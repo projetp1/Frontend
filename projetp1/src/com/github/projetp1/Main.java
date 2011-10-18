@@ -7,9 +7,11 @@ public class Main {
 	 */
 	public static void main(String[] args) 
 	{
-		System.out.print("Teste !");
+		System.out.print("Test !");
 
-		System.out.print("je travail !");
+		System.out.print("je travail !\n");
+		System.out.print("ici ");
+		
 
 	}
 
