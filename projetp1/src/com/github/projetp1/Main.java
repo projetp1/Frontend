@@ -5,6 +5,7 @@ public class Main {
 	/**
 	 * @param args
 	 */
+	
 	public static void main(String[] args) 
 	{
 		System.out.print("Test !");
@@ -12,7 +13,10 @@ public class Main {
 		System.out.print("je travail !\n");
 		System.out.print("ici ");
 		
-
+		MainFrame jfrMainFrame = new MainFrame();
+		jfrMainFrame.setVisible(true);
+		
+		jfrMainFrame.getLblTest().setText("It works !");
 	}
 
 }
