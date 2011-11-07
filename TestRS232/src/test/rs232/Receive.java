@@ -7,7 +7,7 @@ public class Receive {
     static SerialPort serialPort;
 
     public static void main(String[] args) {
-        serialPort = new SerialPort("COM1"); 
+        serialPort = new SerialPort("COM4"); 
         try {
             serialPort.openPort();//Open port
             serialPort.setParams(9600, 8, 1, 0);//Set params
@@ -29,16 +29,14 @@ public class Receive {
     static class SerialPortReader implements SerialPortEventListener {
 
         public void serialEvent(SerialPortEvent event) {
-            if(event.isRXCHAR()){//If data is available
-                if(event.getEventValue() == 10){//Check bytes count in the input buffer
-                    //Read data, if 10 bytes available 
-                    try {
-                        byte buffer[] = serialPort.readBytes(10);
-                    }
-                    catch (SerialPortException ex) {
-                        System.out.println(ex);
-                    }
-                }
+            if(event.isRXCHAR()){//If data is available            
+                        try {
+                        	String received = serialPort.readBytes(event.getEventValue()).toString();
+                        	System.out.print(received);
+						} catch (SerialPortException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}  
             }
             else if(event.isCTS()){//If CTS line has changed state
                 if(event.getEventValue() == 1){//If line is ON
