@@ -1,9 +1,8 @@
 package test.rs232;
 
-import jssc.SerialPort;
-import jssc.SerialPortException;
+import jssc.*;
 
-public class Main {
+public class Send {
 
 	/**
 	 * @param args
