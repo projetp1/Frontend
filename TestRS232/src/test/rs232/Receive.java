@@ -1,5 +1,7 @@
 package test.rs232;
 
+import java.math.BigInteger;
+
 import jssc.*;
 
 public class Receive {
@@ -7,7 +9,7 @@ public class Receive {
     static SerialPort serialPort;
 
     public static void main(String[] args) {
-        serialPort = new SerialPort("COM4"); 
+        serialPort = new SerialPort("COM3"); 
         try {
             serialPort.openPort();//Open port
             serialPort.setParams(9600, 8, 1, 0);//Set params
@@ -31,28 +33,12 @@ public class Receive {
         public void serialEvent(SerialPortEvent event) {
             if(event.isRXCHAR()){//If data is available            
                         try {
-                        	String received = serialPort.readBytes(event.getEventValue()).toString();
+                        	String received = serialPort.readString();
                         	System.out.print(received);
 						} catch (SerialPortException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}  
-            }
-            else if(event.isCTS()){//If CTS line has changed state
-                if(event.getEventValue() == 1){//If line is ON
-                    System.out.println("CTS - ON");
-                }
-                else {
-                    System.out.println("CTS - OFF");
-                }
-            }
-            else if(event.isDSR()){///If DSR line has changed state
-                if(event.getEventValue() == 1){//If line is ON
-                    System.out.println("DSR - ON");
-                }
-                else {
-                    System.out.println("DSR - OFF");
-                }
             }
         }
     }
