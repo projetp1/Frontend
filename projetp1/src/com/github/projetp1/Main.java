@@ -8,10 +8,7 @@ public class Main {
 	
 	public static void main(String[] args) 
 	{
-		MainFrame jfrMainFrame = new MainFrame();
-		jfrMainFrame.setVisible(true);
 		
-		jfrMainFrame.getLblTest().setText("It works !");
 	}
 
 }

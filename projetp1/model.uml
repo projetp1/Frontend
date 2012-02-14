@@ -1,111 +1,829 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_QwKPkDrSEeGOwcHQDxuIiQ" name="model">
-  <packagedElement xmi:type="uml:Class" xmi:id="_UXRgMDrSEeGOwcHQDxuIiQ" name="ObjetCeleste"/>
-  <packagedElement xmi:type="uml:Class" xmi:id="_gRcMIDrSEeGOwcHQDxuIiQ" name="Planete">
-    <generalization xmi:id="_jO-UQDrSEeGOwcHQDxuIiQ" general="_UXRgMDrSEeGOwcHQDxuIiQ"/>
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_i5nhcFcwEeGnqMCAKRARow">
+  <name xsi:nil="true"/>
+  <packagedElement xmi:type="uml:Package" xmi:id="_i5oIgFcwEeGnqMCAKRARow" name="com">
+    <packagedElement xmi:type="uml:Package" xmi:id="_i5oIgVcwEeGnqMCAKRARow" name="github"/>
   </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_k0uxIDrSEeGOwcHQDxuIiQ" name="Etoile">
-    <generalization xmi:id="_oxVwoDrSEeGOwcHQDxuIiQ" general="_UXRgMDrSEeGOwcHQDxuIiQ"/>
+  <packagedElement xmi:type="uml:Package" xmi:id="_i5tBAFcwEeGnqMCAKRARow" name="java">
+    <packagedElement xmi:type="uml:Package" xmi:id="_i5toEFcwEeGnqMCAKRARow" name="lang">
+      <packagedElement xmi:type="uml:DataType" xmi:id="_i5toEVcwEeGnqMCAKRARow" name="String"/>
+      <packagedElement xmi:type="uml:DataType" xmi:id="_i6iHcFcwEeGnqMCAKRARow" name="Boolean"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_i55OQFcwEeGnqMCAKRARow" name="util">
+      <packagedElement xmi:type="uml:DataType" xmi:id="_i55OQVcwEeGnqMCAKRARow" name="ArrayList"/>
+    </packagedElement>
   </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_hUrf4DrUEeGOwcHQDxuIiQ" name="Database"/>
-  <packagedElement xmi:type="uml:Class" xmi:id="_jt4L4DrUEeGOwcHQDxuIiQ" name="Pointeur"/>
-  <packagedElement xmi:type="uml:Class" xmi:id="_4sDO8DrUEeGOwcHQDxuIiQ" name="RS232"/>
-  <packagedElement xmi:type="uml:Class" xmi:id="__W26EDrUEeGOwcHQDxuIiQ" name="MainView">
-    <ownedComment xmi:id="_TqKqoUXrEeGTi6mV0YsmLA">
-      <body>-- 
-Alexandre Perez,
-www.perezapp.ch</body>
-    </ownedComment>
-    <ownedOperation xmi:id="_fkNawEXrEeGTi6mV0YsmLA" name="Operation0"/>
-    <ownedOperation xmi:id="_gka6kEXrEeGTi6mV0YsmLA" name="Operation1"/>
-    <ownedOperation xmi:id="_6SsPkEXrEeGTi6mV0YsmLA" name="Operation2"/>
-    <ownedOperation xmi:id="_H-jioEXsEeGTi6mV0YsmLA" name="Operation3"/>
+  <packagedElement xmi:type="uml:DataType" xmi:id="_i5x5gFcwEeGnqMCAKRARow" name="double"/>
+  <packagedElement xmi:type="uml:DataType" xmi:id="_i6DmUlcwEeGnqMCAKRARow" name="int"/>
+  <packagedElement xmi:type="uml:Package" xmi:id="_i5oIglcwEeGnqMCAKRARow" name="projetp1" clientDependency="_i6wJ5lcwEeGnqMCAKRARow">
+    <packagedElement xmi:type="uml:Class" xmi:id="_i5oIg1cwEeGnqMCAKRARow" name="Main">
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i5wEVVcwEeGnqMCAKRARow" name="main" specification="_i5wEUFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i5wEVlcwEeGnqMCAKRARow" name="args" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedOperation xmi:id="_i5wEUFcwEeGnqMCAKRARow" name="main" visibility="public" isStatic="true" method="_i5wEVVcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i5wEUVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i5wEUlcwEeGnqMCAKRARow" key="documentation" value=" @param args&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i5wEU1cwEeGnqMCAKRARow" name="args" type="_i5toEVcwEeGnqMCAKRARow">
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i5wEVFcwEeGnqMCAKRARow" value="*"/>
+        </ownedParameter>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_i5ovkFcwEeGnqMCAKRARow" name="Pic">
+      <eAnnotations xmi:id="_i5ovkVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+        <details xmi:id="_i5ovklcwEeGnqMCAKRARow" key="documentation" value=" @author  alexandr.perez&#xD;&#xA;"/>
+      </eAnnotations>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i5x5hVcwEeGnqMCAKRARow" name="getLongitude" specification="_i5x5gVcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i5x5hlcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return longitude;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i5zutFcwEeGnqMCAKRARow" name="setLongitude" specification="_i5zusFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i5zutVcwEeGnqMCAKRARow" name="_longitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i5080FcwEeGnqMCAKRARow" name="getLatitude" specification="_i50VwFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i5080VcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return latitude;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i52K8FcwEeGnqMCAKRARow" name="setLatitude" specification="_i51j4FcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i52K8VcwEeGnqMCAKRARow" name="_latitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i52yAFcwEeGnqMCAKRARow" name="getAngle" specification="_i52K8lcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i52yAVcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return angle;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i53ZFFcwEeGnqMCAKRARow" name="setAngle" specification="_i53ZEFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i53ZFVcwEeGnqMCAKRARow" name="_angle" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i54AIFcwEeGnqMCAKRARow" name="getCompass" specification="_i53ZFlcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i54AIVcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return compass;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i54nNFcwEeGnqMCAKRARow" name="setCompass" specification="_i54nMFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i54nNVcwEeGnqMCAKRARow" name="_compass" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedOperation xmi:id="_i5x5gVcwEeGnqMCAKRARow" name="getLongitude" visibility="public" method="_i5x5hVcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i5x5glcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i5x5g1cwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;longitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i5x5hFcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i5zusFcwEeGnqMCAKRARow" name="setLongitude" visibility="public" method="_i5zutFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i5zusVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i5zuslcwEeGnqMCAKRARow" key="documentation" value=" @param _longitude&#xD;&#xA; @uml.property  name=&quot;longitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i5zus1cwEeGnqMCAKRARow" name="_longitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i50VwFcwEeGnqMCAKRARow" name="getLatitude" visibility="public" method="_i5080FcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i50VwVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i50VwlcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;latitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i50Vw1cwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i51j4FcwEeGnqMCAKRARow" name="setLatitude" visibility="public" method="_i52K8FcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i51j4VcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i51j4lcwEeGnqMCAKRARow" key="documentation" value=" @param _latitude&#xD;&#xA; @uml.property  name=&quot;latitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i51j41cwEeGnqMCAKRARow" name="_latitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i52K8lcwEeGnqMCAKRARow" name="getAngle" visibility="public" method="_i52yAFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i52K81cwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i52K9FcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;angle&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i52K9VcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i53ZEFcwEeGnqMCAKRARow" name="setAngle" visibility="public" method="_i53ZFFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i53ZEVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i53ZElcwEeGnqMCAKRARow" key="documentation" value=" @param _angle&#xD;&#xA; @uml.property  name=&quot;angle&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i53ZE1cwEeGnqMCAKRARow" name="_angle" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i53ZFlcwEeGnqMCAKRARow" name="getCompass" visibility="public" method="_i54AIFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i53ZF1cwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i53ZGFcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;compass&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i53ZGVcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i54nMFcwEeGnqMCAKRARow" name="setCompass" visibility="public" method="_i54nNFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i54nMVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i54nMlcwEeGnqMCAKRARow" key="documentation" value=" @param _compass&#xD;&#xA; @uml.property  name=&quot;compass&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i54nM1cwEeGnqMCAKRARow" name="_compass" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_i5pWoFcwEeGnqMCAKRARow" name="MainView">
+      <eAnnotations xmi:id="_i5pWoVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+        <details xmi:id="_i5pWolcwEeGnqMCAKRARow" key="documentation" value=" @author alexandr.perez&#xD;&#xA;"/>
+      </eAnnotations>
+      <elementImport xmi:id="_i55OQlcwEeGnqMCAKRARow" visibility="private" importedElement="_i55OQVcwEeGnqMCAKRARow"/>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i57qgFcwEeGnqMCAKRARow" name="showHelpView" specification="_i57DcFcwEeGnqMCAKRARow">
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i5-GwFcwEeGnqMCAKRARow" name="showSettingsView" specification="_i59fsFcwEeGnqMCAKRARow">
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6AjAFcwEeGnqMCAKRARow" name="updateCompass" specification="_i5_78FcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6AjAVcwEeGnqMCAKRARow" name="_degree" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6DmUFcwEeGnqMCAKRARow" name="updateAngle" specification="_i6CYMFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6DmUVcwEeGnqMCAKRARow" name="_degree" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6GCkFcwEeGnqMCAKRARow" name="setZoom" specification="_i6E0cFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6GCkVcwEeGnqMCAKRARow" name="_zoom" type="_i6DmUlcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		//update skymap&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6JF4FcwEeGnqMCAKRARow" name="updateInfo" specification="_i6Ie0FcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6JF4VcwEeGnqMCAKRARow" name="_object" type="_i5p9sFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6K7EFcwEeGnqMCAKRARow" name="searchForText" specification="_i6KUAFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6K7EVcwEeGnqMCAKRARow" name="_searchText" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <ownedParameter xmi:id="_i6K7ElcwEeGnqMCAKRARow" type="_i55OQVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		//request ddb&#xD;
+		return null;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedOperation xmi:id="_i57DcFcwEeGnqMCAKRARow" name="showHelpView" visibility="public" method="_i57qgFcwEeGnqMCAKRARow"/>
+      <ownedOperation xmi:id="_i59fsFcwEeGnqMCAKRARow" name="showSettingsView" visibility="public" method="_i5-GwFcwEeGnqMCAKRARow"/>
+      <ownedOperation xmi:id="_i5_78FcwEeGnqMCAKRARow" name="updateCompass" visibility="public" method="_i6AjAFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i5_78VcwEeGnqMCAKRARow" name="_degree" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6CYMFcwEeGnqMCAKRARow" name="updateAngle" visibility="public" method="_i6DmUFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6CYMVcwEeGnqMCAKRARow" name="_degree" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6E0cFcwEeGnqMCAKRARow" name="setZoom" visibility="public" method="_i6GCkFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6E0cVcwEeGnqMCAKRARow" name="_zoom" type="_i6DmUlcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6Ie0FcwEeGnqMCAKRARow" name="updateInfo" visibility="public" method="_i6JF4FcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6Ie0VcwEeGnqMCAKRARow" name="_object" type="_i5p9sFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6KUAFcwEeGnqMCAKRARow" name="searchForText" visibility="public" method="_i6K7EFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6KUAVcwEeGnqMCAKRARow" name="_searchText" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <ownedParameter xmi:id="_i6KUAlcwEeGnqMCAKRARow" type="_i55OQVcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_i5pWo1cwEeGnqMCAKRARow" name="DataBase">
+      <eAnnotations xmi:id="_i5pWpFcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+        <details xmi:id="_i5pWpVcwEeGnqMCAKRARow" key="documentation" value=" @author alexandr.perez&#xD;&#xA;"/>
+      </eAnnotations>
+      <elementImport xmi:id="_i6LiIFcwEeGnqMCAKRARow" visibility="private" importedElement="_i55OQVcwEeGnqMCAKRARow"/>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6NXUFcwEeGnqMCAKRARow" name="starsForCoordinates" specification="_i6MwQFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6NXUVcwEeGnqMCAKRARow" name="_longitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <ownedParameter xmi:id="_i6NXUlcwEeGnqMCAKRARow" name="_latitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <ownedParameter xmi:id="_i6NXU1cwEeGnqMCAKRARow" type="_i55OQVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return null;		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6PzkFcwEeGnqMCAKRARow" name="starsForText" specification="_i6PMgFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6PzkVcwEeGnqMCAKRARow" name="_searchText" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <ownedParameter xmi:id="_i6PzklcwEeGnqMCAKRARow" type="_i55OQVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return null;		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedOperation xmi:id="_i6MwQFcwEeGnqMCAKRARow" name="starsForCoordinates" visibility="public" method="_i6NXUFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6MwQVcwEeGnqMCAKRARow" name="_longitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <ownedParameter xmi:id="_i6MwQlcwEeGnqMCAKRARow" name="_latitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <ownedParameter xmi:id="_i6MwQ1cwEeGnqMCAKRARow" type="_i55OQVcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6PMgFcwEeGnqMCAKRARow" name="starsForText" visibility="public" method="_i6PzkFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6PMgVcwEeGnqMCAKRARow" name="_searchText" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <ownedParameter xmi:id="_i6PMglcwEeGnqMCAKRARow" type="_i55OQVcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_i5p9sFcwEeGnqMCAKRARow" name="CelestialObject">
+      <eAnnotations xmi:id="_i5p9sVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+        <details xmi:id="_i5p9slcwEeGnqMCAKRARow" key="documentation" value=" @author  alexandr.perez&#xD;&#xA;"/>
+      </eAnnotations>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6QapFcwEeGnqMCAKRARow" name="getName" specification="_i6QaoFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6QapVcwEeGnqMCAKRARow" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return name;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6RowFcwEeGnqMCAKRARow" name="setName" specification="_i6RBsFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6RowVcwEeGnqMCAKRARow" name="_name" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6RoxlcwEeGnqMCAKRARow" name="getLongitude" specification="_i6RowlcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6Rox1cwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return longitude;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6SP1FcwEeGnqMCAKRARow" name="setLongitude" specification="_i6SP0FcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6SP1VcwEeGnqMCAKRARow" name="_longitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6S24FcwEeGnqMCAKRARow" name="getLatitude" specification="_i6SP1lcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6S24VcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return latitude;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6S25lcwEeGnqMCAKRARow" name="setLatitude" specification="_i6S24lcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6S251cwEeGnqMCAKRARow" name="_latitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6Td9FcwEeGnqMCAKRARow" name="getMass" specification="_i6Td8FcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6Td9VcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return mass;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6UFBFcwEeGnqMCAKRARow" name="setMass" specification="_i6UFAFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6UFBVcwEeGnqMCAKRARow" name="_mass" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6UFClcwEeGnqMCAKRARow" name="getMagnitude" specification="_i6UFBlcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6UFC1cwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return magnitude;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6UsFFcwEeGnqMCAKRARow" name="setMagnitude" specification="_i6UsEFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6UsFVcwEeGnqMCAKRARow" name="_magnitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6VTJFcwEeGnqMCAKRARow" name="getDistance" specification="_i6VTIFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6VTJVcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return distance;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6V6NFcwEeGnqMCAKRARow" name="setDistance" specification="_i6V6MFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6V6NVcwEeGnqMCAKRARow" name="_distance" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6V6OlcwEeGnqMCAKRARow" name="getTemperature" specification="_i6V6NlcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6V6O1cwEeGnqMCAKRARow" type="_i6DmUlcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return temperature;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6WhRFcwEeGnqMCAKRARow" name="setTemperature" specification="_i6WhQFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6WhRVcwEeGnqMCAKRARow" name="_temperature" type="_i6DmUlcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6XvY1cwEeGnqMCAKRARow" name="getColor" specification="_i6XIUFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6XvZFcwEeGnqMCAKRARow" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return color;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6Y9hFcwEeGnqMCAKRARow" name="setColor" specification="_i6Y9gFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6Y9hVcwEeGnqMCAKRARow" name="_color" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedOperation xmi:id="_i6QaoFcwEeGnqMCAKRARow" name="getName" visibility="public" method="_i6QapFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6QaoVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6QaolcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;name&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6Qao1cwEeGnqMCAKRARow" type="_i5toEVcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6RBsFcwEeGnqMCAKRARow" name="setName" visibility="public" method="_i6RowFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6RBsVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6RBslcwEeGnqMCAKRARow" key="documentation" value=" @param _name&#xD;&#xA; @uml.property  name=&quot;name&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6RBs1cwEeGnqMCAKRARow" name="_name" type="_i5toEVcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6RowlcwEeGnqMCAKRARow" name="getLongitude" visibility="public" method="_i6RoxlcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6Row1cwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6RoxFcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;longitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6RoxVcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6SP0FcwEeGnqMCAKRARow" name="setLongitude" visibility="public" method="_i6SP1FcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6SP0VcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6SP0lcwEeGnqMCAKRARow" key="documentation" value=" @param _longitude&#xD;&#xA; @uml.property  name=&quot;longitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6SP01cwEeGnqMCAKRARow" name="_longitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6SP1lcwEeGnqMCAKRARow" name="getLatitude" visibility="public" method="_i6S24FcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6SP11cwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6SP2FcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;latitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6SP2VcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6S24lcwEeGnqMCAKRARow" name="setLatitude" visibility="public" method="_i6S25lcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6S241cwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6S25FcwEeGnqMCAKRARow" key="documentation" value=" @param _latitude&#xD;&#xA; @uml.property  name=&quot;latitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6S25VcwEeGnqMCAKRARow" name="_latitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6Td8FcwEeGnqMCAKRARow" name="getMass" visibility="public" method="_i6Td9FcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6Td8VcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6Td8lcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;mass&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6Td81cwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6UFAFcwEeGnqMCAKRARow" name="setMass" visibility="public" method="_i6UFBFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6UFAVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6UFAlcwEeGnqMCAKRARow" key="documentation" value=" @param _mass&#xD;&#xA; @uml.property  name=&quot;mass&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6UFA1cwEeGnqMCAKRARow" name="_mass" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6UFBlcwEeGnqMCAKRARow" name="getMagnitude" visibility="public" method="_i6UFClcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6UFB1cwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6UFCFcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;magnitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6UFCVcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6UsEFcwEeGnqMCAKRARow" name="setMagnitude" visibility="public" method="_i6UsFFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6UsEVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6UsElcwEeGnqMCAKRARow" key="documentation" value=" @param _magnitude&#xD;&#xA; @uml.property  name=&quot;magnitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6UsE1cwEeGnqMCAKRARow" name="_magnitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6VTIFcwEeGnqMCAKRARow" name="getDistance" visibility="public" method="_i6VTJFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6VTIVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6VTIlcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;distance&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6VTI1cwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6V6MFcwEeGnqMCAKRARow" name="setDistance" visibility="public" method="_i6V6NFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6V6MVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6V6MlcwEeGnqMCAKRARow" key="documentation" value=" @param _distance&#xD;&#xA; @uml.property  name=&quot;distance&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6V6M1cwEeGnqMCAKRARow" name="_distance" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6V6NlcwEeGnqMCAKRARow" name="getTemperature" visibility="public" method="_i6V6OlcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6V6N1cwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6V6OFcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;temperature&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6V6OVcwEeGnqMCAKRARow" type="_i6DmUlcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6WhQFcwEeGnqMCAKRARow" name="setTemperature" visibility="public" method="_i6WhRFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6WhQVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6WhQlcwEeGnqMCAKRARow" key="documentation" value=" @param _temperature&#xD;&#xA; @uml.property  name=&quot;temperature&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6WhQ1cwEeGnqMCAKRARow" name="_temperature" type="_i6DmUlcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6XIUFcwEeGnqMCAKRARow" name="getColor" visibility="public" method="_i6XvY1cwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6XvYFcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6XvYVcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;color&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6XvYlcwEeGnqMCAKRARow" type="_i5toEVcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6Y9gFcwEeGnqMCAKRARow" name="setColor" visibility="public" method="_i6Y9hFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6Y9gVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6Y9glcwEeGnqMCAKRARow" key="documentation" value=" @param _color&#xD;&#xA; @uml.property  name=&quot;color&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6Y9g1cwEeGnqMCAKRARow" name="_color" type="_i5toEVcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_i5p9s1cwEeGnqMCAKRARow" name="SkyMap">
+      <eAnnotations xmi:id="_i5p9tFcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+        <details xmi:id="_i5p9tVcwEeGnqMCAKRARow" key="documentation" value=" @author  alexandr.perez&#xD;&#xA;"/>
+      </eAnnotations>
+      <elementImport xmi:id="_i6Y9hlcwEeGnqMCAKRARow" visibility="private" importedElement="_i55OQVcwEeGnqMCAKRARow"/>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6aysFcwEeGnqMCAKRARow" name="updateSkyMap" specification="_i6aLoFcwEeGnqMCAKRARow">
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6cn4FcwEeGnqMCAKRARow" name="updateArrow" specification="_i6cA0FcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6cn4VcwEeGnqMCAKRARow" name="_object" type="_i5p9sFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6dO9FcwEeGnqMCAKRARow" name="getZoom" specification="_i6dO8FcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6dO9VcwEeGnqMCAKRARow" type="_i6DmUlcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return zoom;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6d2A1cwEeGnqMCAKRARow" name="setZoom" specification="_i6dO9lcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6d2BFcwEeGnqMCAKRARow" name="_zoom" type="_i6DmUlcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		this.zoom = _zoom;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6d2CVcwEeGnqMCAKRARow" name="getLatitude" specification="_i6d2BVcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6d2ClcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return latitude;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6edFFcwEeGnqMCAKRARow" name="setLatitude" specification="_i6edEFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6edFVcwEeGnqMCAKRARow" name="_latitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		this.latitude = _latitude;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6edGlcwEeGnqMCAKRARow" name="getLongitude" specification="_i6edFlcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6edG1cwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return longitude;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6fEJFcwEeGnqMCAKRARow" name="setLongitude" specification="_i6fEIFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6fEJVcwEeGnqMCAKRARow" name="_longitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		this.longitude = _longitude;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6frNFcwEeGnqMCAKRARow" name="getArrayObject" specification="_i6frMFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6frNVcwEeGnqMCAKRARow" type="_i55OQVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return arrayObject;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6g5VFcwEeGnqMCAKRARow" name="setArrayObject" specification="_i6g5UFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6g5VVcwEeGnqMCAKRARow" name="_arrayObject" type="_i55OQVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		this.arrayObject = _arrayObject;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedOperation xmi:id="_i6aLoFcwEeGnqMCAKRARow" name="updateSkyMap" visibility="public" method="_i6aysFcwEeGnqMCAKRARow"/>
+      <ownedOperation xmi:id="_i6cA0FcwEeGnqMCAKRARow" name="updateArrow" visibility="public" method="_i6cn4FcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6cA0VcwEeGnqMCAKRARow" name="_object" type="_i5p9sFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6dO8FcwEeGnqMCAKRARow" name="getZoom" visibility="public" method="_i6dO9FcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6dO8VcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6dO8lcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;zoom&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6dO81cwEeGnqMCAKRARow" type="_i6DmUlcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6dO9lcwEeGnqMCAKRARow" name="setZoom" visibility="public" method="_i6d2A1cwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6d2AFcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6d2AVcwEeGnqMCAKRARow" key="documentation" value=" @param _zoom&#xD;&#xA; @uml.property  name=&quot;zoom&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6d2AlcwEeGnqMCAKRARow" name="_zoom" type="_i6DmUlcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6d2BVcwEeGnqMCAKRARow" name="getLatitude" visibility="public" method="_i6d2CVcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6d2BlcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6d2B1cwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;latitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6d2CFcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6edEFcwEeGnqMCAKRARow" name="setLatitude" visibility="public" method="_i6edFFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6edEVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6edElcwEeGnqMCAKRARow" key="documentation" value=" @param _latitude&#xD;&#xA; @uml.property  name=&quot;latitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6edE1cwEeGnqMCAKRARow" name="_latitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6edFlcwEeGnqMCAKRARow" name="getLongitude" visibility="public" method="_i6edGlcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6edF1cwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6edGFcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;longitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6edGVcwEeGnqMCAKRARow" type="_i5x5gFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6fEIFcwEeGnqMCAKRARow" name="setLongitude" visibility="public" method="_i6fEJFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6fEIVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6fEIlcwEeGnqMCAKRARow" key="documentation" value=" @param _longitude&#xD;&#xA; @uml.property  name=&quot;longitude&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6fEI1cwEeGnqMCAKRARow" name="_longitude" type="_i5x5gFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6frMFcwEeGnqMCAKRARow" name="getArrayObject" visibility="public" method="_i6frNFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6frMVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6frMlcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;arrayObject&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6frM1cwEeGnqMCAKRARow" type="_i55OQVcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6g5UFcwEeGnqMCAKRARow" name="setArrayObject" visibility="public" method="_i6g5VFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6g5UVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6g5UlcwEeGnqMCAKRARow" key="documentation" value=" @param _arrayObject&#xD;&#xA; @uml.property  name=&quot;arrayObject&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6g5U1cwEeGnqMCAKRARow" name="_arrayObject" type="_i55OQVcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_i5qkwFcwEeGnqMCAKRARow" name="RS232">
+      <eAnnotations xmi:id="_i5qkwVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+        <details xmi:id="_i5qkwlcwEeGnqMCAKRARow" key="documentation" value=" @author alexandr.perez&#xD;&#xA;"/>
+      </eAnnotations>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6iugFcwEeGnqMCAKRARow" name="connect" specification="_i6iHcVcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6iugVcwEeGnqMCAKRARow" name="_port" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <ownedParameter xmi:id="_i6iuglcwEeGnqMCAKRARow" type="_i6iHcFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		port = _port;&#xD;
+		return true;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6j8oFcwEeGnqMCAKRARow" name="disconnect" specification="_i6jVkFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6j8oVcwEeGnqMCAKRARow" type="_i6iHcFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+		return true;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6lKwFcwEeGnqMCAKRARow" name="receiveData" specification="_i6kjsFcwEeGnqMCAKRARow">
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6lx0VcwEeGnqMCAKRARow" name="sendData" specification="_i6lx0FcwEeGnqMCAKRARow">
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedOperation xmi:id="_i6iHcVcwEeGnqMCAKRARow" name="connect" visibility="public" method="_i6iugFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6iHclcwEeGnqMCAKRARow" name="_port" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <ownedParameter xmi:id="_i6iHc1cwEeGnqMCAKRARow" type="_i6iHcFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6jVkFcwEeGnqMCAKRARow" name="disconnect" visibility="public" method="_i6j8oFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6jVkVcwEeGnqMCAKRARow" type="_i6iHcFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6kjsFcwEeGnqMCAKRARow" name="receiveData" visibility="public" method="_i6lKwFcwEeGnqMCAKRARow"/>
+      <ownedOperation xmi:id="_i6lx0FcwEeGnqMCAKRARow" name="sendData" visibility="public" method="_i6lx0VcwEeGnqMCAKRARow"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_i5rL0FcwEeGnqMCAKRARow" name="Settings">
+      <eAnnotations xmi:id="_i5rL0VcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+        <details xmi:id="_i5rL0lcwEeGnqMCAKRARow" key="documentation" value=" @author  alexandr.perez&#xD;&#xA;"/>
+      </eAnnotations>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6nnAFcwEeGnqMCAKRARow" name="saveToFile" specification="_i6m_8FcwEeGnqMCAKRARow">
+        <language>JAVA</language>
+        <body>&#xD;
+			&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6oOFFcwEeGnqMCAKRARow" name="getPort" specification="_i6oOEFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6oOFVcwEeGnqMCAKRARow" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return port;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6o1JFcwEeGnqMCAKRARow" name="setPort" specification="_i6o1IFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6o1JVcwEeGnqMCAKRARow" name="_port" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6pcNFcwEeGnqMCAKRARow" name="getSpeed" specification="_i6pcMFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6pcNVcwEeGnqMCAKRARow" type="_i6DmUlcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return speed;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6qDRFcwEeGnqMCAKRARow" name="setSpeed" specification="_i6qDQFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6qDRVcwEeGnqMCAKRARow" name="_speed" type="_i6DmUlcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6qDSlcwEeGnqMCAKRARow" name="getDatabit" specification="_i6qDRlcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6qDS1cwEeGnqMCAKRARow" type="_i6DmUlcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return databit;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6qqVFcwEeGnqMCAKRARow" name="setDatabit" specification="_i6qqUFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6qqVVcwEeGnqMCAKRARow" name="_databit" type="_i6DmUlcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6qqWlcwEeGnqMCAKRARow" name="getStopbit" specification="_i6qqVlcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6qqW1cwEeGnqMCAKRARow" type="_i6DmUlcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return stopbit;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6rRZFcwEeGnqMCAKRARow" name="setStopbit" specification="_i6rRYFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6rRZVcwEeGnqMCAKRARow" name="_stopbit" type="_i6DmUlcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6r4dFcwEeGnqMCAKRARow" name="getParity" specification="_i6r4cFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6r4dVcwEeGnqMCAKRARow" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return parity;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6tGlFcwEeGnqMCAKRARow" name="setParity" specification="_i6tGkFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6tGlVcwEeGnqMCAKRARow" name="_parity" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6ttoFcwEeGnqMCAKRARow" name="getFlowControl" specification="_i6tGllcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6ttoVcwEeGnqMCAKRARow" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return flowControl;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6uUtFcwEeGnqMCAKRARow" name="setFlowControl" specification="_i6uUsFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6uUtVcwEeGnqMCAKRARow" name="_flowControl" type="_i5toEVcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6u7xFcwEeGnqMCAKRARow" name="getSimulation" specification="_i6u7wFcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6u7xVcwEeGnqMCAKRARow" type="_i6iHcFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		return simulation;&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_i6wJ5FcwEeGnqMCAKRARow" name="setSimulation" specification="_i6wJ4FcwEeGnqMCAKRARow">
+        <ownedParameter xmi:id="_i6wJ5VcwEeGnqMCAKRARow" name="_simulation" type="_i6iHcFcwEeGnqMCAKRARow"/>
+        <language>JAVA</language>
+        <body>&#xD;
+		&#xD;
+	</body>
+      </ownedBehavior>
+      <ownedOperation xmi:id="_i6m_8FcwEeGnqMCAKRARow" name="saveToFile" visibility="public" method="_i6nnAFcwEeGnqMCAKRARow"/>
+      <ownedOperation xmi:id="_i6oOEFcwEeGnqMCAKRARow" name="getPort" visibility="public" method="_i6oOFFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6oOEVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6oOElcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;port&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6oOE1cwEeGnqMCAKRARow" type="_i5toEVcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6o1IFcwEeGnqMCAKRARow" name="setPort" visibility="public" method="_i6o1JFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6o1IVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6o1IlcwEeGnqMCAKRARow" key="documentation" value=" @param _port&#xD;&#xA; @uml.property  name=&quot;port&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6o1I1cwEeGnqMCAKRARow" name="_port" type="_i5toEVcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6pcMFcwEeGnqMCAKRARow" name="getSpeed" visibility="public" method="_i6pcNFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6pcMVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6pcMlcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;speed&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6pcM1cwEeGnqMCAKRARow" type="_i6DmUlcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6qDQFcwEeGnqMCAKRARow" name="setSpeed" visibility="public" method="_i6qDRFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6qDQVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6qDQlcwEeGnqMCAKRARow" key="documentation" value=" @param _speed&#xD;&#xA; @uml.property  name=&quot;speed&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6qDQ1cwEeGnqMCAKRARow" name="_speed" type="_i6DmUlcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6qDRlcwEeGnqMCAKRARow" name="getDatabit" visibility="public" method="_i6qDSlcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6qDR1cwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6qDSFcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;databit&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6qDSVcwEeGnqMCAKRARow" type="_i6DmUlcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6qqUFcwEeGnqMCAKRARow" name="setDatabit" visibility="public" method="_i6qqVFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6qqUVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6qqUlcwEeGnqMCAKRARow" key="documentation" value=" @param _databit&#xD;&#xA; @uml.property  name=&quot;databit&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6qqU1cwEeGnqMCAKRARow" name="_databit" type="_i6DmUlcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6qqVlcwEeGnqMCAKRARow" name="getStopbit" visibility="public" method="_i6qqWlcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6qqV1cwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6qqWFcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;stopbit&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6qqWVcwEeGnqMCAKRARow" type="_i6DmUlcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6rRYFcwEeGnqMCAKRARow" name="setStopbit" visibility="public" method="_i6rRZFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6rRYVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6rRYlcwEeGnqMCAKRARow" key="documentation" value=" @param _stopbit&#xD;&#xA; @uml.property  name=&quot;stopbit&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6rRY1cwEeGnqMCAKRARow" name="_stopbit" type="_i6DmUlcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6r4cFcwEeGnqMCAKRARow" name="getParity" visibility="public" method="_i6r4dFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6r4cVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6r4clcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;parity&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6r4c1cwEeGnqMCAKRARow" type="_i5toEVcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6tGkFcwEeGnqMCAKRARow" name="setParity" visibility="public" method="_i6tGlFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6tGkVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6tGklcwEeGnqMCAKRARow" key="documentation" value=" @param _parity&#xD;&#xA; @uml.property  name=&quot;parity&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6tGk1cwEeGnqMCAKRARow" name="_parity" type="_i5toEVcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6tGllcwEeGnqMCAKRARow" name="getFlowControl" visibility="public" method="_i6ttoFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6tGl1cwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6tGmFcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;flowControl&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6tGmVcwEeGnqMCAKRARow" type="_i5toEVcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6uUsFcwEeGnqMCAKRARow" name="setFlowControl" visibility="public" method="_i6uUtFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6uUsVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6uUslcwEeGnqMCAKRARow" key="documentation" value=" @param _flowControl&#xD;&#xA; @uml.property  name=&quot;flowControl&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6uUs1cwEeGnqMCAKRARow" name="_flowControl" type="_i5toEVcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6u7wFcwEeGnqMCAKRARow" name="getSimulation" visibility="public" method="_i6u7xFcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6u7wVcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6u7wlcwEeGnqMCAKRARow" key="documentation" value=" @return&#xD;&#xA; @uml.property  name=&quot;simulation&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6u7w1cwEeGnqMCAKRARow" type="_i6iHcFcwEeGnqMCAKRARow" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:id="_i6wJ4FcwEeGnqMCAKRARow" name="setSimulation" visibility="public" method="_i6wJ5FcwEeGnqMCAKRARow">
+        <eAnnotations xmi:id="_i6wJ4VcwEeGnqMCAKRARow" source="http://www.topcased.org/documentation">
+          <details xmi:id="_i6wJ4lcwEeGnqMCAKRARow" key="documentation" value=" @param _simulation&#xD;&#xA; @uml.property  name=&quot;simulation&quot;&#xD;&#xA;&#x9;"/>
+        </eAnnotations>
+        <ownedParameter xmi:id="_i6wJ41cwEeGnqMCAKRARow" name="_simulation" type="_i6iHcFcwEeGnqMCAKRARow"/>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_i6wJ5lcwEeGnqMCAKRARow" supplier="_i55OQFcwEeGnqMCAKRARow" client="_i5oIglcwEeGnqMCAKRARow"/>
   </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_AyDswDrVEeGOwcHQDxuIiQ" name="Class0"/>
-  <packagedElement xmi:type="uml:Class" xmi:id="_6UvOkDrVEeGOwcHQDxuIiQ" name="Class1"/>
-  <packagedElement xmi:type="uml:TimeObservation" xmi:id="_NPLuwEXsEeGTi6mV0YsmLA" name=""/>
-  <packagedElement xmi:type="uml:Association" xmi:id="_kczE4EXsEeGTi6mV0YsmLA" name="main_mainView_0" memberEnd="_kczE4UXsEeGTi6mV0YsmLA _kcwBkEXsEeGTi6mV0YsmLA">
-    <ownedEnd xmi:id="_kczE4UXsEeGTi6mV0YsmLA" name="main" type="_hY8SUEXsEeGTi6mV0YsmLA" association="_kczE4EXsEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_kczE4kXsEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kczE40XsEeGTi6mV0YsmLA" value="1"/>
-    </ownedEnd>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_9QFi4EXtEeGTi6mV0YsmLA" name="mainView_skyMap_0" memberEnd="_9QFi4UXtEeGTi6mV0YsmLA _9QAqYEXtEeGTi6mV0YsmLA">
-    <ownedEnd xmi:id="_9QFi4UXtEeGTi6mV0YsmLA" name="mainView" type="_VixVkEXsEeGTi6mV0YsmLA" association="_9QFi4EXtEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_9QFi4kXtEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_9QFi40XtEeGTi6mV0YsmLA" value="1"/>
-    </ownedEnd>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_-Hym8EXtEeGTi6mV0YsmLA" name="main_rS232_0" memberEnd="_-Hym8UXtEeGTi6mV0YsmLA _-HsgUEXtEeGTi6mV0YsmLA">
-    <ownedEnd xmi:id="_-Hym8UXtEeGTi6mV0YsmLA" name="main" type="_hY8SUEXsEeGTi6mV0YsmLA" association="_-Hym8EXtEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-Hym8kXtEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-Hym80XtEeGTi6mV0YsmLA" value="1"/>
-    </ownedEnd>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_-i8R4EXtEeGTi6mV0YsmLA" name="main_database_0" memberEnd="_-i848EXtEeGTi6mV0YsmLA _-i2yUEXtEeGTi6mV0YsmLA">
-    <ownedEnd xmi:id="_-i848EXtEeGTi6mV0YsmLA" name="main" type="_hY8SUEXsEeGTi6mV0YsmLA" association="_-i8R4EXtEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-i848UXtEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-i848kXtEeGTi6mV0YsmLA" value="1"/>
-    </ownedEnd>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="__FNRcEXtEeGTi6mV0YsmLA" name="main_settings_0" memberEnd="__FNRcUXtEeGTi6mV0YsmLA __FHK0EXtEeGTi6mV0YsmLA">
-    <ownedEnd xmi:id="__FNRcUXtEeGTi6mV0YsmLA" name="main" type="_hY8SUEXsEeGTi6mV0YsmLA" association="__FNRcEXtEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__FNRckXtEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__FNRc0XtEeGTi6mV0YsmLA" value="1"/>
-    </ownedEnd>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="__fZ6IEXtEeGTi6mV0YsmLA" name="settings_iNIHandler_0" memberEnd="__fZ6IUXtEeGTi6mV0YsmLA __fVosEXtEeGTi6mV0YsmLA">
-    <ownedEnd xmi:id="__fZ6IUXtEeGTi6mV0YsmLA" name="settings" type="_rrMlQEXsEeGTi6mV0YsmLA" association="__fZ6IEXtEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__fZ6IkXtEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__fZ6I0XtEeGTi6mV0YsmLA" value="1"/>
-    </ownedEnd>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Package" xmi:id="_HnVDgEXuEeGTi6mV0YsmLA" name="Package"/>
-  <packagedElement xmi:type="uml:Class" xmi:id="_ogzF0EXsEeGTi6mV0YsmLA" name="RS232">
-    <ownedOperation xmi:id="_qB33AEXsEeGTi6mV0YsmLA" name="RS232"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_66HmgEXsEeGTi6mV0YsmLA" name="SkyMap">
-    <ownedOperation xmi:id="_-gtSsEXsEeGTi6mV0YsmLA" name="SkyMap"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_7sDZwEXsEeGTi6mV0YsmLA" name="Database">
-    <ownedOperation xmi:id="_9ltDAEXsEeGTi6mV0YsmLA" name="Database"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_VixVkEXsEeGTi6mV0YsmLA" name="MainView">
-    <ownedAttribute xmi:id="_9QAqYEXtEeGTi6mV0YsmLA" name="skyMap" type="_66HmgEXsEeGTi6mV0YsmLA" association="_9QFi4EXtEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_9QAqYUXtEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_9QAqYkXtEeGTi6mV0YsmLA" value="1"/>
-    </ownedAttribute>
-    <ownedOperation xmi:id="_bJDooEXsEeGTi6mV0YsmLA" name="MainView"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_hY8SUEXsEeGTi6mV0YsmLA" name="Main">
-    <ownedAttribute xmi:id="_kcwBkEXsEeGTi6mV0YsmLA" name="mainView" type="_VixVkEXsEeGTi6mV0YsmLA" association="_kczE4EXsEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_kcwBkUXsEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kcwBkkXsEeGTi6mV0YsmLA" value="1"/>
-    </ownedAttribute>
-    <ownedAttribute xmi:id="_-HsgUEXtEeGTi6mV0YsmLA" name="rS232" type="_ogzF0EXsEeGTi6mV0YsmLA" association="_-Hym8EXtEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-HsgUUXtEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-HsgUkXtEeGTi6mV0YsmLA" value="1"/>
-    </ownedAttribute>
-    <ownedAttribute xmi:id="_-i2yUEXtEeGTi6mV0YsmLA" name="database" type="_7sDZwEXsEeGTi6mV0YsmLA" association="_-i8R4EXtEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-i2yUUXtEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-i2yUkXtEeGTi6mV0YsmLA" value="1"/>
-    </ownedAttribute>
-    <ownedAttribute xmi:id="__FHK0EXtEeGTi6mV0YsmLA" name="settings" type="_rrMlQEXsEeGTi6mV0YsmLA" association="__FNRcEXtEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__FHx4EXtEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__FHx4UXtEeGTi6mV0YsmLA" value="1"/>
-    </ownedAttribute>
-    <ownedOperation xmi:id="_jDHVIEXsEeGTi6mV0YsmLA" name="Main"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_rrMlQEXsEeGTi6mV0YsmLA" name="Settings">
-    <ownedAttribute xmi:id="__fVosEXtEeGTi6mV0YsmLA" name="iNIHandler" type="_son20EXsEeGTi6mV0YsmLA" association="__fZ6IEXtEeGTi6mV0YsmLA">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__fVosUXtEeGTi6mV0YsmLA" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__fVoskXtEeGTi6mV0YsmLA" value="1"/>
-    </ownedAttribute>
-    <ownedOperation xmi:id="_u80HAEXsEeGTi6mV0YsmLA" name="Settings"/>
-    <ownedOperation xmi:id="_WqPMkEXvEeGTi6mV0YsmLA" name="SetProperty(String _name, String _value"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_son20EXsEeGTi6mV0YsmLA" name="INIHandler">
-    <ownedOperation xmi:id="_wEXk8EXsEeGTi6mV0YsmLA" name="INIHandler"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_UfLDMEXvEeGTi6mV0YsmLA" name="Class2"/>
 </uml:Model>
