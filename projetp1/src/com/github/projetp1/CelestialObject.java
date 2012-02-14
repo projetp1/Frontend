@@ -1,6 +1,6 @@
 package com.github.projetp1;
 
-public class CelestialObjects {
+public class CelestialObject {
 
 	private String name;
 	private double longitude;
@@ -11,12 +11,8 @@ public class CelestialObjects {
 	private int temperature;
 	private String color;
 	
-	public CelestialObjects star() {
-		return null;		
-	}
-	
-	public CelestialObjects planets() {
-		return null;		
+	public CelestialObject() {
+		
 	}
 	
 	public String getName () {
