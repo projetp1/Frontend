@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_QwKPkDrSEeGOwcHQDxuIiQ" name="model">
+  <packagedElement xmi:type="uml:Class" xmi:id="_UXRgMDrSEeGOwcHQDxuIiQ" name="ObjetCeleste"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_gRcMIDrSEeGOwcHQDxuIiQ" name="Planete">
+    <generalization xmi:id="_jO-UQDrSEeGOwcHQDxuIiQ" general="_UXRgMDrSEeGOwcHQDxuIiQ"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_k0uxIDrSEeGOwcHQDxuIiQ" name="Etoile">
+    <generalization xmi:id="_oxVwoDrSEeGOwcHQDxuIiQ" general="_UXRgMDrSEeGOwcHQDxuIiQ"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_hUrf4DrUEeGOwcHQDxuIiQ" name="Database"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_jt4L4DrUEeGOwcHQDxuIiQ" name="Pointeur"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_4sDO8DrUEeGOwcHQDxuIiQ" name="RS232"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="__W26EDrUEeGOwcHQDxuIiQ" name="MainView">
+    <ownedComment xmi:id="_TqKqoUXrEeGTi6mV0YsmLA">
+      <body>-- 
+Alexandre Perez,
+www.perezapp.ch</body>
+    </ownedComment>
+    <ownedOperation xmi:id="_fkNawEXrEeGTi6mV0YsmLA" name="Operation0"/>
+    <ownedOperation xmi:id="_gka6kEXrEeGTi6mV0YsmLA" name="Operation1"/>
+    <ownedOperation xmi:id="_6SsPkEXrEeGTi6mV0YsmLA" name="Operation2"/>
+    <ownedOperation xmi:id="_H-jioEXsEeGTi6mV0YsmLA" name="Operation3"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_AyDswDrVEeGOwcHQDxuIiQ" name="Class0"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_6UvOkDrVEeGOwcHQDxuIiQ" name="Class1"/>
+  <packagedElement xmi:type="uml:TimeObservation" xmi:id="_NPLuwEXsEeGTi6mV0YsmLA" name=""/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_kczE4EXsEeGTi6mV0YsmLA" name="main_mainView_0" memberEnd="_kczE4UXsEeGTi6mV0YsmLA _kcwBkEXsEeGTi6mV0YsmLA">
+    <ownedEnd xmi:id="_kczE4UXsEeGTi6mV0YsmLA" name="main" type="_hY8SUEXsEeGTi6mV0YsmLA" association="_kczE4EXsEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_kczE4kXsEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kczE40XsEeGTi6mV0YsmLA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_9QFi4EXtEeGTi6mV0YsmLA" name="mainView_skyMap_0" memberEnd="_9QFi4UXtEeGTi6mV0YsmLA _9QAqYEXtEeGTi6mV0YsmLA">
+    <ownedEnd xmi:id="_9QFi4UXtEeGTi6mV0YsmLA" name="mainView" type="_VixVkEXsEeGTi6mV0YsmLA" association="_9QFi4EXtEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_9QFi4kXtEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_9QFi40XtEeGTi6mV0YsmLA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_-Hym8EXtEeGTi6mV0YsmLA" name="main_rS232_0" memberEnd="_-Hym8UXtEeGTi6mV0YsmLA _-HsgUEXtEeGTi6mV0YsmLA">
+    <ownedEnd xmi:id="_-Hym8UXtEeGTi6mV0YsmLA" name="main" type="_hY8SUEXsEeGTi6mV0YsmLA" association="_-Hym8EXtEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-Hym8kXtEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-Hym80XtEeGTi6mV0YsmLA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_-i8R4EXtEeGTi6mV0YsmLA" name="main_database_0" memberEnd="_-i848EXtEeGTi6mV0YsmLA _-i2yUEXtEeGTi6mV0YsmLA">
+    <ownedEnd xmi:id="_-i848EXtEeGTi6mV0YsmLA" name="main" type="_hY8SUEXsEeGTi6mV0YsmLA" association="_-i8R4EXtEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-i848UXtEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-i848kXtEeGTi6mV0YsmLA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="__FNRcEXtEeGTi6mV0YsmLA" name="main_settings_0" memberEnd="__FNRcUXtEeGTi6mV0YsmLA __FHK0EXtEeGTi6mV0YsmLA">
+    <ownedEnd xmi:id="__FNRcUXtEeGTi6mV0YsmLA" name="main" type="_hY8SUEXsEeGTi6mV0YsmLA" association="__FNRcEXtEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__FNRckXtEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__FNRc0XtEeGTi6mV0YsmLA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="__fZ6IEXtEeGTi6mV0YsmLA" name="settings_iNIHandler_0" memberEnd="__fZ6IUXtEeGTi6mV0YsmLA __fVosEXtEeGTi6mV0YsmLA">
+    <ownedEnd xmi:id="__fZ6IUXtEeGTi6mV0YsmLA" name="settings" type="_rrMlQEXsEeGTi6mV0YsmLA" association="__fZ6IEXtEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__fZ6IkXtEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__fZ6I0XtEeGTi6mV0YsmLA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_HnVDgEXuEeGTi6mV0YsmLA" name="Package"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_ogzF0EXsEeGTi6mV0YsmLA" name="RS232">
+    <ownedOperation xmi:id="_qB33AEXsEeGTi6mV0YsmLA" name="RS232"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_66HmgEXsEeGTi6mV0YsmLA" name="SkyMap">
+    <ownedOperation xmi:id="_-gtSsEXsEeGTi6mV0YsmLA" name="SkyMap"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_7sDZwEXsEeGTi6mV0YsmLA" name="Database">
+    <ownedOperation xmi:id="_9ltDAEXsEeGTi6mV0YsmLA" name="Database"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_VixVkEXsEeGTi6mV0YsmLA" name="MainView">
+    <ownedAttribute xmi:id="_9QAqYEXtEeGTi6mV0YsmLA" name="skyMap" type="_66HmgEXsEeGTi6mV0YsmLA" association="_9QFi4EXtEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_9QAqYUXtEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_9QAqYkXtEeGTi6mV0YsmLA" value="1"/>
+    </ownedAttribute>
+    <ownedOperation xmi:id="_bJDooEXsEeGTi6mV0YsmLA" name="MainView"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_hY8SUEXsEeGTi6mV0YsmLA" name="Main">
+    <ownedAttribute xmi:id="_kcwBkEXsEeGTi6mV0YsmLA" name="mainView" type="_VixVkEXsEeGTi6mV0YsmLA" association="_kczE4EXsEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_kcwBkUXsEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kcwBkkXsEeGTi6mV0YsmLA" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-HsgUEXtEeGTi6mV0YsmLA" name="rS232" type="_ogzF0EXsEeGTi6mV0YsmLA" association="_-Hym8EXtEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-HsgUUXtEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-HsgUkXtEeGTi6mV0YsmLA" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-i2yUEXtEeGTi6mV0YsmLA" name="database" type="_7sDZwEXsEeGTi6mV0YsmLA" association="_-i8R4EXtEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-i2yUUXtEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-i2yUkXtEeGTi6mV0YsmLA" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="__FHK0EXtEeGTi6mV0YsmLA" name="settings" type="_rrMlQEXsEeGTi6mV0YsmLA" association="__FNRcEXtEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__FHx4EXtEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__FHx4UXtEeGTi6mV0YsmLA" value="1"/>
+    </ownedAttribute>
+    <ownedOperation xmi:id="_jDHVIEXsEeGTi6mV0YsmLA" name="Main"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_rrMlQEXsEeGTi6mV0YsmLA" name="Settings">
+    <ownedAttribute xmi:id="__fVosEXtEeGTi6mV0YsmLA" name="iNIHandler" type="_son20EXsEeGTi6mV0YsmLA" association="__fZ6IEXtEeGTi6mV0YsmLA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__fVosUXtEeGTi6mV0YsmLA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__fVoskXtEeGTi6mV0YsmLA" value="1"/>
+    </ownedAttribute>
+    <ownedOperation xmi:id="_u80HAEXsEeGTi6mV0YsmLA" name="Settings"/>
+    <ownedOperation xmi:id="_WqPMkEXvEeGTi6mV0YsmLA" name="SetProperty(String _name, String _value"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_son20EXsEeGTi6mV0YsmLA" name="INIHandler">
+    <ownedOperation xmi:id="_wEXk8EXsEeGTi6mV0YsmLA" name="INIHandler"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_UfLDMEXvEeGTi6mV0YsmLA" name="Class2"/>
+</uml:Model>

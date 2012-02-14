@@ -8,9 +8,15 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 
+/**
+ * @author  alexandr.perez
+ */
 public class MainFrame extends JFrame {
 
 	private JPanel contentPane;
+	/**
+	 * @uml.property  name="lblTest"
+	 */
 	private JLabel lblTest;
 
 	/**
@@ -44,6 +50,10 @@ public class MainFrame extends JFrame {
 		contentPane.add(lblTest, BorderLayout.CENTER);
 	}
 
+	/**
+	 * @return
+	 * @uml.property  name="lblTest"
+	 */
 	public JLabel getLblTest() {
 		return lblTest;
 	}
