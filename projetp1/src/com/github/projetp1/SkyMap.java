@@ -26,11 +26,11 @@ public class SkyMap {
 		
 	}
 	
-	public void updateArrow(CelestialObjects _object) {
+	public void updateArrow(CelestialObject _object) {
 		
 	}
 	
-	public void showCelestialObjects(ArrayList<CelestialObjects> _arrayObject) {
+	public void showCelestialObjects(ArrayList<CelestialObject> _arrayObject) {
 		
 	}
 }

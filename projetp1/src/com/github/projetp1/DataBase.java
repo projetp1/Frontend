@@ -18,11 +18,11 @@ public class DataBase {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ArrayList<CelestialObjects> starsForCoordinates (double _longitude, double _latitude) {
+	public ArrayList<CelestialObject> starsForCoordinates (double _longitude, double _latitude) {
 		return null;		
 	}
 	
-	public ArrayList<CelestialObjects> starsForText (String _searchText) {
+	public ArrayList<CelestialObject> starsForText (String _searchText) {
 		return null;		
 	}
 }

@@ -38,11 +38,11 @@ public class MainView {
 		//update skymap
 	}
 	
-	public void updateInfo(CelestialObjects _object) {
+	public void updateInfo(CelestialObject _object) {
 		
 	}
 	
-	public ArrayList<CelestialObjects> searchForText(String _searchText) {
+	public ArrayList<CelestialObject> searchForText(String _searchText) {
 		//request ddb
 		return null;
 	}
