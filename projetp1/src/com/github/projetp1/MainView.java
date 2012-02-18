@@ -42,8 +42,9 @@ public class MainView {
 		
 	}
 	
-	public ArrayList<CelestialObject> searchForText(String _searchText) {
+	public ArrayList<CelestialObject> searchForTextInSearchField() {
 		//request ddb
+		//text form search field
 		return null;
 	}
 }
