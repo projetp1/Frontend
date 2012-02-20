@@ -16,7 +16,8 @@ public class Test {
 		    //test.getInfos();
 		    
 		    ArrayList<CelestialObject> stars = new ArrayList<CelestialObject>();
-		    stars = db.starsForCoordinates(statement,0.0, -2.0); 
+		    stars = db.starsForCoordinates(statement,01111111111111111111111.0, -2.0); 
+
 		    stars.get(0).getHeader();
 		    
 		    for(int i=0;i<stars.size();i++)
