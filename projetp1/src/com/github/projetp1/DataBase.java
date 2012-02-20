@@ -58,7 +58,10 @@ public class DataBase {
 		System.out.println(l_query);
 		ResultSet result = _state.executeQuery(l_query);
 		
-	    while (result.next()) 
+		if(result == null)
+			return null;
+	    
+		while (result.next()) 
 	    {
 	    	l_id = result.getInt("id");
 			l_StarId = result.getInt("StarID");
