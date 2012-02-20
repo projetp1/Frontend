@@ -3,6 +3,8 @@
  */
 package com.github.projetp1;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import java.sql.*;
 
@@ -52,6 +54,21 @@ public class DataBase {
 		double l_lamax = _latitude+0.5;
 		double l_lamin = _latitude-0.5;
 		
+		
+		
+		String strRegex  = "[-+]?[0-9]*\\.?[0-9]+";
+        CharSequence strLongitude = Double.toString(_longitude);
+        CharSequence strLatitude = Double.toString(_latitude);
+        
+        Pattern pattern = Pattern.compile(strRegex);
+        Matcher matcher_lon = pattern.matcher(strLongitude);
+        Matcher matcher_lat = pattern.matcher(strLatitude);
+        
+        if (matcher_lon.matches() && matcher_lat.matches()) 
+        	System.out.println("OK");
+        else
+        	System.out.println("KO");
+				
 		//Requête de test,il manque les calculs
 		String l_query = "SELECT * FROM stars WHERE x > " + l_lomin + " AND x < " + l_lomax + " AND y > " + l_lamin + " AND y > " + l_lamax + ";";
 		//String l_query = "SELECT * FROM stars;";
