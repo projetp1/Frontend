@@ -54,6 +54,7 @@ public class DataBase {
 		
 		//Requête de test,il manque les calculs
 		String l_query = "SELECT * FROM stars WHERE x > " + l_lomin + " AND x < " + l_lomax + " AND y > " + l_lamin + " AND y > " + l_lamax + ";";
+		//String l_query = "SELECT * FROM stars;";
 		System.out.println(l_query);
 		ResultSet result = _state.executeQuery(l_query);
 		
