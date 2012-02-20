@@ -1,37 +1,27 @@
 package com.github.projetp1;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class Test {
 
 	public static void main(String[] args) throws Exception {
 		 	Class.forName("org.sqlite.JDBC");
-		    Connection conn = DriverManager.getConnection("jdbc:sqlite:res/hyg.db");
-		    Statement stat = conn.createStatement();
-		    //stat.executeUpdate("drop table if exists people;");
-		    //stat.executeUpdate("create table people (name, occupation);");
-		    //PreparedStatement prep = conn.prepareStatement("insert into people values (?, ?);");
-
-		    /*prep.setString(1, "Gandhi");
-		    prep.setString(2, "politics");
-		    prep.addBatch();
-		    prep.setString(1, "Turing");
-		    prep.setString(2, "computers");
-		    prep.addBatch();
-		    prep.setString(1, "Wittgenstein");
-		    prep.setString(2, "smartypants");
-		    prep.addBatch();*/
-
-		    conn.setAutoCommit(false);
-		    //prep.executeBatch();
-		    conn.setAutoCommit(true);
-
-		    ResultSet rs = stat.executeQuery("select * from stars limit 0,10;");
-		    while (rs.next()) {
-		      System.out.println("name = " + rs.getString("ProperName"));
-		      System.out.println("id = " + rs.getString("id"));
-		    }
-		    rs.close();
-		    conn.close();
+		    DataBase db = new DataBase();
+		    Connection connection = db.getConnection();
+		    Statement statement = db.getStatement();
+		    
+		    //CelestialObject test = new CelestialObject(1,0,-1,-1,-1,-1,-1,"Sol",0,0,0.000004848,0,0,0,-26.73,4.85,"G2V",0.656,0,0,0,0,0,0);//-1 = null car dans ces champs, cette valeur est impossible !
+		    //test.getHeader();
+		    //test.getInfos();
+		    
+		    ArrayList<CelestialObject> stars = new ArrayList<CelestialObject>();
+		    stars = db.starsForCoordinates(statement,0.0, -2.0); 
+		    stars.get(0).getHeader();
+		    
+		    for(int i=0;i<stars.size();i++)
+		    	stars.get(i).getInfos();
+		    
+		    connection.close();
 		  }
 	}
