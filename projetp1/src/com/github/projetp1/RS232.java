@@ -9,7 +9,7 @@ import jssc.*;
  * @author alexandr.perez
  * @author sebastie.vaucher
  */
-public class RS232 {
+public class RS232 implements SerialPortEventListener {
 
 	private String port;
 	protected Settings _settings;
@@ -41,11 +41,13 @@ public class RS232 {
 		return true;
 	}
 	
-	public void receiveData() {
+	public void sendData(String data) {
 		
 	}
-	
-	public void sendData() {
+
+	@Override
+	public void serialEvent(SerialPortEvent e) {
+		// Callback du SerialPort
 		
 	}
 }
