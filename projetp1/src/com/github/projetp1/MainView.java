@@ -16,6 +16,10 @@ public class MainView {
 	 */
 	public MainView() {
 		// TODO Auto-generated constructor stub
+		Settings set = new Settings();
+		Serializer serializer = new Serializer();
+		set.setPort("com4");
+		serializer.serialize("settings.lol",set);
 	}
 
 	public void showHelpView() {

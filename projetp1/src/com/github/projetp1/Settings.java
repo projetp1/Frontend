@@ -1,9 +1,14 @@
 package com.github.projetp1;
 
+import java.io.*;
+
+import com.sun.org.apache.bcel.internal.generic.LAND;
+
+
 /**
  * @author   alexandr.perez
  */
-public class Settings {
+public class Settings implements Serializable {
 
 	/**
 	 * @uml.property  name="port"
@@ -34,17 +39,38 @@ public class Settings {
 	 */
 	private Boolean simulation;
 	
-	public Settings() {
+	public Settings() 
+	{
 		// TODO Auto-generated constructor stub
-		//ICI on récupère depuis le fichier
+		loadFromFile();
 	}
 	
-	public void  saveToFile() {
+	private void  loadFromFile() 
+	{
+		String filename = "settings.lol";
+		Serializer serializer = new Serializer();
+		Settings deserialize =(Settings)serializer.deserialize(filename);
+		if(deserialize != null) 
+		{			
 			
-	}
-	
-	private void  loadFromFile() {
-		
+			this.port = deserialize.port;
+			this.speed = deserialize.speed;	
+			this.databit = deserialize.databit;
+			this.stopbit = deserialize.stopbit;
+			this.parity = deserialize.parity;
+			this.flowControl = deserialize.flowControl;
+			this.simulation = deserialize.simulation;
+		} 
+		else 
+		{
+			this.port = "com1"; // a faire un systeme de recherche des ports disponible
+			this.speed = 9600;	
+			this.databit = 8;
+			this.stopbit = 1;
+			this.parity = "none";
+			this.flowControl = "none";
+			this.simulation = false;
+		}
 	}
 	
 	/**
@@ -60,7 +86,7 @@ public class Settings {
 	 * @uml.property  name="port"
 	 */
 	public void setPort (String _port) {
-		
+		this.port = _port;
 	}
 
 	/**
@@ -76,7 +102,7 @@ public class Settings {
 	 * @uml.property  name="speed"
 	 */
 	public void setSpeed (int _speed) {
-		
+		this.speed = _speed;
 	}
 	
 	/**
@@ -92,7 +118,7 @@ public class Settings {
 	 * @uml.property  name="databit"
 	 */
 	public void setDatabit (int _databit) {
-		
+		this.databit = _databit;
 	}
 	
 	/**
@@ -108,7 +134,7 @@ public class Settings {
 	 * @uml.property  name="stopbit"
 	 */
 	public void setStopbit (int _stopbit) {
-		
+		this.stopbit = _stopbit;
 	}
 	
 	/**
@@ -124,7 +150,7 @@ public class Settings {
 	 * @uml.property  name="parity"
 	 */
 	public void setParity (String _parity) {
-		
+		this.parity = _parity;
 	}
 	
 	/**
@@ -140,7 +166,7 @@ public class Settings {
 	 * @uml.property  name="flowControl"
 	 */
 	public void setFlowControl (String _flowControl) {
-		
+		this.flowControl = _flowControl;
 	}
 	
 	/**
@@ -156,7 +182,7 @@ public class Settings {
 	 * @uml.property  name="simulation"
 	 */
 	public void setSimulation (Boolean _simulation) {
-		
+		this.simulation = _simulation;
 	}
 	
 	private void getFromINI () {
