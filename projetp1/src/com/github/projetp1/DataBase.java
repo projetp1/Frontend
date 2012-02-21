@@ -68,7 +68,7 @@ public class DataBase
         	return 0;
 	}
 	
-	private ResultSet selectQuery(String _sFields[],String _sTable,String _sWhere[][]) throws SQLException
+	private ResultSet selectQuery(String _sFields[],String _sTable,String _sWhere[][],String _sOrderBy[]) throws SQLException
 	{
 		String l_sQuery = "SELECT ";
 		
@@ -83,11 +83,19 @@ public class DataBase
 		
 		for(int i=0;i<_sWhere.length;i++)
 		{
-			l_sQuery += _sWhere[i][0] + "=" + "'" + _sWhere[i][1] + "'";
+			l_sQuery += _sWhere[i][0] +  " " +_sWhere[i][1] + " '" + _sWhere[i][2] + "'";
 			if(i!=_sWhere.length-1)
 				l_sQuery += " AND ";
 		}
 		
+		l_sQuery += " ORDER BY ";
+		
+		for(int i=0;i<_sOrderBy.length;i++)
+		{
+			l_sQuery += " " + _sOrderBy[i];
+			if(i<_sOrderBy.length-2)
+				l_sQuery += ",";
+		}	
 		l_sQuery += ";";
 		
 		return this.statement.executeQuery(l_sQuery);
@@ -130,12 +138,15 @@ public class DataBase
 				
 		//Requête de test,il manque les calculs
 		//String l_sQuery = "SELECT * FROM stars WHERE x > " + l_dLonMin + " AND x < " + l_dLonMax + " AND y > " + l_dLanMin + " AND y > " + l_dLanMax + ";";
-		
-		String where[][] = {{"id","1"},
-							{"ProperName","Sol"}};		
+				
 		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
 
-		ResultSet result = selectQuery(field,"stars",where);
+		String where[][] = {{"id","<","1100"},
+				{"ProperName","LIKE","A%"}};
+		
+		String orderby[]={"id","ProperName","DESC"}; 
+		
+		ResultSet result = selectQuery(field,"stars",where,orderby);
 		
 		if(result == null)
 			return null;
