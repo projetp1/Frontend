@@ -68,7 +68,7 @@ public class DataBase
         	return 0;
 	}
 	
-	private ResultSet selectQuery(String _sFields[],String _sTable,String _sWhere[][],String _sOrderBy[]) throws SQLException
+	private ResultSet selectQuery(String _sFields[],String _sTable,String _sWhere[][],String _sOrderBy[],int _Limit[]) throws SQLException
 	{
 		String l_sQuery = "SELECT ";
 		
@@ -96,6 +96,9 @@ public class DataBase
 			if(i<_sOrderBy.length-2)
 				l_sQuery += ",";
 		}	
+		
+		l_sQuery += " LIMIT " + _Limit[0] + "," + _Limit[1];
+		
 		l_sQuery += ";";
 		
 		return this.statement.executeQuery(l_sQuery);
@@ -146,7 +149,9 @@ public class DataBase
 		
 		String orderby[]={"id","ProperName","DESC"}; 
 		
-		ResultSet result = selectQuery(field,"stars",where,orderby);
+		int limit[] = {0,1};
+		
+		ResultSet result = selectQuery(field,"stars",where,orderby,limit);
 		
 		if(result == null)
 			return null;
