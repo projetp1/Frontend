@@ -68,12 +68,21 @@ public class DataBase
         	return 0;
 	}
 	
-	private ResultSet selectQuery(String _sTable) throws SQLException
+	private ResultSet selectQuery(String _sTable,String _sWhere[][]) throws SQLException
 	{
-		String l_sQuery = "SELECT * FROM " + _sTable + ";";
-		ResultSet res = this.statement.executeQuery(l_sQuery);
-		return res;
+		String l_sQuery = "SELECT * FROM " + _sTable + " WHERE ";
+		
+		for(int i=0;i<_sWhere.length;i++)
+		{
+			l_sQuery += _sWhere[i][0] + "=" + "'" + _sWhere[i][1] + "'";
+			if(i!=_sWhere.length-1)
+				l_sQuery += " AND ";
+		}
+		
+		return this.statement.executeQuery(l_sQuery);
 	}
+	
+	//private 
 	//Manque d'autres paramètres
 	public ArrayList<CelestialObject> starsForCoordinates (double _dLongitude, double _dLatitude) throws SQLException 
 	{
@@ -111,7 +120,10 @@ public class DataBase
 		//Requête de test,il manque les calculs
 		//String l_sQuery = "SELECT * FROM stars WHERE x > " + l_dLonMin + " AND x < " + l_dLonMax + " AND y > " + l_dLanMin + " AND y > " + l_dLanMax + ";";
 		
-		ResultSet result = selectQuery("stars");
+		String where[][] = {{"id","1"},
+							{"ProperName","Sol"}};		
+		
+		ResultSet result = selectQuery("stars",where);
 		
 		if(result == null)
 			return null;
