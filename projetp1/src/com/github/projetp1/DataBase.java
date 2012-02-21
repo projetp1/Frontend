@@ -68,9 +68,18 @@ public class DataBase
         	return 0;
 	}
 	
-	private ResultSet selectQuery(String _sTable,String _sWhere[][]) throws SQLException
+	private ResultSet selectQuery(String _sFields[],String _sTable,String _sWhere[][]) throws SQLException
 	{
-		String l_sQuery = "SELECT * FROM " + _sTable + " WHERE ";
+		String l_sQuery = "SELECT ";
+		
+		for(int i = 0;i<_sFields.length;i++)
+		{
+			l_sQuery += _sFields[i];
+			if(i!=_sFields.length -1)
+				l_sQuery += ",";
+		}
+		
+		l_sQuery += " FROM " + _sTable + " WHERE ";
 		
 		for(int i=0;i<_sWhere.length;i++)
 		{
@@ -78,6 +87,8 @@ public class DataBase
 			if(i!=_sWhere.length-1)
 				l_sQuery += " AND ";
 		}
+		
+		l_sQuery += ";";
 		
 		return this.statement.executeQuery(l_sQuery);
 	}
@@ -122,8 +133,9 @@ public class DataBase
 		
 		String where[][] = {{"id","1"},
 							{"ProperName","Sol"}};		
-		
-		ResultSet result = selectQuery("stars",where);
+		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
+
+		ResultSet result = selectQuery(field,"stars",where);
 		
 		if(result == null)
 			return null;
