@@ -1,6 +1,18 @@
-/**
- * 
- */
+ /*=====================================================================*
+ | This file declares the following classes:
+ |    DataBase
+ |
+ | Description of the class DataBase :
+ |	  Use to access to the database. You can select the stars that you want, with some informations.
+ |	  All fonctions return an ArrayList with object of CelestialObject	
+ |
+ | <p>Copyright : EIAJ, all rights reserved</p>
+ | @autor : Diego Antognini
+ | @version : 1.0
+ |
+ |
+ *=====================================================================*/
+
 package com.github.projetp1;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,25 +20,64 @@ import java.util.regex.Pattern;
 
 import java.sql.*;
 
-/**
- * @author Diego Antognini
- *
- */
-
-public class DataBase {
-
+public class DataBase 
+{
+	private String sDataBase;
 	private Connection connection;
 	private Statement statement;
 	
-	public DataBase() throws Exception {
-		Class.forName("org.sqlite.JDBC");
-		connection = DriverManager.getConnection("jdbc:sqlite:res/hyg.db");
-		statement = connection.createStatement();
-	}
-
-	public ArrayList<CelestialObject> starsForCoordinates (Statement _state,double _longitude, double _latitude) throws SQLException 
+	public DataBase(String _sDataBase) throws SQLException, Exception
 	{
-		ArrayList<CelestialObject> stars = new ArrayList<CelestialObject>();
+		Class.forName("org.sqlite.JDBC");//Load the drivers for SQLite
+		this.sDataBase = _sDataBase;
+		this.connection = createConnection();
+		this.statement = createStatement();
+	}
+	
+	public void closeConnection() throws SQLException
+	{
+		this.connection.close();
+	}
+	
+	public void openConnection() throws SQLException
+	{
+		this.connection = createConnection();
+	}
+	
+	private Connection createConnection() throws SQLException
+	{
+		return DriverManager.getConnection("jdbc:sqlite:res/"+this.sDataBase);
+	}
+	
+	private Statement createStatement() throws SQLException
+	{
+		return connection.createStatement();
+	}
+	
+	private int isDouble(String _sString)
+	{
+		String l_sRegex  = "[-+]?[0-9]*\\.?[0-9]+";
+        String l_sInput = _sString;
+        
+        Pattern l_pattern = Pattern.compile(l_sRegex);
+        Matcher l_matcher = l_pattern.matcher(l_sInput);
+        
+        if (l_matcher.matches()) 
+        	return 1;
+        else
+        	return 0;
+	}
+	
+	private ResultSet selectQuery(String _sTable) throws SQLException
+	{
+		String l_sQuery = "SELECT * FROM " + _sTable + ";";
+		ResultSet res = this.statement.executeQuery(l_sQuery);
+		return res;
+	}
+	//Manque d'autres paramètres
+	public ArrayList<CelestialObject> starsForCoordinates (double _dLongitude, double _dLatitude) throws SQLException 
+	{
+		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
 		int l_id;
 		int l_StarId;
@@ -36,44 +87,31 @@ public class DataBase {
 		int l_Gliese;
 		int l_BayerFlamsteed;
 		String l_ProperName;
-		double l_RA;
+		double l_dRA;
 		double l_Dec;
-		double l_Distance;
-		double l_PMRA;
-		double l_PMDec;
-		double l_RV;
-		double l_Mag;
-		double l_AbsMag;
-		String l_Spectrum;
-		double l_ColorIndex;
-		double l_xyz[] = new double[3];
-		double l_vxyz[] = new double[3];
+		double l_dDistance;
+		double l_dPMRA;
+		double l_dPMDec;
+		double l_dRV;
+		double l_dMag;
+		double l_dAbsMag;
+		String l_sSpectrum;
+		double l_dColorIndex;
+		double l_dXYZ[] = new double[3];
+		double l_dVXYZ[] = new double[3];
 		
-		double l_lomax = _longitude+0.5;
-		double l_lomin = _longitude-0.5;
-		double l_lamax = _latitude+0.5;
-		double l_lamin = _latitude-0.5;
+		if(isDouble(Double.toString(_dLongitude))==0 || isDouble(Double.toString(_dLatitude))==0)
+			return null;
 		
-		
-		
-		String strRegex  = "[-+]?[0-9]*\\.?[0-9]+";
-        CharSequence strLongitude = Double.toString(_longitude);
-        CharSequence strLatitude = Double.toString(_latitude);
-        
-        Pattern pattern = Pattern.compile(strRegex);
-        Matcher matcher_lon = pattern.matcher(strLongitude);
-        Matcher matcher_lat = pattern.matcher(strLatitude);
-        
-        if (matcher_lon.matches() && matcher_lat.matches()) 
-        	System.out.println("OK");
-        else
-        	System.out.println("KO");
+		/*double l_dLonMax = _dLongitude+0.5;
+		double l_dLonMin = _dLongitude-0.5;
+		double l_dLanMax = _dLatitude+0.5;
+		double l_dLanMin = _dLatitude-0.5;*/
 				
 		//Requête de test,il manque les calculs
-		String l_query = "SELECT * FROM stars WHERE x > " + l_lomin + " AND x < " + l_lomax + " AND y > " + l_lamin + " AND y > " + l_lamax + ";";
-		//String l_query = "SELECT * FROM stars;";
-		System.out.println(l_query);
-		ResultSet result = _state.executeQuery(l_query);
+		//String l_sQuery = "SELECT * FROM stars WHERE x > " + l_dLonMin + " AND x < " + l_dLonMax + " AND y > " + l_dLanMin + " AND y > " + l_dLanMax + ";";
+		
+		ResultSet result = selectQuery("stars");
 		
 		if(result == null)
 			return null;
@@ -88,34 +126,35 @@ public class DataBase {
 			l_Gliese = result.getInt("Gliese");
 			l_BayerFlamsteed = result.getInt("BayerFlamsteed");
 			l_ProperName = result.getString("ProperName");
-			l_RA = result.getDouble("RA");
+			l_dRA = result.getDouble("RA");
 			l_Dec = result.getDouble("Dec");
-			l_Distance = result.getDouble("Distance");
-			l_PMRA = result.getDouble("PMRA");
-			l_PMDec = result.getDouble("PMDec");
-			l_RV = result.getDouble("RV");
-			l_Mag = result.getDouble("Mag");
-			l_AbsMag = result.getDouble("AbsMag");
-			l_Spectrum = result.getString("Spectrum");
-			l_ColorIndex = result.getDouble("ColorIndex");
-			l_xyz[0] = result.getDouble("VX");
-			l_xyz[1] = result.getDouble("VY");
-			l_xyz[2] = result.getDouble("VZ");
-			l_vxyz[0] = result.getDouble("VX");
-			l_vxyz[1] = result.getDouble("VY");
-			l_vxyz[2] = result.getDouble("VZ");
+			l_dDistance = result.getDouble("Distance");
+			l_dPMRA = result.getDouble("PMRA");
+			l_dPMDec = result.getDouble("PMDec");
+			l_dRV = result.getDouble("RV");
+			l_dMag = result.getDouble("Mag");
+			l_dAbsMag = result.getDouble("AbsMag");
+			l_sSpectrum = result.getString("Spectrum");
+			l_dColorIndex = result.getDouble("ColorIndex");
+			l_dXYZ[0] = result.getDouble("VX");
+			l_dXYZ[1] = result.getDouble("VY");
+			l_dXYZ[2] = result.getDouble("VZ");
+			l_dVXYZ[0] = result.getDouble("VX");
+			l_dVXYZ[1] = result.getDouble("VY");
+			l_dVXYZ[2] = result.getDouble("VZ");
 
 			
-	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_RA,l_Dec,l_Distance,l_PMRA,l_PMDec,l_RV,l_Mag,l_AbsMag,l_Spectrum,l_ColorIndex,l_xyz[0],l_xyz[1],l_xyz[2],l_vxyz[0],l_vxyz[1],l_vxyz[2]);
-	    	stars.add(l_star);
+	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
+	    	al_stars.add(l_star);
 	    	l_star = null;
 		}
 		result.close();
 		
-		return stars;		
+		return al_stars;		
 	}
 	
-	public ArrayList<CelestialObject> starsForText (String _searchText) {
+	public ArrayList<CelestialObject> starsForText (String _searchText) 
+	{
 		return null;		
 	}
 
@@ -126,7 +165,7 @@ public class DataBase {
 		return rs;
 	}*/
 	
-	
+	/*
 	public Connection getConnection()
 	{
 		return connection;
@@ -135,5 +174,5 @@ public class DataBase {
 	public Statement getStatement()
 	{
 		return statement;
-	}
+	}*/
 }
