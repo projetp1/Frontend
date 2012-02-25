@@ -68,7 +68,7 @@ public class CelestialObject {
 
 	public void getHeader()
 	{
-		System.out.println("ID\tStarID\tHIP\tHD\tHR\tGliese\tBayerFlamsteed\tsProperName\tdRA\tdDec\tdDistance\tdPMRA\tdPMDec\tdRV\tdMag\tdAbsMag\tsSpectrum\tdColorIndex\tX\tY\tZ\tVX\tVY\tVZ");
+		System.out.println("ID\tStarID\tHIP\tHD\tHR\tGliese\tBayerFlamsteed\tProperName\tRA\tDec\tDistance\tPMRA\tPMDec\tRV\tMag\tAbsMag\tSpectrum\tColorIndex\tX\tY\tZ\tVX\tVY\tVZ");
 	}
 	public void getInfos()
 	{
