@@ -25,6 +25,7 @@ public class DataBase
 	private String sDataBase;
 	private Connection connection;
 	private Statement statement;
+	private int argumentCount = 0;
 	
 	public DataBase(String _sDataBase) throws SQLException, Exception
 	{
@@ -53,14 +54,11 @@ public class DataBase
 	{
 		return connection.createStatement();
 	}
-	
-	private int isDouble(String _sString)
+
+	private int executeRegex(String _sRegex,String _sString)
 	{
-		String l_sRegex  = "[-+]?[0-9]*\\.?[0-9]+";
-        String l_sInput = _sString;
-        
-        Pattern l_pattern = Pattern.compile(l_sRegex);
-        Matcher l_matcher = l_pattern.matcher(l_sInput);
+        Pattern l_pattern = Pattern.compile(_sRegex);
+        Matcher l_matcher = l_pattern.matcher(_sString);
         
         if (l_matcher.matches()) 
         	return 1;
@@ -68,40 +66,99 @@ public class DataBase
         	return 0;
 	}
 	
-	private ResultSet selectQuery(String _sFields[],String _sTable,String _sWhere[][],String _sOrderBy[],int _Limit[]) throws SQLException
+	private int isDouble(String _sString)
 	{
-		String l_sQuery = "SELECT ";
-		
+		String l_sRegex  = "[-+]?[0-9]*\\.?[0-9]+";
+        return executeRegex(l_sRegex,_sString);
+	}
+	
+	private String addFieldsQuery(String _sFields[])
+	{
+		String l_sOut = "";
 		for(int i = 0;i<_sFields.length;i++)
 		{
-			l_sQuery += _sFields[i];
+			l_sOut += _sFields[i];
 			if(i!=_sFields.length -1)
-				l_sQuery += ",";
-		}
-		
-		l_sQuery += " FROM " + _sTable + " WHERE ";
-		
+				l_sOut += ",";
+		}	
+		return l_sOut;
+	}
+	
+	private String addTableQuery(String _sTable[])
+	{
+		String l_sOut = " FROM ";
+		for(int i = 0;i<_sTable.length;i++)
+		{
+			l_sOut += _sTable[i];
+			if(i!= _sTable.length -1)
+				l_sOut += ",";
+		}	
+		return l_sOut;		
+	}
+	
+	private String addWhereQuery(String _sWhere[][],boolean secured)
+	{
+		String l_sOut = " WHERE ";
 		for(int i=0;i<_sWhere.length;i++)
 		{
-			l_sQuery += _sWhere[i][0] +  " " +_sWhere[i][1] + " '" + _sWhere[i][2] + "'";
+			l_sOut += _sWhere[i][0] +  " " +_sWhere[i][1];
+			if(secured)
+			{
+				l_sOut += " ? ";
+				this.argumentCount++;
+			}
+			else
+				l_sOut += " '" + _sWhere[i][2] + "'";
 			if(i!=_sWhere.length-1)
-				l_sQuery += " AND ";
-		}
-		
-		l_sQuery += " ORDER BY ";
+				l_sOut += " AND ";
+		}		
+		return l_sOut;
+	}	
+
+	private String addOrderByQuery(String _sOrderBy[])
+	{
+		String l_sOut = " ORDER BY ";
 		
 		for(int i=0;i<_sOrderBy.length;i++)
 		{
-			l_sQuery += " " + _sOrderBy[i];
+			l_sOut += " " + _sOrderBy[i];
 			if(i<_sOrderBy.length-2)
-				l_sQuery += ",";
-		}	
+				l_sOut += ",";
+		}		
+		return l_sOut;
+	}		
+	
+	private String addLimitQuery(int _Limit[])
+	{
+		String l_sOut = " LIMIT ";
+		l_sOut += _Limit[0] + "," + _Limit[1];
+		return l_sOut;
+	}
+	
+	
+	private ResultSet selectQuery(String _sFields[],String _sTable[],String _sWhere[][],String _sOrderBy[],int _Limit[],boolean secured) throws SQLException
+	{
+		String l_sQuery;
 		
-		l_sQuery += " LIMIT " + _Limit[0] + "," + _Limit[1];
-		
+		l_sQuery = "SELECT ";
+		l_sQuery += addFieldsQuery(_sFields);
+		l_sQuery += addTableQuery(_sTable);
+		l_sQuery += addWhereQuery(_sWhere,secured);
+		l_sQuery += addOrderByQuery(_sOrderBy);
+		l_sQuery += addLimitQuery(_Limit);
 		l_sQuery += ";";
 		
-		return this.statement.executeQuery(l_sQuery);
+		if(secured)
+		{
+			PreparedStatement pStatement = this.connection.prepareStatement(l_sQuery);
+			for(int i = 0;i<this.argumentCount;i++)
+				pStatement.setString(i+1, _sWhere[i][0]);
+			
+			this.argumentCount=0;
+			return pStatement.executeQuery();
+		}
+		else
+			return this.statement.executeQuery(l_sQuery);
 	}
 	
 	//private 
@@ -141,17 +198,25 @@ public class DataBase
 				
 		//Requête de test,il manque les calculs
 		//String l_sQuery = "SELECT * FROM stars WHERE x > " + l_dLonMin + " AND x < " + l_dLonMax + " AND y > " + l_dLanMin + " AND y > " + l_dLanMax + ";";
-				
+		
+		boolean secured = false;
+		
 		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
 
 		String where[][] = {{"id","<","1100"},
 				{"ProperName","LIKE","A%"}};
 		
+		//Injection SQL
+		/*String where[][] = {{"id","=","'UNION SELECT * FROM stars WHERE id = 1 ;--"},
+				{"ProperName","LIKE","A%"}};
+		secured = true;
+		*/
+		
 		String orderby[]={"id","ProperName","DESC"}; 
 		
 		int limit[] = {0,1};
-		
-		ResultSet result = selectQuery(field,"stars",where,orderby,limit);
+		String table[] = {"stars"};
+		ResultSet result = selectQuery(field,table,where,orderby,limit,secured);
 		
 		if(result == null)
 			return null;
@@ -197,22 +262,4 @@ public class DataBase
 	{
 		return null;		
 	}
-
-	/*public ResultSet Select(Statement _state) throws Exception
-	{
-		String query = "SELECT * FROM stars ORDER BY id ;";
-		ResultSet rs = _state.executeQuery(query);
-		return rs;
-	}*/
-	
-	/*
-	public Connection getConnection()
-	{
-		return connection;
-	}
-	
-	public Statement getStatement()
-	{
-		return statement;
-	}*/
 }
