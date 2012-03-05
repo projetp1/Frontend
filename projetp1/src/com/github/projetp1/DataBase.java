@@ -163,7 +163,7 @@ public class DataBase
 			return this.statement.executeQuery(l_sQuery);
 	}
 	
-	private HashMap DecryptText(String _sText)
+	private HashMap<String, String> DecryptText(String _sText)
 	{
 		String l_sSeparateur = ";";
 		String l_sTemp = "";
@@ -171,7 +171,7 @@ public class DataBase
 		String l_sValue = "";
 		String l_sUnit = "";
 		String[] l_sString = _sText.split(l_sSeparateur);
-		HashMap hs_Out = new HashMap(l_sString.length);
+		HashMap<String, String> hs_Out = new HashMap<String, String>(l_sString.length);
 		
 		for(int i = 0;i<l_sString.length;i++)
 		{
@@ -318,8 +318,8 @@ public class DataBase
 		
 		boolean secured = true;
 		
-		HashMap hm_sWhere = DecryptText("!distance 1km");
-		Iterator l_it = hm_sWhere.keySet().iterator();
+		HashMap<String, String> hm_sWhere = DecryptText("!distance 1km");
+		Iterator<String> l_it = hm_sWhere.keySet().iterator();
 		
 		while(l_it.hasNext())
 		{
