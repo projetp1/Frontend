@@ -2,8 +2,6 @@ package com.github.projetp1;
 
 import java.io.*;
 
-import com.sun.org.apache.bcel.internal.generic.LAND;
-
 
 /**
  * @author   alexandr.perez
@@ -35,10 +33,22 @@ public class Settings implements Serializable {
 	 */
 	private String flowControl;
 	/**
+	 * @uml.property  name="samplingRate"
+	 */
+	private int samplingRate;
+	/**
+	 * @uml.property  name="databaseName"
+	 */
+	private String databaseName;
+	/**
+	 * @uml.property  name="inputDelimiter"
+	 */
+	private String inputDelimiter;
+	/**
 	 * @uml.property  name="simulation"
 	 */
 	private Boolean simulation;
-	
+
 	public Settings() 
 	{
 		// TODO Auto-generated constructor stub
@@ -59,6 +69,7 @@ public class Settings implements Serializable {
 			this.stopbit = deserialize.stopbit;
 			this.parity = deserialize.parity;
 			this.flowControl = deserialize.flowControl;
+			this.samplingRate = deserialize.samplingRate;
 			this.simulation = deserialize.simulation;
 		} 
 		else 
@@ -69,6 +80,7 @@ public class Settings implements Serializable {
 			this.stopbit = 1;
 			this.parity = "none";
 			this.flowControl = "none";
+			this.samplingRate = 25;
 			this.simulation = false;
 		}
 	}
@@ -185,11 +197,26 @@ public class Settings implements Serializable {
 		this.simulation = _simulation;
 	}
 	
-	private void getFromINI () {
-		
+	public int getSamplingRate() {
+		return samplingRate;
 	}
-	
-	private void setINI () {
-		
+
+	public void setSamplingRate(int _samplingRate) {
+		this.samplingRate = _samplingRate;
+	}
+	public String getDatabaseName() {
+		return databaseName;
+	}
+
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
+	}
+
+	public String getInputDelimiter() {
+		return inputDelimiter;
+	}
+
+	public void setInputDelimiter(String inputDelimiter) {
+		this.inputDelimiter = inputDelimiter;
 	}
 }
