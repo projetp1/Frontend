@@ -165,6 +165,13 @@ public class DataBase
 	
 	private HashMap<String, String> DecryptText(String _sText)
 	{
+		if(_sText.length()==0 || _sText.charAt(0)!='!')
+		{
+			HashMap<String, String> hs_Out = new HashMap<String, String>(1);
+			hs_Out.put("0","Paramètre incorrecte");
+			return hs_Out;
+		}
+			
 		String l_sSeparateur = ";";
 		String l_sTemp = "";
 		String l_sKey = "";
@@ -177,17 +184,19 @@ public class DataBase
 		{
 			l_sTemp = l_sString[i];
 			l_sKey = l_sTemp.substring(1, l_sTemp.indexOf(' '));
-			l_sValue = l_sTemp.substring(l_sTemp.indexOf(' '),l_sTemp.length()-2);
 			
 			if(l_sKey.matches("distance"))
 			{
+				l_sValue = l_sTemp.substring(l_sTemp.indexOf(' '),l_sTemp.length()-2);
 				l_sUnit = l_sTemp.substring(l_sTemp.length()-2, l_sTemp.length());
 				if(l_sUnit.matches("(km)$")){
 					double l_dAnneeLumiere = Double.parseDouble(l_sValue)/dAL_KM;
-					System.out.println(l_dAnneeLumiere);
+					l_sValue = String.valueOf(l_dAnneeLumiere);
 				}
 			}
-			
+			else
+				l_sValue = l_sTemp.substring(l_sTemp.indexOf(' '),l_sTemp.length());
+			System.out.println("Key -> " + l_sKey + "\tValue -> " + l_sValue + "\n");
 			hs_Out.put(l_sKey, l_sValue);
 		}
 		
@@ -318,7 +327,7 @@ public class DataBase
 		
 		boolean secured = true;
 		
-		HashMap<String, String> hm_sWhere = DecryptText("!distance 1km");
+		HashMap<String, String> hm_sWhere = DecryptText(_searchText);
 		Iterator<String> l_it = hm_sWhere.keySet().iterator();
 		
 		while(l_it.hasNext())
