@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -20,25 +22,64 @@ import java.io.IOException;
 public class MainView extends JFrame {
 
 	Compass compassPanel;
+	Inclinometer inclinometerPanel;
+	int degree = 0;
 	
 	/**
 	 * 
 	 */
+	private Timer createTimer () {
+		// Création d'une instance de listener 
+		// associée au timer
+		ActionListener action = new ActionListener () {
+		    // Méthode appelée à chaque tic du timer
+			public void actionPerformed (ActionEvent event)
+			{
+				degree++;
+				compassPanel.updateGreenNeedle(degree);
+				compassPanel.updateRedNeedle(-degree);
+				inclinometerPanel.updateGreenNeedle(degree);
+				inclinometerPanel.updateRedNeedle(-degree);
+		    }
+		};
+		return new Timer (10, action);
+  }
+	      
 	public MainView() {
-		initComponents();
-		setLocationRelativeTo(null);
+		
+		
+		
+		
+		
+		
+		//initComponents();
+		//setLocationRelativeTo(null);
 		
 		
 		compassPanel = new Compass();
-		//this.add(compassPanel);
-		//getLayeredPane().add(compassPanel);
-		jlp_compass.add(compassPanel);
+		inclinometerPanel = new Inclinometer();
+		inclinometerPanel.setLocation(400, 400);
+		this.add(compassPanel);
+		this.add(inclinometerPanel);
+		getLayeredPane().add(compassPanel);
+		getLayeredPane().add(inclinometerPanel);
+		//jlp_compass.add(compassPanel);
 		this.setVisible(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.getContentPane().setBackground(Color.BLACK);
 		repaint();
 		//pack();
+		
+		
+		
+
+		Timer timer = createTimer();
+		timer.start();
+		
+		
+		
+		
 		
 		Settings set = new Settings();
 		Serializer serializer = new Serializer();
@@ -127,30 +168,33 @@ public class MainView extends JFrame {
 		@SuppressWarnings("serial")
 		private class Needle extends JPanel
 		{
-		    //AffineTransform at = null;
 		    BufferedImage needleImage;
 		    double angle = 0;
 		    
 			public Needle(String _color)
 			{
-				//at = new AffineTransform();
-				//ImageIcon needleImage = null;
 				if(_color == "RED")
-					try {
+				{
+					try 
+					{
 						needleImage = ImageIO.read(new File("res/aiguille_rouge.png"));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
+					}
+					catch (IOException e)
+					{
 						e.printStackTrace();
 					}
+				}
 				else if(_color == "GREEN")
-					try {
+				{
+					try
+					{
 						needleImage = ImageIO.read(new File("res/aiguille_vert.png"));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
+					}
+					catch (IOException e)
+					{
 						e.printStackTrace();
-					}//needleImage = new ImageIcon("res/aiguille_vert.png");
-				//JLabel needleLabel = new JLabel(needleImage);
-				//this.add(needleLabel);
+					}
+				}
 			}
 			
 			public void rotate(double _angle)
@@ -160,28 +204,130 @@ public class MainView extends JFrame {
 			}
 			
 			@Override 
-            public Dimension getPreferredSize() { 
+            public Dimension getPreferredSize()
+			{ 
                 return new Dimension(needleImage.getWidth(), needleImage.getHeight()); 
             } 
             @Override 
-            protected void paintComponent(Graphics g) { 
+            protected void paintComponent(Graphics g)
+            { 
                 super.paintComponent(g); 
                 Graphics2D g2 = (Graphics2D) g; 
                 g2.rotate(angle, needleImage.getWidth() / 2, needleImage.getHeight() / 2); 
                 g2.drawImage(needleImage, 0, 0, null); 
             }
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	private class Inclinometer extends JLayeredPane
+	{
+		JLabel background;
+		JLabel coordinate;
+		Needle redNeedle = new Needle("RED");
+		Needle greenNeedle = new Needle("GREEN");
+		
+		public Inclinometer()
+		{
+			background = new JLabel(new ImageIcon("res/backgroundInclinometer.png"));
+			background.setBounds(0, 0, 194, 279);
+			this.add(background, new Integer(0));
+			this.setVisible(true);
+			this.setBackground(Color.BLACK);
+			redNeedle.setBackground(this.getBackground());
+			redNeedle.setBounds(0, 0, 194, 279);
+			greenNeedle.setBackground(this.getBackground());
+			greenNeedle.setBounds(0, 0, 194, 279);
+			redNeedle.setOpaque(false);
+			greenNeedle.setOpaque(false);
+			this.updateGreenNeedle(-45);
+			this.updateRedNeedle(45);
+			this.add(redNeedle, new Integer(1));
+			this.add(greenNeedle, new Integer(2));
+			
+			this.setBounds(0, 0, 194, 324);
+			this.repaint();
+			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
+			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
+			coordinate.setBounds(0, 274, 194, 35);
+			coordinate.setForeground(Color.WHITE);
+			
+			this.add(coordinate, new Integer(3));
+		}
+		
+		public void updateRedNeedle (double _angle) 
+		{
+            _angle = Math.toRadians(_angle);
+            redNeedle.rotate(_angle);			
+		}
+		
+		public void updateGreenNeedle (double _angle) 
+		{
+            _angle = Math.toRadians(_angle);
+            greenNeedle.rotate(_angle);
+		}
+
+		@SuppressWarnings("serial")
+		private class Needle extends JPanel
+		{
+		    BufferedImage needleImage;
+		    double angle = 0;
+		    
+			public Needle(String _color)
+			{
+				if(_color == "RED")
+				{
+					try
+					{
+						needleImage = ImageIO.read(new File("res/aiguille_rouge_inclinometer.png"));
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				else if(_color == "GREEN")
+				{
+					try 
+					{
+						needleImage = ImageIO.read(new File("res/aiguille_vert_inclinometer.png"));
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			public void rotate(double _angle)
+			{
+				angle = _angle;
+				repaint();
+			}
+			
+			@Override 
+	        public Dimension getPreferredSize()
+			{ 
+	            return new Dimension(needleImage.getWidth(), needleImage.getHeight()); 
+	        } 
+	        @Override 
+	        protected void paintComponent(Graphics g)
+	        { 
+	            super.paintComponent(g); 
+	            Graphics2D g2 = (Graphics2D) g; 
+	            g2.rotate(-angle, 10, needleImage.getHeight() / 2);  
+	            g2.drawImage(needleImage, 0, 0, null); 
+	        }
 			
 		}
-				
 	}
-
 
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
      */
-    @SuppressWarnings("unchecked")
+    
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
 	private void initComponents() {
 
