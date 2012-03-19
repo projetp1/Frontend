@@ -4,29 +4,42 @@
 package com.github.projetp1;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.zip.CRC32;
+
+import sun.misc.CRC16;
 
 import com.sun.xml.internal.bind.v2.util.FatalAdapter;
 
 import jssc.*;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The class that manages the RS-232 connection and communications.
+ *
  * @author alexandr.perez
  * @author sebastie.vaucher
  */
 public class RS232 implements SerialPortEventListener
 {
 
+	/** The RS-232 port. */
 	private String port;
-	protected Settings _settings;
-	private SerialPort _sp;
-	private ConcurrentLinkedQueue<Object[]> _dataQueue = new ConcurrentLinkedQueue<>();
-	private ConcurrentLinkedQueue<String> _ctrlQueue = new ConcurrentLinkedQueue<>();
-	private String buffer = "";
 	
-	private final char EOT = 4;
+	/** The Settings object. */
+	protected Settings _settings;
+	
+	/** The serial port object. */
+	private SerialPort _sp;
+	
+	/** The queue of the latest received commands. */
+	private ConcurrentLinkedQueue<RS232Command> commandQueue = new ConcurrentLinkedQueue<RS232Command>();
+	
+	/** The buffer in which the received datas are temporarily put. */
+	private StringBuffer buffer = new StringBuffer();
+
 	
 	/**
-	 * 
+	 * Instantiates a new r s232.
 	 */
 	public RS232()
 	{
@@ -59,29 +72,55 @@ public class RS232 implements SerialPortEventListener
         }
 	}
 	
+	/**
+	 * Connect.
+	 *
+	 * @param _port the _port
+	 * @return the boolean
+	 */
 	public Boolean connect(String _port)
 	{
 		port = _port;
 		return true;
 	}
 	
+	/**
+	 * Disconnect.
+	 *
+	 * @return the boolean
+	 */
 	public Boolean disconnect()
 	{
 		
 		return true;
 	}
 	
+	/**
+	 * Send ack.
+	 *
+	 * @param frame the frame
+	 * @throws SerialPortException the serial port exception
+	 */
 	private void sendAck(int frame) throws SerialPortException
 	{
 		_sp.writeString("CTRL:ACK"+String.valueOf(frame));
 	}
 	
+	/**
+	 * Send nck.
+	 *
+	 * @param frame the frame
+	 * @throws SerialPortException the serial port exception
+	 */
 	private void sendNck(int frame) throws SerialPortException
 	{
 		_sp.writeString("CTRL:NCK"+String.valueOf(frame));
 	}
 	
 	//TODO: Utiliser un buffer car jssc envoie les données sans les séparer.
+	/* (non-Javadoc)
+	 * @see jssc.SerialPortEventListener#serialEvent(jssc.SerialPortEvent)
+	 */
 	@Override
 	public void serialEvent(SerialPortEvent e)
 	{
@@ -94,32 +133,18 @@ public class RS232 implements SerialPortEventListener
 		try {
 			received = _sp.readString();
 		} catch (SerialPortException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
+			System.out.println("RS232 : port " + ex.getPortName() + " unreadable");
 			return;
 		}
+
+		buffer.append(received);
 		
-		if(received.indexOf(EOT) == -1)
-		{
-			buffer += received;
-			return;
-		}
-		
-        if(received.toUpperCase().startsWith("CTRL")) { //Trame de contrôle
-        	String[]datas = received.substring(5).split(";");
-        	for (String str : datas)
-        		_ctrlQueue.add(str);
-        	
-        	
-        }
-        else if (received.toUpperCase().startsWith("DATA")) { //Trame de donnée
-        	
-        }
-        else //Trame invalide
-        {
-        	System.err.println("Trame invalide reçue");
-        	return;
-        }
+		int pos = buffer.indexOf("\r\n");
+	}
+	
+	public static boolean computeCrc(String datas, String crc)
+	{
+		return true;
 	}
 }
 
