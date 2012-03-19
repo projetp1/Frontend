@@ -25,14 +25,16 @@ import java.sql.*;
 public class DataBase 
 {
 	private String sDataBase;
+	private String sDelimiter;
 	private Connection connection;
 	private Statement statement;
 	private int argumentCount = 0;
 	private double dAL_KM = 9435053029704.605;//Source wikipédia
-	public DataBase(String _sDataBase) throws SQLException, Exception
+	public DataBase(String _sDataBase,String _sDelimiter) throws SQLException, Exception
 	{
 		Class.forName("org.sqlite.JDBC");//Load the drivers for SQLite
 		this.sDataBase = _sDataBase;
+		this.sDelimiter = _sDelimiter;
 		this.connection = createConnection();
 		this.statement = createStatement();
 	}
@@ -257,7 +259,7 @@ public class DataBase
 			return hs_Out;
 		}
 			
-		String l_sSeparateur = ";";
+		String l_sSeparateur = this.sDelimiter;
 		String l_sTemp = "";
 		String l_sKey = "";
 		String l_sValue = "";
