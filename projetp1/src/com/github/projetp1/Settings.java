@@ -70,6 +70,8 @@ public class Settings implements Serializable {
 			this.parity = deserialize.parity;
 			this.flowControl = deserialize.flowControl;
 			this.samplingRate = deserialize.samplingRate;
+			this.databaseName = deserialize.databaseName;
+			this.inputDelimiter = deserialize.inputDelimiter;
 			this.simulation = deserialize.simulation;
 		} 
 		else 
@@ -81,6 +83,8 @@ public class Settings implements Serializable {
 			this.parity = "none";
 			this.flowControl = "none";
 			this.samplingRate = 25;
+			this.databaseName = "hyg.db";
+			this.inputDelimiter = ";";
 			this.simulation = false;
 		}
 	}

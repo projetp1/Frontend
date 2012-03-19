@@ -21,9 +21,10 @@ import java.io.IOException;
  */
 public class MainView extends JFrame {
 
+	Settings settings;
 	Compass compassPanel;
 	Inclinometer inclinometerPanel;
-	int degree = 0;
+	int degree = 90;
 	
 	/**
 	 * 
@@ -35,14 +36,14 @@ public class MainView extends JFrame {
 		    // Méthode appelée à chaque tic du timer
 			public void actionPerformed (ActionEvent event)
 			{
-				degree++;
-				compassPanel.updateGreenNeedle(degree);
-				compassPanel.updateRedNeedle(-degree);
-				inclinometerPanel.updateGreenNeedle(degree);
-				inclinometerPanel.updateRedNeedle(-degree);
+					degree++;
+					compassPanel.updateGreenNeedle(degree);
+					compassPanel.updateRedNeedle(-degree);
+					inclinometerPanel.updateGreenNeedle(degree);
+					inclinometerPanel.updateRedNeedle(-degree);
 		    }
 		};
-		return new Timer (10, action);
+		return new Timer (1, action);
   }
 	      
 	public MainView() {
@@ -52,8 +53,8 @@ public class MainView extends JFrame {
 		
 		
 		
-		//initComponents();
-		//setLocationRelativeTo(null);
+		initComponents();
+		setLocationRelativeTo(null);
 		
 		
 		compassPanel = new Compass();
@@ -71,20 +72,14 @@ public class MainView extends JFrame {
 		repaint();
 		//pack();
 		
-		
-		
-
 		Timer timer = createTimer();
 		timer.start();
 		
 		
-		
-		
-		
-		Settings set = new Settings();
+		settings = new Settings();
 		Serializer serializer = new Serializer();
-		set.setPort("com4");
-		Serializer.serialize("settings.lol",set);
+		settings.setPort("com4");
+		Serializer.serialize("settings.lol",settings);
 	}
 
 	public void showHelpView() {
@@ -230,14 +225,14 @@ public class MainView extends JFrame {
 		public Inclinometer()
 		{
 			background = new JLabel(new ImageIcon("res/backgroundInclinometer.png"));
-			background.setBounds(0, 0, 194, 279);
+			background.setBounds(0, 0, 186, 258);
 			this.add(background, new Integer(0));
 			this.setVisible(true);
 			this.setBackground(Color.BLACK);
 			redNeedle.setBackground(this.getBackground());
-			redNeedle.setBounds(0, 0, 194, 279);
+			redNeedle.setBounds(0, 0, 186, 258);
 			greenNeedle.setBackground(this.getBackground());
-			greenNeedle.setBounds(0, 0, 194, 279);
+			greenNeedle.setBounds(0, 0, 186, 258);
 			redNeedle.setOpaque(false);
 			greenNeedle.setOpaque(false);
 			this.updateGreenNeedle(-45);
@@ -245,11 +240,11 @@ public class MainView extends JFrame {
 			this.add(redNeedle, new Integer(1));
 			this.add(greenNeedle, new Integer(2));
 			
-			this.setBounds(0, 0, 194, 324);
+			this.setBounds(0, 0, 186, 324);
 			this.repaint();
 			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
-			coordinate.setBounds(0, 274, 194, 35);
+			coordinate.setBounds(0, 258, 186, 35);
 			coordinate.setForeground(Color.WHITE);
 			
 			this.add(coordinate, new Integer(3));
@@ -257,13 +252,19 @@ public class MainView extends JFrame {
 		
 		public void updateRedNeedle (double _angle) 
 		{
-            _angle = Math.toRadians(_angle);
+			try
+			{
+				coordinate.setText(String.valueOf(_angle%360));
+			}
+			catch(Exception e)
+			{
+				System.out.print(e);
+			}
             redNeedle.rotate(_angle);			
 		}
 		
 		public void updateGreenNeedle (double _angle) 
 		{
-            _angle = Math.toRadians(_angle);
             greenNeedle.rotate(_angle);
 		}
 
@@ -301,7 +302,13 @@ public class MainView extends JFrame {
 			
 			public void rotate(double _angle)
 			{
-				angle = _angle;
+				angle = Math.toRadians(_angle);				
+				
+				if(Math.sin(angle) < 0 && Math.cos(angle) < 0)
+					angle = angle + 2 * (3*Math.PI/2 - angle);
+				if(Math.sin(angle) > 0 && Math.cos(angle) < 0)
+					angle = angle - 2 * (angle - Math.PI/2);
+				
 				repaint();
 			}
 			
@@ -314,8 +321,8 @@ public class MainView extends JFrame {
 	        protected void paintComponent(Graphics g)
 	        { 
 	            super.paintComponent(g); 
-	            Graphics2D g2 = (Graphics2D) g; 
-	            g2.rotate(-angle, 10, needleImage.getHeight() / 2);  
+	            Graphics2D g2 = (Graphics2D) g;
+	            g2.rotate(-angle, 5, needleImage.getHeight() / 2); //TODO voir valeur non constante
 	            g2.drawImage(needleImage, 0, 0, null); 
 	        }
 			
