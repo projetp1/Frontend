@@ -1,4 +1,4 @@
- /*=====================================================================*
+ /**=====================================================================*
  | This file declares the following classes:
  |    DataBase
  |
@@ -36,44 +36,77 @@ public class DataBase
 		this.connection = createConnection();
 		this.statement = createStatement();
 	}
-	
+	/** 
+	 * closeConnection
+	 *  You can close the connection of a connection object
+	 */
 	public void closeConnection() throws SQLException
 	{
 		this.connection.close();
 	}
 	
+	/** 
+	 * OpenConnection
+	 * You can open the connection of a connection object. After that, you can do everything in the database
+	 */
 	public void openConnection() throws SQLException
 	{
 		this.connection = createConnection();
 	}
 	
+	/** 
+	 * createConnection
+	 * After open a connection, you have to load the database and create a connection to this
+	 *@return return a Connection objet that has loaded the database
+	 */
 	private Connection createConnection() throws SQLException
 	{
 		return DriverManager.getConnection("jdbc:sqlite:res/"+this.sDataBase);
 	}
 	
+	/** 
+	 * createStatement
+	 * When you have create a connection, load the database you can now do sql queries
+	 * @return : return a Statement object that will be use for queries
+	 */
 	private Statement createStatement() throws SQLException
 	{
 		return connection.createStatement();
 	}
 
-	private int executeRegex(String _sRegex,String _sString)
+	/** 
+	 * executeRegex
+	 * Used for execute a Regex. For example when you want to know if the is a unity for the value 
+	 * @param string _sRegex : It's the regex that the function will use
+	 * @param string _sString : It's the string that will be analyse by the regex
+	 * @return : Return a boolean with true if the regex has found the string or return false
+	 */
+	private boolean executeRegex(String _sRegex,String _sString)
 	{
         Pattern l_pattern = Pattern.compile(_sRegex);
         Matcher l_matcher = l_pattern.matcher(_sString);
         
-        if (l_matcher.matches()) 
-        	return 1;
-        else
-        	return 0;
+        return l_matcher.matches(); 
 	}
 	
-	private int isDouble(String _sString)
+	/** 
+	 * isDouble
+	 * Say if it's a Double or not with a regex.
+	 * @param _sString : It's the string that will be analyse
+	 * @return : Returne a boolean with true if the regex has found that the string is a double or return false
+	 */
+	private boolean isDouble(String _sString)
 	{
 		String l_sRegex  = "[-+]?[0-9]*\\.?[0-9]+";
         return executeRegex(l_sRegex,_sString);
 	}
-	
+	 
+	/** 
+	 * addFieldsQuery
+	 * Add to the query the fields that you want to have.
+	 * @param String[] _sFields : Array that contains the fields that you want to have in the query
+	 * @return : Return the string that contains the fields for the query
+	 */
 	private String addFieldsQuery(String _sFields[])
 	{
 		String l_sOut = "";
@@ -86,6 +119,12 @@ public class DataBase
 		return l_sOut;
 	}
 	
+	/** 
+	 * addTableQuery
+	 * Add the table that will be used in the query
+	 * @param String[] _sTable : The array where the tables are
+	 * @return : Return a string that contains the table for the query
+	 */
 	private String addTableQuery(String _sTable[])
 	{
 		String l_sOut = " FROM ";
@@ -97,7 +136,13 @@ public class DataBase
 		}
 		return l_sOut;		
 	}
-	
+	/**
+	 * addWhereQuery
+	 * Add the clause "WHERE" to the query
+	 * @param String[][] _sWhere : Array 2D with the format : {{"field","sign","value"},{...}}
+	 * @param boolean secured : True if you want a prepared statement or false for a basic statement
+	 * @return : Return a string that contains the clause WHERE for the query
+	 */
 	private String addWhereQuery(String _sWhere[][],boolean secured)
 	{
 		String l_sOut = " WHERE ";
@@ -117,7 +162,14 @@ public class DataBase
 		}
 		return l_sOut;
 	}	
-
+	
+	/**
+	 * addOrderByQuery
+	 * Add the clause "ORDER BY" in the query
+	 * @param String[] _sOrderBy : Array 1D with the format : {"field1","field2"}. 
+	 * 							The query sort with the first value, then the second ...
+	 * @return : Return a string that contains the clause ORDER BY for the query
+	 */
 	private String addOrderByQuery(String _sOrderBy[])
 	{
 		String l_sOut = " ORDER BY ";
@@ -131,13 +183,30 @@ public class DataBase
 		return l_sOut;
 	}		
 	
+	/**
+	 * addLimitQuery
+	 * Add the clause "LIMIT" in the query
+	 * @param String[] _Limit : Array 1D with the format {"begin","end"}
+	 * @return : Return a string that contains the clause LIMIT for the query
+	 */
 	private String addLimitQuery(int _Limit[])
 	{
 		String l_sOut = " LIMIT ";
 		l_sOut += _Limit[0] + "," + _Limit[1];
 		return l_sOut;
 	}
-	
+	/**
+	 * selectQuery()
+	 * Do a selectQuery with the fields,tables and all the clause for the query
+	 * @param _sFields
+	 * @param _sTable
+	 * @param _sWhere
+	 * @param _sOrderBy
+	 * @param _Limit
+	 * @param secured
+	 * @return
+	 * @throws SQLException
+	 */
 	private ResultSet selectQuery(String _sFields[],String _sTable[],String _sWhere[][],String _sOrderBy[],int _Limit[],boolean secured) throws SQLException
 	{
 		String l_sQuery;
@@ -162,8 +231,15 @@ public class DataBase
 		else
 			return this.statement.executeQuery(l_sQuery);
 	}
-	
-	private HashMap<String, String> DecryptText(String _sText)
+	/**
+	 * decryptText
+	 * Use to decrypt the text inputed by the user.
+	 * @param String[] _sText : String that contains the text to decrypt
+	 * @return : Return an HashMap object that contains all the words of the string with the value.
+	 * 				The key of the hashmap is the string word
+	 * 				The value is the number after the space
+	 */
+	private HashMap<String, String> decryptText(String _sText)
 	{
 		if(_sText.length()==0 || _sText.charAt(0)!='!')
 		{
@@ -230,7 +306,7 @@ public class DataBase
 		double l_dXYZ[] = new double[3];
 		double l_dVXYZ[] = new double[3];
 		
-		if(isDouble(Double.toString(_dLongitude))==0 || isDouble(Double.toString(_dLatitude))==0)
+		if(!isDouble(Double.toString(_dLongitude)) || !isDouble(Double.toString(_dLatitude)))
 			return null;
 		
 		/*double l_dLonMax = _dLongitude+0.5;
@@ -300,6 +376,13 @@ public class DataBase
 		return al_stars;		
 	}
 	
+	/**
+	 * starsForText
+	 * Search all the stars that has all the condition of the string
+	 * @param String[] _searchText : The string that will be analyse by the fonction decryptText
+	 * @return : Return an arraylyst of ClestialObject.
+	 * @throws SQLException
+	 */
 	public ArrayList<CelestialObject> starsForText (String _searchText) throws SQLException 
 	{
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
@@ -327,7 +410,7 @@ public class DataBase
 		
 		boolean secured = true;
 		
-		HashMap<String, String> hm_sWhere = DecryptText(_searchText);
+		HashMap<String, String> hm_sWhere = decryptText(_searchText);
 		Iterator<String> l_it = hm_sWhere.keySet().iterator();
 		
 		while(l_it.hasNext())
