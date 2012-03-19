@@ -110,6 +110,7 @@ public class DataBase
 	private String addFieldsQuery(String _sFields[])
 	{
 		String l_sOut = "";
+		//Analyse all the array and add the fields to the query
 		for(int i = 0;i<_sFields.length;i++)
 		{
 			l_sOut += _sFields[i];
@@ -128,6 +129,7 @@ public class DataBase
 	private String addTableQuery(String _sTable[])
 	{
 		String l_sOut = " FROM ";
+		//Analyse all the array and had the tables to the query
 		for(int i = 0;i<_sTable.length;i++)
 		{
 			l_sOut += _sTable[i];
@@ -147,12 +149,15 @@ public class DataBase
 	{
 		String l_sOut = " WHERE ";
 
+		//Analyse all the array and add the where clause to the query
+		//If secured = true, the function will prepared a prepared statement, replace all the value by "?"
 		for(int i=0;i<_sWhere.length;i++)
 		{
 			l_sOut += _sWhere[i][0] +  " " +_sWhere[i][1];
 			if(secured)
 			{
 				l_sOut += " ? ";
+				//Count the element,because after you have to replace these values
 				this.argumentCount++;
 			}
 			else
@@ -174,6 +179,7 @@ public class DataBase
 	{
 		String l_sOut = " ORDER BY ";
 		
+		//Analyse all the array and add the ORDER BY clause to the query
 		for(int i=0;i<_sOrderBy.length;i++)
 		{
 			l_sOut += " " + _sOrderBy[i];
@@ -211,6 +217,7 @@ public class DataBase
 	{
 		String l_sQuery;
 		
+		//Create the entire query with all the function
 		l_sQuery = "SELECT ";
 		l_sQuery += addFieldsQuery(_sFields);
 		l_sQuery += addTableQuery(_sTable);
@@ -219,6 +226,7 @@ public class DataBase
 		l_sQuery += addLimitQuery(_Limit);
 		l_sQuery += ";";
 		
+		//If we want to have a preparte statement, we have to replace all value by the real value in s_Where[][]
 		if(secured)
 		{
 			PreparedStatement pStatement = this.connection.prepareStatement(l_sQuery);
@@ -241,6 +249,7 @@ public class DataBase
 	 */
 	private HashMap<String, String> decryptText(String _sText)
 	{
+		//If the string is null or haven't a "!" return avec wrong hashmap
 		if(_sText.length()==0 || _sText.charAt(0)!='!')
 		{
 			HashMap<String, String> hs_Out = new HashMap<String, String>(1);
@@ -256,16 +265,18 @@ public class DataBase
 		String[] l_sString = _sText.split(l_sSeparateur);
 		HashMap<String, String> hs_Out = new HashMap<String, String>(l_sString.length);
 		
+		//Analyse all the string
 		for(int i = 0;i<l_sString.length;i++)
 		{
 			l_sTemp = l_sString[i];
-			l_sKey = l_sTemp.substring(1, l_sTemp.indexOf(' '));
+			l_sKey = l_sTemp.substring(1, l_sTemp.indexOf(' '));//Key is the word string
 			
+			//If the string is "distance", it could have a unity 
 			if(l_sKey.matches("distance"))
 			{
 				l_sValue = l_sTemp.substring(l_sTemp.indexOf(' '),l_sTemp.length()-2);
 				l_sUnit = l_sTemp.substring(l_sTemp.length()-2, l_sTemp.length());
-				if(l_sUnit.matches("(km)$")){
+				if(l_sUnit.matches("(km)$")){//Convert the km to year light
 					double l_dAnneeLumiere = Double.parseDouble(l_sValue)/dAL_KM;
 					l_sValue = String.valueOf(l_dAnneeLumiere);
 				}
