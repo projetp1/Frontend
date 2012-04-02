@@ -25,6 +25,14 @@ public class MainView extends JFrame {
 	Compass compassPanel;
 	Inclinometer inclinometerPanel;
 	int degree = 90;
+	double w = ((100/Toolkit.getDefaultToolkit().getScreenSize().width)*this.getWidth());
+	
+	private double width()
+	{
+		System.out.print(this.getWidth() + "<--\n");
+		System.out.print(Toolkit.getDefaultToolkit().getScreenSize().width + "<---\n");
+		return this.getWidth();
+	}
 	
 	/**
 	 * 
@@ -32,39 +40,44 @@ public class MainView extends JFrame {
 	private Timer createTimer () {
 		// Création d'une instance de listener 
 		// associée au timer
+		
+		
 		ActionListener action = new ActionListener () {
 		    // Méthode appelée à chaque tic du timer
 			public void actionPerformed (ActionEvent event)
 			{
+					w =  width() / Toolkit.getDefaultToolkit().getScreenSize().width;
+					System.out.print(w + "<-\n");
+					if(w<.1)w=.1;
 					degree++;
-					compassPanel.updateGreenNeedle(degree);
-					compassPanel.updateRedNeedle(-degree);
-					inclinometerPanel.updateGreenNeedle(degree);
-					inclinometerPanel.updateRedNeedle(-degree);
+					compassPanel.setGreenNeedle(degree);
+					compassPanel.setRedNeedle(-degree);
+					compassPanel.setScale(w);
+					compassPanel.setLocation((int)(width()-10-compassPanel.getWidth()), 50);
+					inclinometerPanel.setRedNeedle(degree);
+					inclinometerPanel.setGreenNeedle(-degree);
+					inclinometerPanel.setScale(w); //update() appelé auto
+					inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
 		    }
 		};
-		return new Timer (1, action);
+		return new Timer (50, action);
   }
 	      
 	public MainView() {
+
+        this.setMinimumSize(new java.awt.Dimension(680, 420));
+
+		compassPanel = new Compass(0.8);
+		compassPanel.setLocation((int)(width()-10-compassPanel.getWidth()), 50);		
 		
+		inclinometerPanel = new Inclinometer(0.8);
+		inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
 		
-		
-		
-		
-		
-		initComponents();
-		setLocationRelativeTo(null);
-		
-		
-		compassPanel = new Compass();
-		inclinometerPanel = new Inclinometer();
-		inclinometerPanel.setLocation(400, 400);
-		this.add(compassPanel);
-		this.add(inclinometerPanel);
+		//this.add(compassPanel);
+		//this.add(inclinometerPanel);
 		getLayeredPane().add(compassPanel);
 		getLayeredPane().add(inclinometerPanel);
-		//jlp_compass.add(compassPanel);
+		
 		this.setVisible(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -112,52 +125,129 @@ public class MainView extends JFrame {
 		return null;
 	}
 	
-	@SuppressWarnings("serial")
-	private class Compass extends JLayeredPane
+    public static BufferedImage resizeImage(BufferedImage bImage, double _scale) {
+        int destWidth = (int)(_scale*bImage.getWidth());
+        int destHeight = (int)(_scale*bImage.getHeight());
+        GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        BufferedImage bImageNew = configuration.createCompatibleImage(destWidth, destHeight, 2);
+        Graphics2D graphics = bImageNew.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        graphics.drawImage(bImage, 0, 0, destWidth, destHeight, 0, 0, bImage.getWidth(), bImage.getHeight(), null);
+        graphics.dispose();
+
+        return bImageNew;
+    }
+	
+    private class Compass extends JLayeredPane
 	{
-		JLabel background;
+		double scale = 1;
+		double redAngle = 0;
+		double greenAngle = 0;
+		BufferedImage background;
 		JLabel coordinate;
-		Needle redNeedle = new Needle("RED");
-		Needle greenNeedle = new Needle("GREEN");
+		Needle redNeedle;
+		Needle greenNeedle;
 		
-		public Compass()
+		public Compass(double _scale)
 		{
-			background = new JLabel(new ImageIcon("res/backgroundCompass.png"));
-			background.setBounds(0, 0, 345, 304);
-			this.add(background, new Integer(0));
+			scale = _scale;
+			try {
+				background = resizeImage(ImageIO.read(new File("res/backgroundCompass.png")),scale);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			repaint();
 			this.setVisible(true);
 			this.setBackground(Color.BLACK);
-			redNeedle.setBackground(this.getBackground());
-			redNeedle.setBounds(0, 0, 345, 304);
-			greenNeedle.setBackground(this.getBackground());
-			greenNeedle.setBounds(0, 0, 345, 304);
-			redNeedle.setOpaque(false);
-			greenNeedle.setOpaque(false);
-			this.updateGreenNeedle(120);
-			this.updateRedNeedle(90);
-			this.add(redNeedle, new Integer(1));
-			this.add(greenNeedle, new Integer(2));
 			
-			this.setBounds(0, 0, 345, 350);
-			this.repaint();
+			redNeedle = new Needle("res/aiguille_rouge.png", scale);
+			greenNeedle = new Needle("res/aiguille_vert.png", scale);
+			
+			redNeedle.setBackground(this.getBackground());
+			redNeedle.setBounds(0, 0, (int)(scale*345), (int)(scale*304));
+			redNeedle.setOpaque(false);
+			this.add(redNeedle, new Integer(1));
+			
+			greenNeedle.setBackground(this.getBackground());
+			greenNeedle.setBounds(0, 0, (int)(scale*345), (int)(scale*304));
+			greenNeedle.setOpaque(false);
+			this.add(greenNeedle, new Integer(2));
+
+			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
 			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
-			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
-			coordinate.setBounds(0, 310, 345, 34);
+			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
+			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
 			coordinate.setForeground(Color.WHITE);
 			
 			this.add(coordinate, new Integer(3));
+			
+			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
+			this.repaint();
+			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
+			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
+			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*34));
+			coordinate.setForeground(Color.WHITE);
 		}
 		
-		public void updateRedNeedle (double _angle) 
+		@Override 
+        public Dimension getPreferredSize()
+		{ 
+            return new Dimension(background.getWidth(), background.getHeight()); 
+        } 
+        @Override 
+        protected void paintComponent(Graphics g)
+        { 
+            super.paintComponent(g); 
+            Graphics2D g2 = (Graphics2D) g; 
+            g2.drawImage(background, 0, 0, null); 
+        }
+		
+		public void setScale (double _scale)
 		{
-            _angle = Math.toRadians(_angle);
-            redNeedle.rotate(_angle);			
+			scale = _scale;
+			update();
 		}
 		
-		public void updateGreenNeedle (double _angle) 
+		public void update()
+		{
+			try {
+				background = resizeImage(ImageIO.read(new File("res/backgroundCompass.png")),scale);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			repaint();
+			redNeedle.scale(scale);
+            redNeedle.rotate(redAngle);
+			redNeedle.setBounds(0, 0, (int)(scale*345), (int)(scale*304));
+            greenNeedle.scale(scale);
+            greenNeedle.rotate(greenAngle);
+			greenNeedle.setBounds(0, 0, (int)(scale*345), (int)(scale*304));
+			try
+			{
+				coordinate.setText(String.valueOf(redAngle%360));
+			}
+			catch(Exception e)
+			{
+				System.out.print(e);
+			}
+			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
+			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
+			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
+		}
+		
+		public void setRedNeedle (double _angle) 
 		{
             _angle = Math.toRadians(_angle);
-            greenNeedle.rotate(_angle);
+            redAngle = _angle;
+		}
+		
+		public void setGreenNeedle (double _angle) 
+		{
+            _angle = Math.toRadians(_angle);
+            greenAngle =_angle;
 		}
 		
 		@SuppressWarnings("serial")
@@ -165,28 +255,32 @@ public class MainView extends JFrame {
 		{
 		    BufferedImage needleImage;
 		    double angle = 0;
+		    double scale = 1;
+		    String adresseImage;
 		    
-			public Needle(String _color)
+			public Needle(String _adresseImage, double _scale)
 			{
-				if(_color == "RED")
+				scale = _scale;
+				adresseImage = _adresseImage;
+				try
 				{
-					try 
-					{
-						needleImage = ImageIO.read(new File("res/aiguille_rouge.png"));
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
+					needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
 				}
-				else if(_color == "GREEN")
+				catch (IOException e)
 				{
-					try
-					{
-						needleImage = ImageIO.read(new File("res/aiguille_vert.png"));
-					}
-					catch (IOException e)
-					{
+					e.printStackTrace();
+				}
+			}
+			
+			public void scale(double _scale)
+			{
+				if(scale != _scale)
+				{
+					scale = _scale;
+					try {
+						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -212,60 +306,111 @@ public class MainView extends JFrame {
                 g2.drawImage(needleImage, 0, 0, null); 
             }
 		}
+	
 	}
+	
 	
 	@SuppressWarnings("serial")
 	private class Inclinometer extends JLayeredPane
 	{
-		JLabel background;
+		double scale = 1;
+		double redAngle = 0;
+		double greenAngle = 0;
+		BufferedImage background;
 		JLabel coordinate;
-		Needle redNeedle = new Needle("RED");
-		Needle greenNeedle = new Needle("GREEN");
+		Needle redNeedle;
+		Needle greenNeedle;
 		
-		public Inclinometer()
+		public Inclinometer(double _scale)
 		{
-			background = new JLabel(new ImageIcon("res/backgroundInclinometer.png"));
-			background.setBounds(0, 0, 186, 258);
-			this.add(background, new Integer(0));
+			scale = _scale;
+			try {
+				background = resizeImage(ImageIO.read(new File("res/backgroundInclinometer.png")),scale);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			repaint();
 			this.setVisible(true);
 			this.setBackground(Color.BLACK);
-			redNeedle.setBackground(this.getBackground());
-			redNeedle.setBounds(0, 0, 186, 258);
-			greenNeedle.setBackground(this.getBackground());
-			greenNeedle.setBounds(0, 0, 186, 258);
-			redNeedle.setOpaque(false);
-			greenNeedle.setOpaque(false);
-			this.updateGreenNeedle(-45);
-			this.updateRedNeedle(45);
-			this.add(redNeedle, new Integer(1));
-			this.add(greenNeedle, new Integer(2));
 			
-			this.setBounds(0, 0, 186, 324);
-			this.repaint();
+			redNeedle = new Needle("res/aiguille_rouge_inclinometer.png", scale);
+			greenNeedle = new Needle("res/aiguille_vert_inclinometer.png", scale);
+			
+			redNeedle.setBackground(this.getBackground());
+			redNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
+			redNeedle.setOpaque(false);
+			this.add(redNeedle, new Integer(1));
+			
+			greenNeedle.setBackground(this.getBackground());
+			greenNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
+			greenNeedle.setOpaque(false);
+			this.add(greenNeedle, new Integer(2));
+
+			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
 			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
-			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
-			coordinate.setBounds(0, 258, 186, 35);
+			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
+			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
 			coordinate.setForeground(Color.WHITE);
 			
 			this.add(coordinate, new Integer(3));
 		}
+				
+		@Override 
+        public Dimension getPreferredSize()
+		{ 
+            return new Dimension(background.getWidth(), background.getHeight()); 
+        } 
+        @Override 
+        protected void paintComponent(Graphics g)
+        { 
+            super.paintComponent(g); 
+            Graphics2D g2 = (Graphics2D) g; 
+            g2.drawImage(background, 0, 0, null); 
+        }
 		
-		public void updateRedNeedle (double _angle) 
+		public void setScale (double _scale)
 		{
+			scale = _scale;
+			update();
+		}
+		
+		public void update()
+		{
+			try {
+				background = resizeImage(ImageIO.read(new File("res/backgroundInclinometer.png")),scale);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			repaint();
+			redNeedle.scale(scale);
+            redNeedle.rotate(redAngle);
+			redNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
+            greenNeedle.scale(scale);
+            greenNeedle.rotate(greenAngle);
+			greenNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
 			try
 			{
-				coordinate.setText(String.valueOf(_angle%360));
+				coordinate.setText(String.valueOf(redAngle%360));
 			}
 			catch(Exception e)
 			{
 				System.out.print(e);
 			}
-            redNeedle.rotate(_angle);			
+			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));
+			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
+			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
+		}
+        
+		public void setRedNeedle (double _redAngle) 
+		{
+			redAngle = _redAngle;		
 		}
 		
-		public void updateGreenNeedle (double _angle) 
+		public void setGreenNeedle (double _greenAngle) 
 		{
-            greenNeedle.rotate(_angle);
+			greenAngle = _greenAngle;
 		}
 
 		@SuppressWarnings("serial")
@@ -273,28 +418,32 @@ public class MainView extends JFrame {
 		{
 		    BufferedImage needleImage;
 		    double angle = 0;
+		    double scale = 1;
+		    String adresseImage;
 		    
-			public Needle(String _color)
+			public Needle(String _adresseImage, double _scale)
 			{
-				if(_color == "RED")
+				scale = _scale;
+				adresseImage = _adresseImage;
+				try
 				{
-					try
-					{
-						needleImage = ImageIO.read(new File("res/aiguille_rouge_inclinometer.png"));
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
+					needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
 				}
-				else if(_color == "GREEN")
+				catch (IOException e)
 				{
-					try 
-					{
-						needleImage = ImageIO.read(new File("res/aiguille_vert_inclinometer.png"));
-					}
-					catch (IOException e)
-					{
+					e.printStackTrace();
+				}
+			}
+			
+			public void scale(double _scale)
+			{
+				if(scale != _scale)
+				{
+					scale = _scale;
+					try {
+						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -322,147 +471,10 @@ public class MainView extends JFrame {
 	        { 
 	            super.paintComponent(g); 
 	            Graphics2D g2 = (Graphics2D) g;
-	            g2.rotate(-angle, 5, needleImage.getHeight() / 2); //TODO voir valeur non constante
+	            g2.rotate(-angle, scale*5, needleImage.getHeight() / 2); //TODO voir valeur non constante
 	            g2.drawImage(needleImage, 0, 0, null); 
 	        }
 			
 		}
 	}
-
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
-    
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">
-	private void initComponents() {
-
-        jPanel_informations = new javax.swing.JPanel();
-        jPanel_fondNoir = new javax.swing.JPanel();
-        jLabel_coordonees = new javax.swing.JLabel();
-        jlp_zoom = new javax.swing.JLayeredPane();
-        jlp_settings = new javax.swing.JLayeredPane();
-        jlp_question = new javax.swing.JLayeredPane();
-        jlp_searchBar = new javax.swing.JLayeredPane();
-        jlp_compass = new javax.swing.JLayeredPane();
-        jlp_height = new javax.swing.JLayeredPane();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(680, 420));
-
-        jPanel_informations.setName("jPanel_informations"); // NOI18N
-
-        javax.swing.GroupLayout jPanel_informationsLayout = new javax.swing.GroupLayout(jPanel_informations);
-        jPanel_informations.setLayout(jPanel_informationsLayout);
-        jPanel_informationsLayout.setHorizontalGroup(
-            jPanel_informationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        jPanel_informationsLayout.setVerticalGroup(
-            jPanel_informationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 344, Short.MAX_VALUE)
-        );
-
-        jPanel_fondNoir.setBackground(new java.awt.Color(0, 0, 0));
-        jPanel_fondNoir.setName("jPanel_fondNoir"); // NOI18N
-
-        jLabel_coordonees.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel_coordonees.setText("jLabel1");
-        jLabel_coordonees.setName("jLabel_coordonees"); // NOI18N
-
-        jlp_zoom.setBackground(new java.awt.Color(204, 204, 204));
-        jlp_zoom.setName("jlp_zoom"); // NOI18N
-        jlp_zoom.setOpaque(true);
-
-        jlp_settings.setBackground(new java.awt.Color(204, 204, 204));
-        jlp_settings.setName("jlp_settings"); // NOI18N
-        jlp_settings.setOpaque(true);
-
-        jlp_question.setBackground(new java.awt.Color(204, 204, 204));
-        jlp_question.setName("jlp_question"); // NOI18N
-        jlp_question.setOpaque(true);
-
-        jlp_searchBar.setBackground(new java.awt.Color(204, 204, 204));
-        jlp_searchBar.setName("jlp_searchBar"); // NOI18N
-        jlp_searchBar.setOpaque(true);
-
-        jlp_compass.setBackground(new java.awt.Color(204, 204, 204));
-        jlp_compass.setName("jlp_compass"); // NOI18N
-        jlp_compass.setOpaque(true);
-
-        jlp_height.setBackground(new java.awt.Color(204, 204, 204));
-        jlp_height.setName("jlp_height"); // NOI18N
-        jlp_height.setOpaque(true);
-
-        javax.swing.GroupLayout jPanel_fondNoirLayout = new javax.swing.GroupLayout(jPanel_fondNoir);
-        jPanel_fondNoir.setLayout(jPanel_fondNoirLayout);
-        jPanel_fondNoirLayout.setHorizontalGroup(
-            jPanel_fondNoirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_fondNoirLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel_fondNoirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jlp_height, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel_fondNoirLayout.createSequentialGroup()
-                        .addComponent(jlp_zoom, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jlp_settings, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jlp_question, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel_fondNoirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jlp_compass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_fondNoirLayout.createSequentialGroup()
-                                .addComponent(jlp_searchBar, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-                                .addGap(86, 86, 86))))
-                    .addComponent(jLabel_coordonees, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-        jPanel_fondNoirLayout.setVerticalGroup(
-            jPanel_fondNoirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_fondNoirLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel_fondNoirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jlp_searchBar, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                    .addComponent(jlp_question)
-                    .addComponent(jlp_settings)
-                    .addComponent(jlp_zoom, javax.swing.GroupLayout.PREFERRED_SIZE, 20, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jlp_compass, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jlp_height, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 142, Short.MAX_VALUE)
-                .addComponent(jLabel_coordonees)
-                .addContainerGap())
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel_informations, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel_fondNoir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel_fondNoir, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
-            .addComponent(jPanel_informations, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
-        pack();
-    }// </editor-fold>
-
-    // Variables declaration - do not modify
-    private javax.swing.JLabel jLabel_coordonees;
-    private javax.swing.JPanel jPanel_fondNoir;
-    private javax.swing.JPanel jPanel_informations;
-    private javax.swing.JLayeredPane jlp_compass;
-    private javax.swing.JLayeredPane jlp_height;
-    private javax.swing.JLayeredPane jlp_question;
-    private javax.swing.JLayeredPane jlp_searchBar;
-    private javax.swing.JLayeredPane jlp_settings;
-    private javax.swing.JLayeredPane jlp_zoom;
-    // End of variables declaration
 }
