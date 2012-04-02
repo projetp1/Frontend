@@ -11,22 +11,22 @@ package com.github.projetp1;
  */
 public class CrcException extends Exception {
 
-	private String CRC;
+	private byte CRC;
 	
 	/**
 	 * @return the faulty CRC
 	 */
 	public String getCRC() {
-		return CRC;
+		return String.valueOf(CRC);
 	}
 
 	/**
-	 * @param crc The faulty CRC
+	 * @param b The faulty CRC
 	 */
-	public CrcException(String crc) {
+	public CrcException(byte b) {
 		super();
 		
-		this.CRC = crc;
+		this.CRC = b;
 	}
 
 

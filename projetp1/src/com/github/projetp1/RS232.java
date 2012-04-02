@@ -162,20 +162,25 @@ public class RS232 implements SerialPortEventListener
 	 * @param crc The received CRC
 	 * @return True if it matches or false otherwise
 	 */
-	public static boolean checkCrc(String datas, String crc)
+	public static boolean checkCrc(String datas, byte crc)
 	{
-		return crc.equals(computeCrc(datas));
+		return crc == (computeCrc(datas));
 	}
 	
 	/**
 	 * Returns the computed CRC of the chain
-	 * @param datas The chain of which to compute the CRC
-	 * @return The computed CRC
+	 * Uses NMEA-0183 method
+	 * @param datas The String of which to compute the CRC
+	 * @return The computed CRC as a byte
 	 */
-	public static String computeCrc(String datas)
+	public static byte computeCrc(String datas)
 	{
+		byte crc = 0;
 		
-		return "";
+		for (byte b : datas.getBytes()) {
+			crc = (byte) (crc ^ b);
+		}
+		return crc;
 	}
 }
 

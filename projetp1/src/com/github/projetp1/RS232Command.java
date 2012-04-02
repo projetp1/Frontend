@@ -13,7 +13,7 @@ public class RS232Command
 	 * @throws CrcException
 	 * @throws Exception
 	 */
-	public RS232Command(String commandNumber, String datas, String crc) throws CrcException, Exception
+	public RS232Command(String commandNumber, String datas, byte crc) throws CrcException, Exception
 	{
 		if(commandNumber.length() == 2)
 			this._commandNumber = commandNumber;
@@ -59,8 +59,8 @@ public class RS232Command
 		return chain.substring(1, 3);
 	}
 	
-	public static String extractCrc(String chain)
+	public static byte extractCrc(String chain)
 	{
-		return chain.substring(chain.indexOf("*") + 1, chain.length() - 2);
+		return (byte) chain.charAt(chain.indexOf("*") + 1);
 	}
 }
