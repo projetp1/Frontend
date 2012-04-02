@@ -25,6 +25,12 @@ public enum RS232CommandType {
 		return code;
 	}
 	
+	/**
+	 * Checks if it is a valid command number
+	 *
+	 * @param commandNumber The number of the command
+	 * @return true, if it's valid. False otherwise
+	 */
 	public static boolean isCommandNumber(String commandNumber) {
 		for (RS232CommandType elem : RS232CommandType.values()) {
 			if(elem.toString().equalsIgnoreCase(commandNumber))
