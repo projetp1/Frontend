@@ -8,9 +8,13 @@ package com.github.projetp1;
  * 
  */
 public enum RS232CommandType {
+	/** Ping command */
 	EMPTY("00"),
+	/** Changes the PIC mode to pointing */
 	CHANGE_TO_POINT_MODE("01"),
+	/** Changes the PIC mode to search + Send the arrow */
 	CHANGE_TO_ARROW_MODE("02"),
+	/** Used by the PIC to communicates its status to the PC */
 	PIC_STATUS("99")
 	;
 
