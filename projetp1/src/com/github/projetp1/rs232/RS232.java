@@ -6,10 +6,10 @@ package com.github.projetp1.rs232;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeoutException;
 
 import com.github.projetp1.MainView;
 import com.github.projetp1.Settings;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import jssc.*;
 
@@ -31,7 +31,14 @@ public class RS232 implements SerialPortEventListener {
 	/** The buffer in which the received datas are temporarily put. */
 	private StringBuffer buffer = new StringBuffer();
 	private Timer pingTimer = new Timer("timerDaemon", true);
-	private f
+	private Timer timeoutTimer = new Timer(false);
+	/** True if the PIC is online. */
+	private boolean connectionIsActive = false;
+	
+	/** The delay between 2 pings */
+	private static final int PINGDELAY = 3000;
+	/** The delay after which a ping timeout occurs */
+	public static final int PINGTIMEOUT = 2000;
 	
 	/**
 	 * Instantiates a new RS232 object.
@@ -43,13 +50,6 @@ public class RS232 implements SerialPortEventListener {
 	public RS232(MainView mainview) throws Exception, SerialPortException {
 		this._mainview = mainview;
 		this._settings = mainview.getSettings();
-		
-		pingTimer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				sendPing();			
-			}
-		}, 3000, 4000);
 
 		// Initialisation du sp
 		String port = _settings.getPort();
@@ -82,11 +82,19 @@ public class RS232 implements SerialPortEventListener {
 		if (!this.sendPing())
 			throw new Exception(
 					"The initial ping could not be sent, aborting...");
-
+		
+		
+		// TODO: Envoi du ping seulement si liaison inactive
+		pingTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				sendPing();			
+			}
+		}, PINGDELAY, PINGDELAY);
 	}
 
 	/**
-	 * Send an EMPTY command to the PIC
+	 * Send an EMPTY command to the PIC and resets the timeout
 	 * 
 	 * @return True if it succeeds, false otherwise
 	 */
@@ -106,16 +114,66 @@ public class RS232 implements SerialPortEventListener {
 	 *
 	 * @param command The command number
 	 */
-	public void sendNck(String command) {
-		if (command.equalsIgnoreCase(RS232CommandType.PIC_STATUS.toString()))
+	public synchronized void sendNck(RS232CommandType command) {
+		if (command.equals(RS232CommandType.PIC_STATUS))
 			return;
-
-		String trame = "$" + command.substring(0, 2) + "*";
+		
 		try {
-			_sp.writeString(trame + RS232.computeCrc(trame) + "\r\n");
+			sendFrame(command, "");
 		} catch (SerialPortException ex) {
-			System.out.println("RS232 : Unable to NCK port " + ex.getPortName()
-					+ ". Possible future mismatch between the datas.");
+			System.out.println("RS232 : Unable to send a NCK on port " + ex.getPortName());
+		}
+	}
+	
+	public void sendFrame(RS232CommandType cNum, String datas) throws SerialPortException
+	{
+		String trame = "$" + cNum.toString() + "*" + datas;
+		_sp.writeString(trame + RS232.computeCrc(trame) + "\r\n");
+	}
+	
+	/* TODO: Reopen port (may need a rethink)
+	private boolean reopenPort() {
+		if(connectionIsActive)
+		
+		try {
+			_sp.closePort();
+			_sp.addEventListener(this);
+			_sp.openPort();
+		} catch (SerialPortException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	//*/
+	
+	private void resetTimeout() {
+		timeoutTimer.cancel();
+		timeoutTimer = null;
+		
+		timeoutTimer = new Timer();
+		timeoutTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				//Le PIC n'a pas répondu à temps : la liaison est perdue
+			}
+		}, PINGTIMEOUT);
+	}
+	
+	/**
+	 * Check if the ping originating from the PIC was received
+	 *
+	 * @return true, if successful
+	 */
+	private boolean pingReceived() {
+		try {
+			boolean ping = false;
+			while(commandQueue.remove(new RS232Command(RS232CommandType.EMPTY, "")))
+				ping = true;
+			
+			return ping;
+		} catch (Exception e) {
+			System.out.println("Erreur impossible : " + e.getMessage());
+			return false;
 		}
 	}
 
@@ -177,7 +235,7 @@ public class RS232 implements SerialPortEventListener {
 	}
 
 	/**
-	 * Returns the computed CRC of the chain Uses NMEA-0183 method
+	 * Returns the computed CRC of the chain following NMEA-0183 method
 	 * 
 	 * @param datas The String of which to compute the CRC
 	 * @return The computed CRC as a byte
@@ -189,5 +247,9 @@ public class RS232 implements SerialPortEventListener {
 			crc = (byte) (crc ^ b);
 		}
 		return crc;
+	}
+
+	public boolean isConnectionActive() {
+		return connectionIsActive;
 	}
 }
