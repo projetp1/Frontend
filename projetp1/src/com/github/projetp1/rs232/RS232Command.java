@@ -1,4 +1,4 @@
-package com.github.projetp1;
+package com.github.projetp1.rs232;
 
 public class RS232Command
 {

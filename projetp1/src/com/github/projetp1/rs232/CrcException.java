@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.github.projetp1;
+package com.github.projetp1.rs232;
 
 /**
  * CRC Exception

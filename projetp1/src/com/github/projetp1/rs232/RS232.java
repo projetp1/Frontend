@@ -1,9 +1,15 @@
 /**
  * 
  */
-package com.github.projetp1;
+package com.github.projetp1.rs232;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import com.github.projetp1.MainView;
+import com.github.projetp1.Settings;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import jssc.*;
 
@@ -24,7 +30,9 @@ public class RS232 implements SerialPortEventListener {
 	private ConcurrentLinkedQueue<RS232Command> commandQueue = new ConcurrentLinkedQueue<RS232Command>();
 	/** The buffer in which the received datas are temporarily put. */
 	private StringBuffer buffer = new StringBuffer();
-
+	private Timer pingTimer = new Timer("timerDaemon", true);
+	private f
+	
 	/**
 	 * Instantiates a new RS232 object.
 	 * 
@@ -35,6 +43,13 @@ public class RS232 implements SerialPortEventListener {
 	public RS232(MainView mainview) throws Exception, SerialPortException {
 		this._mainview = mainview;
 		this._settings = mainview.getSettings();
+		
+		pingTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				sendPing();			
+			}
+		}, 3000, 4000);
 
 		// Initialisation du sp
 		String port = _settings.getPort();
@@ -43,9 +58,7 @@ public class RS232 implements SerialPortEventListener {
 				port = SerialPortList.getPortNames()[0];
 				if (port == null || port.equals(""))
 					throw new Exception();
-				System.out
-						.println("The default SerialPort has been selected : "
-								+ port);
+				System.out.println("The default SerialPort has been selected : " + port);
 				_settings.setPort(port);
 			} catch (Exception e) {
 				System.out.println("FATAL : No SerialPort has been found !");
@@ -56,7 +69,7 @@ public class RS232 implements SerialPortEventListener {
 		}
 
 		this._sp = new SerialPort(port);
-
+		
 		try {
 			this._sp.openPort();// Open serial port
 			this._sp.setParams(SerialPort.BAUDRATE_9600, SerialPort.DATABITS_8,	SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
