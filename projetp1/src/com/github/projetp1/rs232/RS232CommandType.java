@@ -18,7 +18,7 @@ public enum RS232CommandType {
 	PIC_STATUS("99")
 	;
 
-	private String code;
+	private final String code;
 
 	private RS232CommandType(String c) {
 		code = c;
@@ -42,5 +42,14 @@ public enum RS232CommandType {
 		}
 		
 		return false;
+	}
+	
+	public static RS232CommandType valueOfByNum(String num) throws IllegalArgumentException {
+		for (RS232CommandType t : RS232CommandType.values()) {
+			if(t.toString().equalsIgnoreCase(num))
+				return t;
+		}
+		
+		throw new IllegalArgumentException("RS232CommandType : " + num + "is not a valid command type !");
 	}
 }

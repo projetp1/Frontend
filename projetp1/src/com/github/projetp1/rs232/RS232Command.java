@@ -2,31 +2,36 @@ package com.github.projetp1.rs232;
 
 public class RS232Command
 {
-	private String _commandNumber;
+	private RS232CommandType _commandNumber;
 	private String _datas;
 	
 	/**
-	 * Create a new RS232Command object
+	 * Create a new RS232Command object (with CRC check)
 	 * @param commandNumber The number of the command (an RS232CommandType)
 	 * @param datas The datas. Can be empty in some cases
 	 * @param crc The CRC as described in the docs (NMEA-0183)
 	 * @throws CrcException
 	 * @throws Exception
 	 */
-	public RS232Command(String commandNumber, String datas, byte crc) throws CrcException, Exception
+	public RS232Command(String commandNumber, String datas, byte crc) throws CrcException, IllegalArgumentException
 	{
-		if(commandNumber.length() == 2)
-			this._commandNumber = commandNumber;
-		else
-			throw new Exception("Command number does not have a length of 2");
-		
-		if(!RS232CommandType.isCommandNumber(commandNumber))
-			throw new Exception("Not a valid command number : " + commandNumber);
-		
+		this._commandNumber = RS232CommandType.valueOfByNum(commandNumber);
 		this._datas = datas;
 		
-		if(!RS232.checkCrc(datas, crc));
+		if(!RS232.checkCrc(datas, crc))
 			throw new CrcException(crc);
+	}
+	
+	/**
+	 * Create a new RS232Command object (without CRC check).
+	 *
+	 * @param commandNumber The number of the command (an RS232CommandType)
+	 * @param datas The datas. Can be empty in some cases
+	 */
+	public RS232Command(RS232CommandType commandNumber, String datas)
+	{
+		this._commandNumber = commandNumber;
+		this._datas = datas;
 	}
 	
 	/**
@@ -34,18 +39,18 @@ public class RS232Command
 	 *
 	 * @param chain The original string, as received by RS-232
 	 * @throws CrcException Thrown if the CRC is faulty
-	 * @throws Exception Can be thrown for various reasons, including when the String does not conform with the standards.
+	 * @throws IllegalArgumentException Can be thrown when the String does not conform with the standards.
 	 */
-	public RS232Command(String chain) throws CrcException, Exception
+	public RS232Command(String chain) throws CrcException, IllegalArgumentException
 	{
 		if(!chain.startsWith("$") && !chain.endsWith("\r\n"))
-			throw new Exception("The chain doesn't start with a $");
+			throw new IllegalArgumentException("The chain doesn't start with a $");
 		
 		// Extract the CRC
 		
 		// Extract the datas
 		this._datas = extractDatas(chain);
-		this._commandNumber = extractCommand(chain);
+		this._commandNumber = RS232CommandType.valueOfByNum(extractCommand(chain));
 		
 		if(!RS232.checkCrc(_datas, extractCrc(chain)))
 			throw new CrcException(extractCrc(chain));		
@@ -58,7 +63,7 @@ public class RS232Command
 	 */
 	public void sendNck(RS232 rs)
 	{
-		rs.sendNck(_commandNumber);
+		rs.sendNck(_commandNumber.toString());
 	}
 	
 	/**
