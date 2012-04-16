@@ -21,17 +21,27 @@ import java.io.IOException;
  */
 public class MainView extends JFrame {
 
-	Settings settings;
-	Compass compassPanel;
-	Inclinometer inclinometerPanel;
-	int degree = 90;
-	double w = ((100/Toolkit.getDefaultToolkit().getScreenSize().width)*this.getWidth());
+	private Settings settings;
+	
+	public Settings getSettings() {
+		return settings;
+	}
+
+
+	private Compass compassPanel;
+	private Inclinometer inclinometerPanel;
+	private int degree = 90;
+	private double w = ((100/Toolkit.getDefaultToolkit().getScreenSize().width)*this.getWidth());
+	private double h = ((100/Toolkit.getDefaultToolkit().getScreenSize().height)*this.getHeight());
 	
 	private double width()
 	{
-		System.out.print(this.getWidth() + "<--\n");
-		System.out.print(Toolkit.getDefaultToolkit().getScreenSize().width + "<---\n");
 		return this.getWidth();
+	}
+	
+	private double height()
+	{
+		return this.getHeight();
 	}
 	
 	/**
@@ -47,17 +57,18 @@ public class MainView extends JFrame {
 			public void actionPerformed (ActionEvent event)
 			{
 					w =  width() / Toolkit.getDefaultToolkit().getScreenSize().width;
-					System.out.print(w + "<-\n");
+					h =  height() / Toolkit.getDefaultToolkit().getScreenSize().height;
+					if(w>h)w=h;
 					if(w<.1)w=.1;
 					degree++;
 					compassPanel.setGreenNeedle(degree);
 					compassPanel.setRedNeedle(-degree);
 					compassPanel.setScale(w);
-					compassPanel.setLocation((int)(width()-10-compassPanel.getWidth()), 50);
+					compassPanel.setLocation((int)(width()-compassPanel.getWidth()), 50);
 					inclinometerPanel.setRedNeedle(degree);
 					inclinometerPanel.setGreenNeedle(-degree);
 					inclinometerPanel.setScale(w); //update() appelé auto
-					inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
+					inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight())); //TODO constante
 		    }
 		};
 		return new Timer (50, action);
@@ -72,9 +83,7 @@ public class MainView extends JFrame {
 		
 		inclinometerPanel = new Inclinometer(0.8);
 		inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
-		
-		//this.add(compassPanel);
-		//this.add(inclinometerPanel);
+
 		getLayeredPane().add(compassPanel);
 		getLayeredPane().add(inclinometerPanel);
 		
@@ -83,7 +92,7 @@ public class MainView extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.getContentPane().setBackground(Color.BLACK);
 		repaint();
-		//pack();
+		pack();
 		
 		Timer timer = createTimer();
 		timer.start();
@@ -178,17 +187,13 @@ public class MainView extends JFrame {
 			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
 			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
-			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
+			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*35));
 			coordinate.setForeground(Color.WHITE);
 			
 			this.add(coordinate, new Integer(3));
 			
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			this.repaint();
-			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
-			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
-			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*34));
-			coordinate.setForeground(Color.WHITE);
 		}
 		
 		@Override 
@@ -235,18 +240,16 @@ public class MainView extends JFrame {
 			}
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
-			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
+			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*35));
 		}
 		
 		public void setRedNeedle (double _angle) 
 		{
-            _angle = Math.toRadians(_angle);
             redAngle = _angle;
 		}
 		
 		public void setGreenNeedle (double _angle) 
 		{
-            _angle = Math.toRadians(_angle);
             greenAngle =_angle;
 		}
 		
@@ -288,7 +291,7 @@ public class MainView extends JFrame {
 			
 			public void rotate(double _angle)
 			{
-				angle = _angle;
+				angle = Math.toRadians(_angle);
 				repaint();
 			}
 			
@@ -370,7 +373,7 @@ public class MainView extends JFrame {
         }
 		
 		public void setScale (double _scale)
-		{
+		{ 
 			scale = _scale;
 			update();
 		}
@@ -473,8 +476,7 @@ public class MainView extends JFrame {
 	            Graphics2D g2 = (Graphics2D) g;
 	            g2.rotate(-angle, scale*5, needleImage.getHeight() / 2); //TODO voir valeur non constante
 	            g2.drawImage(needleImage, 0, 0, null); 
-	        }
-			
+	        }			
 		}
 	}
 }
