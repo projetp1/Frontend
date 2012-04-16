@@ -50,10 +50,10 @@ public class RS232Command
 		
 		// Extract the datas
 		this._datas = extractDatas(chain);
-		this._commandNumber = RS232CommandType.valueOfByNum(extractCommand(chain));
+		this._commandNumber = extractCommand(chain);
 		
 		if(!RS232.checkCrc(_datas, extractCrc(chain)))
-			throw new CrcException(extractCrc(chain));		
+			throw new CrcException(extractCrc(chain));	
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class RS232Command
 	 */
 	public void sendNck(RS232 rs)
 	{
-		rs.sendNck(_commandNumber.toString());
+		rs.sendNck(_commandNumber);
 	}
 	
 	/**
@@ -74,18 +74,23 @@ public class RS232Command
 	 */
 	public static String extractDatas(String chain)
 	{
-		return chain.substring(3, chain.indexOf("*"));
+		return chain.substring(chain.indexOf(",") + 1, chain.indexOf("*"));
 	}
 	
 	/**
 	 * Extract the command number from a received String.
 	 *
 	 * @param chain The String that was received via RS-232
-	 * @return The command number as a String.
+	 * @return The command number as an RS232CommandType.
 	 */
-	public static String extractCommand(String chain)
+	public static RS232CommandType extractCommand(String chain)
 	{
-		return chain.substring(1, 3);
+		try {
+			return RS232CommandType.valueOfByNum(chain.substring(1, chain.indexOf(",")));
+		} catch (IllegalArgumentException e) {
+			System.out.println("Not a valid command number !");
+			return null;
+		}
 	}
 	
 	/**
