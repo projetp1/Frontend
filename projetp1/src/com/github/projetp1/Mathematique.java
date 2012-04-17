@@ -1,8 +1,22 @@
+ /**=====================================================================*
+ | This file declares the following classes:
+ |    Mathematique
+ |
+ | Description of the class Mathematique :
+ |	  Use to calcul all the informations that the program needs
+ 	  e.g : Coordinates, Magnitude, Direction ....
+ |
+ | <p>Copyright : EIAJ, all rights reserved</p>
+ | @autor : Diego Antognini
+ | @version : 1.0
+ |
+ |
+ *========================================================================*/
 
 package com.github.projetp1;
 import java.lang.Math;
 
-public class stars_calculation 
+public class Mathematique 
 {
 	static final double pi = Math.PI;
 	static final double rad = pi/180.0;
