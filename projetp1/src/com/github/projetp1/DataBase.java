@@ -29,7 +29,7 @@ public class DataBase
 	private Connection connection;
 	private Statement statement;
 	private int argumentCount = 0;
-	private double dAL_KM = 9435053029704.605;//Source wikipédia
+	private double dAL_KM = 9435053029704.605;//Source wikipÃ©dia
 	public DataBase(String _sDataBase,String _sDelimiter) throws SQLException, Exception
 	{
 		Class.forName("org.sqlite.JDBC");//Load the drivers for SQLite
@@ -255,7 +255,7 @@ public class DataBase
 		if(_sText.length()==0 || _sText.charAt(0)!='!')
 		{
 			HashMap<String, String> hs_Out = new HashMap<String, String>(1);
-			hs_Out.put("0","Paramètre incorrecte");
+			hs_Out.put("0","ParamÃ¨tre incorrect");
 			return hs_Out;
 		}
 			
@@ -293,7 +293,7 @@ public class DataBase
 	}
 	
 	//private 
-	//Manque d'autres paramètres
+	//Manque d'autres paramÃ¨tres
 	public ArrayList<CelestialObject> starsForCoordinates (double _dLongitude, double _dLatitude) throws SQLException 
 	{
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
@@ -327,7 +327,7 @@ public class DataBase
 		double l_dLanMax = _dLatitude+0.5;
 		double l_dLanMin = _dLatitude-0.5;*/
 				
-		//Requête de test,il manque les calculs
+		//RequÃªte de test,il manque les calculs
 		//String l_sQuery = "SELECT * FROM stars WHERE x > " + l_dLonMin + " AND x < " + l_dLonMax + " AND y > " + l_dLanMin + " AND y > " + l_dLanMax + ";";
 		
 		boolean secured = false;

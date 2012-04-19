@@ -42,12 +42,12 @@ public class MainView extends JFrame {
 	 * 
 	 */
 	private Timer createTimer () {
-		// Cr�ation d'une instance de listener 
-		// associ�e au timer
+		// Création d'une instance de listener 
+		// associée au timer
 		
 		
 		ActionListener action = new ActionListener () {
-		    // M�thode appel�e � chaque tic du timer
+		    // Méthode appelée à chaque tic du timer
 			public void actionPerformed (ActionEvent event)
 			{
 					w =  width() / Toolkit.getDefaultToolkit().getScreenSize().width;
@@ -60,7 +60,7 @@ public class MainView extends JFrame {
 					compassPanel.setLocation((int)(width()-10-compassPanel.getWidth()), 50);
 					inclinometerPanel.setRedNeedle(degree);
 					inclinometerPanel.setGreenNeedle(-degree);
-					inclinometerPanel.setScale(w); //update() appel� auto
+					inclinometerPanel.setScale(w); //update() appelé auto
 					inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
 		    }
 		};
@@ -180,7 +180,7 @@ public class MainView extends JFrame {
 			this.add(greenNeedle, new Integer(2));
 
 			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
-			coordinate = new JLabel("-10�2'13'' N", JLabel.CENTER);
+			coordinate = new JLabel("-10:2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
 			coordinate.setForeground(Color.WHITE);
@@ -189,7 +189,7 @@ public class MainView extends JFrame {
 			
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			this.repaint();
-			coordinate = new JLabel("-10�2'13'' N", JLabel.CENTER);
+			coordinate = new JLabel("-10:2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
 			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*34));
 			coordinate.setForeground(Color.WHITE);
@@ -352,7 +352,7 @@ public class MainView extends JFrame {
 			this.add(greenNeedle, new Integer(2));
 
 			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
-			coordinate = new JLabel("-10�2'13'' N", JLabel.CENTER);
+			coordinate = new JLabel("-10:2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
 			coordinate.setForeground(Color.WHITE);
