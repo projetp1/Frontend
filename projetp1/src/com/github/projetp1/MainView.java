@@ -22,6 +22,10 @@ import java.io.IOException;
 public class MainView extends JFrame {
 
 	Settings settings;
+	public Settings getSettings() { return settings; }
+	Pic pic;
+	public Pic getPic() { return pic; }
+	
 	Compass compassPanel;
 	Inclinometer inclinometerPanel;
 	int degree = 90;
@@ -38,12 +42,12 @@ public class MainView extends JFrame {
 	 * 
 	 */
 	private Timer createTimer () {
-		// Création d'une instance de listener 
-		// associée au timer
+		// Crï¿½ation d'une instance de listener 
+		// associï¿½e au timer
 		
 		
 		ActionListener action = new ActionListener () {
-		    // Méthode appelée à chaque tic du timer
+		    // Mï¿½thode appelï¿½e ï¿½ chaque tic du timer
 			public void actionPerformed (ActionEvent event)
 			{
 					w =  width() / Toolkit.getDefaultToolkit().getScreenSize().width;
@@ -56,7 +60,7 @@ public class MainView extends JFrame {
 					compassPanel.setLocation((int)(width()-10-compassPanel.getWidth()), 50);
 					inclinometerPanel.setRedNeedle(degree);
 					inclinometerPanel.setGreenNeedle(-degree);
-					inclinometerPanel.setScale(w); //update() appelé auto
+					inclinometerPanel.setScale(w); //update() appelï¿½ auto
 					inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
 		    }
 		};
@@ -90,9 +94,9 @@ public class MainView extends JFrame {
 		
 		
 		settings = new Settings();
-		Serializer serializer = new Serializer();
-		settings.setPort("com4");
 		Serializer.serialize("settings.lol",settings);
+		
+		pic = new Pic();
 	}
 
 	public void showHelpView() {
@@ -176,7 +180,7 @@ public class MainView extends JFrame {
 			this.add(greenNeedle, new Integer(2));
 
 			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
-			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
+			coordinate = new JLabel("-10ï¿½2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
 			coordinate.setForeground(Color.WHITE);
@@ -185,7 +189,7 @@ public class MainView extends JFrame {
 			
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			this.repaint();
-			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
+			coordinate = new JLabel("-10ï¿½2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
 			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*34));
 			coordinate.setForeground(Color.WHITE);
@@ -348,7 +352,7 @@ public class MainView extends JFrame {
 			this.add(greenNeedle, new Integer(2));
 
 			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
-			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
+			coordinate = new JLabel("-10ï¿½2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
 			coordinate.setForeground(Color.WHITE);

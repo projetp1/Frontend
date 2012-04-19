@@ -76,7 +76,7 @@ public class Settings implements Serializable {
 		} 
 		else 
 		{
-			this.port = "com1"; // a faire un systeme de recherche des ports disponible
+			this.port = jssc.SerialPortList.getPortNames()[0]; //1er port RS232 de la machine
 			this.speed = 9600;	
 			this.databit = 8;
 			this.stopbit = 1;
