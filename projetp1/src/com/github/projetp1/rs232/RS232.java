@@ -6,10 +6,9 @@ package com.github.projetp1.rs232;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeoutException;
 
-import com.github.projetp1.MainView;
-import com.github.projetp1.Settings;
+import com.github.projetp1.*;
+import com.github.projetp1.Pic.PicMode;
 
 import jssc.*;
 
@@ -24,6 +23,8 @@ public class RS232 implements SerialPortEventListener {
 	protected Settings _settings;
 	/** The MainView */
 	protected MainView _mainview;
+	/** The object maintaining the PIC status */
+	protected Pic _pic;
 	/** The serial port object. */
 	private SerialPort _sp;
 	/** The queue of the latest received commands. */
@@ -50,6 +51,7 @@ public class RS232 implements SerialPortEventListener {
 	public RS232(MainView mainview) throws Exception, SerialPortException {
 		this._mainview = mainview;
 		this._settings = mainview.getSettings();
+		this._pic = mainview.getPic();
 
 		// Initialisation du sp
 		String port = _settings.getPort();
@@ -115,7 +117,7 @@ public class RS232 implements SerialPortEventListener {
 	 * @param command The command number
 	 */
 	public synchronized void sendNck(RS232CommandType command) {
-		if (command.equals(RS232CommandType.PIC_STATUS))
+		if (_pic.getMode() == PicMode.GUIDING || command.equals(RS232CommandType.PIC_STATUS))
 			return;
 		
 		try {
@@ -154,7 +156,7 @@ public class RS232 implements SerialPortEventListener {
 		timeoutTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				//Le PIC n'a pas répondu à temps : la liaison est perdue
+				// TODO: Le PIC n'a pas rÃ©pondu Ã  temps : la liaison est perdue
 			}
 		}, PINGTIMEOUT);
 	}
@@ -186,7 +188,6 @@ public class RS232 implements SerialPortEventListener {
 		if (!e.isRXCHAR()) // If no data is available
 			return;
 
-		// TODO: Try/Catch
 		String received;
 		try {
 			received = _sp.readString();
@@ -217,10 +218,10 @@ public class RS232 implements SerialPortEventListener {
 			}
 		}
 
-		/*
-		 * TODO: Call the delegate and inform him that new datas are available
-		 * if(newComs) { // Call the delegate } //
-		 */
+		if(newComs) {
+			// TODO: Notify the Pic object that new data is available
+		}
+		 
 	}
 
 	/**

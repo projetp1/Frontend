@@ -25,6 +25,9 @@ public class Pic {
 	 */
 	private double compass;
 	
+	private PicMode mode;
+	public enum PicMode { POINTING, GUIDING; }
+	
 	/**
 	 * 
 	 */
@@ -94,5 +97,13 @@ public class Pic {
 	 */
 	public void setCompass (double _compass) {
 		
+	}
+
+	public PicMode getMode() {
+		return mode;
+	}
+
+	public void setMode(PicMode mode) {
+		this.mode = mode;
 	}
 }
