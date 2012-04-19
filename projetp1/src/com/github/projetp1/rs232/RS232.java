@@ -39,7 +39,7 @@ public class RS232 implements SerialPortEventListener {
 	/** The delay between 2 pings */
 	private static final int PINGDELAY = 3000;
 	/** The delay after which a ping timeout occurs */
-	public static final int PINGTIMEOUT = 2000;
+	private static final int PINGTIMEOUT = 2000;
 	
 	/**
 	 * Instantiates a new RS232 object.
