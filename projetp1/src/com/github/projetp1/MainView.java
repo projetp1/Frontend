@@ -56,15 +56,15 @@ public class MainView extends JFrame {
 		    // Méthode appelée à chaque tic du timer
 			public void actionPerformed (ActionEvent event)
 			{
-					w =  width() / Toolkit.getDefaultToolkit().getScreenSize().width;
-					h =  height() / Toolkit.getDefaultToolkit().getScreenSize().height;
+					w =  width() * 0.15 / 345;
+					h =  height() * 0.30 / 350;
 					if(w>h)w=h;
 					if(w<.1)w=.1;
 					degree++;
 					compassPanel.setGreenNeedle(degree);
 					compassPanel.setRedNeedle(-degree);
 					compassPanel.setScale(w);
-					compassPanel.setLocation((int)(width()-compassPanel.getWidth()), 50);
+					compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
 					inclinometerPanel.setRedNeedle(degree);
 					inclinometerPanel.setGreenNeedle(-degree);
 					inclinometerPanel.setScale(w); //update() appelé auto
@@ -76,6 +76,11 @@ public class MainView extends JFrame {
 	      
 	public MainView() {
 
+		name = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
+		this.add(name);
+		
+		
+		
         this.setMinimumSize(new java.awt.Dimension(680, 420));
 
 		compassPanel = new Compass(0.8);
@@ -395,7 +400,7 @@ public class MainView extends JFrame {
 			greenNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
 			try
 			{
-				coordinate.setText(String.valueOf(redAngle%360));
+				coordinate.setText(String.valueOf(redAngle%90));
 			}
 			catch(Exception e)
 			{
@@ -479,4 +484,7 @@ public class MainView extends JFrame {
 	        }			
 		}
 	}
+	
+	private JLayeredPane leftPanel;
+	private JLabel name; 
 }
