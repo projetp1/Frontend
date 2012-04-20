@@ -20,14 +20,11 @@ import java.io.IOException;
  *
  */
 public class MainView extends JFrame {
-
 	private Settings settings;
+	public Settings getSettings() { return settings; }
+	private Pic pic;
+	public Pic getPic() { return pic; }
 	
-	public Settings getSettings() {
-		return settings;
-	}
-
-
 	private Compass compassPanel;
 	private Inclinometer inclinometerPanel;
 	private int degree = 90;
@@ -48,12 +45,12 @@ public class MainView extends JFrame {
 	 * 
 	 */
 	private Timer createTimer () {
-		// Création d'une instance de listener 
-		// associée au timer
+		// CrÃ©ation d'une instance de listener 
+		// associÃ©e au timer
 		
 		
 		ActionListener action = new ActionListener () {
-		    // Méthode appelée à chaque tic du timer
+		    // MÃ©thode appelÃ©e Ã  chaque tic du timer
 			public void actionPerformed (ActionEvent event)
 			{
 					w =  width() * 0.15 / 345;
@@ -67,7 +64,7 @@ public class MainView extends JFrame {
 					compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
 					inclinometerPanel.setRedNeedle(degree);
 					inclinometerPanel.setGreenNeedle(-degree);
-					inclinometerPanel.setScale(w); //update() appelé auto
+					inclinometerPanel.setScale(w); //update() appelÃ© auto
 					inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight())); //TODO constante
 		    }
 		};
@@ -76,7 +73,7 @@ public class MainView extends JFrame {
 	      
 	public MainView() {
 
-		name = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
+		name = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />CoordonnÃ©es<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />DiamÃ¨tre<br />142983 km<br /><br />TempÃ©rature<br />-161Â°C<br /><br />Couleur<br />Beige</html>");
 		this.add(name);
 		
 		
@@ -104,9 +101,9 @@ public class MainView extends JFrame {
 		
 		
 		settings = new Settings();
-		Serializer serializer = new Serializer();
-		settings.setPort("com4");
 		Serializer.serialize("settings.lol",settings);
+		
+		pic = new Pic();
 	}
 
 	public void showHelpView() {
@@ -190,7 +187,7 @@ public class MainView extends JFrame {
 			this.add(greenNeedle, new Integer(2));
 
 			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
-			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
+			coordinate = new JLabel("-10:2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*35));
 			coordinate.setForeground(Color.WHITE);
@@ -356,7 +353,7 @@ public class MainView extends JFrame {
 			this.add(greenNeedle, new Integer(2));
 
 			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
-			coordinate = new JLabel("-10°2'13'' N", JLabel.CENTER);
+			coordinate = new JLabel("-10:2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
 			coordinate.setForeground(Color.WHITE);
