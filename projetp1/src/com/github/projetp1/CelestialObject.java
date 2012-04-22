@@ -40,7 +40,7 @@ public class CelestialObject {
 
 	/**
 	 * CelestialObject
-	 * It is the constructor
+	 * Constructor
 	 * @param _id
 	 * @param _StarId
 	 * @param _HIP
