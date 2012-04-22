@@ -69,7 +69,7 @@ public class DataBase
 	/** 
 	 * createConnection
 	 * After open a connection, you have to load the database and create a connection to this
-	 *@return return a Connection objet that has loaded the database
+	 *@return return a Connection object that has loaded the database
 	 */
 	private Connection createConnection() throws SQLException
 	{
@@ -90,7 +90,7 @@ public class DataBase
 	 * executeRegex
 	 * Used for execute a Regex. For example when you want to know if the is a unity for the value 
 	 * @param string _sRegex : It's the regex that the function will use
-	 * @param string _sString : It's the string that will be analyse by the regex
+	 * @param string _sString : It's the string that will be analyze by the regex
 	 * @return : Return a boolean with true if the regex has found the string or return false
 	 */
 	private boolean executeRegex(String _sRegex,String _sString)
@@ -104,8 +104,8 @@ public class DataBase
 	/** 
 	 * isDouble
 	 * Say if it's a Double or not with a regex.
-	 * @param _sString : It's the string that will be analyse
-	 * @return : Returne a boolean with true if the regex has found that the string is a double or return false
+	 * @param _sString : It's the string that will be analyze
+	 * @return : Return a boolean with true if the regex has found that the string is a double or return false
 	 */
 	private boolean isDouble(String _sString)
 	{
@@ -122,7 +122,7 @@ public class DataBase
 	private String addFieldsQuery(String _sFields[])
 	{
 		String l_sOut = "";
-		//Analyse all the array and add the fields to the query
+		//Analyze all the array and add the fields to the query
 		for(int i = 0;i<_sFields.length;i++)
 		{
 			l_sOut += _sFields[i];
@@ -141,7 +141,7 @@ public class DataBase
 	private String addTableQuery(String _sTable[])
 	{
 		String l_sOut = " FROM ";
-		//Analyse all the array and had the tables to the query
+		//Analyze all the array and had the tables to the query
 		for(int i = 0;i<_sTable.length;i++)
 		{
 			l_sOut += _sTable[i];
@@ -161,7 +161,7 @@ public class DataBase
 	{
 		String l_sOut = " WHERE ";
 
-		//Analyse all the array and add the where clause to the query
+		//Analyze all the array and add the where clause to the query
 		//If secured = true, the function will prepared a prepared statement, replace all the value by "?"
 		for(int i=0;i<_sWhere.length;i++)
 		{
@@ -191,7 +191,7 @@ public class DataBase
 	{
 		String l_sOut = " ORDER BY ";
 		
-		//Analyse all the array and add the ORDER BY clause to the query
+		//Analyze all the array and add the ORDER BY clause to the query
 		for(int i=0;i<_sOrderBy.length;i++)
 		{
 			l_sOut += " " + _sOrderBy[i];
@@ -238,7 +238,7 @@ public class DataBase
 		l_sQuery += addLimitQuery(_Limit);
 		l_sQuery += ";";
 		
-		//If we want to have a preparte statement, we have to replace all value by the real value in s_Where[][]
+		//If we want to have a prepare statement, we have to replace all value by the real value in s_Where[][]
 		if(_bsecured)
 		{
 			PreparedStatement pStatement = this.connection.prepareStatement(l_sQuery);
@@ -261,7 +261,7 @@ public class DataBase
 	 */
 	private HashMap<String, String> decryptText(String _sText)
 	{
-		//If the string is null or haven't a "!" return avec wrong hashmap
+		//If the string is null or haven't a "!" return a wrong hashmap
 		if(_sText.length()==0 || _sText.charAt(0)!='!')
 		{
 			HashMap<String, String> l_hs_Out = new HashMap<String, String>(1);
@@ -277,7 +277,7 @@ public class DataBase
 		String[] l_sString = _sText.split(l_sSeparateur);
 		HashMap<String, String> hs_Out = new HashMap<String, String>(l_sString.length);
 		
-		//Analyse all the string
+		//Analyze all the string
 		for(int i = 0;i<l_sString.length;i++)
 		{
 			l_sTemp = l_sString[i];
@@ -303,10 +303,10 @@ public class DataBase
 	}
 	
 	//private 
-	//Manque d'autres paramètres
+	/*Manque d'autres paramètres
 	public ArrayList<CelestialObject> starsForCoordinates (double _dLongitude, double _dLatitude) throws SQLException 
 	{
-		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
+		/*ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
 		int l_id;
 		int l_StarId;
@@ -339,20 +339,20 @@ public class DataBase
 				
 		//Requête de test,il manque les calculs
 		//String l_sQuery = "SELECT * FROM stars WHERE x > " + l_dLonMin + " AND x < " + l_dLonMax + " AND y > " + l_dLanMin + " AND y > " + l_dLanMax + ";";
-		
+		/*
 		boolean secured = false;
 		
 		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
 
 		String where[][] = {{"id","<","1100"},
 				{"ProperName","LIKE","A%"}};
-		
+		/*
 		//Injection SQL
 		/*String where[][] = {{"id","=","'UNION SELECT * FROM stars WHERE id = 1 ;--"},
 				{"ProperName","LIKE","A%"}};
 		secured = true;
 		*/
-		
+		/*
 		String orderby[]={"id","ProperName","DESC"}; 
 		
 		int limit[] = {0,1};
@@ -398,12 +398,12 @@ public class DataBase
 		
 		return al_stars;		
 	}
-	
+	/*
 	/**
 	 * starsForText
 	 * Search all the stars that has all the condition of the string
-	 * @param String[] _searchText : The string that will be analyse by the fonction decryptText
-	 * @return : Return an arraylyst of ClestialObject.
+	 * @param String[] _searchText : The string that will be analyze by the function decryptText
+	 * @return : Return an arraylist of ClestialObject.
 	 * @throws SQLException
 	 */
 	public ArrayList<CelestialObject> starsForText (String _searchText) throws SQLException 
