@@ -1,9 +1,9 @@
  /**=====================================================================*
  | This file declares the following classes:
- |    Mathematique
+ |    Mathematics
  |
- | Description of the class Mathematique :
- |	  Use to calcul all the informations that the program needs
+ | Description of the class Mathematics :
+ |	  Use to calculate all the informations that the program needs
  	  e.g : Coordinates, Magnitude, Direction ....
  |
  | <p>Copyright : EIAJ, all rights reserved</p>
@@ -17,7 +17,7 @@ package com.github.projetp1;
 import java.lang.Math;
 import java.util.Date;
 
-public class Mathematic 
+public class Mathematics 
 {
 	static private final double kpi = Math.PI;
 	static private final double krad = kpi/180.0;
@@ -62,7 +62,7 @@ public class Mathematic
 	 * @param double _lon : It's the longitude of the star's pointeur
 	 */
 	@SuppressWarnings({ "deprecation", "static-access" })
-	public Mathematic(Date _date,double _lat, double _lon)
+	public Mathematics(Date _date,double _lat, double _lon)
 	{
 		this.hour = _date.getHours();
 		this.minute = _date.getMinutes();
