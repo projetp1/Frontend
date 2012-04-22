@@ -60,8 +60,8 @@ public class Mathematics
 	 * @param Date _date : Date of the computer. Will be use to calculate the sideral Time
 	 * @param double _lat : It's the latitude of the star's pointer
 	 * @param double _lon : It's the longitude of the star's pointer
+	 * @deprecated methods Date.get*()
 	 */
-	@SuppressWarnings({ "deprecation", "static-access" })
 	public Mathematics(Date _date,double _lat, double _lon)
 	{
 		this.hour = _date.getHours();
