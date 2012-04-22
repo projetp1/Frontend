@@ -28,7 +28,7 @@ public class Mathematics
 	static private final double knumber_of_day_in_one_month = 30.6001;//average of the day in one month about X000 years
 	static private final double kinitial_year = 4716.0;
 	static private final double kadditionnal_year_of_gregorian_calendar = 1900.0;
-	static private final double kadditionnal_monthe_of_Date_object = 1.0;
+	static private final double kadditionnal_month_of_Date_object = 1.0;
 	static private final double kadditionnal_day_of_Date_object = 0.0;
 	
 	private double hour;
@@ -37,7 +37,7 @@ public class Mathematics
 	private double GMT;
 	
 	private double day;
-	private double monthe;
+	private double month;
 	private double year;
 	
 	private double date_JulianCalendar;
@@ -55,11 +55,11 @@ public class Mathematics
 	private double angle; //angle_sideral_time+angle_our
 	
 	/** 
-	 * Mathematique
+	 * Mathematics
 	 * Constructor
 	 * @param Date _date : Date of the computer. Will be use to calculate the sideral Time
-	 * @param double _lat : It's the latitude of the star's pointeur
-	 * @param double _lon : It's the longitude of the star's pointeur
+	 * @param double _lat : It's the latitude of the star's pointer
+	 * @param double _lon : It's the longitude of the star's pointer
 	 */
 	@SuppressWarnings({ "deprecation", "static-access" })
 	public Mathematics(Date _date,double _lat, double _lon)
@@ -73,7 +73,7 @@ public class Mathematics
 	    this.GMT = this.hour-Integer.parseInt(l_hour_GMT);
 		
 	    this.day = this.kadditionnal_day_of_Date_object+_date.getDate();
-	    this.monthe = this.kadditionnal_monthe_of_Date_object+_date.getMonth();
+	    this.month = this.kadditionnal_month_of_Date_object+_date.getMonth();
 	    this.year = this.kadditionnal_year_of_gregorian_calendar+_date.getYear();
 	    
 		this.latitude = _lat;
@@ -82,24 +82,24 @@ public class Mathematics
 	
 	/** 
 	 * calculate_all
-	 * Calculs all the informations that the program needs
+	 * Calculates all the informations that the program needs
 	 */
 	public void calculate_all()
 	{
 		this.declination = calculate_declination(this.latitude,this.longitude);
 		this.ascension = calculate_ascension();
 		
-		this.date_JulianCalendar = 	greg2julien(this.day,this.monthe,this.year,this.hour,this.minute,this.second);
-		this.sideral_time = calculate_sideral_time(this.day,this.monthe,this.year,this.hour,this.minute,this.second);
+		this.date_JulianCalendar = 	greg2julian(this.day,this.month,this.year,this.hour,this.minute,this.second);
+		this.sideral_time = calculate_sideral_time(this.day,this.month,this.year,this.hour,this.minute,this.second);
 		
-		this.angle_sideral_time = calculate_siderial_hour_angle(this.sideral_time);
+		this.angle_sideral_time = calculate_sideral_hour_angle(this.sideral_time);
 		this.angle_hour = calculate_hour_angle(this.hour,this.minute,this.GMT);
 		this.angle = this.angle_hour+this.angle_sideral_time;
 		
 		this.hour_angle_star = this.angle - this.ascension + this.longitude;
 		
 		this.height = calculate_height(this.declination,this.latitude,this.hour_angle_star);
-		this.azimut = calculate_azimut(this.declination,this.latitude,this.height,this.hour_angle_star);
+		this.azimut = calculate_azimuth(this.declination,this.latitude,this.height,this.hour_angle_star);
 	}
 	
 	/** 
@@ -113,9 +113,9 @@ public class Mathematics
 		System.out.println("Seconde : " + this.second);
 		System.out.println("GMT : " + this.GMT);
 		System.out.println("Day : " + this.day);
-		System.out.println("Monthe : " + this.monthe);
+		System.out.println("month : " + this.month);
 		System.out.println("Year : " + this.year);
-		System.out.println("-->" + this.day + "/" + this.monthe + "/" + this.year + "\t" + this.hour + ":" + this.minute + ":" + this.second);
+		System.out.println("-->" + this.day + "/" + this.month + "/" + this.year + "\t" + this.hour + ":" + this.minute + ":" + this.second);
 		
 		if(this.GMT>=0)
 			System.out.print("GMT+" + this.GMT);
@@ -152,17 +152,22 @@ public class Mathematics
 	
 	/** 
 	 * calculate_ascension
-	 * Calculates the 
-	 * @param Date _date : Date of the computer. Will be use to calculate the sideral Time
-	 * @param double _lat : It's the latitude of the star's pointeur
-	 * @param double _lon : It's the longitude of the star's pointeur
-	 * @return : Return a boolean with true if the regex has found the string or return false
+	 * Calculates the right ascension
+	 * @return : Return a double that's the result
 	 */
 	private double calculate_ascension()
 	{
 		return 0;
 	}
 	
+	/** 
+	 * hms
+	 * Converts ° ' '' to degree
+	 * @param double _hour : The hour of the value
+	 * @param double _minute : The minute of the value
+	 * @param double _second : The second of the value
+	 * @return : Return a double that's the result
+	 */
 	private double hms (double _hour,double _minute,double _second)
 	{
 		double sign;
@@ -170,18 +175,43 @@ public class Mathematics
 		return sign*(Math.abs(_hour)+Math.abs(_minute)/60.0+Math.abs(_second)/36000);
 	}
 	
+	/** 
+	 * fraction_of_day
+	 * Calculates the fraction of day about a time
+	 * @param double _hour : The hour of the value
+	 * @param double _minute : The minute of the value
+	 * @param double _second : The second of the value
+	 * @return : Return a double that's the result
+	 */
 	private double fraction_of_day(double _hour,double _minute,double _second)
 	{
 		return _hour/24 + _minute/(24*60) + _second/(24*60*60);
 	}
 	
+	/** 
+	 * calculate_height
+	 * Calculates the height of the fixed point
+	 * @param double _dec : The declination
+	 * @param double _lat : The latitude
+	 * @param double _star_angle : The star's angle
+	 * @return : Return a double that's the result
+	 */
 	private double calculate_height(double _dec,double _lat,double _star_angle)
 	{
 		double l_sinh = Math.sin(_dec)*Math.sin(_lat)-Math.cos(_dec)*Math.cos(_lat)*Math.cos(_star_angle);
 		return Math.asin(l_sinh);
 	}
 	
-	private double calculate_azimut(double _dec,double _lat,double _height,double _star_angle)
+	/** 
+	 * calculate_azimu
+	 * Calculates the azimuth
+	 * @param double _dec : The declination
+	 * @param double _lat : The latitude
+	 * @param double _height : The height
+	 * @param double _star_angle : The star's angle
+	 * @return : Return a double that's the result
+	 */
+	private double calculate_azimuth(double _dec,double _lat,double _height,double _star_angle)
 	{
 		double l_cos_az = (Math.sin(_dec)-Math.sin(_lat)*Math.sin(_height))/(Math.cos(_lat)*Math.cos(_height));
 		double l_sin_a = (Math.cos(_dec)*Math.sin(_star_angle))/Math.cos(_height);
@@ -193,7 +223,18 @@ public class Mathematics
 				
 	}
 
-	private double greg2julien (double _day,double _month,double _year,double _hour,double _minute,double _second)
+	/** 
+	 * greg2julian
+	 * Converts a gregorian date to a julian date
+	 * @param double _day : The day
+	 * @param double _month : The month
+	 * @param double _year : The year
+	 * @param double _hour : The hour
+	 * @param double _minute : The minute
+	 * @param double _seconde : The second
+	 * @return : Return a double that's the result
+	 */
+	private double greg2julian (double _day,double _month,double _year,double _hour,double _minute,double _second)
 	{
 		if(_month<3)
 		{
@@ -211,19 +252,44 @@ public class Mathematics
 				_day+l_t+l_b-1524.5);
 	}
 	
-	private double calculate_siderial_hour_angle(double _sideral_time)
+	/** 
+	 * calculate_sideral_hour_angle
+	 * Calculates the sideral hour angle
+	 * @param double _sideral_time : The sideral time
+	 * @return : Return a double that's the result
+	 */
+	private double calculate_sideral_hour_angle(double _sideral_time)
 	{
 		return 2.0*kpi*_sideral_time/fraction_of_day(23,56,4);
 	}
 	
+	/** 
+	 * calculate_hour_angle
+	 * Calculates the hours angle
+	 * @param double _hour : The hour
+	 * @param double _min : The minute
+	 * @param double _GMT : The GMT zone
+	 * @return : Return a double that's the result
+	 */
 	private double calculate_hour_angle(double _hour,double _min,double _GMT)
 	{
 		return (_hour-12+_min/60-_GMT)*2*kpi*fraction_of_day(23,56,4);
 	}
 	
+	/** 
+	 * calculate_sideral_time
+	 * Calculates the sideral time
+	 * @param double _day : The day
+	 * @param double _month : The month
+	 * @param double _year : The year
+	 * @param double _hour : The hour
+	 * @param double _min : The minute
+	 * @param double _second : The second
+	 * @return : Return a double that's the result
+	 */	
 	private double calculate_sideral_time(double _day,double _month,double _year,double _hour,double _minute,double _second)
 	{
-		double l_JJ = greg2julien(_day,_month,_year,_hour,_minute,_second);
+		double l_JJ = greg2julian(_day,_month,_year,_hour,_minute,_second);
 		double l_T = (l_JJ-2451545.0)/36525.0;
 		double l_H1 = 24110.54841 + 8640184.812866*l_T + 0.093104*l_T*l_T - 0.0000062*l_T*l_T*l_T;
 		double l_HSH = l_H1/3600.0;
@@ -231,130 +297,174 @@ public class Mathematics
 		return l_HS;
 	}
 
+	/**
+	 * getHour
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getHour() {
 		return hour;
 	}
 	
+	/**
+	 * getMinute
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getMinute() {
 		return minute;
 	}
 	
+	/**
+	 * getSecond
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getSecond() {
 		return second;
 	}
 	
+	/**
+	 * getGMT
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getGMT() {
 		return GMT;
 	}
 	
+	/**
+	 * getDay
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getDay() {
 		return day;
 	}
 	
-	public double getMonthe() {
-		return monthe;
+	/**
+	 * getMonth
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getMonth() {
+		return month;
 	}
 	
+	/**
+	 * getYear
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getYear() {
 		return year;
 	}
 	
+	/**
+	 * getDate_JulianCalendar
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getDate_JulianCalendar() {
 		return date_JulianCalendar;
 	}
 	
+	/**
+	 * getSideral_time
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getSideral_time() {
 		return sideral_time;
 	}
 	
+	/**
+	 * getLatitude
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getLatitude() {
 		return latitude;
 	}
 	
+	/**
+	 * getLongitude
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getLongitude() {
 		return longitude;
 	}
 	
+	/**
+	 * getDeclination
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getDeclination() {
 		return declination;
 	}
 	
+	/**
+	 * getAscension
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getAscension() {
 		return ascension;
 	}
 	
-	public double getAzimut() {
+	/**
+	 * getAzimuth
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getAzimuth() {
 		return azimut;
 	}
 	
+	/**
+	 * getHeight
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getHeight() {
 		return height;
 	}
 	
+	/**
+	 * getHour_angle_star
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getHour_angle_star() {
 		return hour_angle_star;
 	}
 	
+	/**
+	 * getAngle_sideral_time
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getAngle_sideral_time() {
 		return angle_sideral_time;
 	}
 	
+	/**
+	 * getAngle_hour
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getAngle_hour() {
 		return angle_hour;
 	}
 	
+	/**
+	 * getAngle
+	 * getter of the private value
+	 * @return the private variable
+	 */
 	public double getAngle() {
-	return angle;
-}
-
-	
-	public static double getkpi() {
-		return kpi;
+		return angle;
 	}
-
-	
-	public static double getkrad() {
-		return krad;
-	}
-
-	
-	public static double getkdeg() {
-		return kdeg;
-	}
-	
-
-	public static double getkAU() {
-		return kAU;
-	}
-	
-
-	public static double getNumberOfDayInOneYear() {
-		return knumber_of_day_in_one_year;
-	}
-	
-
-	public static double getNumberOfDayInOneMonth() {
-		return knumber_of_day_in_one_month;
-	}
-	
-
-	public static double getInitialYear() {
-		return kinitial_year;
-	}
-	
-
-	public static double getAdditionnalYearOfGregorianCalendar() {
-		return kadditionnal_year_of_gregorian_calendar;
-	}
-	
-
-	public static double getAdditionnalMontheOfDateObject() {
-		return kadditionnal_monthe_of_Date_object;
-	}
-	
-
-	public static double getAdditionnalDayOfDateObject() {
-		return kadditionnal_day_of_Date_object;
-	}
-
 }
