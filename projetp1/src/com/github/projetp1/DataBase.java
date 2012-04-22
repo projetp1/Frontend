@@ -28,16 +28,26 @@ public class DataBase
 	private String sDelimiter;
 	private Connection connection;
 	private Statement statement;
-	private int argumentCount = 0;
-	private double dAL_KM = 9435053029704.605;//Source wikipédia
+	
+	private int argumentCount;
+	static private final double kdAL_KM = 9435053029704.605;//Source wikipédia
+	
+	/** 
+	 * Database
+	 * Constructor
+	 * @param string _sDataBase : It's the name of the database that will use
+	 * @param string _sDelimiter : It's the delimiter of the string of the searchbar
+	 */
 	public DataBase(String _sDataBase,String _sDelimiter) throws SQLException, Exception
 	{
 		Class.forName("org.sqlite.JDBC");//Load the drivers for SQLite
+		this.argumentCount = 0;
 		this.sDataBase = _sDataBase;
 		this.sDelimiter = _sDelimiter;
 		this.connection = createConnection();
 		this.statement = createStatement();
 	}
+	
 	/** 
 	 * closeConnection
 	 *  You can close the connection of a connection object
@@ -147,7 +157,7 @@ public class DataBase
 	 * @param boolean secured : True if you want a prepared statement or false for a basic statement
 	 * @return : Return a string that contains the clause WHERE for the query
 	 */
-	private String addWhereQuery(String _sWhere[][],boolean secured)
+	private String addWhereQuery(String _sWhere[][],boolean _bsecured)
 	{
 		String l_sOut = " WHERE ";
 
@@ -156,7 +166,7 @@ public class DataBase
 		for(int i=0;i<_sWhere.length;i++)
 		{
 			l_sOut += _sWhere[i][0] +  " " +_sWhere[i][1];
-			if(secured)
+			if(_bsecured)
 			{
 				l_sOut += " ? ";
 				//Count the element,because after you have to replace these values
@@ -215,7 +225,7 @@ public class DataBase
 	 * @return
 	 * @throws SQLException
 	 */
-	private ResultSet selectQuery(String _sFields[],String _sTable[],String _sWhere[][],String _sOrderBy[],int _Limit[],boolean secured) throws SQLException
+	private ResultSet selectQuery(String _sFields[],String _sTable[],String _sWhere[][],String _sOrderBy[],int _Limit[],boolean _bsecured) throws SQLException
 	{
 		String l_sQuery;
 		
@@ -223,13 +233,13 @@ public class DataBase
 		l_sQuery = "SELECT ";
 		l_sQuery += addFieldsQuery(_sFields);
 		l_sQuery += addTableQuery(_sTable);
-		l_sQuery += addWhereQuery(_sWhere,secured);
+		l_sQuery += addWhereQuery(_sWhere,_bsecured);
 		l_sQuery += addOrderByQuery(_sOrderBy);
 		l_sQuery += addLimitQuery(_Limit);
 		l_sQuery += ";";
 		
 		//If we want to have a preparte statement, we have to replace all value by the real value in s_Where[][]
-		if(secured)
+		if(_bsecured)
 		{
 			PreparedStatement pStatement = this.connection.prepareStatement(l_sQuery);
 			for(int i = 0;i<this.argumentCount;i++)
@@ -254,9 +264,9 @@ public class DataBase
 		//If the string is null or haven't a "!" return avec wrong hashmap
 		if(_sText.length()==0 || _sText.charAt(0)!='!')
 		{
-			HashMap<String, String> hs_Out = new HashMap<String, String>(1);
-			hs_Out.put("0","Paramètre incorrect");
-			return hs_Out;
+			HashMap<String, String> l_hs_Out = new HashMap<String, String>(1);
+			l_hs_Out.put("0","Paramètre incorrect");
+			return l_hs_Out;
 		}
 			
 		String l_sSeparateur = this.sDelimiter;
@@ -279,7 +289,7 @@ public class DataBase
 				l_sValue = l_sTemp.substring(l_sTemp.indexOf(' '),l_sTemp.length()-2);
 				l_sUnit = l_sTemp.substring(l_sTemp.length()-2, l_sTemp.length());
 				if(l_sUnit.matches("(km)$")){//Convert the km to year light
-					double l_dAnneeLumiere = Double.parseDouble(l_sValue)/dAL_KM;
+					double l_dAnneeLumiere = Double.parseDouble(l_sValue)/kdAL_KM;
 					l_sValue = String.valueOf(l_dAnneeLumiere);
 				}
 			}
