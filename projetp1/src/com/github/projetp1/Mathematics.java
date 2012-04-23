@@ -41,13 +41,14 @@ public class Mathematics
 	private double day;
 	private double month;
 	private double year;
-
+	
 	private double date_JulianCalendar;
 	private double sideral_time;
 	private double latitude;
 	private double longitude;
 	private double declination;
 	private double ascension;
+
 	private double azimuth;
 	private double height;
 
@@ -92,9 +93,6 @@ public class Mathematics
 	 */
 	public void calculate_all()
 	{
-		//this.declination = calculate_declination(this.latitude, this.longitude);
-		//this.ascension = calculate_ascension();
-
 		this.date_JulianCalendar = greg2julian(this.day, this.month, this.year, this.hour,this.minute, this.second);
 		this.sideral_time = calculate_sideral_time(this.day, this.month, this.year, this.hour,this.minute, this.second);
 
@@ -118,6 +116,7 @@ public class Mathematics
 	{
 		System.out.println("X : " + this.X);
 		System.out.println("Y : " + this.Y);
+		
 		System.out.println("Hour : " + this.hour);
 		System.out.println("Minute : " + this.minute);
 		System.out.println("Seconde : " + this.second);
@@ -125,18 +124,19 @@ public class Mathematics
 		System.out.println("Day : " + this.day);
 		System.out.println("month : " + this.month);
 		System.out.println("Year : " + this.year);
-		System.out.println("-->" + this.day + "/" + this.month + "/" + this.year + "\t" + this.hour
-				+ ":" + this.minute + ":" + this.second);
 
-		if (this.GMT >= 0)
+		System.out.println("-->" + this.day + "/" + this.month + "/" + this.year + "\t" + this.hour + ":" + this.minute + ":" + this.second);
+		
+		if(this.GMT>=0)
 			System.out.print("GMT+" + this.GMT);
 		else
-			System.out.print("GMT-" + this.GMT);
+			System.out.print("GMT-" + this.GMT);	
 
 		System.out.println("Latitude : " + this.latitude);
 		System.out.println("Longitude : " + this.longitude);
 		System.out.println("Delination : " + this.declination);
 		System.out.println("Ascension : " + this.ascension);
+
 		System.out.println("Azimuth : " + this.azimuth);
 		System.out.println("Height : " + this.height);
 
@@ -163,31 +163,9 @@ public class Mathematics
 		return l_y*Math.sin(_dAzimuth);
 	}
 	
-	/**
-	 * calculate_declination Calculates the declination of a position(longitude+latitude)
-	 * 
-	 * @param double _dLat : It's the latitude of the star's pointer
-	 * @param double _Lon : It's the longitude of the star's pointer
-	 * @return : Return a double that's the result
-	 */
-	/*private double calculate_declination(double _dLat, double _Lon)
-	{
-		return 0;
-	}*/
-
-	/**
-	 * calculate_ascension Calculates the right ascension
-	 * 
-	 * @return : Return a double that's the result
-	 */
-	/*private double calculate_ascension()
-	{
-		return 0;
-	}*/
-
-	/**
-	 * hms Converts ° ' '' to degree
-	 * 
+	/** 
+	 * hms
+	 * Converts ° ' '' to degree
 	 * @param double _hour : The hour of the value
 	 * @param double _minute : The minute of the value
 	 * @param double _second : The second of the value
@@ -200,9 +178,9 @@ public class Mathematics
 		return sign * (Math.abs(_hour) + Math.abs(_minute) / 60.0 + Math.abs(_second) / 36000);
 	}
 
-	/**
-	 * fraction_of_day Calculates the fraction of day about a time
-	 * 
+	/** 
+	 * fraction_of_day
+	 * Calculates the fraction of day about a time
 	 * @param double _hour : The hour of the value
 	 * @param double _minute : The minute of the value
 	 * @param double _second : The second of the value
@@ -227,12 +205,12 @@ public class Mathematics
 				* Math.cos(_star_angle);
 		return Math.asin(l_sinh);
 	}
-
-	/**
-	 * calculate_azimu Calculates the azimuth
-	 * 
+	
+	/** 
+	 * calculate_azimu
+	 * Calculates the azimuth
 	 * @param double _dec : The declination
-	 * @param double _dLat : The latitude
+	 * @param double _lat : The latitude
 	 * @param double _height : The height
 	 * @param double _star_angle : The star's angle
 	 * @return : Return a double that's the result
@@ -288,9 +266,9 @@ public class Mathematics
 		return 2.0 * kpi * _sideral_time / hms(23, 56, 4);
 	}
 
-	/**
-	 * calculate_hour_angle Calculates the hours angle
-	 * 
+	/** 
+	 * calculate_hour_angle
+	 * Calculates the hours angle
 	 * @param double _hour : The hour
 	 * @param double _min : The minute
 	 * @param double _GMT : The GMT zone
@@ -301,9 +279,9 @@ public class Mathematics
 		return (_hour - 12 + _min / 60 - _GMT) * 2 * kpi * hms(23, 56, 4);
 	}
 
-	/**
-	 * calculate_sideral_time Calculates the sideral time
-	 * 
+	/** 
+	 * calculate_sideral_time
+	 * Calculates the sideral time
 	 * @param double _day : The day
 	 * @param double _month : The month
 	 * @param double _year : The year
@@ -312,8 +290,7 @@ public class Mathematics
 	 * @param double _second : The second
 	 * @return : Return a double that's the result
 	 */
-	static private double calculate_sideral_time(double _day, double _month, double _year, double _hour,
-			double _minute, double _second)
+	static private double calculate_sideral_time(double _day, double _month, double _year, double _hour,double _minute, double _second)
 	{
 		double l_JJ = greg2julian(_day, _month, _year, _hour, _minute, _second);
 		double l_T = (l_JJ - 2451545.0) / 36525.0;
@@ -321,6 +298,7 @@ public class Mathematics
 				* l_T * l_T;
 		double l_HSH = l_H1 / 3600.0;
 		double l_HS = (l_HSH / 24 - (int) (l_HSH / 24)) * 24;
+
 		return l_HS;
 	}
 

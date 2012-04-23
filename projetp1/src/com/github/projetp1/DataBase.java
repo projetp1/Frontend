@@ -306,6 +306,7 @@ public class DataBase
 		return hs_Out;
 	}
 	
+
 	/** 
 	 * starsForCoordinates
 	 * Search all the stars that could be in the hemisphere
@@ -341,7 +342,7 @@ public class DataBase
 		if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
 			return null;
 
-		boolean secured = false;
+		boolean secured = true;
 		
 		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
 
@@ -414,7 +415,7 @@ public class DataBase
 		
 		return al_stars;		
 	}
-	
+	/*
 	/**
 	 * starsForText
 	 * Search all the stars that has all the condition of the string
