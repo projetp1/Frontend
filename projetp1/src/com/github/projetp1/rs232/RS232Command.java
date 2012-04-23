@@ -3,7 +3,9 @@ package com.github.projetp1.rs232;
 public class RS232Command
 {
 	private RS232CommandType _commandNumber;
+	public RS232CommandType getCommandNumber() { return _commandNumber; }
 	private String _datas;
+	public String getDatas() { return _datas; }
 	
 	/**
 	 * Create a new RS232Command object (with CRC check)
