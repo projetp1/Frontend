@@ -26,7 +26,21 @@ public class Pic {
 	private double compass;
 	
 	private PicMode mode;
-	public enum PicMode { POINTING, GUIDING; }
+	
+	public enum PicMode {
+		/**
+		 * The default mode : point, click and see
+		 */
+		POINTING, 
+		/**
+		 * The searching star mode
+		 */
+		GUIDING, 
+		/**
+		 * The simulation mode. No PIC is connected, user commands come from the keyboard
+		 */
+		SIMULATION
+		; }
 	
 	/**
 	 * 
