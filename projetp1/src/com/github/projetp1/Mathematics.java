@@ -25,38 +25,38 @@ public class Mathematics
 	static private final double rad2deg = 180.0 / pi;
 
 	//Constants for Julian Date
-	static private final double knumber_of_day_in_one_year = 365.25;
-	static private final double knumber_of_day_in_one_month = 30.6001;// average of the day in one month about X000 years
-	static private final double kinitial_year = 4716.0;
+	static private final double knumber_of_dDay_in_one_dYear = 365.25;
+	static private final double knumber_of_dDay_in_one_dMonth = 30.6001;// average of the dDay in one dMonth about X000 dYears
+	static private final double kinitial_dYear = 4716.0;
 	
 	//Constants for the Object Date
-	static private final double kadditionnal_year_of_gregorian_calendar = 0.0;
-	static private final double kadditionnal_month_of_Date_object = 1.0;
-	static private final double kadditionnal_day_of_Date_object = 0.0;
+	static private final double kadditionnal_dYear_of_gregorian_calendar = 0.0;
+	static private final double kadditionnal_dMonth_of_Date_object = 1.0;
+	static private final double kadditionnal_dDay_of_Date_object = 0.0;
 
-	private double hour;
-	private double minute;
-	private double second;
-	private double GMT;
+	private double dHour;
+	private double dMinute;
+	private double dSecond;
+	private double dGMT;
 
-	private double day;
-	private double month;
-	private double year;
+	private double dDay;
+	private double dMonth;
+	private double dYear;
 	
-	private double date_JulianCalendar;
-	private double sideral_time;
-	private double latitude;
-	private double longitude;
-	private double declination;
-	private double ascension;
+	private double dDate_JulianCalendar;
+	private double dSideral_Time;
+	private double dLatitude;
+	private double dLongitude;
+	private double dDeclination;
+	private double dAscension;
 
-	private double azimuth;
-	private double height;
+	private double dAzimuth;
+	private double dHeight;
 
-	private double hour_angle_star;
-	private double angle_sideral_time;
-	private double angle_hour;
-	private double angle; // angle_sideral_time+angle_our
+	private double dHour_dAngle_Star;
+	private double ddAngle_Sideral_Time;
+	private double ddAngle_Hour;
+	private double dAngle; // ddAngle_Sideral_Time+dAngle_our
 	
 	private double X;
 	private double Y;
@@ -64,235 +64,253 @@ public class Mathematics
 	/**
 	 * Mathematics Constructor
 	 * 
-	 * @param Date _date : Date of the computer. Will be use to calculate the sideral Time
-	 * @param double _dLat : It's the latitude of the star's pointer
-	 * @param double _Lon : It's the longitude of the star's pointer
+	 * @param Calendate _date : Date of the computer. Will be use to calculate the Sideral Time
+	 * @param double _dLat : It's the Latitude of the star's pointer
+	 * @param double _Lon : It's the Longitude of the star's pointer
+	 * @param double _dDec : It's the Declination of the star
+	 * @param double _dAsc : It's the Ascension of the star
 	 */
-	public Mathematics(Calendar _date, double _dLat, double _dLon,double _dDec,double _dAscension)
+	public Mathematics(Calendar _date, double _dLat, double _dLon,double _dDec,double _dAsc)
 	{
-		this.hour = _date.get(Calendar.HOUR_OF_DAY);
-		this.minute = _date.get(Calendar.MINUTE);
-		this.second = _date.get(Calendar.SECOND);
+		this.dHour = _date.get(Calendar.HOUR_OF_DAY);
+		this.dMinute = _date.get(Calendar.MINUTE);
+		this.dSecond = _date.get(Calendar.SECOND);
 
+		//Calculate the GMT
 		String l_GMT = _date.getTime().toGMTString();
 		String l_hour_GMT = l_GMT.substring(l_GMT.indexOf(':') - 2, l_GMT.indexOf(':'));
-		this.GMT = this.hour - Integer.parseInt(l_hour_GMT);
+		this.dGMT = this.dHour - Integer.parseInt(l_hour_GMT);
 
-		this.day = Mathematics.kadditionnal_day_of_Date_object + _date.get(Calendar.DATE);
-		this.month = Mathematics.kadditionnal_month_of_Date_object + _date.get(Calendar.MONTH);
-		this.year = Mathematics.kadditionnal_year_of_gregorian_calendar + _date.get(Calendar.YEAR);
+		this.dDay = Mathematics.kadditionnal_dDay_of_Date_object + _date.get(Calendar.DATE);
+		this.dMonth = Mathematics.kadditionnal_dMonth_of_Date_object + _date.get(Calendar.MONTH);
+		this.dYear = Mathematics.kadditionnal_dYear_of_gregorian_calendar + _date.get(Calendar.YEAR);
 
-		this.latitude = _dLat;
-		this.longitude = _dLon;
-		this.declination = _dDec;
-		this.ascension = _dAscension;
+		this.dLatitude = _dLat;
+		this.dLongitude = _dLon;
+		this.dDeclination = _dDec;
+		this.dAscension = _dAsc;
 		
 		calculate_all();
 	}
 	
 	/**
-	 * calculate_all Calculates all the informations that the program needs
+	 * calculate_all 
+	 * Calculates all the informations that the program needs
 	 */
 	private void calculate_all()
 	{
-		this.date_JulianCalendar = calculate_JulianDate(this.day, this.month, this.year, this.hour,this.minute, this.second);
-		this.sideral_time = calculate_sideral_time(this.day, this.month, this.year, this.hour,this.minute, this.second);
+		this.dDate_JulianCalendar = calculate_JulianDate(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
+		this.dSideral_Time = calculate_dSideral_Time(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
 
-		this.angle_sideral_time = calculate_sideral_hour_angle(this.sideral_time);
-		this.angle_hour = calculate_hour_angle(this.hour, this.minute, this.GMT);
-		this.angle = this.angle_hour + this.angle_sideral_time;
+		this.ddAngle_Sideral_Time = calculate_sideral_hour_dAngle(this.dSideral_Time);
+		this.ddAngle_Hour = calculate_hour_angle(this.dHour, this.dMinute, this.dGMT);
+		this.dAngle = this.ddAngle_Hour + this.ddAngle_Sideral_Time;
 
-		this.hour_angle_star = this.angle - this.ascension + this.longitude;
+		this.dHour_dAngle_Star = this.dAngle - this.dAscension + this.dLongitude;
 
-		this.height = calculate_height(this.declination, this.latitude, this.hour_angle_star);
-		this.azimuth = calculate_azimuth(this.declination, this.latitude, this.height,this.hour_angle_star);
+		this.dHeight = calculate_height(this.dDeclination, this.dLatitude, this.dHour_dAngle_Star);
+		this.dAzimuth = calculate_azimuth(this.dDeclination, this.dLatitude, this.dHeight,this.dHour_dAngle_Star);
 	
-		this.X = calculate_X(this.height,this.azimuth);
-		this.Y = calculate_Y(this.height,this.azimuth);
+		this.X = calculate_X(this.dHeight,this.dAzimuth);
+		this.Y = calculate_Y(this.dHeight,this.dAzimuth);
 	}
 
 	/**
-	 * get_all Give all the information of the values calculated
+	 * get_all 
+	 * Give all the informations of the values calculated
 	 */
 	public void get_all()
 	{
 		System.out.println("X : " + this.X);
 		System.out.println("Y : " + this.Y);
 		
-		System.out.println("Hour : " + this.hour);
-		System.out.println("Minute : " + this.minute);
-		System.out.println("Seconde : " + this.second);
-		System.out.println("GMT : " + this.GMT);
-		System.out.println("Day : " + this.day);
-		System.out.println("month : " + this.month);
-		System.out.println("Year : " + this.year);
+		System.out.println("Hour : " + this.dHour);
+		System.out.println("Minute : " + this.dMinute);
+		System.out.println("Seconde : " + this.dSecond);
+		System.out.println("GMT : " + this.dGMT);
+		System.out.println("Day : " + this.dDay);
+		System.out.println("Month : " + this.dMonth);
+		System.out.println("Year : " + this.dYear);
 
-		System.out.println("-->" + this.day + "/" + this.month + "/" + this.year + "\t" + this.hour + ":" + this.minute + ":" + this.second);
+		System.out.println("-->" + this.dDay + "/" + this.dMonth + "/" + this.dYear + "\t" + this.dHour + ":" + this.dMinute + ":" + this.dSecond);
 		
-		if(this.GMT>=0)
-			System.out.print("GMT+" + this.GMT);
+		if(this.dGMT>=0)
+			System.out.print("GMT+" + this.dGMT);
 		else
-			System.out.print("GMT-" + this.GMT);	
+			System.out.print("GMT-" + this.dGMT);	
 
-		System.out.println("Latitude : " + this.latitude);
-		System.out.println("Longitude : " + this.longitude);
-		System.out.println("Delination : " + this.declination);
-		System.out.println("Ascension : " + this.ascension);
+		System.out.println("Latitude : " + this.dLatitude);
+		System.out.println("Longitude : " + this.dLongitude);
+		System.out.println("Delination : " + this.dDeclination);
+		System.out.println("Ascension : " + this.dAscension);
 
-		System.out.println("Azimuth : " + this.azimuth);
-		System.out.println("Height : " + this.height);
+		System.out.println("Azimuth : " + this.dAzimuth);
+		System.out.println("Height : " + this.dHeight);
 
-		System.out.println("Julian Date : " + this.date_JulianCalendar);
-		System.out.println("Sideral Time : " + this.sideral_time);
+		System.out.println("Julian Date : " + this.dDate_JulianCalendar);
+		System.out.println("Sideral Time : " + this.dSideral_Time);
 
-		System.out.println("Hour Angle Star : " + this.hour_angle_star);
-		System.out.println("Angle Sideral Time : " + this.angle_sideral_time);
-		System.out.println("Angle Hour : " + this.angle_hour);
-		System.out.println("Angle : " + this.angle);
+		System.out.println("Hour dAngle Star : " + this.dHour_dAngle_Star);
+		System.out.println("Angle Sideral Time : " + this.ddAngle_Sideral_Time);
+		System.out.println("Angle Hour : " + this.ddAngle_Hour);
+		System.out.println("Angle : " + this.dAngle);
 	}
 
+	/**
+	 * calculate_X
+	 * Calculates the X value of a coordinate system of 2D. It's a projection.
+	 * @param double _dHeight : The Height of the star, calculated with "calculate_Height()"
+	 * @param double _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
+	 * @return : Return a double that contains the X coordinate
+	 */
 	static public double calculate_X(double _dHeight,double _dAzimuth)
 	{
 		double l_x=-((2.0/pi)*_dHeight+1);
 		
-		return l_x*Math.cos(_dAzimuth);
+		return l_x*cos(_dAzimuth);
 	}
 	
+	/**
+	 * calculate_Y
+	 * Calculates the Y value of a coordinate system of 2D. It's a projection.
+	 * @param double _dHeight : The Height of the star, calculated with "calculate_Height()"
+	 * @param double _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
+	 * @return : Return a double that contains the Y coordinate
+	 */
 	static public double calculate_Y(double _dHeight,double _dAzimuth)
 	{
 		double l_y=-((2.0/pi)*_dHeight+1);
 		
-		return l_y*Math.sin(_dAzimuth);
+		return l_y*sin(_dAzimuth);
 	}
 	
 	/** 
 	 * hms
-	 * Converts ° ' '' to degree
-	 * @param double _hour : The hour of the value
-	 * @param double _minute : The minute of the value
-	 * @param double _second : The second of the value
-	 * @return : Return a double that's the result
+	 * Converts ° ' '' dAngle to degree
+	 * @param double _dHour : The hour of the value
+	 * @param double _dMinute : The Minute of the value
+	 * @param double _dSecond : The Second of the value
+	 * @return : Return a double that's the degree dAngle
 	 */
-	static private double hms(double _hour, double _minute, double _second)
+	static private double hms(double _dHour, double _dMinute, double _dSecond)
 	{
 		double sign;
-		sign = (_hour < 0 || _minute < 0 || _second < 0) ? -1 : 1;
-		return sign * (Math.abs(_hour) + Math.abs(_minute) / 60.0 + Math.abs(_second) / 36000);
+		sign = (_dHour < 0 || _dMinute < 0 || _dSecond < 0) ? -1 : 1;
+		return sign * (Math.abs(_dHour) + Math.abs(_dMinute) / 60.0 + Math.abs(_dSecond) / 36000);
 	}
 
 	/** 
 	 * fraction_of_day
 	 * Calculates the fraction of day about a time
-	 * @param double _hour : The hour of the value
-	 * @param double _minute : The minute of the value
-	 * @param double _second : The second of the value
-	 * @return : Return a double that's the result
+	 * @param double _dHour : The hour of the value
+	 * @param double _dMinute : The Minute of the value
+	 * @param double _dSecond : The Second of the value
+	 * @return : Return a double that contains the value
 	 */
-	static private double fraction_of_day(double _hour, double _minute, double _second)
+	static private double fraction_of_day(double _dHour, double _dMinute, double _dSecond)
 	{
-		return _hour / 24 + _minute / (24 * 60) + _second / (24 * 60 * 60);
+		return _dHour / 24 + _dMinute / (24 * 60) + _dSecond / (24 * 60 * 60);
 	}
 
 	/**
-	 * calculate_height Calculates the height of the fixed point
-	 * 
-	 * @param double _dec : The declination
-	 * @param double _dLat : The latitude
-	 * @param double _star_angle : The star's angle
-	 * @return : Return a double that's the result
+	 * calculate_height 
+	 * Calculates the dHeight of the fixed point
+	 * @param double _dec : The Declination of the star
+	 * @param double _dLat : The Latitude of the pointer's star
+	 * @param double _star_angle : The hour angle star
+	 * @return : Return a double that's the Height of the star
 	 */
 	static private double calculate_height(double _dec, double _dLat, double _star_angle)
 	{
-		double l_sinh = Math.sin(_dec) * Math.sin(_dLat) - Math.cos(_dec) * Math.cos(_dLat)* Math.cos(_star_angle);
-		return Math.asin(l_sinh);
+		double l_sinh = sin(_dec) * sin(_dLat) - cos(_dec) * cos(_dLat)* cos(_star_angle);
+		return arcsin(l_sinh);
 	}
 	
 	/** 
-	 * calculate_azimu
-	 * Calculates the azimuth
-	 * @param double _dec : The declination
-	 * @param double _lat : The latitude
-	 * @param double _height : The height
-	 * @param double _star_angle : The star's angle
-	 * @return : Return a double that's the result
+	 * calculate_azimuth
+	 * Calculates the dAzimuth
+	 * @param double _dec : The dDeclination of the star
+	 * @param double _dLat : The dLatitude of the pointer's star
+	 * @param double _dHeight : The dHeight of the star, calculated with "calculate_height()"
+	 * @param double _star_angle : The star's dAngle
+	 * @return : Return a double that's the dAzimuth of the star
 	 */
-	static private double calculate_azimuth(double _dec, double _dLat, double _height, double _star_angle)
+	static private double calculate_azimuth(double _dec, double _dLat, double _dHeight, double _star_angle)
 	{
-		double l_cos_az = (Math.sin(_dec) - Math.sin(_dLat) * Math.sin(_height))/(Math.cos(_dLat) * Math.cos(_height));
-		double l_sin_a = (Math.cos(_dec) * Math.sin(_star_angle)) / Math.cos(_height);
+		double l_cos_az = (sin(_dec) - sin(_dLat) * sin(_dHeight))/(cos(_dLat) * cos(_dHeight));
+		double l_sin_a = (cos(_dec) * sin(_star_angle)) / cos(_dHeight);
 
 		if (l_sin_a > 0)
-			return Math.acos(l_cos_az);
+			return arccos(l_cos_az);
 		else
-			return -Math.acos(l_cos_az);
+			return -arccos(l_cos_az);
 	}
 
 	/**
-	 * calculate_JulianDate Converts a gregorian date to a julian date
-	 * 
-	 * @param double _day : The day
-	 * @param double _month : The month
-	 * @param double _year : The year
-	 * @param double _hour : The hour
-	 * @param double _minute : The minute
-	 * @param double _seconde : The second
+	 * calculate_JulianDate 
+	 * Converts a gregorian date to a julian date
+	 * @param double _dDay : The day
+	 * @param double _dMonth : The month
+	 * @param double _dYear : The year
+	 * @param double _dHour : The hour
+	 * @param double _dMinute : The minute
+	 * @param double _dSeconde : The second
 	 * @return : Return a double that's the result
 	 */
-	static private double calculate_JulianDate(double _day, double _month, double _year, double _hour,
-			double _minute, double _second)
+	static private double calculate_JulianDate(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
 	{
-		if (_month < 3)
+		if (_dMonth < 3)
 		{
-			_year--;
-			_month += 12;
+			_dYear--;
+			_dMonth += 12;
 		}
-		int l_c = (int) (_year / 100);
+		int l_c = (int) (_dYear / 100);
 		int l_b = 2 - l_c + (int) (l_c / 4);
 
-		int l_t = (int) (fraction_of_day(_hour, _minute, _second));
+		int l_t = (int) (fraction_of_day(_dHour, _dMinute, _dSecond));
 
-		return ((int) (knumber_of_day_in_one_year * (_year + kinitial_year))
-				+ (int) (knumber_of_day_in_one_month * (_month + 1)) + _day + l_t + l_b - 1524.5);
+		return ((int) (knumber_of_dDay_in_one_dYear * (_dYear + kinitial_dYear))
+				+ (int) (knumber_of_dDay_in_one_dMonth * (_dMonth + 1)) + _dDay + l_t + l_b - 1524.5);
 	}
 
 	/**
-	 * calculate_sideral_hour_angle Calculates the sideral hour angle
+	 * calculate_sideral_hour_dAngle Calculates the sideral hour angle
 	 * 
-	 * @param double _sideral_time : The sideral time
+	 * @param double _dSideral_Time : The Sideral time
 	 * @return : Return a double that's the result
 	 */
-	static private double calculate_sideral_hour_angle(double _sideral_time)
+	static private double calculate_sideral_hour_dAngle(double _dSideral_Time)
 	{
-		return 2.0 * pi * _sideral_time / hms(23.0, 56.0, 4.0);
+		return 2.0 * pi * _dSideral_Time / hms(23.0, 56.0, 4.0);
 	}
 
 	/** 
 	 * calculate_hour_angle
-	 * Calculates the hours angle
-	 * @param double _hour : The hour
-	 * @param double _min : The minute
-	 * @param double _GMT : The GMT zone
+	 * Calculates the hours dAngle
+	 * @param double _dHour : The hour
+	 * @param double _dMin : The minute
+	 * @param double _dGMT : The GMT zone
 	 * @return : Return a double that's the result
 	 */
-	static private double calculate_hour_angle(double _hour, double _min, double _GMT)
+	static private double calculate_hour_angle(double _dHour, double _dMin, double _dGMT)
 	{
-		return (_hour - 12 + _min / 60 - _GMT) * 2 * pi / hms(23.0, 56.0, 4.0);
+		return (_dHour - 12 + _dMin / 60 - _dGMT) * 2 * pi / hms(23.0, 56.0, 4.0);
 	}
 
 	/** 
-	 * calculate_sideral_time
+	 * calculate_dSideral_Time
 	 * Calculates the sideral time
-	 * @param double _day : The day
-	 * @param double _month : The month
-	 * @param double _year : The year
-	 * @param double _hour : The hour
-	 * @param double _min : The minute
-	 * @param double _second : The second
+	 * @param double _dDay : The day
+	 * @param double _dMonth : The month
+	 * @param double _dYear : The year
+	 * @param double _dHour : The hour
+	 * @param double _min : The _minute
+	 * @param double _dSecond : The second
 	 * @return : Return a double that's the result
 	 */
-	static private double calculate_sideral_time(double _day, double _month, double _year, double _hour,double _minute, double _second)
+	static private double calculate_dSideral_Time(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
 	{
-		double l_JJ = calculate_JulianDate(_day, _month, _year, _hour, _minute, _second);
+		double l_JJ = calculate_JulianDate(_dDay, _dMonth, _dYear, _dHour, _dMinute, _dSecond);
 		double l_T = (l_JJ - 2451545.0) / 36525.0;
 		double l_H1 = 24110.54841 + 8640184.812866 * l_T + 0.093104 * l_T * l_T - 0.0000062 * l_T* l_T * l_T;
 		double l_HSH = l_H1 / 3600.0;
@@ -300,200 +318,244 @@ public class Mathematics
 
 		return l_HS;
 	}
-
+	
 	/**
-	 * getHour getter of the private value
-	 * 
-	 * @return the private variable
+	 * cos
+	 * Calculate the cosinus of a number
+	 * @param double _dX : The value to transform
+	 * @return : Return the result of the operation
 	 */
-	public double getHour()
+	static private double cos(double _dX)
 	{
-		return hour;
-	}
-
-	/**
-	 * getMinute getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getMinute()
-	{
-		return minute;
-	}
-
-	/**
-	 * getSecond getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getSecond()
-	{
-		return second;
-	}
-
-	/**
-	 * getGMT getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getGMT()
-	{
-		return GMT;
-	}
-
-	/**
-	 * getDay getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getDay()
-	{
-		return day;
-	}
-
-	/**
-	 * getMonth getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getMonth()
-	{
-		return month;
-	}
-
-	/**
-	 * getYear getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getYear()
-	{
-		return year;
-	}
-
-	/**
-	 * getDate_JulianCalendar getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getDate_JulianCalendar()
-	{
-		return date_JulianCalendar;
-	}
-
-	/**
-	 * getSideral_time getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getSideral_time()
-	{
-		return sideral_time;
-	}
-
-	/**
-	 * getLatitude getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getLatitude()
-	{
-		return latitude;
-	}
-
-	/**
-	 * getLongitude getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getLongitude()
-	{
-		return longitude;
-	}
-
-	/**
-	 * getDeclination getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getDeclination()
-	{
-		return declination;
-	}
-
-	/**
-	 * getAscension getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getAscension()
-	{
-		return ascension;
-	}
-
-	/**
-	 * getAzimuth getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getAzimuth()
-	{
-		return azimuth;
-	}
-
-	/**
-	 * getHeight getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getHeight()
-	{
-		return height;
-	}
-
-	/**
-	 * getHour_angle_star getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getHour_angle_star()
-	{
-		return hour_angle_star;
-	}
-
-	/**
-	 * getAngle_sideral_time getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getAngle_sideral_time()
-	{
-		return angle_sideral_time;
-	}
-
-	/**
-	 * getAngle_hour getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getAngle_hour()
-	{
-		return angle_hour;
-	}
-
-	/**
-	 * getAngle getter of the private value
-	 * 
-	 * @return the private variable
-	 */
-	public double getAngle()
-	{
-		return angle;
+		return Math.cos(_dX);
 	}
 	
 	/**
-	 * getX getter of the private value
-	 * 
+	 * sin
+	 * Calculate the sinus of a number
+	 * @param double _dX : The value to transform
+	 * @return : Return the result of the operation
+	 */
+	static private double sin(double _dX)
+	{
+		return Math.sin(_dX);
+	}
+	
+	/**
+	 * arccos
+	 * Calculate the ArcCosinus of a number
+	 * @param double _dX : The value to transform
+	 * @return : Return the result of the operation
+	 */
+	static private double arccos(double _dX)
+	{
+		return Math.acos(_dX);
+	}
+	
+	/**
+	 * arcsin
+	 * Calculate the ArcSinus of a number
+	 * @param double _dX : The value to transform
+	 * @return : Return the result of the operation
+	 */
+	static private double arcsin(double _dX)
+	{
+		return Math.asin(_dX);
+	}
+	
+	/**
+	 * getdHour 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdHour()
+	{
+		return dHour;
+	}
+
+	/**
+	 * get_dMinute 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double get_dMinute()
+	{
+		return dMinute;
+	}
+
+	/**
+	 * getdSecond 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdSecond()
+	{
+		return dSecond;
+	}
+
+	/**
+	 * getdGMT 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdGMT()
+	{
+		return dGMT;
+	}
+
+	/**
+	 * getdDay 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdDay()
+	{
+		return dDay;
+	}
+
+	/**
+	 * getdMonth 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdMonth()
+	{
+		return dMonth;
+	}
+
+	/**
+	 * getdYear 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdYear()
+	{
+		return dYear;
+	}
+
+	/**
+	 * getdDate_JulianCalendar 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdDate_JulianCalendar()
+	{
+		return dDate_JulianCalendar;
+	}
+
+	/**
+	 * getdSideral_Time 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdSideral_Time()
+	{
+		return dSideral_Time;
+	}
+
+	/**
+	 * getdLatitude 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdLatitude()
+	{
+		return dLatitude;
+	}
+
+	/**
+	 * getdLongitude 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdLongitude()
+	{
+		return dLongitude;
+	}
+
+	/**
+	 * getdDeclination 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdDeclination()
+	{
+		return dDeclination;
+	}
+
+	/**
+	 * getdAscension 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdAscension()
+	{
+		return dAscension;
+	}
+
+	/**
+	 * getdAzimuth 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdAzimuth()
+	{
+		return dAzimuth;
+	}
+
+	/**
+	 * getdHeight 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdHeight()
+	{
+		return dHeight;
+	}
+
+	/**
+	 * getdHour_dAngle_Star 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdHour_dAngle_Star()
+	{
+		return dHour_dAngle_Star;
+	}
+
+	/**
+	 * getddAngle_Sideral_Time 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getddAngle_Sideral_Time()
+	{
+		return ddAngle_Sideral_Time;
+	}
+
+	/**
+	 * getddAngle_Hour 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getddAngle_Hour()
+	{
+		return ddAngle_Hour;
+	}
+
+	/**
+	 * getdAngle 
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getdAngle()
+	{
+		return dAngle;
+	}
+	
+	/**
+	 * getX 
+	 * getter of the private value
 	 * @return the private variable
 	 */
 	public double getX()
@@ -502,8 +564,8 @@ public class Mathematics
 	}
 
 	/**
-	 * getY getter of the private value
-	 * 
+	 * getY 
+	 * getter of the private value
 	 * @return the private variable
 	 */
 	public double getY()
