@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.github.projetp1.rs232;
 
 import java.util.Timer;
@@ -18,81 +15,92 @@ import jssc.*;
  * @author alexandr.perez
  * @author sebastie.vaucher
  */
-public class RS232 implements SerialPortEventListener {
+public class RS232 implements SerialPortEventListener
+{
 	/** The Settings */
-	protected Settings _settings;
+	protected Settings settings;
 	/** The MainView */
-	protected MainView _mainview;
+	protected MainView mainview;
 	/** The object maintaining the PIC status */
-	protected Pic _pic;
+	protected Pic pic;
 	/** The serial port object. */
-	private SerialPort _sp;
+	private SerialPort sp;
 	/** The queue of the latest received commands. */
 	private ConcurrentLinkedQueue<RS232Command> commandQueue = new ConcurrentLinkedQueue<RS232Command>();
 	/** The buffer in which the received datas are temporarily put. */
 	private StringBuffer buffer = new StringBuffer();
-	private Timer pingTimer = new Timer("timerDaemon", true);
-	private Timer timeoutTimer = new Timer(false);
-	/** True if the PIC is online. */
-	private boolean connectionIsActive = false;
-	
+	private Timer pingTimer;
+	private Timer timeoutTimer;
+
 	/** The delay between 2 pings */
 	private static final int PINGDELAY = 3000;
 	/** The delay after which a ping timeout occurs */
 	private static final int PINGTIMEOUT = 2000;
 	
 	/**
+	 * Represents the direction of the arrow that is displayed on the PIC screen.
+	 */
+	public enum PicArrowDirection
+	{
+		NORTH(0), NORTHWEST(1), WEST(2), SOUTHWEST(3), SOUTH(4), SOUTHEAST(5), EAST(6), NORTHEAST(7);
+		private int number;
+		private PicArrowDirection(int _number)
+		{
+			number = _number;
+		}
+	}
+
+	/**
 	 * Instantiates a new RS232 object.
 	 * 
 	 * @param mainview The global MainView
 	 * @throws Exception A generic Exception. May occur if the PIC isn't found.
-	 * @throws SerialPortException A SerialPort Exception
+	 * @throws SerialPortException A SerialPortException
 	 */
-	public RS232(MainView mainview) throws Exception, SerialPortException {
-		this._mainview = mainview;
-		this._settings = mainview.getSettings();
-		this._pic = mainview.getPic();
+	public RS232(MainView mainview) throws Exception, SerialPortException
+	{
+		this.mainview = mainview;
+		this.settings = mainview.getSettings();
+		this.pic = mainview.getPic();
 
 		// Initialisation du sp
-		String port = _settings.getPort();
-		if (port == null || port.equals("")) {
-			try {
+		String port = settings.getPort();
+		if (port == null || port.equals(""))
+		{
+			try
+			{
 				port = SerialPortList.getPortNames()[0];
 				if (port == null || port.equals(""))
 					throw new Exception();
 				System.out.println("The default SerialPort has been selected : " + port);
-				_settings.setPort(port);
-			} catch (Exception e) {
+				settings.setPort(port);
+			}
+			catch (Exception e)
+			{
 				System.out.println("FATAL : No SerialPort has been found !");
-				throw new SerialPortException("NoPort",
-						"RS232.RS232(MainView)",
+				throw new SerialPortException("NoPort", "RS232.RS232(MainView)",
 						"No RS-232 port found on the computer !");
 			}
 		}
 
-		this._sp = new SerialPort(port);
-		
-		try {
-			this._sp.openPort();// Open serial port
-			this._sp.setParams(SerialPort.BAUDRATE_9600, SerialPort.DATABITS_8,	SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-		} catch (SerialPortException ex) {
-			System.out.println("SerialPortException at port opening : "
-					+ ex.getMessage());
+		this.sp = new SerialPort(port);
+
+		try
+		{
+			this.sp.openPort();// Open serial port
+			this.sp.setParams(SerialPort.BAUDRATE_9600, SerialPort.DATABITS_8,
+					SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+		}
+		catch (SerialPortException ex)
+		{
+			System.out.println("SerialPortException at port opening : " + ex.getMessage());
 			throw ex;
 		}
 
 		if (!this.sendPing())
-			throw new Exception(
-					"The initial ping could not be sent, aborting...");
-		
-		
-		// TODO: Envoi du ping seulement si liaison inactive
-		pingTimer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				sendPing();			
-			}
-		}, PINGDELAY, PINGDELAY);
+			throw new Exception("The initial ping could not be sent, aborting...");
+
+		this.connect();
 	}
 
 	/**
@@ -100,80 +108,183 @@ public class RS232 implements SerialPortEventListener {
 	 * 
 	 * @return True if it succeeds, false otherwise
 	 */
-	public Boolean sendPing() {
-		try {
+	protected Boolean sendPing()
+	{
+		try
+		{
 			String start = "$" + RS232CommandType.EMPTY.toString() + "*";
-			_sp.writeString(start + computeCrc(start) + "\r\n");
+			sp.writeString(start + computeCrc(start) + "\r\n");
 			return true;
-		} catch (SerialPortException ex) {
+		}
+		catch (SerialPortException ex)
+		{
 			return false;
+		}
+	}
+	
+	/**
+	 * Connect to the PIC (send ping, schedule ping)
+	 */
+	private void connect()
+	{
+		if(pingTimer != null)
+		{
+			pingTimer.cancel();
+			pingTimer = null;
+		}
+		
+		if(pic.getMode() == PicMode.SIMULATION)
+			pic.setMode(PicMode.POINTING);
+		if(pic.getMode() == PicMode.POINTING)
+		{
+			pingTimer = new Timer("pingDaemon", true);
+			pingTimer.schedule(new TimerTask()
+			{
+				public void run()
+				{
+					sendPing();
+					resetTimeout();
+				}
+			}, 0, PINGDELAY);
+		}
+	}
+	
+	/**
+	 * Disconnect from the PIC (cancel ping scheduling)
+	 */
+	private void disconnect()
+	{
+		if(pingTimer != null)
+		{
+			pingTimer.cancel();
+			pingTimer = null;
+		}
+		if(timeoutTimer != null)
+		{
+			timeoutTimer.cancel();
+			timeoutTimer = null;
+		}
+		
+		pic.setMode(PicMode.SIMULATION);
+	}
+	
+	/**
+	 * Indicate to this object that the operation mode has changed
+	 * @param _mode The new mode of operation
+	 * @throws SerialPortException If the PIC can not be reached
+	 */
+	public void modeHasChanged(PicMode _mode) throws SerialPortException
+	{
+		switch (_mode)
+		{
+			case SIMULATION:
+				disconnect();
+				break;
+			case GUIDING:
+				connect();
+				sendArrowToPic(PicArrowDirection.NORTH);
+				break;
+			case POINTING:
+				connect();
+				sendFrame(RS232CommandType.CHANGE_TO_POINT_MODE, "");
+				break;
+			default:
+				System.out.println("ERROR: Mode not yet supported, the state may be inaccurate !");
+				disconnect();
+				break;
+		}
+	}
+	
+	
+	/**
+	 * Send the direction of the arrow to the PIC.
+	 *
+	 * @param _dir The direction of the arrow
+	 * @throws SerialPortException 
+	 */
+	public void sendArrowToPic(PicArrowDirection _dir) throws SerialPortException
+	{
+		this.sendFrame(RS232CommandType.CHANGE_TO_ARROW_MODE, String.valueOf(_dir.number));
+	}
+
+	/**
+	 * Send an NCK message to the PIC informing that a packet has been corrupted.
+	 * 
+	 * @param command The command number
+	 */
+	public void sendNck(RS232CommandType command)
+	{
+		if (pic.getMode() == PicMode.GUIDING || command.equals(RS232CommandType.PIC_STATUS))
+			return;
+
+		try
+		{
+			sendFrame(command, "");
+		}
+		catch (SerialPortException ex)
+		{
+			System.out.println("RS232 : Unable to send a NCK on port " + ex.getPortName());
+		}
+	}
+
+	
+	/**
+	 * Send a frame to the PIC
+	 * @param cNum The command to send
+	 * @param datas The datas (can be empty)
+	 * @throws SerialPortException If the SerialPort cannot be written
+	 */
+	public synchronized void sendFrame(RS232CommandType cNum, String datas) throws SerialPortException
+	{
+		String trame = "$" + cNum.toString() + "*" + datas;
+		sp.writeString(trame + RS232.computeCrc(trame) + "\r\n");
+	}
+
+	/**
+	 * Reset the timeout of the ping
+	 */
+	private void resetTimeout()
+	{
+		if(timeoutTimer != null)
+		{
+			timeoutTimer.cancel();
+			timeoutTimer = null;
+		}
+
+		if(pic.getMode() == PicMode.POINTING)
+		{
+			timeoutTimer = new Timer();
+			timeoutTimer.schedule(new TimerTask()
+			{
+				@Override
+				public void run()
+				{
+					if(pingReceived())
+						resetTimeout();
+					else
+						disconnect();
+				}
+			}, PINGTIMEOUT);
 		}
 	}
 
 	/**
-	 * Send an NCK message to the PIC informing that a packet has been
-	 * corrupted.
-	 *
-	 * @param command The command number
-	 */
-	public synchronized void sendNck(RS232CommandType command) {
-		if (_pic.getMode() == PicMode.GUIDING || command.equals(RS232CommandType.PIC_STATUS))
-			return;
-		
-		try {
-			sendFrame(command, "");
-		} catch (SerialPortException ex) {
-			System.out.println("RS232 : Unable to send a NCK on port " + ex.getPortName());
-		}
-	}
-	
-	public void sendFrame(RS232CommandType cNum, String datas) throws SerialPortException
-	{
-		String trame = "$" + cNum.toString() + "*" + datas;
-		_sp.writeString(trame + RS232.computeCrc(trame) + "\r\n");
-	}
-	
-	/* TODO: Reopen port (may need a rethink)
-	private boolean reopenPort() {
-		if(connectionIsActive)
-		
-		try {
-			_sp.closePort();
-			_sp.addEventListener(this);
-			_sp.openPort();
-		} catch (SerialPortException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	//*/
-	
-	private void resetTimeout() {
-		timeoutTimer.cancel();
-		timeoutTimer = null;
-		
-		timeoutTimer = new Timer();
-		timeoutTimer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				// TODO: Le PIC n'a pas répondu à temps : la liaison est perdue
-			}
-		}, PINGTIMEOUT);
-	}
-	
-	/**
-	 * Check if the ping originating from the PIC was received
-	 *
+	 * Check if a ping originating from the PIC was received
+	 * 
 	 * @return true, if successful
 	 */
-	private boolean pingReceived() {
-		try {
+	private boolean pingReceived()
+	{
+		try
+		{
 			boolean ping = false;
-			while(commandQueue.remove(new RS232Command(RS232CommandType.EMPTY, "")))
+			while (commandQueue.remove(new RS232Command(RS232CommandType.EMPTY, "")))
 				ping = true;
-			
+
 			return ping;
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			System.out.println("Erreur impossible : " + e.getMessage());
 			return false;
 		}
@@ -183,19 +294,21 @@ public class RS232 implements SerialPortEventListener {
 	 * @see jssc.SerialPortEventListener#serialEvent(jssc.SerialPortEvent)
 	 */
 	@Override
-	public void serialEvent(SerialPortEvent e) {
+	public void serialEvent(SerialPortEvent e)
+	{
 		// Callback du SerialPort
 		if (!e.isRXCHAR()) // If no data is available
 			return;
 
 		String received;
-		try {
-			received = _sp.readString();
-		} catch (SerialPortException ex) {
-			System.out
-					.println("RS232 : port "
-							+ ex.getPortName()
-							+ " unreadable. Please check that we are the only one listening to this port.");
+		try
+		{
+			received = sp.readString();
+		}
+		catch (SerialPortException ex)
+		{
+			System.out.println("RS232 : port " + ex.getPortName()
+					+ " unreadable. Please check that we are the only one listening to this port.");
 			return;
 		}
 
@@ -204,53 +317,59 @@ public class RS232 implements SerialPortEventListener {
 		int pos;
 		boolean newComs = false;
 
-		while ((pos = buffer.indexOf("\r\n")) != -1) {
+		while ((pos = buffer.indexOf("\r\n")) != -1)
+		{
 			RS232Command com;
 			String chain = buffer.substring(0, pos + 2);
-			try {
+			try
+			{
 				com = new RS232Command(chain);
 				commandQueue.add(com);
 				newComs = true;
-			} catch (CrcException e1) {
+			}
+			catch (CrcException e1)
+			{
 				this.sendNck(RS232Command.extractCommand(chain));
-			} catch (Exception e1) {
+			}
+			catch (Exception e1)
+			{
 				System.out.println(e1.getMessage());
 			}
 		}
 
-		if(newComs) {
+		if (newComs)
+		{
 			// TODO: Notify the Pic object that new data is available
 		}
-		 
+
 	}
 
 	/**
-	 * Returns whether the chains and the CRC matches
+	 * Check the CRC against the raw string received via RS-232
 	 * 
-	 * @param datas The datas
+	 * @param datas The data against which to check the CRC
 	 * @param crc The received CRC
 	 * @return True if it matches or false otherwise
 	 */
-	public static boolean checkCrc(String datas, byte crc) {
+	public static boolean checkCrc(String datas, byte crc)
+	{
 		return crc == (computeCrc(datas));
 	}
 
 	/**
-	 * Returns the computed CRC of the chain following NMEA-0183 method
+	 * Returns the computed CRC of the string following NMEA-0183 method
 	 * 
 	 * @param datas The String of which to compute the CRC
 	 * @return The computed CRC as a byte
 	 */
-	public static byte computeCrc(String datas) {
+	public static byte computeCrc(String datas)
+	{
 		byte crc = 0;
 
-		for (byte b : datas.getBytes()) {
+		for (byte b : datas.getBytes())
+		{
 			crc = (byte) (crc ^ b);
 		}
 		return crc;
-	}
-
-	public boolean isConnectionActive() {
-		return connectionIsActive;
 	}
 }
