@@ -3,54 +3,63 @@
  */
 package com.github.projetp1;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 /**
  * @author   alexandr.perez
  */
-public class SkyMap {
-
-	/**
-	 * @uml.property  name="zoom"
-	 */
-	private int zoom;
-	/**
-	 * @uml.property  name="longitude"
-	 */
-	private double longitude;
-	/**
-	 * @uml.property  name="latitude"
-	 */
-	private double latitude;
-	/**
-	 * @uml.property  name="arrayObject"
-	 */
-	private ArrayList<CelestialObject> arrayObject;
+public class SkyMap extends javax.swing.JPanel implements KeyListener {
 	
+	private int zoom, x, y, xOrigin, yOrigin, heightSky, widthSky;
+	private ArrayList<CelestialObject> celestialObjects;
 	/**
 	 * 
 	 */
-	public SkyMap(int _zoom) {
-		// TODO Auto-generated constructor stub
-		this.setZoom(_zoom);
-	}
+	public SkyMap(int xOrigin, int yOrigin, int heightSky, int widthSky) {
+		 
+    }
+	
+	public void keyTyped(KeyEvent evt){}
+	
+	public void keyReleased(KeyEvent evt){}  
 
+	public void keyPressed(KeyEvent evt) {
+        if(evt.getKeyCode() == 37) //Left
+        {
+        	
+        }
+        else if(evt.getKeyCode() == 39) //Right
+        {
+        	
+        }
+        else if(evt.getKeyCode() == 38) // Up
+        {
+
+        }
+        else if(evt.getKeyCode() == 40) // Up
+        {
+        	
+        }
+	}
+	
 	public void updateSkyMap() {
+		 for (CelestialObject celestialObject : celestialObjects)
+			 this.drawStar(celestialObject);
+	}
+	
+	private void drawStar (CelestialObject _celestialObjects)
+	{
 		
 	}
 	
+	/**
 	public void updateArrow(CelestialObject _object) {
 		
 	}
-
-	/**
-	 * @return
-	 * @uml.property  name="zoom"
-	 */
-	public int getZoom() {
-		return zoom;
-	}
-
+	*/
+	
 	/**
 	 * @param  _zoom
 	 * @uml.property  name="zoom"
@@ -59,51 +68,20 @@ public class SkyMap {
 		this.zoom = _zoom;
 	}
 
-	/**
-	 * @return
-	 * @uml.property  name="latitude"
-	 */
-	public double getLatitude() {
-		return latitude;
-	}
-
-	/**
-	 * @param  _latitude
-	 * @uml.property  name="latitude"
-	 */
-	public void setLatitude(double _latitude) {
-		this.latitude = _latitude;
-	}
-
-	/**
-	 * @return
-	 * @uml.property  name="longitude"
-	 */
-	public double getLongitude() {
-		return longitude;
-	}
-
-	/**
-	 * @param  _longitude
-	 * @uml.property  name="longitude"
-	 */
-	public void setLongitude(double _longitude) {
-		this.longitude = _longitude;
-	}
 
 	/**
 	 * @return
 	 * @uml.property  name="arrayObject"
 	 */
 	public ArrayList<CelestialObject> getArrayObject() {
-		return arrayObject;
+		return celestialObjects;
 	}
 
 	/**
 	 * @param  _arrayObject
 	 * @uml.property  name="arrayObject"
 	 */
-	public void setArrayObject(ArrayList<CelestialObject> _arrayObject) {
-		this.arrayObject = _arrayObject;
+	public void setArrayObject(ArrayList<CelestialObject> _celestialObjects) {
+		this.celestialObjects = _celestialObjects;
 	}
 }
