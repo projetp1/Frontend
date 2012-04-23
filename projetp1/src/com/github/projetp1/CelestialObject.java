@@ -1,5 +1,5 @@
  /**=====================================================================*
- | This file dDeclares the following classes:
+ | This file declares the following classes:
  |    CelestialObject
  |
  | Description of the CelestialObject DataBase :
@@ -37,6 +37,8 @@ public class CelestialObject {
 	private double dColorIndex;
 	private double dXYZ[] = new double[3];
 	private double dVXYZ[] = new double[3];
+	private double dXReal;
+	private double dYReal;
 
 	/**
 	 * CelestialObject
@@ -100,7 +102,7 @@ public class CelestialObject {
 	 */
 	public void getHeader()
 	{
-		System.out.println("ID\tStarID\tHIP\tHD\tHR\tGliese\tBayerFlamsteed\tProperName\tRA\tDec\tDistance\tPMRA\tPMDec\tRV\tMag\tAbsMag\tSpectrum\tColorIndex\tX\tY\tZ\tVX\tVY\tVZ");
+		System.out.println("ID\tStarID\tHIP\tHD\tHR\tGliese\tBayerFlamsteed\tProperName\tRA\tDec\tDistance\tPMRA\tPMDec\tRV\tMag\tAbsMag\tSpectrum\tColorIndex\tX\tY\tVX\tVY\tVZ");
 	}
 	/**
 	 * getInfos
@@ -274,7 +276,7 @@ public class CelestialObject {
 	public double getColorIndex() {
 		return this.dColorIndex;
 	}
-
+	
 	/**
 	 * getXYZ
 	 * getter of the private value
@@ -291,6 +293,42 @@ public class CelestialObject {
 	 */
 	public double[] getVXYZ() {
 		return this.dVXYZ;
+	}
+	
+	/**
+	 * getXReal
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getXReal() {
+		return this.dXReal;
+	}
+
+	/**
+	 * getYReal
+	 * getter of the private value
+	 * @return the private variable
+	 */
+	public double getYReal() {
+		return this.dYReal;
+	}
+	
+	/**
+	 * setXReal
+	 * setter of the private value
+	 * @return the private variable
+	 */
+	public void setXReal(double x) {
+		this.dXReal = x;
+	}
+	
+	/**
+	 * setYReal
+	 * setter of the private value
+	 * @return the private variable
+	 */
+	public void setYReal(double y) {
+		this.dYReal = y;
 	}
 
 }
