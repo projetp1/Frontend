@@ -21,8 +21,8 @@ import java.util.Calendar;
 public class Mathematics
 {
 	static private final double pi = Math.PI;
-	static private final double deg2rad = pi / 180.0;
-	static private final double rad2deg = 180.0 / pi;
+	//static private final double deg2rad = pi / 180.0;
+	//static private final double rad2deg = 180.0 / pi;
 
 	//Constants for Julian Date
 	static private final double knumber_of_dDay_in_one_dYear = 365.25;
@@ -58,8 +58,8 @@ public class Mathematics
 	private double dAngle_Hour;
 	private double dAngle; // dAngle_Sideral_Time+dAngle_our
 	
-	private double X;
-	private double Y;
+	private double dX;
+	private double dY;
 
 	/**
 	 * Mathematics Constructor
@@ -77,6 +77,7 @@ public class Mathematics
 		this.dSecond = _date.get(Calendar.SECOND);
 
 		//Calculate the GMT
+		@SuppressWarnings("deprecation")
 		String l_GMT = _date.getTime().toGMTString();
 		String l_hour_GMT = l_GMT.substring(l_GMT.indexOf(':') - 2, l_GMT.indexOf(':'));
 		this.dGMT = this.dHour - Integer.parseInt(l_hour_GMT);
@@ -111,8 +112,8 @@ public class Mathematics
 		this.dHeight = calculate_height(this.dDeclination, this.dLatitude, this.dHour_Angle_Star);
 		this.dAzimuth = calculate_azimuth(this.dDeclination, this.dLatitude, this.dHeight,this.dHour_Angle_Star);
 	
-		this.X = calculate_X(this.dHeight,this.dAzimuth);
-		this.Y = calculate_Y(this.dHeight,this.dAzimuth);
+		this.dX = calculate_X(this.dHeight,this.dAzimuth);
+		this.dY = calculate_Y(this.dHeight,this.dAzimuth);
 	}
 
 	/**
@@ -121,8 +122,8 @@ public class Mathematics
 	 */
 	public void get_all()
 	{
-		System.out.println("X : " + this.X);
-		System.out.println("Y : " + this.Y);
+		System.out.println("X : " + this.dX);
+		System.out.println("Y : " + this.dY);
 		
 		System.out.println("Hour : " + this.dHour);
 		System.out.println("Minute : " + this.dMinute);
@@ -364,191 +365,191 @@ public class Mathematics
 	}
 	
 	/**
-	 * getdHour 
+	 * getHour 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdHour()
+	public double getHour()
 	{
 		return dHour;
 	}
 
 	/**
-	 * get_dMinute 
+	 * getMinute 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double get_dMinute()
+	public double getMinute()
 	{
 		return dMinute;
 	}
 
 	/**
-	 * getdSecond 
+	 * getSecond 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdSecond()
+	public double getSecond()
 	{
 		return dSecond;
 	}
 
 	/**
-	 * getdGMT 
+	 * getGMT 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdGMT()
+	public double getGMT()
 	{
 		return dGMT;
 	}
 
 	/**
-	 * getdDay 
+	 * getDay 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdDay()
+	public double getDay()
 	{
 		return dDay;
 	}
 
 	/**
-	 * getdMonth 
+	 * getMonth 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdMonth()
+	public double getMonth()
 	{
 		return dMonth;
 	}
 
 	/**
-	 * getdYear 
+	 * getYear 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdYear()
+	public double getYear()
 	{
 		return dYear;
 	}
 
 	/**
-	 * getdDate_JulianCalendar 
+	 * getDate_JulianCalendar 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdDate_JulianCalendar()
+	public double getDate_JulianCalendar()
 	{
 		return dDate_JulianCalendar;
 	}
 
 	/**
-	 * getdSideral_Time 
+	 * getSideral_Time 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdSideral_Time()
+	public double getSideral_Time()
 	{
 		return dSideral_Time;
 	}
 
 	/**
-	 * getdLatitude 
+	 * getLatitude 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdLatitude()
+	public double getLatitude()
 	{
 		return dLatitude;
 	}
 
 	/**
-	 * getdLongitude 
+	 * getLongitude 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdLongitude()
+	public double getLongitude()
 	{
 		return dLongitude;
 	}
 
 	/**
-	 * getdDeclination 
+	 * getDeclination 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdDeclination()
+	public double getDeclination()
 	{
 		return dDeclination;
 	}
 
 	/**
-	 * getdAscension 
+	 * getAscension 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdAscension()
+	public double getAscension()
 	{
 		return dAscension;
 	}
 
 	/**
-	 * getdAzimuth 
+	 * getAzimuth 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdAzimuth()
+	public double getAzimuth()
 	{
 		return dAzimuth;
 	}
 
 	/**
-	 * getdHeight 
+	 * getHeight 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdHeight()
+	public double getHeight()
 	{
 		return dHeight;
 	}
 
 	/**
-	 * getdHour_Angle_Star 
+	 * getHour_Angle_Star 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdHour_Angle_Star()
+	public double getHour_Angle_Star()
 	{
 		return dHour_Angle_Star;
 	}
 
 	/**
-	 * getdAngle_Sideral_Time 
+	 * getAngle_Sideral_Time 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdAngle_Sideral_Time()
+	public double getAngle_Sideral_Time()
 	{
 		return dAngle_Sideral_Time;
 	}
 
 	/**
-	 * getdAngle_Hour 
+	 * getAngle_Hour 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdAngle_Hour()
+	public double getAngle_Hour()
 	{
 		return dAngle_Hour;
 	}
 
 	/**
-	 * getdAngle 
+	 * getAngle 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdAngle()
+	public double getAngle()
 	{
 		return dAngle;
 	}
@@ -560,7 +561,7 @@ public class Mathematics
 	 */
 	public double getX()
 	{
-		return X;
+		return dX;
 	}
 
 	/**
@@ -570,6 +571,6 @@ public class Mathematics
 	 */
 	public double getY()
 	{
-		return Y;
+		return dY;
 	}
 }
