@@ -16,20 +16,21 @@
 package com.github.projetp1;
 
 import java.lang.Math;
-import java.util.Date;
+import java.util.Calendar;
 
 public class Mathematics
 {
-	static private final double kpi = Math.PI;
-	static private final double krad = kpi / 180.0;
-	static private final double kdeg = 180.0 / kpi;
-	static private final double kAU = 149597870.7; // Astronomical Unit
+	static private final double pi = Math.PI;
+	static private final double deg2rad = pi / 180.0;
+	static private final double rad2deg = 180.0 / pi;
 
+	//Constants for Julian Date
 	static private final double knumber_of_day_in_one_year = 365.25;
-	static private final double knumber_of_day_in_one_month = 30.6001;// average of the day in one
-																		// month about X000 years
+	static private final double knumber_of_day_in_one_month = 30.6001;// average of the day in one month about X000 years
 	static private final double kinitial_year = 4716.0;
-	static private final double kadditionnal_year_of_gregorian_calendar = 1900.0;
+	
+	//Constants for the Object Date
+	static private final double kadditionnal_year_of_gregorian_calendar = 0.0;
 	static private final double kadditionnal_month_of_Date_object = 1.0;
 	static private final double kadditionnal_day_of_Date_object = 0.0;
 
@@ -66,34 +67,35 @@ public class Mathematics
 	 * @param Date _date : Date of the computer. Will be use to calculate the sideral Time
 	 * @param double _dLat : It's the latitude of the star's pointer
 	 * @param double _Lon : It's the longitude of the star's pointer
-	 * @deprecated methods Date.get*()
 	 */
-	public Mathematics(Date _date, double _dLat, double _dLon,double _dDec,double _dAscension)
+	public Mathematics(Calendar _date, double _dLat, double _dLon,double _dDec,double _dAscension)
 	{
-		this.hour = _date.getHours();
-		this.minute = _date.getMinutes();
-		this.second = _date.getSeconds();
+		this.hour = _date.get(Calendar.HOUR_OF_DAY);
+		this.minute = _date.get(Calendar.MINUTE);
+		this.second = _date.get(Calendar.SECOND);
 
-		String l_GMT = _date.toGMTString();
+		String l_GMT = _date.getTime().toGMTString();
 		String l_hour_GMT = l_GMT.substring(l_GMT.indexOf(':') - 2, l_GMT.indexOf(':'));
 		this.GMT = this.hour - Integer.parseInt(l_hour_GMT);
 
-		this.day = this.kadditionnal_day_of_Date_object + _date.getDate();
-		this.month = this.kadditionnal_month_of_Date_object + _date.getMonth();
-		this.year = this.kadditionnal_year_of_gregorian_calendar + _date.getYear();
+		this.day = Mathematics.kadditionnal_day_of_Date_object + _date.get(Calendar.DATE);
+		this.month = Mathematics.kadditionnal_month_of_Date_object + _date.get(Calendar.MONTH);
+		this.year = Mathematics.kadditionnal_year_of_gregorian_calendar + _date.get(Calendar.YEAR);
 
 		this.latitude = _dLat;
 		this.longitude = _dLon;
 		this.declination = _dDec;
 		this.ascension = _dAscension;
+		
+		calculate_all();
 	}
 	
 	/**
 	 * calculate_all Calculates all the informations that the program needs
 	 */
-	public void calculate_all()
+	private void calculate_all()
 	{
-		this.date_JulianCalendar = greg2julian(this.day, this.month, this.year, this.hour,this.minute, this.second);
+		this.date_JulianCalendar = calculate_JulianDate(this.day, this.month, this.year, this.hour,this.minute, this.second);
 		this.sideral_time = calculate_sideral_time(this.day, this.month, this.year, this.hour,this.minute, this.second);
 
 		this.angle_sideral_time = calculate_sideral_hour_angle(this.sideral_time);
@@ -151,14 +153,14 @@ public class Mathematics
 
 	static public double calculate_X(double _dHeight,double _dAzimuth)
 	{
-		double l_x=-((2.0/kpi)*_dHeight+1);
+		double l_x=-((2.0/pi)*_dHeight+1);
 		
 		return l_x*Math.cos(_dAzimuth);
 	}
 	
 	static public double calculate_Y(double _dHeight,double _dAzimuth)
 	{
-		double l_y=-((2.0/kpi)*_dHeight+1);
+		double l_y=-((2.0/pi)*_dHeight+1);
 		
 		return l_y*Math.sin(_dAzimuth);
 	}
@@ -201,8 +203,7 @@ public class Mathematics
 	 */
 	static private double calculate_height(double _dec, double _dLat, double _star_angle)
 	{
-		double l_sinh = Math.sin(_dec) * Math.sin(_dLat) - Math.cos(_dec) * Math.cos(_dLat)
-				* Math.cos(_star_angle);
+		double l_sinh = Math.sin(_dec) * Math.sin(_dLat) - Math.cos(_dec) * Math.cos(_dLat)* Math.cos(_star_angle);
 		return Math.asin(l_sinh);
 	}
 	
@@ -217,8 +218,7 @@ public class Mathematics
 	 */
 	static private double calculate_azimuth(double _dec, double _dLat, double _height, double _star_angle)
 	{
-		double l_cos_az = (Math.sin(_dec) - Math.sin(_dLat) * Math.sin(_height))
-				/ (Math.cos(_dLat) * Math.cos(_height));
+		double l_cos_az = (Math.sin(_dec) - Math.sin(_dLat) * Math.sin(_height))/(Math.cos(_dLat) * Math.cos(_height));
 		double l_sin_a = (Math.cos(_dec) * Math.sin(_star_angle)) / Math.cos(_height);
 
 		if (l_sin_a > 0)
@@ -228,7 +228,7 @@ public class Mathematics
 	}
 
 	/**
-	 * greg2julian Converts a gregorian date to a julian date
+	 * calculate_JulianDate Converts a gregorian date to a julian date
 	 * 
 	 * @param double _day : The day
 	 * @param double _month : The month
@@ -238,7 +238,7 @@ public class Mathematics
 	 * @param double _seconde : The second
 	 * @return : Return a double that's the result
 	 */
-	static private double greg2julian(double _day, double _month, double _year, double _hour,
+	static private double calculate_JulianDate(double _day, double _month, double _year, double _hour,
 			double _minute, double _second)
 	{
 		if (_month < 3)
@@ -263,7 +263,7 @@ public class Mathematics
 	 */
 	static private double calculate_sideral_hour_angle(double _sideral_time)
 	{
-		return 2.0 * kpi * _sideral_time / hms(23, 56, 4);
+		return 2.0 * pi * _sideral_time / hms(23.0, 56.0, 4.0);
 	}
 
 	/** 
@@ -276,7 +276,7 @@ public class Mathematics
 	 */
 	static private double calculate_hour_angle(double _hour, double _min, double _GMT)
 	{
-		return (_hour - 12 + _min / 60 - _GMT) * 2 * kpi * hms(23, 56, 4);
+		return (_hour - 12 + _min / 60 - _GMT) * 2 * pi * hms(23.0, 56.0, 4.0);
 	}
 
 	/** 
@@ -292,12 +292,11 @@ public class Mathematics
 	 */
 	static private double calculate_sideral_time(double _day, double _month, double _year, double _hour,double _minute, double _second)
 	{
-		double l_JJ = greg2julian(_day, _month, _year, _hour, _minute, _second);
+		double l_JJ = calculate_JulianDate(_day, _month, _year, _hour, _minute, _second);
 		double l_T = (l_JJ - 2451545.0) / 36525.0;
-		double l_H1 = 24110.54841 + 8640184.812866 * l_T + 0.093104 * l_T * l_T - 0.0000062 * l_T
-				* l_T * l_T;
+		double l_H1 = 24110.54841 + 8640184.812866 * l_T + 0.093104 * l_T * l_T - 0.0000062 * l_T* l_T * l_T;
 		double l_HSH = l_H1 / 3600.0;
-		double l_HS = (l_HSH / 24 - (int) (l_HSH / 24)) * 24;
+		double l_HS = (l_HSH / 24.0 - (int) (l_HSH / 24.0)) * 24.0;
 
 		return l_HS;
 	}

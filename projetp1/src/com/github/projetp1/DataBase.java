@@ -15,7 +15,7 @@
 
 package com.github.projetp1;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -314,7 +314,7 @@ public class DataBase
 	 * @param double _lon : It's the longitude of the star's pointer
 	 * @return : Return an arraylist that contains all the stars could be possible to see
 	 */
-	public ArrayList<CelestialObject> starsForCoordinates (Date _date, double _dLat, double _dLon) throws SQLException 
+	public ArrayList<CelestialObject> starsForCoordinates (Calendar _date, double _dLat, double _dLon) throws SQLException 
 	{
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
@@ -405,11 +405,12 @@ public class DataBase
 			
 	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
 	    	Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
-	    	l_calc.calculate_all();
 	    	l_star.setXReal(l_calc.getX());
 	    	l_star.setYReal(l_calc.getY());
+	    	l_calc.get_all();
 	    	al_stars.add(l_star);
 	    	l_star = null;
+	    	l_calc = null;
 		}
 		result.close();
 		
@@ -423,7 +424,7 @@ public class DataBase
 	 * @return : Return an arraylist of ClestialObject.
 	 * @throws SQLException
 	 */
-	public ArrayList<CelestialObject> starsForText (String _searchText,Date _date, double _dLat, double _dLon) throws SQLException 
+	public ArrayList<CelestialObject> starsForText (String _searchText,Calendar _date, double _dLat, double _dLon) throws SQLException 
 	{
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
@@ -516,7 +517,6 @@ public class DataBase
 			
 	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
 	    	Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
-	    	l_calc.calculate_all();
 	    	l_star.setXReal(l_calc.getX());
 	    	l_star.setYReal(l_calc.getY());
 	    	al_stars.add(l_star);
