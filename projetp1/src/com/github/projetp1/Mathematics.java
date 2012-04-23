@@ -276,7 +276,7 @@ public class Mathematics
 	 */
 	static private double calculate_hour_angle(double _hour, double _min, double _GMT)
 	{
-		return (_hour - 12 + _min / 60 - _GMT) * 2 * pi * hms(23.0, 56.0, 4.0);
+		return (_hour - 12 + _min / 60 - _GMT) * 2 * pi / hms(23.0, 56.0, 4.0);
 	}
 
 	/** 
