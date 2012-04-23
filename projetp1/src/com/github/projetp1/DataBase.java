@@ -4,7 +4,7 @@
  |
  | Description of the class DataBase :
  |	  Use to access to the database. You can select the stars that you want, with some informations.
- |	  All fonctions return an ArrayList with object of CelestialObject	
+ |	  All functions return an ArrayList with object of CelestialObject	
  |
  | <p>Copyright : EIAJ, all rights reserved</p>
  | @autor : Diego Antognini
@@ -15,6 +15,7 @@
 
 package com.github.projetp1;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -233,9 +234,12 @@ public class DataBase
 		l_sQuery = "SELECT ";
 		l_sQuery += addFieldsQuery(_sFields);
 		l_sQuery += addTableQuery(_sTable);
-		l_sQuery += addWhereQuery(_sWhere,_bsecured);
-		l_sQuery += addOrderByQuery(_sOrderBy);
-		l_sQuery += addLimitQuery(_Limit);
+		if(_sWhere.length > 0)
+			l_sQuery += addWhereQuery(_sWhere,_bsecured);
+		if(_sOrderBy.length > 0)
+			l_sQuery += addOrderByQuery(_sOrderBy);
+		if(_Limit.length > 0)
+			l_sQuery += addLimitQuery(_Limit);
 		l_sQuery += ";";
 		
 		//If we want to have a prepare statement, we have to replace all value by the real value in s_Where[][]
@@ -302,11 +306,16 @@ public class DataBase
 		return hs_Out;
 	}
 	
-	//private 
-	/*Manque d'autres paramètres
-	public ArrayList<CelestialObject> starsForCoordinates (double _dLongitude, double _dLatitude) throws SQLException 
+	/** 
+	 * starsForCoordinates
+	 * Search all the stars that could be in the hemisphere
+	 * @param double _lat : It's the latitude of the star's pointer
+	 * @param double _lon : It's the longitude of the star's pointer
+	 * @return : Return an arraylist that contains all the stars could be possible to see
+	 */
+	public ArrayList<CelestialObject> starsForCoordinates (Date _date, double _dLat, double _dLon) throws SQLException 
 	{
-		/*ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
+		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
 		int l_id;
 		int l_StarId;
@@ -329,33 +338,36 @@ public class DataBase
 		double l_dXYZ[] = new double[3];
 		double l_dVXYZ[] = new double[3];
 		
-		if(!isDouble(Double.toString(_dLongitude)) || !isDouble(Double.toString(_dLatitude)))
+		if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
 			return null;
-		
-		/*double l_dLonMax = _dLongitude+0.5;
-		double l_dLonMin = _dLongitude-0.5;
-		double l_dLanMax = _dLatitude+0.5;
-		double l_dLanMin = _dLatitude-0.5;*/
-				
-		//Requête de test,il manque les calculs
-		//String l_sQuery = "SELECT * FROM stars WHERE x > " + l_dLonMin + " AND x < " + l_dLonMax + " AND y > " + l_dLanMin + " AND y > " + l_dLanMax + ";";
-		/*
+
 		boolean secured = false;
 		
 		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
 
-		String where[][] = {{"id","<","1100"},
-				{"ProperName","LIKE","A%"}};
-		/*
-		//Injection SQL
-		/*String where[][] = {{"id","=","'UNION SELECT * FROM stars WHERE id = 1 ;--"},
-				{"ProperName","LIKE","A%"}};
-		secured = true;
-		*/
-		/*
-		String orderby[]={"id","ProperName","DESC"}; 
+		String l_condition_stars_visible;	
+		String l_Sign;
+	    if (_dLat > 0.0)
+	    {
+	    	l_condition_stars_visible = String.valueOf(90.0 - _dLat);
+	    	l_Sign = ">";
+	    }
+	    else
+	    {
+	    	l_condition_stars_visible = String.valueOf(-90.0 - _dLat);
+	    	l_Sign = "<";
+	    }
 		
-		int limit[] = {0,1};
+		String where[][] = {{"dec",l_Sign,l_condition_stars_visible}};
+		
+		//Injection SQL
+		//String where[][] = {{"id","=","'UNION SELECT * FROM stars WHERE id = 1 ;--"},
+		//		{"ProperName","LIKE","A%"}};
+		secured = false;
+	
+		String orderby[]={"dec","DESC"}; 
+		
+		int limit[] = {};
 		String table[] = {"stars"};
 		ResultSet result = selectQuery(field,table,where,orderby,limit,secured);
 		
@@ -391,6 +403,10 @@ public class DataBase
 
 			
 	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
+	    	Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
+	    	l_calc.calculate_all();
+	    	l_star.setXReal(l_calc.getX());
+	    	l_star.setYReal(l_calc.getY());
 	    	al_stars.add(l_star);
 	    	l_star = null;
 		}
@@ -398,7 +414,7 @@ public class DataBase
 		
 		return al_stars;		
 	}
-	/*
+	
 	/**
 	 * starsForText
 	 * Search all the stars that has all the condition of the string
@@ -406,7 +422,7 @@ public class DataBase
 	 * @return : Return an arraylist of ClestialObject.
 	 * @throws SQLException
 	 */
-	public ArrayList<CelestialObject> starsForText (String _searchText) throws SQLException 
+	public ArrayList<CelestialObject> starsForText (String _searchText,Date _date, double _dLat, double _dLon) throws SQLException 
 	{
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
@@ -444,7 +460,20 @@ public class DataBase
 		
 		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
 
-		String where[][] = {{"id","<","1100"},
+		String l_condition_stars_visible;	
+		String l_Sign;
+	    if (_dLat > 0.0)
+	    {
+	    	l_condition_stars_visible = String.valueOf(90.0 - _dLat);
+	    	l_Sign = ">";
+	    }
+	    else
+	    {
+	    	l_condition_stars_visible = String.valueOf(-90.0 - _dLat);
+	    	l_Sign = "<";
+	    }
+	    
+		String where[][] = {{"dec",l_Sign,l_condition_stars_visible},
 				{"ProperName","LIKE",_searchText}};
 		
 		String orderby[]={"id","ProperName","DESC"}; 
@@ -485,8 +514,13 @@ public class DataBase
 
 			
 	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
+	    	Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
+	    	l_calc.calculate_all();
+	    	l_star.setXReal(l_calc.getX());
+	    	l_star.setYReal(l_calc.getY());
 	    	al_stars.add(l_star);
 	    	l_star = null;
+	    	l_calc = null;
 		}
 		result.close();
 		
