@@ -53,10 +53,10 @@ public class Mathematics
 	private double dAzimuth;
 	private double dHeight;
 
-	private double dHour_dAngle_Star;
-	private double ddAngle_Sideral_Time;
-	private double ddAngle_Hour;
-	private double dAngle; // ddAngle_Sideral_Time+dAngle_our
+	private double dHour_Angle_Star;
+	private double dAngle_Sideral_Time;
+	private double dAngle_Hour;
+	private double dAngle; // dAngle_Sideral_Time+dAngle_our
 	
 	private double X;
 	private double Y;
@@ -102,14 +102,14 @@ public class Mathematics
 		this.dDate_JulianCalendar = calculate_JulianDate(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
 		this.dSideral_Time = calculate_dSideral_Time(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
 
-		this.ddAngle_Sideral_Time = calculate_sideral_hour_dAngle(this.dSideral_Time);
-		this.ddAngle_Hour = calculate_hour_angle(this.dHour, this.dMinute, this.dGMT);
-		this.dAngle = this.ddAngle_Hour + this.ddAngle_Sideral_Time;
+		this.dAngle_Sideral_Time = calculate_sideral_hour_dAngle(this.dSideral_Time);
+		this.dAngle_Hour = calculate_hour_angle(this.dHour, this.dMinute, this.dGMT);
+		this.dAngle = this.dAngle_Hour + this.dAngle_Sideral_Time;
 
-		this.dHour_dAngle_Star = this.dAngle - this.dAscension + this.dLongitude;
+		this.dHour_Angle_Star = this.dAngle - this.dAscension + this.dLongitude;
 
-		this.dHeight = calculate_height(this.dDeclination, this.dLatitude, this.dHour_dAngle_Star);
-		this.dAzimuth = calculate_azimuth(this.dDeclination, this.dLatitude, this.dHeight,this.dHour_dAngle_Star);
+		this.dHeight = calculate_height(this.dDeclination, this.dLatitude, this.dHour_Angle_Star);
+		this.dAzimuth = calculate_azimuth(this.dDeclination, this.dLatitude, this.dHeight,this.dHour_Angle_Star);
 	
 		this.X = calculate_X(this.dHeight,this.dAzimuth);
 		this.Y = calculate_Y(this.dHeight,this.dAzimuth);
@@ -150,9 +150,9 @@ public class Mathematics
 		System.out.println("Julian Date : " + this.dDate_JulianCalendar);
 		System.out.println("Sideral Time : " + this.dSideral_Time);
 
-		System.out.println("Hour dAngle Star : " + this.dHour_dAngle_Star);
-		System.out.println("Angle Sideral Time : " + this.ddAngle_Sideral_Time);
-		System.out.println("Angle Hour : " + this.ddAngle_Hour);
+		System.out.println("Hour dAngle Star : " + this.dHour_Angle_Star);
+		System.out.println("Angle Sideral Time : " + this.dAngle_Sideral_Time);
+		System.out.println("Angle Hour : " + this.dAngle_Hour);
 		System.out.println("Angle : " + this.dAngle);
 	}
 
@@ -163,7 +163,7 @@ public class Mathematics
 	 * @param double _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
 	 * @return : Return a double that contains the X coordinate
 	 */
-	static public double calculate_X(double _dHeight,double _dAzimuth)
+	static private double calculate_X(double _dHeight,double _dAzimuth)
 	{
 		double l_x=-((2.0/pi)*_dHeight+1);
 		
@@ -177,7 +177,7 @@ public class Mathematics
 	 * @param double _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
 	 * @return : Return a double that contains the Y coordinate
 	 */
-	static public double calculate_Y(double _dHeight,double _dAzimuth)
+	static private double calculate_Y(double _dHeight,double _dAzimuth)
 	{
 		double l_y=-((2.0/pi)*_dHeight+1);
 		
@@ -514,33 +514,33 @@ public class Mathematics
 	}
 
 	/**
-	 * getdHour_dAngle_Star 
+	 * getdHour_Angle_Star 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getdHour_dAngle_Star()
+	public double getdHour_Angle_Star()
 	{
-		return dHour_dAngle_Star;
+		return dHour_Angle_Star;
 	}
 
 	/**
-	 * getddAngle_Sideral_Time 
+	 * getdAngle_Sideral_Time 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getddAngle_Sideral_Time()
+	public double getdAngle_Sideral_Time()
 	{
-		return ddAngle_Sideral_Time;
+		return dAngle_Sideral_Time;
 	}
 
 	/**
-	 * getddAngle_Hour 
+	 * getdAngle_Hour 
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getddAngle_Hour()
+	public double getdAngle_Hour()
 	{
-		return ddAngle_Hour;
+		return dAngle_Hour;
 	}
 
 	/**
