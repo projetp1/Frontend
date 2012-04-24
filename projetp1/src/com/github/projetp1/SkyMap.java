@@ -3,21 +3,45 @@
  */
 package com.github.projetp1;
 
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
+
+class Star extends javax.swing.JPanel {
+	CelestialObject celestialObject;
+	
+	Star(CelestialObject _celestialObject)
+	{
+		celestialObject = _celestialObject;
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		double d = celestialObject.getMag();
+		g.fillOval(10, 10, (int)d, (int)d);
+	}
+}
+
 /**
  * @author   alexandr.perez
  */
-public class SkyMap extends javax.swing.JPanel implements KeyListener {
+public class SkyMap extends javax.swing.JLayeredPane implements KeyListener {
 	
-	private int zoom, x, y, xOrigin, yOrigin, heightSky, widthSky;
+	private int zoom = 0;
+	private double x, y, xOrigin, yOrigin, heightSky, widthSky;
 	private ArrayList<CelestialObject> celestialObjects;
 	/**
 	 * 
 	 */
-	public SkyMap(int xOrigin, int yOrigin, int heightSky, int widthSky) {
+	public SkyMap(int _xOrigin, int _yOrigin, int _heightSky, int _widthSky) {
+		zoom = 0;
+		xOrigin = _xOrigin;
+		yOrigin = _yOrigin;
+		heightSky = _heightSky;
+		widthSky = _widthSky;
+		 
 		 
     }
 	
