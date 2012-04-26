@@ -81,7 +81,7 @@ public class Mathematics
 		String l_GMT = _date.getTime().toGMTString();
 		String l_hour_GMT = l_GMT.substring(l_GMT.indexOf(':') - 2, l_GMT.indexOf(':'));
 		this.dGMT = this.dHour - Integer.parseInt(l_hour_GMT);
-
+		
 		this.dDay = Mathematics.kadditionnal_dDay_of_Date_object + _date.get(Calendar.DATE);
 		this.dMonth = Mathematics.kadditionnal_dMonth_of_Date_object + _date.get(Calendar.MONTH);
 		this.dYear = Mathematics.kadditionnal_dYear_of_gregorian_calendar + _date.get(Calendar.YEAR);
