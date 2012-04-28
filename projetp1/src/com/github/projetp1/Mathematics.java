@@ -78,7 +78,8 @@ public class Mathematics
 		this.dMinute = _date.get(Calendar.MINUTE);
 		this.dSecond = _date.get(Calendar.SECOND);
 
-		this.dGMT = this.dHour - calculate_Hour_GMT(_date);
+		this.dGMT = calculate_Hour_GMT(_date);
+		System.out.println(this.dGMT);
 		this.dDay = Mathematics.kadditionnal_dDay_of_Date_object + _date.get(Calendar.DATE);
 		this.dMonth = Mathematics.kadditionnal_dMonth_of_Date_object + _date.get(Calendar.MONTH);
 		this.dYear = Mathematics.kadditionnal_dYear_of_gregorian_calendar + _date.get(Calendar.YEAR);
@@ -162,11 +163,9 @@ public class Mathematics
 	 */
 	static private int calculate_Hour_GMT(Calendar _cal)
 	{
-	    SimpleDateFormat formatter = new SimpleDateFormat("HH");
-	    formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-	    String timestamp = formatter.format(_cal.getTime());
-	    return Integer.valueOf(timestamp);
+	    TimeZone l_t = _cal.getTimeZone();
+	    
+	    return l_t.getOffset(_cal.getTimeInMillis())/1000/3600;
 	}
 	
 	/**
