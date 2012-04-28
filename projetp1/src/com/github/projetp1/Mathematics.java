@@ -16,7 +16,6 @@
 package com.github.projetp1;
 
 import java.lang.Math;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
