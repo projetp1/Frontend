@@ -116,19 +116,23 @@ public class MainView extends JFrame implements KeyListener {
 	public void keyPressed(KeyEvent evt) {
         if(evt.getKeyCode() == 37) //Left
         {
-        	xOrigin += 0.02;
+        	if(xOrigin < 1)
+        		xOrigin += 0.02;
         }
         else if(evt.getKeyCode() == 39) //Right
         {
-        	xOrigin -= 0.02;        	
+        	if(xOrigin > 1)
+        		xOrigin -= 0.02;
         }
         else if(evt.getKeyCode() == 38) // Up
         {
-        	yOrigin += 0.02;
+        	if(yOrigin < 1)
+        		yOrigin += 0.02;
         }
         else if(evt.getKeyCode() == 40) // Down
         {
-        	yOrigin -= 0.02;        	
+        	if(yOrigin > 1)
+        		yOrigin -= 0.02;
         }
         else if(evt.getKeyCode() == (int)'.') //+
         {
