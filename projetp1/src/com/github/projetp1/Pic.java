@@ -7,9 +7,10 @@ package com.github.projetp1;
  * @author   alexandr.perez
  */
 
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.github.projetp1.rs232.RS232Command;
+import jssc.SerialPortException;
+
+import com.github.projetp1.rs232.*;
 
 public class Pic extends Thread{
 
@@ -51,7 +52,7 @@ public class Pic extends Thread{
 	
 	protected MainView mainview;
 	
-	private com.github.projetp1.rs232.RS232 rs = new com.github.projetp1.rs232.RS232(mainview);
+	private RS232 rs;
 	
 	/**
 	 * 
@@ -59,7 +60,18 @@ public class Pic extends Thread{
 	public Pic(MainView _mainview) {
 		// TODO Auto-generated constructor stub
 		this.mainview = _mainview;
-		
+		try
+		{
+			rs = new RS232(mainview.settings ,this);
+		}
+		catch (SerialPortException e)
+		{
+			System.out.println(e.getMessage());
+		}
+		catch (Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
 		this.start();
 	}
 
@@ -134,30 +146,34 @@ public class Pic extends Thread{
 	public void setMode(PicMode mode) {
 		this.mode = mode;
 	}
+	
 	public void run()
 	{
 		//Reception des données
 		commande = rs.getLastCommand();
 		
-		//Switch pour trier les données
-		switch(commande.getCommandNumber())
+		if(commande != null)
 		{
-			case EMPTY :
-				break;
-			case CHANGE_TO_POINT_MODE:
-				break;
-			case CHANGE_TO_ARROW_MODE:
-				break;
-			case LOCATION_UPDATE:
-				break;
-			case ACCELEROMETER_UPDATE:
-				break;
-			case MAGNETOMETER_UPDATE:
-				break;
-			case PIC_STATUS:
-				break;
-			default:
-				break;
+			//Switch pour trier les données
+			switch(commande.getCommandNumber())
+			{
+				case EMPTY :
+					break;
+				case CHANGE_TO_POINT_MODE:
+					break;
+				case CHANGE_TO_ARROW_MODE:
+					break;
+				case LOCATION_UPDATE:
+					break;
+				case ACCELEROMETER_UPDATE:
+					break;
+				case MAGNETOMETER_UPDATE:
+					break;
+				case PIC_STATUS:
+					break;
+				default:
+					break;
+			}
 		}
 	}
 }
