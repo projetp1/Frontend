@@ -2,10 +2,10 @@ package com.github.projetp1.rs232;
 
 public class RS232Command
 {
-	private RS232CommandType _commandNumber;
-	public RS232CommandType getCommandNumber() { return _commandNumber; }
-	private String _datas;
-	public String getDatas() { return _datas; }
+	private RS232CommandType commandNumber;
+	public RS232CommandType getCommandNumber() { return commandNumber; }
+	private String datas;
+	public String getDatas() { return datas; }
 	
 	/**
 	 * Create a new RS232Command object (with CRC check)
@@ -17,8 +17,8 @@ public class RS232Command
 	 */
 	public RS232Command(String commandNumber, String datas, byte crc) throws CrcException, IllegalArgumentException
 	{
-		this._commandNumber = RS232CommandType.valueOfByNum(commandNumber);
-		this._datas = datas;
+		this.commandNumber = RS232CommandType.valueOfByNum(commandNumber);
+		this.datas = datas;
 		
 		if(!RS232.checkCrc(datas, crc))
 			throw new CrcException(crc);
@@ -32,8 +32,8 @@ public class RS232Command
 	 */
 	public RS232Command(RS232CommandType commandNumber, String datas)
 	{
-		this._commandNumber = commandNumber;
-		this._datas = datas;
+		this.commandNumber = commandNumber;
+		this.datas = datas;
 	}
 	
 	/**
@@ -51,10 +51,10 @@ public class RS232Command
 		// Extract the CRC
 		
 		// Extract the datas
-		this._datas = extractDatas(chain);
-		this._commandNumber = extractCommand(chain);
+		this.datas = extractDatas(chain);
+		this.commandNumber = extractCommand(chain);
 		
-		if(!RS232.checkCrc(_datas, extractCrc(chain)))
+		if(!RS232.checkCrc(datas, extractCrc(chain)))
 			throw new CrcException(extractCrc(chain));	
 	}
 	
@@ -65,7 +65,7 @@ public class RS232Command
 	 */
 	public void sendNck(RS232 rs)
 	{
-		rs.sendNck(_commandNumber);
+		rs.sendNck(commandNumber);
 	}
 	
 	/**
