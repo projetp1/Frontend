@@ -30,7 +30,7 @@ public class DataBase
 	private String sTable;
 	private Connection connection;
 	private Statement statement;
-	
+
 	private int argumentCount;
 	static private final double kdAL_KM = 9435053029704.605;//Source wikipédia
 	
@@ -170,7 +170,7 @@ public class DataBase
 		//If secured = true, the function will prepared a prepared statement, replace all the value by "?"
 		for(int i=0;i<_sWhere.length;i++)
 		{
-			l_sOut += _sWhere[i][0] +  " " +_sWhere[i][1];
+			l_sOut += _sWhere[i][0] +  " " + _sWhere[i][1];
 			if(_bsecured)
 			{
 				l_sOut += " ? ";
@@ -305,7 +305,6 @@ public class DataBase
 			}
 			else
 				l_sValue = l_sTemp.substring(l_sTemp.indexOf(' '),l_sTemp.length());
-			System.out.println("Key -> " + l_sKey + "\tValue -> " + l_sValue + "\n");
 			hs_Out.put(l_sKey, l_sValue);
 		}
 		
@@ -348,29 +347,17 @@ public class DataBase
 		double l_dVXYZ[] = new double[3];
 		
 		boolean secured = false;
-		String l_condition_stars_visible = "";	
-		String l_Sign = "";
 		
 		if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
 			return null;
 		
-	    if (_dLat > 0.0)
-	    {
-	    	l_condition_stars_visible = String.valueOf(90.0 - _dLat);
-	    	l_Sign = ">";
-	    }
-	    else
-	    {
-	    	l_condition_stars_visible = String.valueOf(-90.0 - _dLat);
-	    	l_Sign = "<";
-	    }
-		
-		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
-		String table[] = {this.sTable};
-		String where[][] = {{"dec",l_Sign,l_condition_stars_visible}};
-		String orderby[]={"dec","DESC"}; 
-		int limit[] = {};
+		String[] field = {"*"};
+		String[] table = {this.sTable};
+		String[][] where = {};
+		String[] orderby={"id","ASC"}; 
+		int[] limit = {};
 		secured = true;
+
 		//Injection SQL
 		//String where[][] = {{"id","=","'UNION SELECT * FROM stars WHERE id = 1 ;--"},
 		//		{"ProperName","LIKE","A%"}};
@@ -406,14 +393,16 @@ public class DataBase
 			l_dVXYZ[0] = result.getDouble("VX");
 			l_dVXYZ[1] = result.getDouble("VY");
 			l_dVXYZ[2] = result.getDouble("VZ");
-
 			
 	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
 	    	Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
 	    	
-	    	l_star.setXReal(l_calc.getX());
-	    	l_star.setYReal(l_calc.getY());
-	    	al_stars.add(l_star);
+	    	if(l_calc.getHeight() > 0)
+	    	{
+		    	l_star.setXReal(l_calc.getX());
+		    	l_star.setYReal(l_calc.getY());
+		    	al_stars.add(l_star);
+	    	}
 	    	
 	    	l_star = null;
 	    	l_calc = null;
@@ -459,37 +448,28 @@ public class DataBase
 		double l_dVXYZ[] = new double[3];
 		
 		boolean secured = false;
-		String l_condition_stars_visible = "";	
-		String l_Sign = "";
 		
 		HashMap<String, String> hm_sWhere = decryptText(_searchText);
 		Iterator<String> l_it = hm_sWhere.keySet().iterator();
 		
+		String[] table = {this.sTable};
+		String[] field = {"*"};
+		String[][] where = new String[hm_sWhere.size()][3];
+		String[] orderby={"id","ASC"}; 
+		int[] limit = {};
+		secured = true;
+		
+		int i = 0;
+		
 		while(l_it.hasNext())
 		{
 			String l_sTemp = l_it.next().toString();
-			System.out.println(l_sTemp + " -> " + hm_sWhere.get(l_sTemp).toString());
+			where[i][0] = l_sTemp;
+			where[i][1] = "LIKE";
+			where[i][2] = "%" + hm_sWhere.get(l_sTemp).toString().trim() + "%";
+			i++;
 		}
-		
-
-	    if (_dLat > 0.0)
-	    {
-	    	l_condition_stars_visible = String.valueOf(90.0 - _dLat);
-	    	l_Sign = ">";
-	    }
-	    else
-	    {
-	    	l_condition_stars_visible = String.valueOf(-90.0 - _dLat);
-	    	l_Sign = "<";
-	    }
-	    
-		String table[] = {this.sTable};
-		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
-		String where[][] = {{"dec",l_Sign,l_condition_stars_visible},{"ProperName","LIKE",_searchText}};
-		String orderby[]={"id","ProperName","DESC"}; 
-		int limit[] = {0,1};
-		secured = true;
-
+	
 		ResultSet result = selectQuery(field,table,where,orderby,limit,secured);
 		
 		if(result == null)
@@ -525,10 +505,13 @@ public class DataBase
 			
 	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
 	    	Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
-	    	
-	    	l_star.setXReal(l_calc.getX());
-	    	l_star.setYReal(l_calc.getY());
-	    	al_stars.add(l_star);
+
+	    	if(l_calc.getHeight() > 0)
+	    	{
+		    	l_star.setXReal(l_calc.getX());
+		    	l_star.setYReal(l_calc.getY());
+		    	al_stars.add(l_star);
+	    	}
 	    	
 	    	l_star = null;
 	    	l_calc = null;
