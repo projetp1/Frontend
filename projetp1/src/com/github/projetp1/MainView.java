@@ -96,7 +96,7 @@ public class MainView extends JFrame {
 		settings = new Settings();
 		Serializer.serialize("settings.lol",settings);
 		
-		pic = new Pic();
+		pic = new Pic(this);
 	}
 
 	public void showHelpView() {
