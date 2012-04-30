@@ -19,8 +19,6 @@ public class RS232 implements SerialPortEventListener
 {
 	/** The Settings */
 	protected Settings settings;
-	/** The MainView */
-	protected MainView mainview;
 	/** The object maintaining the PIC status */
 	protected Pic pic;
 	/** The serial port object. */
@@ -52,16 +50,16 @@ public class RS232 implements SerialPortEventListener
 
 	/**
 	 * Instantiates a new RS232 object.
-	 * 
-	 * @param mainview The global MainView
+	 *
+	 * @param _settings A Settings object
+	 * @param _pic A Pic object
 	 * @throws Exception A generic Exception. May occur if the PIC isn't found.
 	 * @throws SerialPortException A SerialPortException
 	 */
-	public RS232(MainView mainview) throws Exception, SerialPortException
+	public RS232(Settings _settings, Pic _pic) throws Exception, SerialPortException
 	{
-		this.mainview = mainview;
-		this.settings = mainview.getSettings();
-		this.pic = mainview.getPic();
+		this.settings = _settings;
+		this.pic = _pic;
 
 		// Initialisation du sp
 		String port = settings.getPort();
@@ -259,34 +257,9 @@ public class RS232 implements SerialPortEventListener
 				@Override
 				public void run()
 				{
-					if(pingReceived())
-						resetTimeout();
-					else
-						disconnect();
+					disconnect();
 				}
 			}, PINGTIMEOUT);
-		}
-	}
-
-	/**
-	 * Check if a ping originating from the PIC was received
-	 * 
-	 * @return true, if successful
-	 */
-	private boolean pingReceived()
-	{
-		try
-		{
-			boolean ping = false;
-			while (commandQueue.remove(new RS232Command(RS232CommandType.EMPTY, "")))
-				ping = true;
-
-			return ping;
-		}
-		catch (Exception e)
-		{
-			System.out.println("Erreur impossible : " + e.getMessage());
-			return false;
 		}
 	}
 
@@ -324,7 +297,10 @@ public class RS232 implements SerialPortEventListener
 			try
 			{
 				com = new RS232Command(chain);
-				commandQueue.add(com);
+				if(com.getCommandNumber() != RS232CommandType.EMPTY)
+					commandQueue.add(com);
+				else
+					resetTimeout();
 				newComs = true;
 			}
 			catch (CrcException e1)
@@ -344,6 +320,11 @@ public class RS232 implements SerialPortEventListener
 
 	}
 
+	public RS232Command getLastCommand()
+	{
+		return commandQueue.poll();
+	}
+	
 	/**
 	 * Check the CRC against the raw string received via RS-232
 	 * 
