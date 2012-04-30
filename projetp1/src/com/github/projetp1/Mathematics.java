@@ -175,10 +175,10 @@ public class Mathematics
 	 */
 	static private double calculate_X(double _dHeight,double _dAzimuth)
 	{
-		//double l_x=-((2.0/pi)*_dHeight+1);
+		double l_x = 1*((-2.0/pi)*_dHeight+1);
 		
-		//return l_x*cos(_dAzimuth);
-		return -(cos(_dHeight)*sin(_dAzimuth)/(sin(_dHeight)+1));
+		return l_x*cos(_dAzimuth);
+		//return (cos(_dHeight)*sin(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
 	/**
@@ -190,10 +190,10 @@ public class Mathematics
 	 */
 	static private double calculate_Y(double _dHeight,double _dAzimuth)
 	{
-		//double l_y=-((2.0/pi)*_dHeight+1);
+		double l_y = 1*((-2.0/pi)*_dHeight+1);
 		
-		//return l_y*sin(_dAzimuth);
-		return -(cos(_dHeight)*cos(_dAzimuth)/(sin(_dHeight)+1));
+		return l_y*sin(_dAzimuth);
+		//return (cos(_dHeight)*cos(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
 	/** 
