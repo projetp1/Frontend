@@ -78,7 +78,6 @@ public class Mathematics
 		this.dSecond = _date.get(Calendar.SECOND);
 
 		this.dGMT = calculate_Hour_GMT(_date);
-		System.out.println(this.dGMT);
 		this.dDay = Mathematics.kadditionnal_dDay_of_Date_object + _date.get(Calendar.DATE);
 		this.dMonth = Mathematics.kadditionnal_dMonth_of_Date_object + _date.get(Calendar.MONTH);
 		this.dYear = Mathematics.kadditionnal_dYear_of_gregorian_calendar + _date.get(Calendar.YEAR);
