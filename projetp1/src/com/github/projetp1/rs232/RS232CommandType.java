@@ -32,7 +32,7 @@ public enum RS232CommandType {
 
 	@Override
 	public String toString() {
-		return this.name() + ":" + this.code;
+		return code;
 	}
 	
 	/**
