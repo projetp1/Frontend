@@ -4,7 +4,7 @@
  |
  | Description of the class DataBase :
  |	  Use to access to the database. You can select the stars that you want, with some informations.
- |	  All fonctions return an ArrayList with object of CelestialObject	
+ |	  All functions return an ArrayList with object of CelestialObject	
  |
  | <p>Copyright : EIAJ, all rights reserved</p>
  | @autor : Diego Antognini
@@ -15,6 +15,7 @@
 
 package com.github.projetp1;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -26,18 +27,31 @@ public class DataBase
 {
 	private String sDataBase;
 	private String sDelimiter;
+	private String sTable;
 	private Connection connection;
 	private Statement statement;
-	private int argumentCount = 0;
-	private double dAL_KM = 9435053029704.605;//Source wikipédia
+	
+	private int argumentCount;
+	static private final double kdAL_KM = 9435053029704.605;//Source wikipédia
+	
+	/** 
+	 * Database
+	 * Constructor
+	 * @param string _sDataBase : It's the name of the database that will use
+	 * @param string _sDelimiter : It's the delimiter of the string of the searchbar
+	 * @throws SQLException,Exception
+	 */
 	public DataBase(String _sDataBase,String _sDelimiter) throws SQLException, Exception
 	{
 		Class.forName("org.sqlite.JDBC");//Load the drivers for SQLite
+		this.argumentCount = 0;
 		this.sDataBase = _sDataBase;
 		this.sDelimiter = _sDelimiter;
 		this.connection = createConnection();
 		this.statement = createStatement();
+		this.sTable = "stars";
 	}
+	
 	/** 
 	 * closeConnection
 	 *  You can close the connection of a connection object
@@ -59,7 +73,7 @@ public class DataBase
 	/** 
 	 * createConnection
 	 * After open a connection, you have to load the database and create a connection to this
-	 *@return return a Connection objet that has loaded the database
+	 *@return return a Connection object that has loaded the database
 	 */
 	private Connection createConnection() throws SQLException
 	{
@@ -78,9 +92,9 @@ public class DataBase
 
 	/** 
 	 * executeRegex
-	 * Used for execute a Regex. For example when you want to know if the is a unity for the value 
+	 * Used for execute a Regex. For example when you want to know if there is a unity for the value 
 	 * @param string _sRegex : It's the regex that the function will use
-	 * @param string _sString : It's the string that will be analyse by the regex
+	 * @param string _sString : It's the string that will be analyze by the regex
 	 * @return : Return a boolean with true if the regex has found the string or return false
 	 */
 	private boolean executeRegex(String _sRegex,String _sString)
@@ -94,8 +108,8 @@ public class DataBase
 	/** 
 	 * isDouble
 	 * Say if it's a Double or not with a regex.
-	 * @param _sString : It's the string that will be analyse
-	 * @return : Returne a boolean with true if the regex has found that the string is a double or return false
+	 * @param _sString : It's the string that will be analyze
+	 * @return : Return a boolean with true if the regex has found that the string is a double or return false
 	 */
 	private boolean isDouble(String _sString)
 	{
@@ -112,7 +126,7 @@ public class DataBase
 	private String addFieldsQuery(String _sFields[])
 	{
 		String l_sOut = "";
-		//Analyse all the array and add the fields to the query
+		//Analyze all the array and add the fields to the query
 		for(int i = 0;i<_sFields.length;i++)
 		{
 			l_sOut += _sFields[i];
@@ -131,7 +145,7 @@ public class DataBase
 	private String addTableQuery(String _sTable[])
 	{
 		String l_sOut = " FROM ";
-		//Analyse all the array and had the tables to the query
+		//Analyze all the array and had the tables to the query
 		for(int i = 0;i<_sTable.length;i++)
 		{
 			l_sOut += _sTable[i];
@@ -140,23 +154,24 @@ public class DataBase
 		}
 		return l_sOut;		
 	}
+	
 	/**
 	 * addWhereQuery
 	 * Add the clause "WHERE" to the query
-	 * @param String[][] _sWhere : Array 2D with the format : {{"field","sign","value"},{...}}
+	 * @param String[][] _sWhere : Array 2D with the format : {{"field","operator","value"},{...}}
 	 * @param boolean secured : True if you want a prepared statement or false for a basic statement
 	 * @return : Return a string that contains the clause WHERE for the query
 	 */
-	private String addWhereQuery(String _sWhere[][],boolean secured)
+	private String addWhereQuery(String _sWhere[][],boolean _bsecured)
 	{
 		String l_sOut = " WHERE ";
 
-		//Analyse all the array and add the where clause to the query
+		//Analyze all the array and add the where clause to the query
 		//If secured = true, the function will prepared a prepared statement, replace all the value by "?"
 		for(int i=0;i<_sWhere.length;i++)
 		{
 			l_sOut += _sWhere[i][0] +  " " +_sWhere[i][1];
-			if(secured)
+			if(_bsecured)
 			{
 				l_sOut += " ? ";
 				//Count the element,because after you have to replace these values
@@ -181,7 +196,7 @@ public class DataBase
 	{
 		String l_sOut = " ORDER BY ";
 		
-		//Analyse all the array and add the ORDER BY clause to the query
+		//Analyze all the array and add the ORDER BY clause to the query
 		for(int i=0;i<_sOrderBy.length;i++)
 		{
 			l_sOut += " " + _sOrderBy[i];
@@ -203,33 +218,37 @@ public class DataBase
 		l_sOut += _Limit[0] + "," + _Limit[1];
 		return l_sOut;
 	}
+	
 	/**
 	 * selectQuery()
 	 * Do a selectQuery with the fields,tables and all the clause for the query
-	 * @param _sFields
-	 * @param _sTable
-	 * @param _sWhere
-	 * @param _sOrderBy
-	 * @param _Limit
-	 * @param secured
-	 * @return
+	 * @param String[] _sFields : Array that contains the fields that you want to have in the query
+	 * @param String[] _sTable : The array where the tables are
+	 * @param String[][] _sWhere : Array 2D with the format : {{"field","operator","value"},{...}}
+	 * @param String[] _sOrderBy : Array 1D with the format : {"field1","field2"}. The query sort with the first value, then the second ...
+	 * @param String[] _Limit : Array 1D with the format {"begin","end"}
+	 * @param boolean secured : True if you want a prepared statement or false for a basic statement
 	 * @throws SQLException
+	 * @return
 	 */
-	private ResultSet selectQuery(String _sFields[],String _sTable[],String _sWhere[][],String _sOrderBy[],int _Limit[],boolean secured) throws SQLException
+	private ResultSet selectQuery(String _sFields[],String _sTable[],String _sWhere[][],String _sOrderBy[],int _Limit[],boolean _bsecured) throws SQLException
 	{
 		String l_sQuery;
 		
 		//Create the entire query with all the function
 		l_sQuery = "SELECT ";
-		l_sQuery += addFieldsQuery(_sFields);
-		l_sQuery += addTableQuery(_sTable);
-		l_sQuery += addWhereQuery(_sWhere,secured);
-		l_sQuery += addOrderByQuery(_sOrderBy);
-		l_sQuery += addLimitQuery(_Limit);
+		l_sQuery += addFieldsQuery(_sFields);//Obligatory string for the query
+		l_sQuery += addTableQuery(_sTable);//Obligatory string for the query
+		if(_sWhere.length > 0)
+			l_sQuery += addWhereQuery(_sWhere,_bsecured);
+		if(_sOrderBy.length > 0)
+			l_sQuery += addOrderByQuery(_sOrderBy);
+		if(_Limit.length > 0)
+			l_sQuery += addLimitQuery(_Limit);
 		l_sQuery += ";";
 		
-		//If we want to have a preparte statement, we have to replace all value by the real value in s_Where[][]
-		if(secured)
+		//If we want to have a prepare statement, we have to replace all value by the real value in s_Where[][]
+		if(_bsecured)
 		{
 			PreparedStatement pStatement = this.connection.prepareStatement(l_sQuery);
 			for(int i = 0;i<this.argumentCount;i++)
@@ -241,6 +260,7 @@ public class DataBase
 		else
 			return this.statement.executeQuery(l_sQuery);
 	}
+	
 	/**
 	 * decryptText
 	 * Use to decrypt the text inputed by the user.
@@ -251,12 +271,12 @@ public class DataBase
 	 */
 	private HashMap<String, String> decryptText(String _sText)
 	{
-		//If the string is null or haven't a "!" return avec wrong hashmap
+		//If the string is null or haven't a "!" return a wrong hashmap
 		if(_sText.length()==0 || _sText.charAt(0)!='!')
 		{
-			HashMap<String, String> hs_Out = new HashMap<String, String>(1);
-			hs_Out.put("0","Paramètre incorrect");
-			return hs_Out;
+			HashMap<String, String> l_hs_Out = new HashMap<String, String>(1);
+			l_hs_Out.put("0","Incorrect Parameter");
+			return l_hs_Out;
 		}
 			
 		String l_sSeparateur = this.sDelimiter;
@@ -267,7 +287,7 @@ public class DataBase
 		String[] l_sString = _sText.split(l_sSeparateur);
 		HashMap<String, String> hs_Out = new HashMap<String, String>(l_sString.length);
 		
-		//Analyse all the string
+		//Analyze all the string
 		for(int i = 0;i<l_sString.length;i++)
 		{
 			l_sTemp = l_sString[i];
@@ -279,7 +299,7 @@ public class DataBase
 				l_sValue = l_sTemp.substring(l_sTemp.indexOf(' '),l_sTemp.length()-2);
 				l_sUnit = l_sTemp.substring(l_sTemp.length()-2, l_sTemp.length());
 				if(l_sUnit.matches("(km)$")){//Convert the km to year light
-					double l_dAnneeLumiere = Double.parseDouble(l_sValue)/dAL_KM;
+					double l_dAnneeLumiere = Double.parseDouble(l_sValue)/kdAL_KM;
 					l_sValue = String.valueOf(l_dAnneeLumiere);
 				}
 			}
@@ -292,9 +312,17 @@ public class DataBase
 		return hs_Out;
 	}
 	
-	//private 
-	//Manque d'autres paramètres
-	public ArrayList<CelestialObject> starsForCoordinates (double _dLongitude, double _dLatitude) throws SQLException 
+
+	/** 
+	 * starsForCoordinates
+	 * Search all the stars that could be in the hemisphere
+	 * @param Calendar _date : It's the date that will be use to search the stars
+	 * @param double _dLat : It's the latitude of the star's pointer
+	 * @param double _dLon : It's the longitude of the star's pointer
+	 * @throws SQLException
+	 * @return : Return an arraylist that contains all the stars could be possible to see
+	 */
+	public ArrayList<CelestialObject> starsForCoordinates (Calendar _date, double _dLat, double _dLon) throws SQLException 
 	{
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
@@ -319,34 +347,34 @@ public class DataBase
 		double l_dXYZ[] = new double[3];
 		double l_dVXYZ[] = new double[3];
 		
-		if(!isDouble(Double.toString(_dLongitude)) || !isDouble(Double.toString(_dLatitude)))
+		boolean secured = false;
+		String l_condition_stars_visible = "";	
+		String l_Sign = "";
+		
+		if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
 			return null;
 		
-		/*double l_dLonMax = _dLongitude+0.5;
-		double l_dLonMin = _dLongitude-0.5;
-		double l_dLanMax = _dLatitude+0.5;
-		double l_dLanMin = _dLatitude-0.5;*/
-				
-		//Requête de test,il manque les calculs
-		//String l_sQuery = "SELECT * FROM stars WHERE x > " + l_dLonMin + " AND x < " + l_dLonMax + " AND y > " + l_dLanMin + " AND y > " + l_dLanMax + ";";
-		
-		boolean secured = false;
+	    if (_dLat > 0.0)
+	    {
+	    	l_condition_stars_visible = String.valueOf(90.0 - _dLat);
+	    	l_Sign = ">";
+	    }
+	    else
+	    {
+	    	l_condition_stars_visible = String.valueOf(-90.0 - _dLat);
+	    	l_Sign = "<";
+	    }
 		
 		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
-
-		String where[][] = {{"id","<","1100"},
-				{"ProperName","LIKE","A%"}};
-		
-		//Injection SQL
-		/*String where[][] = {{"id","=","'UNION SELECT * FROM stars WHERE id = 1 ;--"},
-				{"ProperName","LIKE","A%"}};
+		String table[] = {this.sTable};
+		String where[][] = {{"dec",l_Sign,l_condition_stars_visible}};
+		String orderby[]={"dec","DESC"}; 
+		int limit[] = {};
 		secured = true;
-		*/
-		
-		String orderby[]={"id","ProperName","DESC"}; 
-		
-		int limit[] = {0,1};
-		String table[] = {"stars"};
+		//Injection SQL
+		//String where[][] = {{"id","=","'UNION SELECT * FROM stars WHERE id = 1 ;--"},
+		//		{"ProperName","LIKE","A%"}};
+
 		ResultSet result = selectQuery(field,table,where,orderby,limit,secured);
 		
 		if(result == null)
@@ -381,8 +409,14 @@ public class DataBase
 
 			
 	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
+	    	Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
+	    	
+	    	l_star.setXReal(l_calc.getX());
+	    	l_star.setYReal(l_calc.getY());
 	    	al_stars.add(l_star);
+	    	
 	    	l_star = null;
+	    	l_calc = null;
 		}
 		result.close();
 		
@@ -392,11 +426,14 @@ public class DataBase
 	/**
 	 * starsForText
 	 * Search all the stars that has all the condition of the string
-	 * @param String[] _searchText : The string that will be analyse by the fonction decryptText
-	 * @return : Return an arraylyst of ClestialObject.
+	 * @param String[] _searchText : The string that will be analyze by the function decryptText
+	 * @param Calendar _date : It's the date that will be use to search the stars
+	 * @param double _dLat : It's the latitude of the star's pointer
+	 * @param double _dLon : It's the longitude of the star's pointer
 	 * @throws SQLException
+	 * @return : Return an arraylist of CelestialObject.
 	 */
-	public ArrayList<CelestialObject> starsForText (String _searchText) throws SQLException 
+	public ArrayList<CelestialObject> starsForText (String _searchText,Calendar _date, double _dLat, double _dLon) throws SQLException 
 	{
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
@@ -421,7 +458,9 @@ public class DataBase
 		double l_dXYZ[] = new double[3];
 		double l_dVXYZ[] = new double[3];
 		
-		boolean secured = true;
+		boolean secured = false;
+		String l_condition_stars_visible = "";	
+		String l_Sign = "";
 		
 		HashMap<String, String> hm_sWhere = decryptText(_searchText);
 		Iterator<String> l_it = hm_sWhere.keySet().iterator();
@@ -432,15 +471,25 @@ public class DataBase
 			System.out.println(l_sTemp + " -> " + hm_sWhere.get(l_sTemp).toString());
 		}
 		
-		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
 
-		String where[][] = {{"id","<","1100"},
-				{"ProperName","LIKE",_searchText}};
-		
+	    if (_dLat > 0.0)
+	    {
+	    	l_condition_stars_visible = String.valueOf(90.0 - _dLat);
+	    	l_Sign = ">";
+	    }
+	    else
+	    {
+	    	l_condition_stars_visible = String.valueOf(-90.0 - _dLat);
+	    	l_Sign = "<";
+	    }
+	    
+		String table[] = {this.sTable};
+		String field[] = {"id","StarID","HIP","HD","HR","Gliese","BayerFlamsteed","ProperName","RA","Dec","Distance","PMRA","PMDec","RV","Mag","AbsMag","Spectrum","ColorIndex","X","Y","Z","VX","VY","VZ"};
+		String where[][] = {{"dec",l_Sign,l_condition_stars_visible},{"ProperName","LIKE",_searchText}};
 		String orderby[]={"id","ProperName","DESC"}; 
-		
 		int limit[] = {0,1};
-		String table[] = {"stars"};
+		secured = true;
+
 		ResultSet result = selectQuery(field,table,where,orderby,limit,secured);
 		
 		if(result == null)
@@ -475,8 +524,14 @@ public class DataBase
 
 			
 	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
+	    	Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
+	    	
+	    	l_star.setXReal(l_calc.getX());
+	    	l_star.setYReal(l_calc.getY());
 	    	al_stars.add(l_star);
+	    	
 	    	l_star = null;
+	    	l_calc = null;
 		}
 		result.close();
 		
