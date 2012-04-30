@@ -127,7 +127,7 @@ public class MainView extends JFrame implements KeyListener {
         else if(evt.getKeyCode() == 40) // Up
         {
         	if(zoom>1)
-        		zoom--;        	
+        		zoom--;
         }
         else if(evt.getKeyCode() == (int)'+') //+
         {

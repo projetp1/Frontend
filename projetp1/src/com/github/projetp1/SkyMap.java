@@ -122,20 +122,34 @@ public class SkyMap extends JLayeredPane {
 	
 	
 	public void updateSkyMap() {
-		this.removeAll();
+		//this.removeAll();
 		this.repaint();
+		/**
 		int scale = (int)(this.getHeight()/5);
 		int xOrigin = this.getWidth()/2; //TODO + scale * l'endroit où point le pic
 		int yOrigin = this.getHeight()/2;
 		for (CelestialObject celestialObject : celestialObjects)
 			 this.add(new Star(celestialObject, scale, zoom, xOrigin, yOrigin));
+			 */
 	}
 	
 	
 	public void paint(Graphics g)
 	{
-		g.fillOval(300, 300, 100, 100);
-		setForeground(Color.red);
+		int scale = (int)(this.getHeight()/5);
+		int xOrigin = this.getWidth()/2; //TODO + scale * l'endroit où point le pic
+		int yOrigin = this.getHeight()/2;
+		for (CelestialObject celestialObject : celestialObjects)
+		{
+			int x, y;
+			int d = getSizeForMagnitude(celestialObject.getMag())+1;
+			if(celestialObject.getMag() < -20)
+				d = 30;
+			x = (int)(celestialObject.getXReal() * zoom * scale) + xOrigin;
+			y = (int)(celestialObject.getYReal() * zoom * scale) + yOrigin;
+			g.setColor(getColorForColorIndex(celestialObject.getColorIndex()));
+	        g.fillOval(x, y, d, d);			
+		}
 	}
 	
 	/**
@@ -146,5 +160,59 @@ public class SkyMap extends JLayeredPane {
 
 	public void setZoom(int _zoom) {
 		this.zoom = _zoom;
-	}	
+	}
+	
+	/**
+     * Returns the diameter of the point who display the star
+     * The diameter correspond to the star magnitude
+     * @param _mag : Magnitude of the star
+     * @return Size of the point in pixel 
+     */
+    private int getSizeForMagnitude(double _mag)
+    {
+        int size = 0;
+        
+        if (_mag >= 5.3)
+            size = 1;
+        else if (_mag >= 4.0)
+            size = 2;
+        else if (_mag >= 2.7)
+            size = 3;
+        else if (_mag >= 1.4)
+            size = 4;
+        else if (_mag >= 0.1)
+            size = 5;
+        else if (_mag >= -1.2)
+            size = 6;
+        else
+            size = 7;
+        
+        return size;
+    }
+    
+
+	/**
+     * Returns the color of the point who display the star
+     * The color correspond to the star color index
+     * @param _colorIndex : Color index of the star
+     * @return Color of the point 
+     */    
+    private Color getColorForColorIndex(double _colorIndex)
+    {
+    	Color c;
+    	if(_colorIndex >= 1.41)
+    		c = new Color(255,200,200);
+    	else if(_colorIndex >= 0.82)
+    		c = new Color(255,225,150);
+    	else if(_colorIndex >= 0.59)
+    		c = new Color(255,255,130);
+    	else if(_colorIndex >= 0.31)
+    		c = new Color(255,255,200);
+    	else if(_colorIndex >= 0.0)
+    		c = Color.WHITE;
+    	else
+    		c = new Color(215,215,255);
+    	
+    	return c;
+    }
 }
