@@ -6,7 +6,12 @@ package com.github.projetp1;
 /**
  * @author   alexandr.perez
  */
-public class Pic {
+
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import com.github.projetp1.rs232.RS232Command;
+
+public class Pic extends Thread{
 
 	/**
 	 * @uml.property  name="longitude"
@@ -42,11 +47,20 @@ public class Pic {
 		SIMULATION
 		; }
 	
+	private com.github.projetp1.rs232.RS232Command commande;
+	
+	protected MainView mainview;
+	
+	private com.github.projetp1.rs232.RS232 rs = new com.github.projetp1.rs232.RS232(mainview);
+	
 	/**
 	 * 
 	 */
-	public Pic() {
+	public Pic(MainView _mainview) {
 		// TODO Auto-generated constructor stub
+		this.mainview = _mainview;
+		
+		this.start();
 	}
 
 	/**
@@ -119,5 +133,31 @@ public class Pic {
 
 	public void setMode(PicMode mode) {
 		this.mode = mode;
+	}
+	public void run()
+	{
+		//Reception des données
+		commande = rs.getLastCommand();
+		
+		//Switch pour trier les données
+		switch(commande.getCommandNumber())
+		{
+			case EMPTY :
+				break;
+			case CHANGE_TO_POINT_MODE:
+				break;
+			case CHANGE_TO_ARROW_MODE:
+				break;
+			case LOCATION_UPDATE:
+				break;
+			case ACCELEROMETER_UPDATE:
+				break;
+			case MAGNETOMETER_UPDATE:
+				break;
+			case PIC_STATUS:
+				break;
+			default:
+				break;
+		}
 	}
 }
