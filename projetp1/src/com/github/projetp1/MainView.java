@@ -33,6 +33,8 @@ public class MainView extends JFrame implements KeyListener {
 	Inclinometer inclinometerPanel;
 	int degree = 90;
 	int zoom = 1;
+	double xOrigin = 0;
+	double yOrigin = 0;
 	double w = ((100/Toolkit.getDefaultToolkit().getScreenSize().width)*this.getWidth());
 	
 	private double width()
@@ -114,31 +116,33 @@ public class MainView extends JFrame implements KeyListener {
 	public void keyPressed(KeyEvent evt) {
         if(evt.getKeyCode() == 37) //Left
         {
-        	
+        	xOrigin += 0.02;
         }
         else if(evt.getKeyCode() == 39) //Right
         {
-        	
+        	xOrigin -= 0.02;        	
         }
         else if(evt.getKeyCode() == 38) // Up
         {
-        	zoom++;
+        	yOrigin += 0.02;
         }
-        else if(evt.getKeyCode() == 40) // Up
+        else if(evt.getKeyCode() == 40) // Down
         {
-        	if(zoom>1)
-        		zoom--;
+        	yOrigin -= 0.02;        	
         }
-        else if(evt.getKeyCode() == (int)'+') //+
+        else if(evt.getKeyCode() == (int)'.') //+
         {
         	zoom++;
         }
         else if(evt.getKeyCode() == (int)'-') //-
         {
-        	zoom--;
+        	if(zoom>1)
+        		zoom--;
         }
 
         skymap.setZoom(zoom);
+        skymap.setXOrigin(xOrigin);
+        skymap.setYOrigin(yOrigin);
         skymap.updateSkyMap();
 		
 		repaint();
