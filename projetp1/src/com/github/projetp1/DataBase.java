@@ -326,25 +326,25 @@ public class DataBase
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
 		int l_id;
-		int l_StarId;
+		//int l_StarId;
 		int l_HIP;
 		int l_HD;
 		int l_HR;
-		int l_Gliese;
-		int l_BayerFlamsteed;
+		//int l_Gliese;
+		//int l_BayerFlamsteed;
 		String l_ProperName;
 		double l_dRA;
 		double l_Dec;
 		double l_dDistance;
-		double l_dPMRA;
-		double l_dPMDec;
-		double l_dRV;
+		//double l_dPMRA;
+		//double l_dPMDec;
+		//double l_dRV;
 		double l_dMag;
-		double l_dAbsMag;
-		String l_sSpectrum;
+		//double l_dAbsMag;
+		//String l_sSpectrum;
 		double l_dColorIndex;
-		double l_dXYZ[] = new double[3];
-		double l_dVXYZ[] = new double[3];
+		//double l_dXYZ[] = new double[3];
+		//double l_dVXYZ[] = new double[3];
 		
 		boolean secured = false;
 		
@@ -370,32 +370,33 @@ public class DataBase
 		while (result.next()) 
 	    {
 	    	l_id = result.getInt("id");
-			l_StarId = result.getInt("StarID");
+	    	//l_StarId = result.getInt("StarID");
 			l_HIP = result.getInt("HIP");
 			l_HD = result.getInt("HD");
 			l_HR = result.getInt("HR");
-			l_Gliese = result.getInt("Gliese");
-			l_BayerFlamsteed = result.getInt("BayerFlamsteed");
+			//l_Gliese = result.getInt("Gliese");
+			//l_BayerFlamsteed = result.getInt("BayerFlamsteed");
 			l_ProperName = result.getString("ProperName");
 			l_dRA = result.getDouble("RA");
 			l_Dec = result.getDouble("Dec");
 			l_dDistance = result.getDouble("Distance");
-			l_dPMRA = result.getDouble("PMRA");
-			l_dPMDec = result.getDouble("PMDec");
-			l_dRV = result.getDouble("RV");
+			//l_dPMRA = result.getDouble("PMRA");
+			//l_dPMDec = result.getDouble("PMDec");
+			//l_dRV = result.getDouble("RV");
 			l_dMag = result.getDouble("Mag");
-			l_dAbsMag = result.getDouble("AbsMag");
-			l_sSpectrum = result.getString("Spectrum");
+			//l_dAbsMag = result.getDouble("AbsMag");
+			//l_sSpectrum = result.getString("Spectrum");
 			l_dColorIndex = result.getDouble("ColorIndex");
-			l_dXYZ[0] = result.getDouble("VX");
-			l_dXYZ[1] = result.getDouble("VY");
-			l_dXYZ[2] = result.getDouble("VZ");
-			l_dVXYZ[0] = result.getDouble("VX");
-			l_dVXYZ[1] = result.getDouble("VY");
-			l_dVXYZ[2] = result.getDouble("VZ");
+			//l_dXYZ[0] = result.getDouble("VX");
+			//l_dXYZ[1] = result.getDouble("VY");
+			//l_dXYZ[2] = result.getDouble("VZ");
+			//l_dVXYZ[0] = result.getDouble("VX");
+			//l_dVXYZ[1] = result.getDouble("VY");
+			//l_dVXYZ[2] = result.getDouble("VZ");
 			
-	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
-	    	Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
+	    	//CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
+			CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
+			Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
 	    	
 	    	if(l_calc.getHeight() > 0)
 	    	{
@@ -427,25 +428,25 @@ public class DataBase
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
 		int l_id;
-		int l_StarId;
+		//int l_StarId;
 		int l_HIP;
 		int l_HD;
 		int l_HR;
-		int l_Gliese;
-		int l_BayerFlamsteed;
+		//int l_Gliese;
+		//int l_BayerFlamsteed;
 		String l_ProperName;
 		double l_dRA;
 		double l_Dec;
 		double l_dDistance;
-		double l_dPMRA;
-		double l_dPMDec;
-		double l_dRV;
+		//double l_dPMRA;
+		//double l_dPMDec;
+		//double l_dRV;
 		double l_dMag;
-		double l_dAbsMag;
-		String l_sSpectrum;
+		//double l_dAbsMag;
+		//String l_sSpectrum;
 		double l_dColorIndex;
-		double l_dXYZ[] = new double[3];
-		double l_dVXYZ[] = new double[3];
+		//double l_dXYZ[] = new double[3];
+		//double l_dVXYZ[] = new double[3];
 		
 		boolean secured = false;
 		
@@ -478,32 +479,34 @@ public class DataBase
 		while (result.next()) 
 	    {
 	    	l_id = result.getInt("id");
-			l_StarId = result.getInt("StarID");
+	    	//l_StarId = result.getInt("StarID");
 			l_HIP = result.getInt("HIP");
 			l_HD = result.getInt("HD");
 			l_HR = result.getInt("HR");
-			l_Gliese = result.getInt("Gliese");
-			l_BayerFlamsteed = result.getInt("BayerFlamsteed");
+			//l_Gliese = result.getInt("Gliese");
+			//l_BayerFlamsteed = result.getInt("BayerFlamsteed");
 			l_ProperName = result.getString("ProperName");
 			l_dRA = result.getDouble("RA");
 			l_Dec = result.getDouble("Dec");
 			l_dDistance = result.getDouble("Distance");
-			l_dPMRA = result.getDouble("PMRA");
-			l_dPMDec = result.getDouble("PMDec");
-			l_dRV = result.getDouble("RV");
+			//l_dPMRA = result.getDouble("PMRA");
+			//l_dPMDec = result.getDouble("PMDec");
+			//l_dRV = result.getDouble("RV");
 			l_dMag = result.getDouble("Mag");
-			l_dAbsMag = result.getDouble("AbsMag");
-			l_sSpectrum = result.getString("Spectrum");
+			//l_dAbsMag = result.getDouble("AbsMag");
+			//l_sSpectrum = result.getString("Spectrum");
 			l_dColorIndex = result.getDouble("ColorIndex");
-			l_dXYZ[0] = result.getDouble("VX");
-			l_dXYZ[1] = result.getDouble("VY");
-			l_dXYZ[2] = result.getDouble("VZ");
-			l_dVXYZ[0] = result.getDouble("VX");
-			l_dVXYZ[1] = result.getDouble("VY");
-			l_dVXYZ[2] = result.getDouble("VZ");
+			//l_dXYZ[0] = result.getDouble("VX");
+			//l_dXYZ[1] = result.getDouble("VY");
+			//l_dXYZ[2] = result.getDouble("VZ");
+			//l_dVXYZ[0] = result.getDouble("VX");
+			//l_dVXYZ[1] = result.getDouble("VY");
+			//l_dVXYZ[2] = result.getDouble("VZ");
 
 			
-	    	CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
+	    	//CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
+	    	
+			CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
 	    	Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
 
 	    	if(l_calc.getHeight() > 0)

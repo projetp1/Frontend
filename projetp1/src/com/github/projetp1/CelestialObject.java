@@ -17,25 +17,25 @@ package com.github.projetp1;
 public class CelestialObject {
 
 	private int id;
-	private int StarId;
+	//private int StarId;
 	private int HIP;
 	private int HD;
 	private int HR;
-	private int Gliese;
-	private int BayerFlamsteed;
+	//private int Gliese;
+	//private int BayerFlamsteed;
 	private String sProperName;
 	private double dRA;
 	private double dDec;
 	private double dDistance;
-	private double dPMRA;
-	private double dPMDec;
-	private double dRV;
+	//private double dPMRA;
+	//private double dPMDec;
+	//private double dRV;
 	private double dMag;
-	private double dAbsMag;
-	private String sSpectrum;
+	//private double dAbsMag;
+	//private String sSpectrum;
 	private double dColorIndex;
-	private double dXYZ[] = new double[3];
-	private double dVXYZ[] = new double[3];
+	//private double dXYZ[] = new double[3];
+	//private double dVXYZ[] = new double[3];
 	private double dXReal;
 	private double dYReal;
 
@@ -65,32 +65,33 @@ public class CelestialObject {
 	 * @param double _z : The Cartesian coordinates of the star, in a system based on the equatorial coordinates as seen from Earth.+Z towards the north celestial pole
 	 * @param double _vx,_vy,_vz = The Cartesian velocity components of the star, in the same coordinate system described immediately above. They are determined from the proper motion and the radial velocity (when known). The velocity unit is parsecs per year; these are small values (around 10-5 to 10-6), but they enormously simplify calculations using parsecs as base units for celestial mapping.
 	 */
-	public CelestialObject(int _id,int _StarId,int _HIP,int _HD,int _HR,int _Gliese,int _BayerFlamsteed,String _sProperName,double _dRA,double _dDec, double _dDistance, double _dPMRA,double _dPMDec,double _dRV,double _dMag
-			,double _dAbsMag,String _sSpectrum,double _dColorIndex,double _x,double _y,double _z,double _vx,double _vy,double _vz) {
-		
+	//public CelestialObject(int _id,int _StarId,int _HIP,int _HD,int _HR,int _Gliese,int _BayerFlamsteed,String _sProperName,double _dRA,double _dDec, double _dDistance, double _dPMRA,double _dPMDec,double _dRV,double _dMag
+	//		,double _dAbsMag,String _sSpectrum,double _dColorIndex,double _x,double _y,double _z,double _vx,double _vy,double _vz) {
+	public CelestialObject(int _id,int _HIP,int _HD,int _HR,String _sProperName,double _dRA,double _dDec, double _dDistance,double _dMag,double _dColorIndex) {
+	
 		this.id = _id;
-		this.StarId = _StarId;
+		//this.StarId = _StarId;
 		this.HIP = _HIP;
 		this.HR = _HR;
-		this.Gliese = _Gliese;
-		this.BayerFlamsteed = _BayerFlamsteed;
+		//this.Gliese = _Gliese;
+		//this.BayerFlamsteed = _BayerFlamsteed;
 		this.sProperName = _sProperName;
 		this.dRA = _dRA;
 		this.dDec = _dDec;
 		this.dDistance = _dDistance;
-		this.dPMRA = _dPMRA;
-		this.dPMDec = _dPMDec;
-		this.dRV = _dRV;
+		//this.dPMRA = _dPMRA;
+		//this.dPMDec = _dPMDec;
+		//this.dRV = _dRV;
 		this.dMag = _dMag;
-		this.dAbsMag = _dAbsMag;
-		this.sSpectrum = _sSpectrum;
+		//this.dAbsMag = _dAbsMag;
+		//this.sSpectrum = _sSpectrum;
 		this.dColorIndex = _dColorIndex;
-		this.dXYZ[0] = _x;
-		this.dXYZ[1] = _y;
-		this.dXYZ[2] = _z;
-		this.dVXYZ[0] = _vx;
-		this.dVXYZ[1] = _vy;
-		this.dVXYZ[2] = _vz;	
+		//this.dXYZ[0] = _x;
+		//this.dXYZ[1] = _y;
+		//this.dXYZ[2] = _z;
+		//this.dVXYZ[0] = _vx;
+		//this.dVXYZ[1] = _vy;
+		//this.dVXYZ[2] = _vz;	
 	}
 
 	/**
@@ -102,14 +103,14 @@ public class CelestialObject {
 		System.out.println("ID\tStarID\tHIP\tHD\tHR\tGliese\tBayerFlamsteed\tProperName\tRA\tDec\tDistance\tPMRA\tPMDec\tRV\tMag\tAbsMag\tSpectrum\tColorIndex\tX\tY\tZ\tVX\tVY\tVZ\tXReal\tYReal");
 	}
 	
-	/**
+	/*
 	 * getInfos
 	 * Writes all the value of the star
 	 */
-	public void getInfos()
-	{
-		System.out.println(this.id + "\t" + this.StarId+ "\t" + this.HIP+ "\t" + this.HD + "\t" + this.HR + "\t" + this.Gliese + "\t" + this.BayerFlamsteed + "\t\t" + this.sProperName + "\t\t" + this.dRA + "\t" + this.dDec + "\t" + this.dDistance + "\t" + this.dPMRA + "\t" + this.dPMDec + "\t" + this.dRV + "\t" + this.dMag + "\t" + this.dAbsMag + "\t" + this.sSpectrum + "\t\t" + this.dColorIndex + "\t\t" + this.dXYZ[0] + "\t" + this.dXYZ[1] + "\t" + this.dXYZ[2] + "\t" + this.dVXYZ[0] + "\t" + this.dVXYZ[1] + "\t" + this.dVXYZ[2] + "\t" + this.dXReal + "\t" + this.dYReal);
-	}
+	//public void getInfos()
+	//{
+	//	System.out.println(this.id + "\t" + this.StarId+ "\t" + this.HIP+ "\t" + this.HD + "\t" + this.HR + "\t" + this.Gliese + "\t" + this.BayerFlamsteed + "\t\t" + this.sProperName + "\t\t" + this.dRA + "\t" + this.dDec + "\t" + this.dDistance + "\t" + this.dPMRA + "\t" + this.dPMDec + "\t" + this.dRV + "\t" + this.dMag + "\t" + this.dAbsMag + "\t" + this.sSpectrum + "\t\t" + this.dColorIndex + "\t\t" + this.dXYZ[0] + "\t" + this.dXYZ[1] + "\t" + this.dXYZ[2] + "\t" + this.dVXYZ[0] + "\t" + this.dVXYZ[1] + "\t" + this.dVXYZ[2] + "\t" + this.dXReal + "\t" + this.dYReal);
+	//}
 	
 	/**
 	 * getId
@@ -120,14 +121,14 @@ public class CelestialObject {
 		return this.id;
 	}
 
-	/**
+	/*
 	 * getStarId
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public int getStarId() {
-		return this.StarId;
-	}
+	//public int getStarId() {
+	//	return this.StarId;
+	//}
 
 	/**
 	 * getHIP
@@ -161,18 +162,18 @@ public class CelestialObject {
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public int getBayerFlamsteed() {
-		return this.BayerFlamsteed;
-	}
+	//public int getBayerFlamsteed() {
+	//	return this.BayerFlamsteed;
+	//}
 
-	/**
+	/*
 	 * getGliese
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public int getGliese() {
-		return this.Gliese;
-	}
+	//public int getGliese() {
+	//	return this.Gliese;
+	//}
 
 	/**
 	 * getProperName
@@ -210,32 +211,32 @@ public class CelestialObject {
 		return this.dDistance;
 	}
 
-	/**
+	/*
 	 * getPMRA
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getPMRA() {
-		return this.dPMRA;
-	}
+	//public double getPMRA() {
+	//	return this.dPMRA;
+	//}
 
-	/**
+	/*
 	 * getPMDec
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getPMDec() {
-		return this.dPMDec;
-	}
+	//public double getPMDec() {
+	//	return this.dPMDec;
+	//}
 
-	/**
+	/*
 	 * getRV
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getRV() {
-		return this.dRV;
-	}
+	//public double getRV() {
+	//	return this.dRV;
+	//}
 
 	/**
 	 * getMag
@@ -246,23 +247,23 @@ public class CelestialObject {
 		return this.dMag;
 	}
 
-	/**
+	/*
 	 * getAbsMag
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double getAbsMag() {
-		return this.dAbsMag;
-	}
+	//public double getAbsMag() {
+	//	return this.dAbsMag;
+	//}
 
-	/**
+	/*
 	 * getSpectrum
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public String getSpectrum() {
-		return this.sSpectrum;
-	}
+	//public String getSpectrum() {
+	//	return this.sSpectrum;
+	//}
 
 	/**
 	 * getColorIndex
@@ -273,23 +274,23 @@ public class CelestialObject {
 		return this.dColorIndex;
 	}
 	
-	/**
+	/*
 	 * getXYZ
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double[] getXYZ() {
-		return this.dXYZ;
-	}
+	//public double[] getXYZ() {
+	//	return this.dXYZ;
+	//}
 
-	/**
+	/*
 	 * getVXYZ
 	 * getter of the private value
 	 * @return the private variable
 	 */
-	public double[] getVXYZ() {
-		return this.dVXYZ;
-	}
+	//public double[] getVXYZ() {
+	//	return this.dVXYZ;
+	//}
 	
 	/**
 	 * getXReal
