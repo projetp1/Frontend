@@ -86,7 +86,7 @@ public class MainView extends JFrame implements KeyListener {
 		inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
 
 		
-		skymap = new SkyMap();
+		skymap = new SkyMap("hyg.db",";");
 		skymap.setSize(this.getWidth()-200,this.getHeight()-20);
 		skymap.setLocation(200, 20);
 		skymap.updateSkyMap();
@@ -121,7 +121,7 @@ public class MainView extends JFrame implements KeyListener {
         }
         else if(evt.getKeyCode() == 39) //Right
         {
-        	if(xOrigin > 1)
+        	if(xOrigin > -1)
         		xOrigin -= 0.02;
         }
         else if(evt.getKeyCode() == 38) // Up
@@ -131,7 +131,7 @@ public class MainView extends JFrame implements KeyListener {
         }
         else if(evt.getKeyCode() == 40) // Down
         {
-        	if(yOrigin > 1)
+        	if(yOrigin > -1)
         		yOrigin -= 0.02;
         }
         else if(evt.getKeyCode() == (int)'.') //+

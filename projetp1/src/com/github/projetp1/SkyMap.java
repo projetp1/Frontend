@@ -1,31 +1,47 @@
-/**
- * 
- */
+ /**=====================================================================*
+ | This file declares the following classes:
+ |    SkyMap
+ |
+ | Description of the class SkyMap :
+ |	  This class is used to display the stars, and the arrow direction.
+ |	  It considers the zoom and screen size for the scale.
+ |
+ | <p>Copyright : EIAJ, all rights reserved</p>
+ | @autor : Alexandre Perez
+ | @version : 1.0
+ |
+ |
+ *========================================================================*/
+
 package com.github.projetp1;
 
 import java.awt.*;
-
 import javax.swing.*;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-/**
- * @author   alexandr.perez
- */
 @SuppressWarnings("serial")
-public class SkyMap extends JLayeredPane {
+public class SkyMap extends JComponent {
 	
 	private int zoom = 1;
-	private double xOrigin = 0;
-	private double yOrigin = 0;
+	private double dXOrigin = 0;
+	private double dYOrigin = 0;
 	private ArrayList<CelestialObject> celestialObjects;
 
-	public SkyMap() {
+	/** 
+	 * SkyMap
+	 * Constructor 
+	 * @param _sDataBase : It's the name of the database that will use
+	 * @param _sDelimiter : It's the delimiter of the string of the searchbar
+	 */
+	public SkyMap(String _sDataBase, String _sDelimiter) {
 		this.setBackground(Color.BLACK);
 		this.setOpaque(true);
 		try
 		{
-			DataBase db = new DataBase("hyg.db", ";");
+			DataBase db = new DataBase(_sDataBase, _sDelimiter);
 			celestialObjects = db.starsForCoordinates(Calendar.getInstance(), 47.039448, 6.799734);
 		}
 		catch (Exception ex)
@@ -34,31 +50,33 @@ public class SkyMap extends JLayeredPane {
 		}
     }
 	
-	
+	/**
+     * Repaint the stars with the last parameters
+    */
 	public void updateSkyMap() {
 		this.repaint();
 	}
-	
-	
+
+
 	public void paint(Graphics g)
 	{
-		int scale = (int)(this.getHeight()/2);
-		int xCenter = this.getWidth()/2 + (int)(xOrigin*scale); //TODO + scale * l'endroit où point le pic
-		int yCenter = this.getHeight()/2 + (int)(yOrigin*scale);
+		int l_scale = (int)(this.getHeight()/2);
+		int l_xCenter = this.getWidth()/2 + (int)(dXOrigin * l_scale * zoom);
+		int l_yCenter = this.getHeight()/2 + (int)(dYOrigin * l_scale * zoom);
 		for (CelestialObject celestialObject : celestialObjects)
 		{
-			int x, y;
-			int d = getSizeForMagnitude(celestialObject.getMag())+1;
+			int l_x, l_y;
+			int l_d = getSizeForMagnitude(celestialObject.getMag())+1;
 			if(celestialObject.getMag() < -20)
-				d = 30;
-			x = (int)(celestialObject.getXReal() * zoom * scale) + xCenter;
-			y = (int)(celestialObject.getYReal() * zoom * scale) + yCenter;
+				l_d = 30;
+			l_x = (int)(celestialObject.getXReal() * zoom * l_scale) + l_xCenter;
+			l_y = (int)(celestialObject.getYReal() * zoom * l_scale) + l_yCenter;
 			g.setColor(getColorForColorIndex(celestialObject.getColorIndex()));
-	        g.fillOval(x, y, d, d);			
+	        g.fillOval(l_x, l_y, l_d, l_d);			
 		}
 		
 		g.setColor(Color.red);
-        g.fillOval(xCenter, yCenter, 30,30);	
+        g.fillOval(l_xCenter, l_yCenter, 30,30);	
 	}
 	
 	/**
@@ -66,19 +84,6 @@ public class SkyMap extends JLayeredPane {
 		
 	}
 	*/
-
-	public void setZoom(int _zoom) {
-		this.zoom = _zoom;
-	}
-	
-	public void setXOrigin(double _xOrigin) {
-		this.xOrigin = _xOrigin;
-	}
-	
-	public void setYOrigin(double _yOrigin) {
-		this.yOrigin = _yOrigin;
-	}
-	
 	
 	/**
      * Returns the diameter of the point who display the star
@@ -133,4 +138,16 @@ public class SkyMap extends JLayeredPane {
     	
     	return c;
     }
+
+	public void setZoom(int _zoom) {
+		this.zoom = _zoom;
+	}
+	
+	public void setXOrigin(double _xOrigin) {
+		this.dXOrigin = _xOrigin;
+	}
+	
+	public void setYOrigin(double _yOrigin) {
+		this.dYOrigin = _yOrigin;
+	}
 }
