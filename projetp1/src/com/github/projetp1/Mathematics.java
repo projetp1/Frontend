@@ -65,11 +65,11 @@ public class Mathematics
 	/**
 	 * Mathematics Constructor
 	 * 
-	 * @param Calendate _date : Date of the computer. Will be use to calculate the Sideral Time
-	 * @param double _dLat : It's the Latitude of the star's pointer
-	 * @param double _Lon : It's the Longitude of the star's pointer
-	 * @param double _dDec : It's the Declination of the star
-	 * @param double _dAsc : It's the Ascension of the star
+	 * @param _date : Date of the computer. Will be use to calculate the Sideral Time
+	 * @param _dLat : It's the Latitude of the star's pointer
+	 * @param _dLon : It's the Longitude of the star's pointer
+	 * @param _dDec : It's the Declination of the star
+	 * @param _dAsc : It's the Ascension of the star
 	 */
 	public Mathematics(Calendar _date, double _dLat, double _dLon,double _dDec,double _dAsc)
 	{
@@ -156,7 +156,7 @@ public class Mathematics
 	/**
 	 * calculate_Hour_GMT
 	 * Gives the hour from HMT
-	 * @param Calendar _cal : Use a calendar for calculate the GTM hour
+	 * @param _cal : Use a calendar for calculate the GTM hour
 	 * @return : Return an int that's the hour GMT
 	 */
 	static private int calculate_Hour_GMT(Calendar _cal)
@@ -169,39 +169,39 @@ public class Mathematics
 	/**
 	 * calculate_X
 	 * Calculates the X value of a coordinate system of 2D. It's a projection.
-	 * @param double _dHeight : The Height of the star, calculated with "calculate_Height()"
-	 * @param double _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
+	 * @param _dHeight : The Height of the star, calculated with "calculate_Height()"
+	 * @param _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
 	 * @return : Return a double that contains the X coordinate
 	 */
 	static private double calculate_X(double _dHeight,double _dAzimuth)
 	{
 		double l_x = 1*((-2.0/pi)*_dHeight+1);
 		
-		return l_x*cos(_dAzimuth);
+		return l_x*sin(_dAzimuth);
 		//return (cos(_dHeight)*sin(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
 	/**
 	 * calculate_Y
 	 * Calculates the Y value of a coordinate system of 2D. It's a projection.
-	 * @param double _dHeight : The Height of the star, calculated with "calculate_Height()"
-	 * @param double _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
+	 * @param _dHeight : The Height of the star, calculated with "calculate_Height()"
+	 * @param _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
 	 * @return : Return a double that contains the Y coordinate
 	 */
 	static private double calculate_Y(double _dHeight,double _dAzimuth)
 	{
 		double l_y = 1*((-2.0/pi)*_dHeight+1);
 		
-		return l_y*sin(_dAzimuth);
+		return l_y*cos(_dAzimuth);
 		//return (cos(_dHeight)*cos(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
 	/** 
 	 * hms
 	 * Converts ° ' '' dAngle to degree
-	 * @param double _dHour : The hour of the value
-	 * @param double _dMinute : The Minute of the value
-	 * @param double _dSecond : The Second of the value
+	 * @param _dHour : The hour of the value
+	 * @param _dMinute : The Minute of the value
+	 * @param _dSecond : The Second of the value
 	 * @return : Return a double that's the degree dAngle
 	 */
 	static private double hms(double _dHour, double _dMinute, double _dSecond)
@@ -214,9 +214,9 @@ public class Mathematics
 	/** 
 	 * fraction_of_day
 	 * Calculates the fraction of day about a time
-	 * @param double _dHour : The hour of the value
-	 * @param double _dMinute : The Minute of the value
-	 * @param double _dSecond : The Second of the value
+	 * @param _dHour : The hour of the value
+	 * @param _dMinute : The Minute of the value
+	 * @param _dSecond : The Second of the value
 	 * @return : Return a double that contains the value
 	 */
 	static private double fraction_of_day(double _dHour, double _dMinute, double _dSecond)
@@ -227,9 +227,9 @@ public class Mathematics
 	/**
 	 * calculate_height 
 	 * Calculates the dHeight of the fixed point
-	 * @param double _dec : The Declination of the star
-	 * @param double _dLat : The Latitude of the pointer's star
-	 * @param double _star_angle : The hour angle star
+	 * @param _dec : The Declination of the star
+	 * @param _dLat : The Latitude of the pointer's star
+	 * @param _star_angle : The hour angle star
 	 * @return : Return a double that's the Height of the star
 	 */
 	static private double calculate_height(double _dec, double _dLat, double _star_angle)
@@ -241,10 +241,10 @@ public class Mathematics
 	/** 
 	 * calculate_azimuth
 	 * Calculates the dAzimuth
-	 * @param double _dec : The dDeclination of the star
-	 * @param double _dLat : The dLatitude of the pointer's star
-	 * @param double _dHeight : The dHeight of the star, calculated with "calculate_height()"
-	 * @param double _star_angle : The star's dAngle
+	 * @param _dec : The dDeclination of the star
+	 * @param _dLat : The dLatitude of the pointer's star
+	 * @param _dHeight : The dHeight of the star, calculated with "calculate_height()"
+	 * @param _star_angle : The star's dAngle
 	 * @return : Return a double that's the dAzimuth of the star
 	 */
 	static private double calculate_azimuth(double _dec, double _dLat, double _dHeight, double _star_angle)
@@ -261,12 +261,12 @@ public class Mathematics
 	/**
 	 * calculate_JulianDate 
 	 * Converts a gregorian date to a julian date
-	 * @param double _dDay : The day
-	 * @param double _dMonth : The month
-	 * @param double _dYear : The year
-	 * @param double _dHour : The hour
-	 * @param double _dMinute : The minute
-	 * @param double _dSeconde : The second
+	 * @param _dDay : The day
+	 * @param _dMonth : The month
+	 * @param _dYear : The year
+	 * @param _dHour : The hour
+	 * @param _dMinute : The minute
+	 * @param _dSeconde : The second
 	 * @return : Return a double that's the result
 	 */
 	static private double calculate_JulianDate(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
@@ -288,7 +288,7 @@ public class Mathematics
 	/**
 	 * calculate_sideral_hour_dAngle Calculates the sideral hour angle
 	 * 
-	 * @param double _dSideral_Time : The Sideral time
+	 * @param _dSideral_Time : The Sideral time
 	 * @return : Return a double that's the result
 	 */
 	static private double calculate_sideral_hour_dAngle(double _dSideral_Time)
@@ -299,9 +299,9 @@ public class Mathematics
 	/** 
 	 * calculate_hour_angle
 	 * Calculates the hours dAngle
-	 * @param double _dHour : The hour
-	 * @param double _dMin : The minute
-	 * @param double _dGMT : The GMT zone
+	 * @param _dHour : The hour
+	 * @param _dMin : The minute
+	 * @param _dGMT : The GMT zone
 	 * @return : Return a double that's the result
 	 */
 	static private double calculate_hour_angle(double _dHour, double _dMin, double _dGMT)
@@ -312,12 +312,12 @@ public class Mathematics
 	/** 
 	 * calculate_dSideral_Time
 	 * Calculates the sideral time
-	 * @param double _dDay : The day
-	 * @param double _dMonth : The month
-	 * @param double _dYear : The year
-	 * @param double _dHour : The hour
-	 * @param double _min : The _minute
-	 * @param double _dSecond : The second
+	 * @param _dDay : The day
+	 * @param _dMonth : The month
+	 * @param _dYear : The year
+	 * @param _dHour : The hour
+	 * @param _min : The _minute
+	 * @param _dSecond : The second
 	 * @return : Return a double that's the result
 	 */
 	static private double calculate_dSideral_Time(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
@@ -334,7 +334,7 @@ public class Mathematics
 	/**
 	 * cos
 	 * Calculate the cosinus of a number
-	 * @param double _dX : The value to transform
+	 * @param _dX : The value to transform
 	 * @return : Return the result of the operation
 	 */
 	static private double cos(double _dX)
@@ -345,7 +345,7 @@ public class Mathematics
 	/**
 	 * sin
 	 * Calculate the sinus of a number
-	 * @param double _dX : The value to transform
+	 * @param _dX : The value to transform
 	 * @return : Return the result of the operation
 	 */
 	static private double sin(double _dX)
@@ -356,7 +356,7 @@ public class Mathematics
 	/**
 	 * arccos
 	 * Calculate the ArcCosinus of a number
-	 * @param double _dX : The value to transform
+	 * @param _dX : The value to transform
 	 * @return : Return the result of the operation
 	 */
 	static private double arccos(double _dX)
@@ -367,7 +367,7 @@ public class Mathematics
 	/**
 	 * arcsin
 	 * Calculate the ArcSinus of a number
-	 * @param double _dX : The value to transform
+	 * @param _dX : The value to transform
 	 * @return : Return the result of the operation
 	 */
 	static private double arcsin(double _dX)

@@ -37,8 +37,8 @@ public class DataBase
 	/** 
 	 * Database
 	 * Constructor
-	 * @param string _sDataBase : It's the name of the database that will use
-	 * @param string _sDelimiter : It's the delimiter of the string of the searchbar
+	 * @param _sDataBase : It's the name of the database that will use
+	 * @param _sDelimiter : It's the delimiter of the string of the searchbar
 	 * @throws SQLException,Exception
 	 */
 	public DataBase(String _sDataBase,String _sDelimiter) throws SQLException, Exception
@@ -93,8 +93,8 @@ public class DataBase
 	/** 
 	 * executeRegex
 	 * Used for execute a Regex. For example when you want to know if there is a unity for the value 
-	 * @param string _sRegex : It's the regex that the function will use
-	 * @param string _sString : It's the string that will be analyze by the regex
+	 * @param _sRegex : It's the regex that the function will use
+	 * @param _sString : It's the string that will be analyze by the regex
 	 * @return : Return a boolean with true if the regex has found the string or return false
 	 */
 	private boolean executeRegex(String _sRegex,String _sString)
@@ -120,7 +120,7 @@ public class DataBase
 	/** 
 	 * addFieldsQuery
 	 * Add to the query the fields that you want to have.
-	 * @param String[] _sFields : Array that contains the fields that you want to have in the query
+	 * @param _sFields : Array that contains the fields that you want to have in the query
 	 * @return : Return the string that contains the fields for the query
 	 */
 	private String addFieldsQuery(String _sFields[])
@@ -139,7 +139,7 @@ public class DataBase
 	/** 
 	 * addTableQuery
 	 * Add the table that will be used in the query
-	 * @param String[] _sTable : The array where the tables are
+	 * @param _sTable : The array where the tables are
 	 * @return : Return a string that contains the table for the query
 	 */
 	private String addTableQuery(String _sTable[])
@@ -158,8 +158,8 @@ public class DataBase
 	/**
 	 * addWhereQuery
 	 * Add the clause "WHERE" to the query
-	 * @param String[][] _sWhere : Array 2D with the format : {{"field","operator","value"},{...}}
-	 * @param boolean secured : True if you want a prepared statement or false for a basic statement
+	 * @param _sWhere : Array 2D with the format : {{"field","operator","value"},{...}}
+	 * @param secured : True if you want a prepared statement or false for a basic statement
 	 * @return : Return a string that contains the clause WHERE for the query
 	 */
 	private String addWhereQuery(String _sWhere[][],boolean _bsecured)
@@ -188,7 +188,7 @@ public class DataBase
 	/**
 	 * addOrderByQuery
 	 * Add the clause "ORDER BY" in the query
-	 * @param String[] _sOrderBy : Array 1D with the format : {"field1","field2"}. 
+	 * @param _sOrderBy : Array 1D with the format : {"field1","field2"}. 
 	 * 							The query sort with the first value, then the second ...
 	 * @return : Return a string that contains the clause ORDER BY for the query
 	 */
@@ -209,7 +209,7 @@ public class DataBase
 	/**
 	 * addLimitQuery
 	 * Add the clause "LIMIT" in the query
-	 * @param String[] _Limit : Array 1D with the format {"begin","end"}
+	 * @param _Limit : Array 1D with the format {"begin","end"}
 	 * @return : Return a string that contains the clause LIMIT for the query
 	 */
 	private String addLimitQuery(int _Limit[])
@@ -222,12 +222,12 @@ public class DataBase
 	/**
 	 * selectQuery()
 	 * Do a selectQuery with the fields,tables and all the clause for the query
-	 * @param String[] _sFields : Array that contains the fields that you want to have in the query
-	 * @param String[] _sTable : The array where the tables are
-	 * @param String[][] _sWhere : Array 2D with the format : {{"field","operator","value"},{...}}
-	 * @param String[] _sOrderBy : Array 1D with the format : {"field1","field2"}. The query sort with the first value, then the second ...
-	 * @param String[] _Limit : Array 1D with the format {"begin","end"}
-	 * @param boolean secured : True if you want a prepared statement or false for a basic statement
+	 * @param _sFields : Array that contains the fields that you want to have in the query
+	 * @param _sTable : The array where the tables are
+	 * @param _sWhere : Array 2D with the format : {{"field","operator","value"},{...}}
+	 * @param _sOrderBy : Array 1D with the format : {"field1","field2"}. The query sort with the first value, then the second ...
+	 * @param _Limit : Array 1D with the format {"begin","end"}
+	 * @param secured : True if you want a prepared statement or false for a basic statement
 	 * @throws SQLException
 	 * @return
 	 */
@@ -264,7 +264,7 @@ public class DataBase
 	/**
 	 * decryptText
 	 * Use to decrypt the text inputed by the user.
-	 * @param String[] _sText : String that contains the text to decrypt
+	 * @param _sText : String that contains the text to decrypt
 	 * @return : Return an HashMap object that contains all the words of the string with the value.
 	 * 				The key of the hashmap is the string word
 	 * 				The value is the number after the space
@@ -315,9 +315,9 @@ public class DataBase
 	/** 
 	 * starsForCoordinates
 	 * Search all the stars that could be in the hemisphere
-	 * @param Calendar _date : It's the date that will be use to search the stars
-	 * @param double _dLat : It's the latitude of the star's pointer
-	 * @param double _dLon : It's the longitude of the star's pointer
+	 * @param _date : It's the date that will be use to search the stars
+	 * @param _dLat : It's the latitude of the star's pointer
+	 * @param _dLon : It's the longitude of the star's pointer
 	 * @throws SQLException
 	 * @return : Return an arraylist that contains all the stars could be possible to see
 	 */
@@ -416,10 +416,10 @@ public class DataBase
 	/**
 	 * starsForText
 	 * Search all the stars that has all the condition of the string
-	 * @param String[] _searchText : The string that will be analyze by the function decryptText
-	 * @param Calendar _date : It's the date that will be use to search the stars
-	 * @param double _dLat : It's the latitude of the star's pointer
-	 * @param double _dLon : It's the longitude of the star's pointer
+	 * @param _searchText : The string that will be analyze by the function decryptText
+	 * @param _date : It's the date that will be use to search the stars
+	 * @param _dLat : It's the latitude of the star's pointer
+	 * @param _dLon : It's the longitude of the star's pointer
 	 * @throws SQLException
 	 * @return : Return an arraylist of CelestialObject.
 	 */
