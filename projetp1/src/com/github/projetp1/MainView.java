@@ -13,7 +13,8 @@ import com.sun.servicetag.SystemEnvironment;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.AffineTransform;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,12 +23,14 @@ import java.io.IOException;
  * @author alexandr.perez
  *
  */
-public class MainView extends JFrame {
+@SuppressWarnings("serial")
+public class MainView extends JFrame implements KeyListener {
 	
 	private Settings settings;
 	public Settings getSettings() { return settings; }
 	private Pic pic;
 	public Pic getPic() { return pic; }
+	SkyMap skymap;
 	
 	private Compass compassPanel;
 	private Inclinometer inclinometerPanel;
@@ -37,9 +40,11 @@ public class MainView extends JFrame {
 	private Help helpPanel;
 	private SettingsConfig settingsPanel;
 	private JLabel coordinate;
-	
-	private int degree = 90;
+	private int zoom = 1;
 	private int coord;
+	private int degree;
+	private double xOrigin = 0;
+	private double yOrigin = 0;
 	private double w = ((100/Toolkit.getDefaultToolkit().getScreenSize().width)*this.getWidth());
 	private double h = ((100/Toolkit.getDefaultToolkit().getScreenSize().height)*this.getHeight());
 	private double width()
@@ -77,7 +82,8 @@ public class MainView extends JFrame {
   }
 		      
 	public MainView() {
-
+		
+		this.addKeyListener(this);
 		name = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
 		getLayeredPane().add(name);
 		
@@ -87,6 +93,9 @@ public class MainView extends JFrame {
 		getLayeredPane().add(coordinate);
 		
         this.setMinimumSize(new java.awt.Dimension(680, 420));
+		this.setExtendedState(Frame.MAXIMIZED_BOTH);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.getContentPane().setBackground(Color.BLACK);
 
         buttonsPanel = new Buttons(0.1);
 		buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()/2), 5);
@@ -109,6 +118,12 @@ public class MainView extends JFrame {
 		inclinometerPanel = new Inclinometer(0.8);
 		inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
 
+
+		skymap = new SkyMap();
+		skymap.setSize(this.getWidth()-200,this.getHeight()-20);
+		skymap.setLocation(200, 20);
+		skymap.updateSkyMap();
+		
 		getLayeredPane().add(buttonsPanel);
 		getLayeredPane().add(searchBarPanel);
 		getLayeredPane().add(helpPanel);
@@ -116,6 +131,7 @@ public class MainView extends JFrame {
 		getLayeredPane().add(zoomBarPanel);
 		getLayeredPane().add(compassPanel);
 		getLayeredPane().add(inclinometerPanel);
+		getLayeredPane().add(skymap);
 		
 		this.setVisible(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
@@ -139,7 +155,49 @@ public class MainView extends JFrame {
                 formComponentResized(evt);
             }
         });
+		
+		repaint();
 	}
+	
+
+	public void keyTyped(KeyEvent evt){}
+	
+	public void keyReleased(KeyEvent evt){}  
+
+	public void keyPressed(KeyEvent evt) {
+        if(evt.getKeyCode() == 37) //Left
+        {
+        	xOrigin += 0.02;
+        }
+        else if(evt.getKeyCode() == 39) //Right
+        {
+        	xOrigin -= 0.02;        	
+        }
+        else if(evt.getKeyCode() == 38) // Up
+        {
+        	yOrigin += 0.02;
+        }
+        else if(evt.getKeyCode() == 40) // Down
+        {
+        	yOrigin -= 0.02;        	
+        }
+        else if(evt.getKeyCode() == (int)'.') //+
+        {
+        	zoom++;
+        }
+        else if(evt.getKeyCode() == (int)'-') //-
+        {
+        	if(zoom>1)
+        		zoom--;
+        }
+
+        skymap.setZoom(zoom);
+        skymap.setXOrigin(xOrigin);
+        skymap.setYOrigin(yOrigin);
+        skymap.updateSkyMap();
+		
+		repaint();
+    }
 	
 	public void showHelpView() {
 		
@@ -570,8 +628,8 @@ public class MainView extends JFrame {
     		repaint();
 		}
     }
-	
-    private class Compass extends JLayeredPane
+
+	private class Compass extends JLayeredPane
 	{
 		double scale = 1;
 		double redAngle = 0;
@@ -587,7 +645,6 @@ public class MainView extends JFrame {
 			try {
 				background = resizeImage(ImageIO.read(new File("res/backgroundCompass.png")),scale);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			repaint();
@@ -617,6 +674,10 @@ public class MainView extends JFrame {
 			
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			this.repaint();
+			coordinate = new JLabel("-10:2'13'' N", JLabel.CENTER);
+			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
+			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*34));
+			coordinate.setForeground(Color.WHITE);
 		}
 		
 		@Override 
@@ -643,7 +704,6 @@ public class MainView extends JFrame {
 			try {
 				background = resizeImage(ImageIO.read(new File("res/backgroundCompass.png")),scale);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			redNeedle.scale(scale);
@@ -663,20 +723,21 @@ public class MainView extends JFrame {
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*35));
-			repaint();
+			//repaint();
 		}
 		
 		public void setRedNeedle (double _angle) 
 		{
+            _angle = Math.toRadians(_angle);
             redAngle = _angle;
 		}
 		
 		public void setGreenNeedle (double _angle) 
 		{
+            _angle = Math.toRadians(_angle);
             greenAngle =_angle;
 		}
 		
-		@SuppressWarnings("serial")
 		private class Needle extends JPanel
 		{
 		    BufferedImage needleImage;
@@ -706,7 +767,6 @@ public class MainView extends JFrame {
 					try {
 						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -714,7 +774,7 @@ public class MainView extends JFrame {
 			
 			public void rotate(double _angle)
 			{
-				angle = Math.toRadians(_angle);
+				angle = _angle;
 				repaint();
 			}
 			
@@ -735,7 +795,6 @@ public class MainView extends JFrame {
 	
 	}
 
-	@SuppressWarnings("serial")
 	private class Inclinometer extends JLayeredPane
 	{
 		double scale = 1;
@@ -752,7 +811,6 @@ public class MainView extends JFrame {
 			try {
 				background = resizeImage(ImageIO.read(new File("res/backgroundInclinometer.png")),scale);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			repaint();
@@ -805,7 +863,6 @@ public class MainView extends JFrame {
 			try {
 				background = resizeImage(ImageIO.read(new File("res/backgroundInclinometer.png")),scale);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			repaint();
@@ -817,7 +874,7 @@ public class MainView extends JFrame {
 			greenNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
 			try
 			{
-				coordinate.setText(String.valueOf(redAngle%90));
+				coordinate.setText(String.valueOf(redAngle%360));
 			}
 			catch(Exception e)
 			{
@@ -838,7 +895,6 @@ public class MainView extends JFrame {
 			greenAngle = _greenAngle;
 		}
 
-		@SuppressWarnings("serial")
 		private class Needle extends JPanel
 		{
 		    BufferedImage needleImage;
@@ -868,7 +924,6 @@ public class MainView extends JFrame {
 					try {
 						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -898,7 +953,7 @@ public class MainView extends JFrame {
 	            Graphics2D g2 = (Graphics2D) g;
 	            g2.rotate(-angle, scale*5, needleImage.getHeight() / 2); //TODO voir valeur non constante
 	            g2.drawImage(needleImage, 0, 0, null); 
-	        }			
+	        }
 		}
 	}
 	
