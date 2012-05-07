@@ -3,6 +3,7 @@ package com.github.projetp1.rs232;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Logger;
 
 import com.github.projetp1.*;
 import com.github.projetp1.Pic.PicMode;
@@ -29,6 +30,8 @@ public class RS232 implements SerialPortEventListener
 	private StringBuffer buffer = new StringBuffer();
 	private Timer pingTimer;
 	private Timer timeoutTimer;
+	
+	Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	/** The delay between 2 pings */
 	private static final int PINGDELAY = 3000;
@@ -70,12 +73,12 @@ public class RS232 implements SerialPortEventListener
 				port = SerialPortList.getPortNames()[0];
 				if (port == null || port.equals(""))
 					throw new Exception();
-				System.out.println("The default SerialPort has been selected : " + port);
+				log.info("The default SerialPort has been selected : " + port);
 				settings.setPort(port);
 			}
 			catch (Exception e)
 			{
-				System.out.println("FATAL : No SerialPort has been found !");
+				log.severe("No SerialPort has been found !");
 				throw new SerialPortException("NoPort", "RS232.RS232(MainView)",
 						"No RS-232 port found on the computer !");
 			}
@@ -88,17 +91,25 @@ public class RS232 implements SerialPortEventListener
 			this.sp.openPort();// Open serial port
 			this.sp.setParams(SerialPort.BAUDRATE_9600, SerialPort.DATABITS_8,
 					SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+            this.sp.setEventsMask(SerialPort.MASK_RXCHAR);//Set mask
+            this.sp.addEventListener(this);//Add SerialPortEventListener
 		}
 		catch (SerialPortException ex)
 		{
-			System.out.println("SerialPortException at port opening : " + ex.getMessage());
+			log.warning("SerialPortException at port opening : " + ex.getMessage());
 			throw ex;
 		}
 
 		if (!this.sendPing())
-			throw new Exception("The initial ping could not be sent, aborting...");
+		{
+			Exception ex = new Exception("The initial ping could not be sent, aborting...");
+			log.warning(ex.getMessage());
+			throw ex;
+		}
+		log.info("Serial port opened");
 
 		this.connect();
+		log.info("RS232 object created");
 	}
 
 	/**
@@ -112,10 +123,12 @@ public class RS232 implements SerialPortEventListener
 		{
 			String start = "$" + RS232CommandType.EMPTY.toString() + "*";
 			sp.writeString(start + computeCrc(start) + "\r\n");
+			log.info("Ping sent");
 			return true;
 		}
 		catch (SerialPortException ex)
 		{
+			log.warning("Unable to send ping");
 			return false;
 		}
 	}
@@ -152,6 +165,8 @@ public class RS232 implements SerialPortEventListener
 	 */
 	private void disconnect()
 	{
+		log.info("Disconnecting the PIC");
+		
 		if(pingTimer != null)
 		{
 			pingTimer.cancel();
@@ -187,10 +202,12 @@ public class RS232 implements SerialPortEventListener
 				sendFrame(RS232CommandType.CHANGE_TO_POINT_MODE, "");
 				break;
 			default:
-				System.out.println("ERROR: Mode not yet supported, the state may be inaccurate !");
+				log.warning("Mode not yet supported, the state may be inaccurate !");
 				disconnect();
 				break;
 		}
+		
+		log.info("PIC mode switched to : " + _mode);
 	}
 	
 	
@@ -221,7 +238,7 @@ public class RS232 implements SerialPortEventListener
 		}
 		catch (SerialPortException ex)
 		{
-			System.out.println("RS232 : Unable to send a NCK on port " + ex.getPortName());
+			log.warning("Unable to send a NCK on port " + ex.getPortName());
 		}
 	}
 
@@ -235,7 +252,9 @@ public class RS232 implements SerialPortEventListener
 	public synchronized void sendFrame(RS232CommandType cNum, String datas) throws SerialPortException
 	{
 		String trame = "$" + cNum.toString() + "*" + datas;
-		sp.writeString(trame + RS232.computeCrc(trame) + "\r\n");
+		trame += RS232.computeCrc(trame) + "\r\n";
+		sp.writeString(trame);
+		log.info("Frame sent : " + trame);
 	}
 
 	/**
@@ -243,6 +262,8 @@ public class RS232 implements SerialPortEventListener
 	 */
 	private void resetTimeout()
 	{
+		log.info("Timeout reset");
+		
 		if(timeoutTimer != null)
 		{
 			timeoutTimer.cancel();
@@ -277,10 +298,11 @@ public class RS232 implements SerialPortEventListener
 		try
 		{
 			received = sp.readString();
+			log.info("Data received : " + received);
 		}
 		catch (SerialPortException ex)
 		{
-			System.out.println("RS232 : port " + ex.getPortName()
+			log.warning("Port " + ex.getPortName()
 					+ " unreadable. Please check that we are the only one listening to this port.");
 			return;
 		}
@@ -300,16 +322,20 @@ public class RS232 implements SerialPortEventListener
 				if(com.getCommandNumber() != RS232CommandType.EMPTY)
 					commandQueue.add(com);
 				else
+				{
+					log.info("Ping received");
 					resetTimeout();
+				}
 				newComs = true;
 			}
 			catch (CrcException e1)
 			{
 				this.sendNck(RS232Command.extractCommand(chain));
+				log.info("Frame corrupted");
 			}
 			catch (Exception e1)
 			{
-				System.out.println(e1.getMessage());
+				log.warning("Exception while trying to decode frame : " + e1.getMessage());
 			}
 		}
 
