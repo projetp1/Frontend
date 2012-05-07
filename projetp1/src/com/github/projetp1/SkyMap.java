@@ -16,11 +16,15 @@
 package com.github.projetp1;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import com.sun.org.apache.bcel.internal.generic.LXOR;
+
 @SuppressWarnings("serial")
-public class SkyMap extends Container {
+public class SkyMap extends Container implements MouseListener {
 	
 	private int zoom = 1;
 	private double dXOrigin = 0;
@@ -35,6 +39,7 @@ public class SkyMap extends Container {
 	 * @param _sDelimiter : The delimiter of the string of the searchbar
 	 */
 	public SkyMap(String _sDataBase, String _sDelimiter) {
+		this.addMouseListener(this);
 		this.setBackground(Color.BLACK);
 		//this.setOpaque(true);
 		try
@@ -47,6 +52,29 @@ public class SkyMap extends Container {
 			ex.printStackTrace();
 		}
     }
+	
+	public void mousePressed(MouseEvent e) {
+
+		int l_scale = (int)(this.getHeight()/2);
+		int l_xCenter = this.getWidth()/2 - (int)(dXOrigin * l_scale * zoom);
+		int l_yCenter = this.getHeight()/2 + (int)(dYOrigin * l_scale * zoom);
+		double l_dLastDelta = 10;
+		double l_dXPressed = (e.getX() - l_xCenter) / zoom / l_scale;
+		double l_dYPressed = (e.getY() - l_yCenter) / zoom / l_scale * -1;
+		CelestialObject l_nearestCelestialObject = null;
+		
+		for (CelestialObject celestialObject : celestialObjects)
+		{
+			double l_dDelta = Math.sqrt(Math.pow(Math.abs(l_dXPressed - celestialObject.getXReal()),2) + Math.pow(Math.abs(l_dYPressed - celestialObject.getYReal()), 2));
+			
+			if(l_dLastDelta > l_dDelta)
+			{
+				l_dLastDelta = l_dDelta;
+				l_nearestCelestialObject = celestialObject;
+			}			
+		}
+		System.out.print("\nnearest : " + l_nearestCelestialObject.getProperName());
+	}
 	
 	/**
      * Repaint the stars with the last parameters
@@ -85,11 +113,11 @@ public class SkyMap extends Container {
 
 		g.setColor(Color.red);
         g.fillOval(this.getWidth()/2, this.getHeight()/2, 30,30);
-        
+       /** 
         Graphics2D g2 = (Graphics2D) g;
         g2.rotate(-getArrowAngle(sun), this.getWidth()/2, this.getHeight()/2); //TODO voir valeur non constante
         g2.drawImage(getToolkit().getImage("res/arrow.png"), this.getWidth()/2, this.getHeight()/2, null);
-        
+        */
 	}
 	
 	
@@ -172,4 +200,12 @@ public class SkyMap extends Container {
 	public void setYOrigin(double _yOrigin) {
 		this.dYOrigin = _yOrigin;
 	}
+
+	public void mouseClicked(MouseEvent _arg0) {}
+
+	public void mouseEntered(MouseEvent _arg0) {}
+
+	public void mouseExited(MouseEvent _arg0) {}
+
+	public void mouseReleased(MouseEvent _arg0) {}
 }
