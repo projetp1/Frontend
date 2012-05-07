@@ -340,5 +340,21 @@ public class CelestialObject {
 	public void setYReal(double y) {
 		this.dYReal = y;
 	}
+	
+	/**
+	 * setdRA
+	 * setter of the private value
+	 */
+	public void setdRA(double y) {
+		this.dRA = y;
+	}
+	
+	/**
+	 * setdDec
+	 * setter of the private value
+	 */
+	public void setdDec(double y) {
+		this.dDec = y;
+	}
 
 }
