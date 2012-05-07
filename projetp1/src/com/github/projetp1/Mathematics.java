@@ -22,7 +22,7 @@ import java.util.TimeZone;
 public class Mathematics
 {
 	static private final double pi = Math.PI;
-	//static private final double deg2rad = pi / 180.0;
+	static private final double deg2rad = pi / 180.0;
 	//static private final double rad2deg = 180.0 / pi;
 
 	//Constants for Julian Date
@@ -73,19 +73,33 @@ public class Mathematics
 	 */
 	public Mathematics(Calendar _date, double _dLat, double _dLon,double _dDec,double _dAsc)
 	{
-		this.dHour = _date.get(Calendar.HOUR_OF_DAY);
-		this.dMinute = _date.get(Calendar.MINUTE);
-		this.dSecond = _date.get(Calendar.SECOND);
-
-		this.dGMT = calculate_Hour_GMT(_date);
-		this.dDay = Mathematics.kadditionnal_dDay_of_Date_object + _date.get(Calendar.DATE);
-		this.dMonth = Mathematics.kadditionnal_dMonth_of_Date_object + _date.get(Calendar.MONTH);
-		this.dYear = Mathematics.kadditionnal_dYear_of_gregorian_calendar + _date.get(Calendar.YEAR);
+		calculate_date_time(_date);
 
 		this.dLatitude = _dLat;
 		this.dLongitude = _dLon;
 		this.dDeclination = _dDec;
 		this.dAscension = _dAsc;
+		
+		calculate_all();
+	}
+	
+	/**
+	 * Mathematics Constructor,use for the sun
+	 * 
+	 * @param _date : Date of the computer. Will be use to calculate the Sideral Time
+	 * @param _dLat : It's the Latitude of the star's pointer
+	 * @param _dLon : It's the Longitude of the star's pointer
+	 */
+	public Mathematics(Calendar _date, double _dLat, double _dLon)
+	{
+		calculate_date_time(_date);
+		
+		this.dLatitude = _dLat;
+		this.dLongitude = _dLon;
+		
+		this.dDate_JulianCalendar = calculate_JulianDate(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
+		
+		calculate_position_sun(this.dDate_JulianCalendar);
 		
 		calculate_all();
 	}
@@ -112,6 +126,23 @@ public class Mathematics
 		this.dY = calculate_Y(this.dHeight,this.dAzimuth);
 	}
 
+	/**
+	 * calculate_date_time
+	 * Calculates the informations from the date and the time
+	 * @param _date : Use a calendar for calculate the GTM hour
+	 */
+	private void calculate_date_time(Calendar _date)
+	{
+		this.dHour = _date.get(Calendar.HOUR_OF_DAY);
+		this.dMinute = _date.get(Calendar.MINUTE);
+		this.dSecond = _date.get(Calendar.SECOND);
+
+		this.dGMT = calculate_Hour_GMT(_date);
+		this.dDay = Mathematics.kadditionnal_dDay_of_Date_object + _date.get(Calendar.DATE);
+		this.dMonth = Mathematics.kadditionnal_dMonth_of_Date_object + _date.get(Calendar.MONTH);
+		this.dYear = Mathematics.kadditionnal_dYear_of_gregorian_calendar + _date.get(Calendar.YEAR);
+	}
+	
 	/**
 	 * get_all 
 	 * Give all the informations of the values calculated
@@ -153,6 +184,27 @@ public class Mathematics
 		System.out.println("Angle : " + this.dAngle);
 	}
 
+	/**
+	 * calculate_position_sun
+	 * Calculates the sun's declination and ascencion
+	 * @param _dDate_JulianCalendar : Use the julian date of the day
+	 */
+	private void calculate_position_sun(double _dDate_JulianCalendar)
+	{
+		//http://www.cppfrance.com/codes/CALCUL-POSITION-SOLEIL-DECLINAISON-ANGLE-HORAIRE-ALTITUDE-AZIMUT_31774.aspx
+		double g=357.529+0.98560028*_dDate_JulianCalendar;
+		double q=280.459+0.98564736*_dDate_JulianCalendar;
+		double l=q+1.915*sin(g*pi/180.0)+0.020*sin(2*g*pi/180.0);
+		double e=23.439-0.00000036*_dDate_JulianCalendar;
+
+		this.dAscension = arctan(cos(e*pi/180.0)*sin(l*pi/180.0)/cos(l*pi/180.0))*(180.0/pi)/15.0;
+		if(cos(l*pi/180.0)<0)
+			this.dAscension = 12.0+this.dAscension;
+		else if(cos(l*pi/180.0)>0 && sin(l*pi/180.0)<0)
+			this.dAscension = this.dAscension+24.0;
+		this.dDeclination = arcsin(sin(e*pi/180.0)*sin(l*pi/180.0))*180.0/pi;
+	}
+	
 	/**
 	 * calculate_Hour_GMT
 	 * Gives the hour from HMT
@@ -373,6 +425,28 @@ public class Mathematics
 	static private double arcsin(double _dX)
 	{
 		return Math.asin(_dX);
+	}
+	
+	/**
+	 * tan
+	 * Calculate the tan of a number
+	 * @param _dX : The value to transform
+	 * @return : Return the result of the operation
+	 */
+	static private double tan(double _dX)
+	{
+		return Math.tan(_dX);
+	}
+
+	/**
+	 * arctan
+	 * Calculate the ArcTan of a number
+	 * @param _dX : The value to transform
+	 * @return : Return the result of the operation
+	 */
+	static private double arctan(double _dX)
+	{
+		return Math.atan(_dX);
 	}
 	
 	/**
