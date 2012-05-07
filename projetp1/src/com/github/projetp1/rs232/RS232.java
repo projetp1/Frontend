@@ -228,7 +228,7 @@ public class RS232 implements SerialPortEventListener
 	 */
 	public void sendNck(RS232CommandType command)
 	{
-		if (pic.getMode() == PicMode.GUIDING || command.equals(RS232CommandType.PIC_STATUS))
+		if (command == null || pic.getMode() == PicMode.GUIDING || command.equals(RS232CommandType.PIC_STATUS))
 			return;
 
 		try
