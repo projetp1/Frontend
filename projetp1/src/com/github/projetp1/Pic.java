@@ -155,27 +155,28 @@ public class Pic extends Thread{
 	public void run()
 	{
 		//Reception des données
-		commande = rs.getLastCommand();
-		
-		//Switch pour trier les données
-		switch(commande.getCommandNumber())
+		while((commande = rs.getLastCommand()) != null)
 		{
-			case EMPTY :
-				break;
-			case CHANGE_TO_POINT_MODE:
-				break;
-			case CHANGE_TO_ARROW_MODE:
-				break;
-			case LOCATION_UPDATE:
-				break;
-			case ACCELEROMETER_UPDATE:
-				break;
-			case MAGNETOMETER_UPDATE:
-				break;
-			case PIC_STATUS:
-				break;
-			default:
-				break;
+			//Switch pour trier les données
+			switch(commande.getCommandNumber())
+			{
+				case EMPTY :
+					break;
+				case CHANGE_TO_POINT_MODE:
+					break;
+				case CHANGE_TO_ARROW_MODE:
+					break;
+				case LOCATION_UPDATE:
+					break;
+				case ACCELEROMETER_UPDATE:
+					break;
+				case MAGNETOMETER_UPDATE:
+					break;
+				case PIC_STATUS:
+					break;
+				default:
+					break;
+			}
 		}
 	}
 }
