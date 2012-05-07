@@ -1,5 +1,7 @@
 package com.github.projetp1.rs232;
 
+import java.util.logging.Logger;
+
 public class RS232Command
 {
 	private RS232CommandType commandNumber;
@@ -54,7 +56,7 @@ public class RS232Command
 		this.datas = extractDatas(chain);
 		this.commandNumber = extractCommand(chain);
 		
-		if(!RS232.checkCrc(datas, extractCrc(chain)))
+		if(!RS232.checkCrc(chain.substring(0, chain.indexOf("*") + 1), extractCrc(chain)))
 			throw new CrcException(extractCrc(chain));	
 	}
 	
@@ -90,7 +92,7 @@ public class RS232Command
 		try {
 			return RS232CommandType.valueOfByNum(chain.substring(1, chain.indexOf(",")));
 		} catch (IllegalArgumentException e) {
-			System.out.println("Not a valid command number !");
+			Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).warning("Not a valid command number !");
 			return null;
 		}
 	}
@@ -103,6 +105,8 @@ public class RS232Command
 	 */
 	public static byte extractCrc(String chain)
 	{
-		return (byte) chain.charAt(chain.indexOf("*") + 1);
+		String crcS = chain.substring(chain.indexOf("*") + 1, chain.indexOf("\r\n"));
+		int crcI = Integer.parseInt(crcS, 16);
+		return (byte) crcI;
 	}
 }

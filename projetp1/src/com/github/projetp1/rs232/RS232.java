@@ -121,8 +121,7 @@ public class RS232 implements SerialPortEventListener
 	{
 		try
 		{
-			String start = "$" + RS232CommandType.EMPTY.toString() + "*";
-			sp.writeString(start + computeCrc(start) + "\r\n");
+			this.sendFrame(RS232CommandType.EMPTY, "");
 			log.info("Ping sent");
 			return true;
 		}
@@ -251,8 +250,8 @@ public class RS232 implements SerialPortEventListener
 	 */
 	public synchronized void sendFrame(RS232CommandType cNum, String datas) throws SerialPortException
 	{
-		String trame = "$" + cNum.toString() + "*" + datas;
-		trame += RS232.computeCrc(trame) + "\r\n";
+		String trame = "$" + cNum.toString() + "," + datas + "*";
+		trame += hexToAscii(RS232.computeCrc(trame)) + "\r\n";
 		sp.writeString(trame);
 		log.info("Frame sent : " + trame);
 	}
@@ -316,6 +315,7 @@ public class RS232 implements SerialPortEventListener
 		{
 			RS232Command com;
 			String chain = buffer.substring(0, pos + 2);
+			buffer.delete(0, pos + 2);
 			try
 			{
 				com = new RS232Command(chain);
@@ -378,5 +378,17 @@ public class RS232 implements SerialPortEventListener
 			crc = (byte) (crc ^ b);
 		}
 		return crc;
+	}
+	
+	
+	/**
+	 * Convert a byte to an ASCII hex string
+	 *
+	 * @param b The byte to be converted
+	 * @return A String
+	 */
+	public static String hexToAscii(byte b)
+	{
+		  return Integer.toString( ( b & 0xff ) + 0x100, 16).substring( 1 );
 	}
 }
