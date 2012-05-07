@@ -315,7 +315,7 @@ public class RS232 implements SerialPortEventListener
 
 		if (newComs)
 		{
-			// TODO: Notify the Pic object that new data is available
+			pic.run();
 		}
 
 	}

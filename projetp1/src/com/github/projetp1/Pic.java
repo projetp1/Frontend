@@ -7,9 +7,11 @@ package com.github.projetp1;
  * @author   alexandr.perez
  */
 
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import jssc.SerialPortException;
 
+import com.github.projetp1.*;
 import com.github.projetp1.rs232.*;
 
 public class Pic extends Thread{
@@ -48,7 +50,7 @@ public class Pic extends Thread{
 		SIMULATION
 		; }
 	
-	private com.github.projetp1.rs232.RS232Command commande;
+	private RS232Command commande;
 	
 	protected MainView mainview;
 	
@@ -60,18 +62,22 @@ public class Pic extends Thread{
 	public Pic(MainView _mainview) {
 		// TODO Auto-generated constructor stub
 		this.mainview = _mainview;
+		
 		try
 		{
-			rs = new RS232(mainview.settings ,this);
+			rs = new RS232(mainview.getSettings(), this);
 		}
-		catch (SerialPortException e)
+		catch (SerialPortException ex)
 		{
-			System.out.println(e.getMessage());
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
-			System.out.println(e.getMessage());
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
 		}
+		
 		this.start();
 	}
 
@@ -146,34 +152,30 @@ public class Pic extends Thread{
 	public void setMode(PicMode mode) {
 		this.mode = mode;
 	}
-	
 	public void run()
 	{
 		//Reception des données
 		commande = rs.getLastCommand();
 		
-		if(commande != null)
+		//Switch pour trier les données
+		switch(commande.getCommandNumber())
 		{
-			//Switch pour trier les données
-			switch(commande.getCommandNumber())
-			{
-				case EMPTY :
-					break;
-				case CHANGE_TO_POINT_MODE:
-					break;
-				case CHANGE_TO_ARROW_MODE:
-					break;
-				case LOCATION_UPDATE:
-					break;
-				case ACCELEROMETER_UPDATE:
-					break;
-				case MAGNETOMETER_UPDATE:
-					break;
-				case PIC_STATUS:
-					break;
-				default:
-					break;
-			}
+			case EMPTY :
+				break;
+			case CHANGE_TO_POINT_MODE:
+				break;
+			case CHANGE_TO_ARROW_MODE:
+				break;
+			case LOCATION_UPDATE:
+				break;
+			case ACCELEROMETER_UPDATE:
+				break;
+			case MAGNETOMETER_UPDATE:
+				break;
+			case PIC_STATUS:
+				break;
+			default:
+				break;
 		}
 	}
 }

@@ -10,7 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.AffineTransform;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,22 +20,25 @@ import java.io.IOException;
  * @author alexandr.perez
  *
  */
-public class MainView extends JFrame {
+@SuppressWarnings("serial")
+public class MainView extends JFrame implements KeyListener {
 
 	Settings settings;
 	public Settings getSettings() { return settings; }
 	Pic pic;
 	public Pic getPic() { return pic; }
+	SkyMap skymap;
 	
 	Compass compassPanel;
 	Inclinometer inclinometerPanel;
 	int degree = 90;
+	int zoom = 1;
+	double xOrigin = 0;
+	double yOrigin = 0;
 	double w = ((100/Toolkit.getDefaultToolkit().getScreenSize().width)*this.getWidth());
 	
 	private double width()
 	{
-		System.out.print(this.getWidth() + "<--\n");
-		System.out.print(Toolkit.getDefaultToolkit().getScreenSize().width + "<---\n");
 		return this.getWidth();
 	}
 	
@@ -51,7 +55,6 @@ public class MainView extends JFrame {
 			public void actionPerformed (ActionEvent event)
 			{
 					w =  width() / Toolkit.getDefaultToolkit().getScreenSize().width;
-					System.out.print(w + "<-\n");
 					if(w<.1)w=.1;
 					degree++;
 					compassPanel.setGreenNeedle(degree);
@@ -68,26 +71,30 @@ public class MainView extends JFrame {
   }
 	      
 	public MainView() {
-
+		
+		this.addKeyListener(this);
         this.setMinimumSize(new java.awt.Dimension(680, 420));
+		this.setVisible(true);
+		this.setExtendedState(Frame.MAXIMIZED_BOTH);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.getContentPane().setBackground(Color.BLACK);
 
 		compassPanel = new Compass(0.8);
 		compassPanel.setLocation((int)(width()-10-compassPanel.getWidth()), 50);		
 		
 		inclinometerPanel = new Inclinometer(0.8);
 		inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
+
 		
-		//this.add(compassPanel);
-		//this.add(inclinometerPanel);
+		skymap = new SkyMap("hyg.db",";");
+		skymap.setSize(this.getWidth()-200,this.getHeight()-20);
+		skymap.setLocation(200, 20);
+		skymap.updateSkyMap();
+		
 		getLayeredPane().add(compassPanel);
 		getLayeredPane().add(inclinometerPanel);
+		getLayeredPane().add(skymap);
 		
-		this.setVisible(true);
-		this.setExtendedState(this.MAXIMIZED_BOTH);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.getContentPane().setBackground(Color.BLACK);
-		repaint();
-		//pack();
 		
 		Timer timer = createTimer();
 		timer.start();
@@ -97,8 +104,54 @@ public class MainView extends JFrame {
 		Serializer.serialize("settings.lol",settings);
 		
 		pic = new Pic(this);
+		
+		repaint();
 	}
 
+
+	public void keyTyped(KeyEvent evt){}
+	
+	public void keyReleased(KeyEvent evt){}  
+
+	public void keyPressed(KeyEvent evt) {
+        if(evt.getKeyCode() == 37) //Left
+        {
+        	if(xOrigin > -1)
+        		xOrigin -= 0.02;
+        }
+        else if(evt.getKeyCode() == 39) //Right
+        {
+        	if(xOrigin < 1)
+        		xOrigin += 0.02;
+        }
+        else if(evt.getKeyCode() == 38) // Up
+        {
+        	if(yOrigin < 1)
+        		yOrigin += 0.02;
+        }
+        else if(evt.getKeyCode() == 40) // Down
+        {
+        	if(yOrigin > -1)
+        		yOrigin -= 0.02;
+        }
+        else if(evt.getKeyCode() == (int)'.') //+
+        {
+        	zoom++;
+        }
+        else if(evt.getKeyCode() == (int)'-') //-
+        {
+        	if(zoom>1)
+        		zoom--;
+        }
+
+        skymap.setZoom(zoom);
+        skymap.setXOrigin(xOrigin);
+        skymap.setYOrigin(yOrigin);
+        skymap.updateSkyMap();
+		
+		repaint();
+    }
+	
 	public void showHelpView() {
 		
 	}
@@ -142,8 +195,8 @@ public class MainView extends JFrame {
 
         return bImageNew;
     }
-	
-    private class Compass extends JLayeredPane
+
+	private class Compass extends JLayeredPane
 	{
 		double scale = 1;
 		double redAngle = 0;
@@ -159,7 +212,6 @@ public class MainView extends JFrame {
 			try {
 				background = resizeImage(ImageIO.read(new File("res/backgroundCompass.png")),scale);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			repaint();
@@ -219,7 +271,6 @@ public class MainView extends JFrame {
 			try {
 				background = resizeImage(ImageIO.read(new File("res/backgroundCompass.png")),scale);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			repaint();
@@ -254,7 +305,6 @@ public class MainView extends JFrame {
             greenAngle =_angle;
 		}
 		
-		@SuppressWarnings("serial")
 		private class Needle extends JPanel
 		{
 		    BufferedImage needleImage;
@@ -284,7 +334,6 @@ public class MainView extends JFrame {
 					try {
 						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -312,9 +361,8 @@ public class MainView extends JFrame {
 		}
 	
 	}
-	
-	
-	@SuppressWarnings("serial")
+
+
 	private class Inclinometer extends JLayeredPane
 	{
 		double scale = 1;
@@ -331,7 +379,6 @@ public class MainView extends JFrame {
 			try {
 				background = resizeImage(ImageIO.read(new File("res/backgroundInclinometer.png")),scale);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			repaint();
@@ -384,7 +431,6 @@ public class MainView extends JFrame {
 			try {
 				background = resizeImage(ImageIO.read(new File("res/backgroundInclinometer.png")),scale);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			repaint();
@@ -417,7 +463,6 @@ public class MainView extends JFrame {
 			greenAngle = _greenAngle;
 		}
 
-		@SuppressWarnings("serial")
 		private class Needle extends JPanel
 		{
 		    BufferedImage needleImage;
@@ -447,7 +492,6 @@ public class MainView extends JFrame {
 					try {
 						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
