@@ -6,7 +6,15 @@ package com.github.projetp1;
 /**
  * @author   alexandr.perez
  */
-public class Pic {
+
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import jssc.SerialPortException;
+
+import com.github.projetp1.*;
+import com.github.projetp1.rs232.*;
+
+public class Pic extends Thread{
 
 	/**
 	 * @uml.property  name="longitude"
@@ -26,13 +34,51 @@ public class Pic {
 	private double compass;
 	
 	private PicMode mode;
-	public enum PicMode { POINTING, GUIDING; }
+	
+	public enum PicMode {
+		/**
+		 * The default mode : point, click and see
+		 */
+		POINTING, 
+		/**
+		 * The searching star mode
+		 */
+		GUIDING, 
+		/**
+		 * The simulation mode. No PIC is connected, user commands come from the keyboard
+		 */
+		SIMULATION
+		; }
+	
+	private RS232Command commande;
+	
+	protected MainView mainview;
+	
+	private RS232 rs;
 	
 	/**
 	 * 
 	 */
-	public Pic() {
+	public Pic(MainView _mainview) {
 		// TODO Auto-generated constructor stub
+		this.mainview = _mainview;
+		
+		try
+		{
+			rs = new RS232(mainview.getSettings(), this);
+		}
+		catch (SerialPortException ex)
+		{
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
+		catch (Exception ex)
+		{
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
+		
+		this.start();
 	}
 
 	/**
@@ -105,5 +151,32 @@ public class Pic {
 
 	public void setMode(PicMode mode) {
 		this.mode = mode;
+	}
+	public void run()
+	{
+		//Reception des données
+		while((commande = rs.getLastCommand()) != null)
+		{
+			//Switch pour trier les données
+			switch(commande.getCommandNumber())
+			{
+				case EMPTY :
+					break;
+				case CHANGE_TO_POINT_MODE:
+					break;
+				case CHANGE_TO_ARROW_MODE:
+					break;
+				case LOCATION_UPDATE:
+					break;
+				case ACCELEROMETER_UPDATE:
+					break;
+				case MAGNETOMETER_UPDATE:
+					break;
+				case PIC_STATUS:
+					break;
+				default:
+					break;
+			}
+		}
 	}
 }

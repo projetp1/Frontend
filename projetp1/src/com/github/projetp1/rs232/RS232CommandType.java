@@ -14,6 +14,12 @@ public enum RS232CommandType {
 	CHANGE_TO_POINT_MODE("01"),
 	/** Changes the PIC mode to search + Send the arrow */
 	CHANGE_TO_ARROW_MODE("02"),
+	/** Contains the GPS coordinates */
+	LOCATION_UPDATE("03"),
+	/** Contains the accelerometer vectors */
+	ACCELEROMETER_UPDATE("04"),
+	/** Contains the compass vectors */
+	MAGNETOMETER_UPDATE("05"),
 	/** Used by the PIC to communicates its status to the PC */
 	PIC_STATUS("99")
 	;

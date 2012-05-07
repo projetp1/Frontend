@@ -85,11 +85,11 @@ public class SkyMap extends Container {
 
 		g.setColor(Color.red);
         g.fillOval(this.getWidth()/2, this.getHeight()/2, 30,30);
-        
+        /*
         Graphics2D g2 = (Graphics2D) g;
         g2.rotate(-getArrowAngle(sun), this.getWidth()/2, this.getHeight()/2); //TODO voir valeur non constante
         g2.drawImage(getToolkit().getImage("res/arrow.png"), this.getWidth()/2, this.getHeight()/2, null);
-        
+        */
 	}
 	
 	

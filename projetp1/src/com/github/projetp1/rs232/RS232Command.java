@@ -1,9 +1,13 @@
 package com.github.projetp1.rs232;
 
+import java.util.logging.Logger;
+
 public class RS232Command
 {
-	private RS232CommandType _commandNumber;
-	private String _datas;
+	private RS232CommandType commandNumber;
+	public RS232CommandType getCommandNumber() { return commandNumber; }
+	private String datas;
+	public String getDatas() { return datas; }
 	
 	/**
 	 * Create a new RS232Command object (with CRC check)
@@ -15,8 +19,8 @@ public class RS232Command
 	 */
 	public RS232Command(String commandNumber, String datas, byte crc) throws CrcException, IllegalArgumentException
 	{
-		this._commandNumber = RS232CommandType.valueOfByNum(commandNumber);
-		this._datas = datas;
+		this.commandNumber = RS232CommandType.valueOfByNum(commandNumber);
+		this.datas = datas;
 		
 		if(!RS232.checkCrc(datas, crc))
 			throw new CrcException(crc);
@@ -30,8 +34,8 @@ public class RS232Command
 	 */
 	public RS232Command(RS232CommandType commandNumber, String datas)
 	{
-		this._commandNumber = commandNumber;
-		this._datas = datas;
+		this.commandNumber = commandNumber;
+		this.datas = datas;
 	}
 	
 	/**
@@ -49,10 +53,10 @@ public class RS232Command
 		// Extract the CRC
 		
 		// Extract the datas
-		this._datas = extractDatas(chain);
-		this._commandNumber = extractCommand(chain);
+		this.datas = extractDatas(chain);
+		this.commandNumber = extractCommand(chain);
 		
-		if(!RS232.checkCrc(_datas, extractCrc(chain)))
+		if(!RS232.checkCrc(chain.substring(0, chain.indexOf("*") + 1), extractCrc(chain)))
 			throw new CrcException(extractCrc(chain));	
 	}
 	
@@ -63,7 +67,7 @@ public class RS232Command
 	 */
 	public void sendNck(RS232 rs)
 	{
-		rs.sendNck(_commandNumber);
+		rs.sendNck(commandNumber);
 	}
 	
 	/**
@@ -88,7 +92,7 @@ public class RS232Command
 		try {
 			return RS232CommandType.valueOfByNum(chain.substring(1, chain.indexOf(",")));
 		} catch (IllegalArgumentException e) {
-			System.out.println("Not a valid command number !");
+			Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).warning("Not a valid command number !");
 			return null;
 		}
 	}
@@ -101,6 +105,8 @@ public class RS232Command
 	 */
 	public static byte extractCrc(String chain)
 	{
-		return (byte) chain.charAt(chain.indexOf("*") + 1);
+		String crcS = chain.substring(chain.indexOf("*") + 1, chain.indexOf("\r\n"));
+		int crcI = Integer.parseInt(crcS, 16);
+		return (byte) crcI;
 	}
 }
