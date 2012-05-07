@@ -109,14 +109,14 @@ public class CelestialObject {
 		//this.dVXYZ[2] = _vz;	
 	}
 
-	/**
-	 * getHeader
-	 * Gives the header of columns from the database
-	 */
-	public void getHeader()
-	{
-		System.out.println("ID\tStarID\tHIP\tHD\tHR\tGliese\tBayerFlamsteed\tProperName\tRA\tDec\tDistance\tPMRA\tPMDec\tRV\tMag\tAbsMag\tSpectrum\tColorIndex\tX\tY\tZ\tVX\tVY\tVZ\tXReal\tYReal");
-	}
+	///**
+	// * getHeader
+	// * Gives the header of columns from the database
+	// */
+	//public void getHeader()
+	//{
+	//	System.out.println("ID\tStarID\tHIP\tHD\tHR\tGliese\tBayerFlamsteed\tProperName\tRA\tDec\tDistance\tPMRA\tPMDec\tRV\tMag\tAbsMag\tSpectrum\tColorIndex\tX\tY\tZ\tVX\tVY\tVZ\tXReal\tYReal");
+	//}
 	
 	/*
 	 * getInfos
