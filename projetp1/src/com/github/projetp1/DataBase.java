@@ -398,6 +398,16 @@ public class DataBase
 			CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
 			Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
 	    	
+			if(l_ProperName == "Sol")
+			{
+				l_calc = new Mathematics(_date,_dLat, _dLon);
+				l_star.setdDec(l_calc.getDeclination());
+				l_star.setdRA(l_calc.getAscension());
+				System.out.println("SOLEIL");
+			}
+			else
+				l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
+			
 	    	if(l_calc.getHeight() >= 0)
 	    	{
 		    	l_star.setXReal(l_calc.getX());
@@ -507,7 +517,16 @@ public class DataBase
 	    	//CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
 	    	
 			CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
-	    	Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
+			Mathematics l_calc = null;
+			
+			if(l_ProperName == "Sol")
+			{
+				l_calc = new Mathematics(_date,_dLat, _dLon);
+				l_star.setdDec(l_calc.getDeclination());
+				l_star.setdRA(l_calc.getAscension());
+			}
+			else
+				l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
 
 	    	if(l_calc.getHeight() > 0)
 	    	{
