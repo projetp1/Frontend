@@ -177,7 +177,7 @@ public class Mathematics
 	{
 		double l_x = 1*((-2.0/pi)*_dHeight+1);
 		
-		return l_x*sin(_dAzimuth);
+		return -l_x*sin(_dAzimuth);
 		//return (cos(_dHeight)*sin(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
@@ -192,7 +192,7 @@ public class Mathematics
 	{
 		double l_y = 1*((-2.0/pi)*_dHeight+1);
 		
-		return l_y*cos(_dAzimuth);
+		return -l_y*cos(_dAzimuth);
 		//return (cos(_dHeight)*cos(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
