@@ -9,7 +9,10 @@ package com.github.projetp1;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.github.projetp1.rs232.RS232Command;
+import jssc.SerialPortException;
+
+import com.github.projetp1.*;
+import com.github.projetp1.rs232.*;
 
 public class Pic extends Thread{
 
@@ -47,11 +50,11 @@ public class Pic extends Thread{
 		SIMULATION
 		; }
 	
-	private com.github.projetp1.rs232.RS232Command commande;
+	private RS232Command commande;
 	
 	protected MainView mainview;
 	
-	private com.github.projetp1.rs232.RS232 rs = new com.github.projetp1.rs232.RS232(mainview);
+	private RS232 rs;
 	
 	/**
 	 * 
@@ -59,6 +62,21 @@ public class Pic extends Thread{
 	public Pic(MainView _mainview) {
 		// TODO Auto-generated constructor stub
 		this.mainview = _mainview;
+		
+		try
+		{
+			rs = new RS232(mainview.getSettings(), this);
+		}
+		catch (SerialPortException ex)
+		{
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
+		catch (Exception ex)
+		{
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
 		
 		this.start();
 	}
