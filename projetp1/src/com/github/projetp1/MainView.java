@@ -119,7 +119,8 @@ public class MainView extends JFrame implements KeyListener {
 		inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
 
 
-		skymap = new SkyMap();
+		skymap = new SkyMap("hyg.db",";");
+
 		skymap.setSize(this.getWidth()-200,this.getHeight()-20);
 		skymap.setLocation(200, 20);
 		skymap.updateSkyMap();
@@ -167,19 +168,23 @@ public class MainView extends JFrame implements KeyListener {
 	public void keyPressed(KeyEvent evt) {
         if(evt.getKeyCode() == 37) //Left
         {
-        	xOrigin += 0.02;
+        	if(xOrigin > -1)
+        		xOrigin -= 0.02;
         }
         else if(evt.getKeyCode() == 39) //Right
         {
-        	xOrigin -= 0.02;        	
+        	if(xOrigin < 1)
+        		xOrigin += 0.02;
         }
         else if(evt.getKeyCode() == 38) // Up
         {
-        	yOrigin += 0.02;
+        	if(yOrigin < 1)
+        		yOrigin += 0.02;
         }
         else if(evt.getKeyCode() == 40) // Down
         {
-        	yOrigin -= 0.02;        	
+        	if(yOrigin > -1)
+        		yOrigin -= 0.02;
         }
         else if(evt.getKeyCode() == (int)'.') //+
         {
@@ -667,7 +672,7 @@ public class MainView extends JFrame implements KeyListener {
 			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
 			coordinate = new JLabel("-10:2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
-			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*35));
+			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
 			coordinate.setForeground(Color.WHITE);
 			
 			this.add(coordinate, new Integer(3));
@@ -723,7 +728,7 @@ public class MainView extends JFrame implements KeyListener {
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*35));
-			//repaint();
+			repaint();
 		}
 		
 		public void setRedNeedle (double _angle) 
