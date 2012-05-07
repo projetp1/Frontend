@@ -120,6 +120,8 @@ public class MainView extends JFrame implements KeyListener {
 
 
 		skymap = new SkyMap("hyg.db",";");
+		
+		this.setFocusable(true);
 
 		skymap.setSize(this.getWidth()-200,this.getHeight()-20);
 		skymap.setLocation(200, 20);
@@ -262,8 +264,10 @@ public class MainView extends JFrame implements KeyListener {
 		zoomBarPanel.setLocation(5, (int)(buttonsPanel.getHeight()/2-zoomBarPanel.getHeight()/2)+5);
 		compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
 		inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight()));
-
-
+		
+		skymap.setBounds(0, 0, this.getWidth(), this.getHeight());
+		skymap.setZoom(zoom);
+		
 		coordinate.setBounds(this.getWidth()-100, this.getHeight()-70, 100, 20);
 		
 	}
@@ -560,12 +564,24 @@ public class MainView extends JFrame implements KeyListener {
     		this.setBounds(0, 0, (int)(width()/2), hig);
     		zoomSlider = new JSlider();
     		zoomSlider.setBounds(0, 0, (int)(width()/2), hig);
+    		zoomSlider.setMinimum(1);
+    		zoomSlider.setMaximum(40);
+    		zoomSlider.setValue(zoom);
     		zoomSlider.setBackground(Color.BLACK);
     		this.add(zoomSlider);
 			this.setVisible(true);
 			this.repaint();
+			zoomSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+	            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+	                jSlider1StateChanged(evt);
+	            }
+	        });
     	}
-    	
+    	private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {
+    		zoom = zoomSlider.getValue();
+    		skymap.setZoom(zoom);
+    		skymap.updateSkyMap();
+    	}
 		public void setScale(double _scale)
 		{
 			scale = _scale;
@@ -595,6 +611,11 @@ public class MainView extends JFrame implements KeyListener {
     		this.setBounds(0, 0, (int)(width()/2), hig);
     		jtextField = new JTextField();
     		jtextField.setBounds(0, 0, (int)(width()/2), hig);
+    		jtextField.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyTyped(java.awt.event.KeyEvent evt) {
+                    jTextField1KeyTyped(evt);
+                }
+            });
     		complement = new JTextArea();
     		complement.setBounds(0, 0, 10, 10);
     		complement.setVisible(false);
@@ -616,6 +637,16 @@ public class MainView extends JFrame implements KeyListener {
     			complement.setVisible(false);
     		else
         		complement.setVisible(true);
+    		repaint();
+    	}
+    	private void jTextField1KeyTyped(java.awt.event.KeyEvent evt) {
+    		//test = jtextField.getText().getChars(1, 3, test, 1);
+    		System.out.print(jtextField.getText() + "\n");
+    		if(jtextField.getText().equals("t"))
+    		{
+    			complement.setText("test");
+        		complement.setVisible(true);
+    		}
     		repaint();
     	}
 		public void setScale(double _scale)
