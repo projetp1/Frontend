@@ -103,7 +103,7 @@ public class MainView extends JFrame implements KeyListener {
 		settings = new Settings();
 		Serializer.serialize("settings.lol",settings);
 		
-		pic = new Pic();
+		pic = new Pic(this);
 		
 		repaint();
 	}
