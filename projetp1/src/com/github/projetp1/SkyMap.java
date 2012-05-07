@@ -85,8 +85,6 @@ public class SkyMap extends Container {
 
 		g.setColor(Color.red);
         g.fillOval(this.getWidth()/2, this.getHeight()/2, 30,30);
-		g.setColor(Color.blue);
-        g.fillOval(l_xCenter + (int)(0.5 * zoom * l_scale),l_yCenter - (int)(0.5 * zoom * l_scale), 30,30);
         
         Graphics2D g2 = (Graphics2D) g;
         g2.rotate(-getArrowAngle(sun), this.getWidth()/2, this.getHeight()/2); //TODO voir valeur non constante
