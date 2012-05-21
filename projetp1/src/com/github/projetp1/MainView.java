@@ -227,7 +227,7 @@ public class MainView extends JFrame implements KeyListener {
 	}
 	
 	public void updateInfo(CelestialObject _object) {
-		name = new JLabel("<html>Nom de l'astre<br />" +
+		name.setText("<html>Nom de l'astre<br />" +
 				_object.getProperName() +
 				"<br /><br />Magnitude<br />" +
 				_object.getMag() +
