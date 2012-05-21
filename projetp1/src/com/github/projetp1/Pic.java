@@ -33,7 +33,7 @@ public class Pic extends Thread{
 	 */
 	private double compass;
 	
-	private PicMode mode;
+	private PicMode mode = PicMode.SIMULATION;
 	
 	public enum PicMode {
 		/**
@@ -49,8 +49,6 @@ public class Pic extends Thread{
 		 */
 		SIMULATION
 		; }
-	
-	private RS232Command commande;
 	
 	protected MainView mainview;
 	
@@ -152,27 +150,32 @@ public class Pic extends Thread{
 	public void setMode(PicMode mode) {
 		this.mode = mode;
 	}
+	
 	public void run()
 	{
+		RS232Command commande;
 		//Reception des données
 		while((commande = rs.getLastCommand()) != null)
 		{
 			//Switch pour trier les données
 			switch(commande.getCommandNumber())
 			{
-				case EMPTY :
-					break;
-				case CHANGE_TO_POINT_MODE:
-					break;
-				case CHANGE_TO_ARROW_MODE:
-					break;
 				case LOCATION_UPDATE:
 					break;
 				case ACCELEROMETER_UPDATE:
-					break;
 				case MAGNETOMETER_UPDATE:
+					String[] components = commande.getDatas().split(",", 3);
+					double[] values = new double[3];
+					for (int l_i = 0; l_i < components.length; l_i++)
+						values[l_i] = Double.parseDouble(components[l_i]);
+					
+					if(commande.getCommandNumber() == RS232CommandType.ACCELEROMETER_UPDATE)
+						this.angle = Mathematics.calculateAngleInclinometer(values[0], values[1], values[2]);
+					else
+						this.compass = Mathematics.calculateAngleCompass(values[0], values[1], values[2]);
 					break;
 				case PIC_STATUS:
+					// TODO: Traitement du message de statut
 					break;
 				default:
 					break;
