@@ -18,6 +18,7 @@ package com.github.projetp1;
 import java.lang.Math;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
 public class Mathematics
 {
@@ -61,7 +62,7 @@ public class Mathematics
 	
 	private double dX;
 	private double dY;
-
+	
 	/**
 	 * Mathematics Constructor
 	 * 
@@ -73,7 +74,7 @@ public class Mathematics
 	 */
 	public Mathematics(Calendar _date, double _dLat, double _dLon,double _dDec,double _dAsc)
 	{
-		calculate_date_time(_date);
+		calculateDateTime(_date);
 
 		this.dLatitude = _dLat;
 		this.dLongitude = _dLon;
@@ -92,16 +93,17 @@ public class Mathematics
 	 */
 	public Mathematics(Calendar _date, double _dLat, double _dLon)
 	{
-		calculate_date_time(_date);
+		calculateDateTime(_date);
 		
 		this.dLatitude = _dLat;
 		this.dLongitude = _dLon;
 		
 		this.dDate_JulianCalendar = calculate_JulianDate(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
 		
-		calculate_position_sun(this.dDate_JulianCalendar);
-		
+		calculatePositionSun(this.dDate_JulianCalendar);
+		//this.getAll();
 		calculate_all();
+		this.getAll();
 	}
 	
 	/**
@@ -111,10 +113,10 @@ public class Mathematics
 	private void calculate_all()
 	{
 		this.dDate_JulianCalendar = calculate_JulianDate(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
-		this.dSideral_Time = calculate_dSideral_Time(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
+		this.dSideral_Time = calculateSideralTime(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
 
-		this.dAngle_Sideral_Time = calculate_sideral_hour_dAngle(this.dSideral_Time);
-		this.dAngle_Hour = calculate_hour_angle(this.dHour, this.dMinute, this.dGMT);
+		this.dAngle_Sideral_Time = calculateSideralHourAngle(this.dSideral_Time);
+		this.dAngle_Hour = calculateHourAngle(this.dHour, this.dMinute, this.dGMT);
 		this.dAngle = this.dAngle_Hour + this.dAngle_Sideral_Time;
 
 		this.dHour_Angle_Star = this.dAngle - this.dAscension + this.dLongitude;
@@ -122,50 +124,51 @@ public class Mathematics
 		this.dHeight = calculate_height(this.dDeclination, this.dLatitude, this.dHour_Angle_Star);
 		this.dAzimuth = calculate_azimuth(this.dDeclination, this.dLatitude, this.dHeight,this.dHour_Angle_Star);
 	
-		this.dX = calculate_X(this.dHeight,this.dAzimuth);
-		this.dY = calculate_Y(this.dHeight,this.dAzimuth);
+		this.dX = calculateX(this.dHeight,this.dAzimuth);
+		this.dY = calculateY(this.dHeight,this.dAzimuth);
 	}
 
 	/**
-	 * calculate_date_time
+	 * calculateDateTime
 	 * Calculates the informations from the date and the time
 	 * @param _date : Use a calendar for calculate the GTM hour
 	 */
-	private void calculate_date_time(Calendar _date)
+	private void calculateDateTime(Calendar _date)
 	{
 		this.dHour = _date.get(Calendar.HOUR_OF_DAY);
 		this.dMinute = _date.get(Calendar.MINUTE);
 		this.dSecond = _date.get(Calendar.SECOND);
 
-		this.dGMT = calculate_Hour_GMT(_date);
+		this.dGMT = calculateHourGMT(_date);
 		this.dDay = Mathematics.kadditionnal_dDay_of_Date_object + _date.get(Calendar.DATE);
 		this.dMonth = Mathematics.kadditionnal_dMonth_of_Date_object + _date.get(Calendar.MONTH);
 		this.dYear = Mathematics.kadditionnal_dYear_of_gregorian_calendar + _date.get(Calendar.YEAR);
 	}
 	
 	/**
-	 * get_all 
+	 * getAll 
 	 * Give all the informations of the values calculated
 	 */
-	public void get_all()
+	public void getAll()
 	{
-		System.out.println("X : " + this.dX);
-		System.out.println("Y : " + this.dY);
+		Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+		log.info("X : " + this.dX);
+		log.info("Y : " + this.dY);
 		
-		System.out.println("Hour : " + this.dHour);
-		System.out.println("Minute : " + this.dMinute);
-		System.out.println("Seconde : " + this.dSecond);
-		System.out.println("GMT : " + this.dGMT);
-		System.out.println("Day : " + this.dDay);
-		System.out.println("Month : " + this.dMonth);
-		System.out.println("Year : " + this.dYear);
+		log.info("Hour : " + this.dHour);
+		log.info("Minute : " + this.dMinute);
+		log.info("Seconde : " + this.dSecond);
+		log.info("GMT : " + this.dGMT);
+		log.info("Day : " + this.dDay);
+		log.info("Month : " + this.dMonth);
+		log.info("Year : " + this.dYear);
 
-		System.out.println("-->" + this.dDay + "/" + this.dMonth + "/" + this.dYear + "\t" + this.dHour + ":" + this.dMinute + ":" + this.dSecond);
+		log.info("-->" + this.dDay + "/" + this.dMonth + "/" + this.dYear + "\t" + this.dHour + ":" + this.dMinute + ":" + this.dSecond);
 		
 		if(this.dGMT>=0)
-			System.out.print("GMT+" + this.dGMT);
+			log.info("GMT+" + this.dGMT);
 		else
-			System.out.print("GMT-" + this.dGMT);	
+			log.info("GMT-" + this.dGMT);	
 
 		System.out.println("Latitude : " + this.dLatitude);
 		System.out.println("Longitude : " + this.dLongitude);
@@ -185,11 +188,11 @@ public class Mathematics
 	}
 
 	/**
-	 * calculate_position_sun
+	 * calculatePositionSun
 	 * Calculates the sun's declination and ascencion
 	 * @param _dDate_JulianCalendar : Use the julian date of the day
 	 */
-	private void calculate_position_sun(double _dDate_JulianCalendar)
+	private void calculatePositionSun(double _dDate_JulianCalendar)
 	{
 		//http://www.cppfrance.com/codes/CALCUL-POSITION-SOLEIL-DECLINAISON-ANGLE-HORAIRE-ALTITUDE-AZIMUT_31774.aspx
 		double g=357.529+0.98560028*_dDate_JulianCalendar;
@@ -197,21 +200,36 @@ public class Mathematics
 		double l=q+1.915*sin(g*pi/180.0)+0.020*sin(2*g*pi/180.0);
 		double e=23.439-0.00000036*_dDate_JulianCalendar;
 
-		this.dAscension = arctan(cos(e*pi/180.0)*sin(l*pi/180.0)/cos(l*pi/180.0))*(180.0/pi)/15.0;
+		this.dAscension = arctan(cos(e*pi/180.0)*sin(l*pi/180.0)/cos(l*pi/180.0))*(180.0/pi);
 		if(cos(l*pi/180.0)<0)
 			this.dAscension = 12.0+this.dAscension;
 		else if(cos(l*pi/180.0)>0 && sin(l*pi/180.0)<0)
 			this.dAscension = this.dAscension+24.0;
 		this.dDeclination = arcsin(sin(e*pi/180.0)*sin(l*pi/180.0))*180.0/pi;
+
+		/*double nb_siecle=_dDate_JulianCalendar/36525.0;
+		double heure_siderale1=(24110.54841+(8640184.812866*nb_siecle)+(0.093104*(nb_siecle*nb_siecle))-(0.0000062*(nb_siecle*nb_siecle*nb_siecle)))/3600.0;
+		double heure_siderale2=((heure_siderale1/24.0)-(int)(heure_siderale1/24.0))*24.0;
+
+		double angleH=2*pi*heure_siderale2/23.9344;
+		double angleT=(this.dHour-12.0+this.dMinute/60.0+this.dSecond/3600.0)*2*pi/23.9344;
+		double angle=angleT+angleH;
+
+		double angle_horaire=angle-this.dAscension+this.dLongitude;
+		
+		this.dAngle_Hour=angleH;
+		this.dAngle_Sideral_Time=angleT;
+		this.dAngle = angle;
+		this.dHour_Angle_Star = angle_horaire;*/
 	}
 	
 	/**
-	 * calculate_Hour_GMT
+	 * calculateHourGMT
 	 * Gives the hour from HMT
 	 * @param _cal : Use a calendar for calculate the GTM hour
 	 * @return : Return an int that's the hour GMT
 	 */
-	static private int calculate_Hour_GMT(Calendar _cal)
+	static private int calculateHourGMT(Calendar _cal)
 	{
 	    TimeZone l_t = _cal.getTimeZone();
 	    
@@ -219,13 +237,13 @@ public class Mathematics
 	}
 	
 	/**
-	 * calculate_X
+	 * calculateX
 	 * Calculates the X value of a coordinate system of 2D. It's a projection.
 	 * @param _dHeight : The Height of the star, calculated with "calculate_Height()"
 	 * @param _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
 	 * @return : Return a double that contains the X coordinate
 	 */
-	static private double calculate_X(double _dHeight,double _dAzimuth)
+	static private double calculateX(double _dHeight,double _dAzimuth)
 	{
 		double l_x = 1*((-2.0/pi)*_dHeight+1);
 		
@@ -234,13 +252,13 @@ public class Mathematics
 	}
 	
 	/**
-	 * calculate_Y
+	 * calculateY
 	 * Calculates the Y value of a coordinate system of 2D. It's a projection.
 	 * @param _dHeight : The Height of the star, calculated with "calculate_Height()"
 	 * @param _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
 	 * @return : Return a double that contains the Y coordinate
 	 */
-	static private double calculate_Y(double _dHeight,double _dAzimuth)
+	static private double calculateY(double _dHeight,double _dAzimuth)
 	{
 		double l_y = 1*((-2.0/pi)*_dHeight+1);
 		
@@ -264,14 +282,14 @@ public class Mathematics
 	}
 
 	/** 
-	 * fraction_of_day
+	 * fractionOfDay
 	 * Calculates the fraction of day about a time
 	 * @param _dHour : The hour of the value
 	 * @param _dMinute : The Minute of the value
 	 * @param _dSecond : The Second of the value
 	 * @return : Return a double that contains the value
 	 */
-	static private double fraction_of_day(double _dHour, double _dMinute, double _dSecond)
+	static private double fractionOfDay(double _dHour, double _dMinute, double _dSecond)
 	{
 		return _dHour / 24 + _dMinute / (24 * 60) + _dSecond / (24 * 60 * 60);
 	}
@@ -331,38 +349,48 @@ public class Mathematics
 		int l_c = (int) (_dYear / 100);
 		int l_b = 2 - l_c + (int) (l_c / 4);
 
-		int l_t = (int) (fraction_of_day(_dHour, _dMinute, _dSecond));
+		int l_t = (int) (fractionOfDay(_dHour, _dMinute, _dSecond));
 
 		return ((int) (knumber_of_dDay_in_one_dYear * (_dYear + kinitial_dYear))
 				+ (int) (knumber_of_dDay_in_one_dMonth * (_dMonth + 1)) + _dDay + l_t + l_b - 1524.5);
 	}
 
+	static public double calculateAngleCompass(double _dX,double _dY,double _dZ)
+	{
+		return 0;
+	}
+
+	static public double calculateAngleInclinometer(double _dX,double _dY,double _dZ)
+	{
+		return 0;
+	}
+	
 	/**
-	 * calculate_sideral_hour_dAngle Calculates the sideral hour angle
+	 * calculateSideralHourAngle Calculates the sideral hour angle
 	 * 
 	 * @param _dSideral_Time : The Sideral time
 	 * @return : Return a double that's the result
 	 */
-	static private double calculate_sideral_hour_dAngle(double _dSideral_Time)
+	static private double calculateSideralHourAngle(double _dSideral_Time)
 	{
 		return 2.0 * pi * _dSideral_Time / hms(23.0, 56.0, 4.0);
 	}
 
 	/** 
-	 * calculate_hour_angle
+	 * calculateHourAngle
 	 * Calculates the hours dAngle
 	 * @param _dHour : The hour
 	 * @param _dMin : The minute
 	 * @param _dGMT : The GMT zone
 	 * @return : Return a double that's the result
 	 */
-	static private double calculate_hour_angle(double _dHour, double _dMin, double _dGMT)
+	static private double calculateHourAngle(double _dHour, double _dMin, double _dGMT)
 	{
 		return (_dHour - 12 + _dMin / 60 - _dGMT) * 2 * pi / hms(23.0, 56.0, 4.0);
 	}
 
 	/** 
-	 * calculate_dSideral_Time
+	 * calculateSideralTime
 	 * Calculates the sideral time
 	 * @param _dDay : The day
 	 * @param _dMonth : The month
@@ -372,7 +400,7 @@ public class Mathematics
 	 * @param _dSecond : The second
 	 * @return : Return a double that's the result
 	 */
-	static private double calculate_dSideral_Time(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
+	static private double calculateSideralTime(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
 	{
 		double l_JJ = calculate_JulianDate(_dDay, _dMonth, _dYear, _dHour, _dMinute, _dSecond);
 		double l_T = (l_JJ - 2451545.0) / 36525.0;

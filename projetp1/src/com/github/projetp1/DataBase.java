@@ -398,12 +398,11 @@ public class DataBase
 			CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
 			Mathematics l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
 	    	
-			if(l_ProperName == "Sol")
+			if(l_id == 1)
 			{
 				l_calc = new Mathematics(_date,_dLat, _dLon);
 				l_star.setdDec(l_calc.getDeclination());
 				l_star.setdRA(l_calc.getAscension());
-				System.out.println("SOLEIL");
 			}
 			else
 				l_calc = new Mathematics(_date,_dLat, _dLon,l_star.getDec(),l_star.getRA());
