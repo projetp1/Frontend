@@ -23,18 +23,18 @@ import java.util.logging.Logger;
 public class Mathematics
 {
 	static private final double pi = Math.PI;
-	static private final double deg2rad = pi / 180.0;
-	//static private final double rad2deg = 180.0 / pi;
+	static private final double D2R = pi / 180.0;
+	static private final double R2D = 180.0 / pi;
 
 	//Constants for Julian Date
-	static private final double knumber_of_dDay_in_one_dYear = 365.25;
-	static private final double knumber_of_dDay_in_one_dMonth = 30.6001;// average of the dDay in one dMonth about X000 dYears
-	static private final double kinitial_dYear = 4716.0;
+	static private final double kNumberOfDayInOneYear = 365.25;
+	static private final double kNumberOfDayInOneMonth = 30.6001;// average of the dDay in one dMonth about X000 dYears
+	static private final double kInitialYear = 4716.0;
 	
 	//Constants for the Object Date
-	static private final double kadditionnal_dYear_of_gregorian_calendar = 0.0;
-	static private final double kadditionnal_dMonth_of_Date_object = 1.0;
-	static private final double kadditionnal_dDay_of_Date_object = 0.0;
+	static private final double kAdditionnalYearOfGregorianCalendar = 0.0;
+	static private final double kAdditionnalMonthOfDateObject = 1.0;
+	static private final double kAdditionnalDayOfDateObject = 0.0;
 
 	private double dHour;
 	private double dMinute;
@@ -69,55 +69,32 @@ public class Mathematics
 	 * @param _date : Date of the computer. Will be use to calculate the Sideral Time
 	 * @param _dLat : It's the Latitude of the star's pointer
 	 * @param _dLon : It's the Longitude of the star's pointer
-	 * @param _dDec : It's the Declination of the star
-	 * @param _dAsc : It's the Ascension of the star
 	 */
-	public Mathematics(Calendar _date, double _dLat, double _dLon,double _dDec,double _dAsc)
+	public Mathematics(Calendar _date, double _dLat, double _dLon)
 	{
 		calculateDateTime(_date);
 
 		this.dLatitude = _dLat;
 		this.dLongitude = _dLon;
-		this.dDeclination = _dDec;
-		this.dAscension = _dAsc;
 		
-		calculate_all();
-	}
-	
-	/**
-	 * Mathematics Constructor,use for the sun
-	 * 
-	 * @param _date : Date of the computer. Will be use to calculate the Sideral Time
-	 * @param _dLat : It's the Latitude of the star's pointer
-	 * @param _dLon : It's the Longitude of the star's pointer
-	 */
-	public Mathematics(Calendar _date, double _dLat, double _dLon)
-	{
-		calculateDateTime(_date);
-		
-		this.dLatitude = _dLat;
-		this.dLongitude = _dLon;
-		
-		this.dDate_JulianCalendar = calculate_JulianDate(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
-		
-		calculatePositionSun(this.dDate_JulianCalendar);
-		//this.getAll();
-		calculate_all();
-		this.getAll();
-	}
-	
-	/**
-	 * calculate_all 
-	 * Calculates all the informations that the program needs
-	 */
-	private void calculate_all()
-	{
 		this.dDate_JulianCalendar = calculate_JulianDate(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
 		this.dSideral_Time = calculateSideralTime(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
 
 		this.dAngle_Sideral_Time = calculateSideralHourAngle(this.dSideral_Time);
 		this.dAngle_Hour = calculateHourAngle(this.dHour, this.dMinute, this.dGMT);
 		this.dAngle = this.dAngle_Hour + this.dAngle_Sideral_Time;
+	}
+	
+	/**
+	 * calculateAll 
+	 * Calculates all the informations that the program needs
+	 * @param _dDec : It's the Declination of the star
+	 * @param _dAsc : It's the Ascension of the star
+	 */
+	public void calculateAll(double _dDec,double _dAsc)
+	{
+		this.dDeclination = _dDec;
+		this.dAscension = _dAsc;
 
 		this.dHour_Angle_Star = this.dAngle - this.dAscension + this.dLongitude;
 
@@ -129,27 +106,32 @@ public class Mathematics
 	}
 
 	/**
-	 * calculateDateTime
-	 * Calculates the informations from the date and the time
-	 * @param _date : Use a calendar for calculate the GTM hour
+	 * calculatePositionSun
+	 * Calculates the sun's declination and ascencion and uses calculateAll()
 	 */
-	private void calculateDateTime(Calendar _date)
+	public void calculatePositionSun()
 	{
-		this.dHour = _date.get(Calendar.HOUR_OF_DAY);
-		this.dMinute = _date.get(Calendar.MINUTE);
-		this.dSecond = _date.get(Calendar.SECOND);
+		//http://www.cppfrance.com/codes/CALCUL-POSITION-SOLEIL-DECLINAISON-ANGLE-HORAIRE-ALTITUDE-AZIMUT_31774.aspx
+		double g=357.529+0.98560028*this.dDate_JulianCalendar;
+		double q=280.459+0.98564736*this.dDate_JulianCalendar;
+		double l=q+1.915*sin(g*D2R)+0.020*sin(2*g*D2R);
+		double e=23.439-0.00000036*this.dDate_JulianCalendar;
 
-		this.dGMT = calculateHourGMT(_date);
-		this.dDay = Mathematics.kadditionnal_dDay_of_Date_object + _date.get(Calendar.DATE);
-		this.dMonth = Mathematics.kadditionnal_dMonth_of_Date_object + _date.get(Calendar.MONTH);
-		this.dYear = Mathematics.kadditionnal_dYear_of_gregorian_calendar + _date.get(Calendar.YEAR);
+		this.dAscension = arctan(cos(e*D2R)*sin(l*D2R)/cos(l*D2R))*(R2D);
+		if(cos(l*D2R)<0)
+			this.dAscension = 12.0+this.dAscension;
+		else if(cos(l*D2R)>0 && sin(l*D2R)<0)
+			this.dAscension = this.dAscension+24.0;
+		this.dDeclination = arcsin(sin(e*D2R)*sin(l*D2R))*R2D;
+
+		calculateAll(this.dDeclination,this.dAscension);
 	}
 	
 	/**
 	 * getAll 
 	 * Give all the informations of the values calculated
 	 */
-	public void getAll()
+	private void getAll()
 	{
 		Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 		log.info("X : " + this.dX);
@@ -170,57 +152,38 @@ public class Mathematics
 		else
 			log.info("GMT-" + this.dGMT);	
 
-		System.out.println("Latitude : " + this.dLatitude);
-		System.out.println("Longitude : " + this.dLongitude);
-		System.out.println("Delination : " + this.dDeclination);
-		System.out.println("Ascension : " + this.dAscension);
+		log.info("Latitude : " + this.dLatitude);
+		log.info("Longitude : " + this.dLongitude);
+		log.info("Delination : " + this.dDeclination);
+		log.info("Ascension : " + this.dAscension);
 
-		System.out.println("Azimuth : " + this.dAzimuth);
-		System.out.println("Height : " + this.dHeight);
+		log.info("Azimuth : " + this.dAzimuth);
+		log.info("Height : " + this.dHeight);
 
-		System.out.println("Julian Date : " + this.dDate_JulianCalendar);
-		System.out.println("Sideral Time : " + this.dSideral_Time);
+		log.info("Julian Date : " + this.dDate_JulianCalendar);
+		log.info("Sideral Time : " + this.dSideral_Time);
 
-		System.out.println("Hour dAngle Star : " + this.dHour_Angle_Star);
-		System.out.println("Angle Sideral Time : " + this.dAngle_Sideral_Time);
-		System.out.println("Angle Hour : " + this.dAngle_Hour);
-		System.out.println("Angle : " + this.dAngle);
+		log.info("Hour dAngle Star : " + this.dHour_Angle_Star);
+		log.info("Angle Sideral Time : " + this.dAngle_Sideral_Time);
+		log.info("Angle Hour : " + this.dAngle_Hour);
+		log.info("Angle : " + this.dAngle);
 	}
-
+	
 	/**
-	 * calculatePositionSun
-	 * Calculates the sun's declination and ascencion
-	 * @param _dDate_JulianCalendar : Use the julian date of the day
+	 * calculateDateTime
+	 * Calculates the informations from the date and the time
+	 * @param _date : Use a calendar for calculate the GTM hour
 	 */
-	private void calculatePositionSun(double _dDate_JulianCalendar)
+	public void calculateDateTime(Calendar _date)
 	{
-		//http://www.cppfrance.com/codes/CALCUL-POSITION-SOLEIL-DECLINAISON-ANGLE-HORAIRE-ALTITUDE-AZIMUT_31774.aspx
-		double g=357.529+0.98560028*_dDate_JulianCalendar;
-		double q=280.459+0.98564736*_dDate_JulianCalendar;
-		double l=q+1.915*sin(g*pi/180.0)+0.020*sin(2*g*pi/180.0);
-		double e=23.439-0.00000036*_dDate_JulianCalendar;
+		this.dHour = _date.get(Calendar.HOUR_OF_DAY);
+		this.dMinute = _date.get(Calendar.MINUTE);
+		this.dSecond = _date.get(Calendar.SECOND);
 
-		this.dAscension = arctan(cos(e*pi/180.0)*sin(l*pi/180.0)/cos(l*pi/180.0))*(180.0/pi);
-		if(cos(l*pi/180.0)<0)
-			this.dAscension = 12.0+this.dAscension;
-		else if(cos(l*pi/180.0)>0 && sin(l*pi/180.0)<0)
-			this.dAscension = this.dAscension+24.0;
-		this.dDeclination = arcsin(sin(e*pi/180.0)*sin(l*pi/180.0))*180.0/pi;
-
-		/*double nb_siecle=_dDate_JulianCalendar/36525.0;
-		double heure_siderale1=(24110.54841+(8640184.812866*nb_siecle)+(0.093104*(nb_siecle*nb_siecle))-(0.0000062*(nb_siecle*nb_siecle*nb_siecle)))/3600.0;
-		double heure_siderale2=((heure_siderale1/24.0)-(int)(heure_siderale1/24.0))*24.0;
-
-		double angleH=2*pi*heure_siderale2/23.9344;
-		double angleT=(this.dHour-12.0+this.dMinute/60.0+this.dSecond/3600.0)*2*pi/23.9344;
-		double angle=angleT+angleH;
-
-		double angle_horaire=angle-this.dAscension+this.dLongitude;
-		
-		this.dAngle_Hour=angleH;
-		this.dAngle_Sideral_Time=angleT;
-		this.dAngle = angle;
-		this.dHour_Angle_Star = angle_horaire;*/
+		this.dGMT = calculateHourGMT(_date);
+		this.dDay = Mathematics.kAdditionnalDayOfDateObject + _date.get(Calendar.DATE);
+		this.dMonth = Mathematics.kAdditionnalMonthOfDateObject + _date.get(Calendar.MONTH);
+		this.dYear = Mathematics.kAdditionnalYearOfGregorianCalendar + _date.get(Calendar.YEAR);
 	}
 	
 	/**
@@ -351,8 +314,8 @@ public class Mathematics
 
 		int l_t = (int) (fractionOfDay(_dHour, _dMinute, _dSecond));
 
-		return ((int) (knumber_of_dDay_in_one_dYear * (_dYear + kinitial_dYear))
-				+ (int) (knumber_of_dDay_in_one_dMonth * (_dMonth + 1)) + _dDay + l_t + l_b - 1524.5);
+		return ((int) (kNumberOfDayInOneYear * (_dYear + kInitialYear))
+				+ (int) (kNumberOfDayInOneMonth * (_dMonth + 1)) + _dDay + l_t + l_b - 1524.5);
 	}
 
 	static public double calculateAngleCompass(double _dX,double _dY,double _dZ)
