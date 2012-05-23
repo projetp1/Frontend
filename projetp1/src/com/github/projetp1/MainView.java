@@ -3,6 +3,7 @@
  */
 package com.github.projetp1;
 
+import com.github.projetp1.ListModel;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -85,6 +86,7 @@ public class MainView extends JFrame implements KeyListener {
 		
 		this.addKeyListener(this);
 		name = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
+		name.setBounds(100, 100, 100, 200);
 		getLayeredPane().add(name);
 		
 		coordinate = new JLabel(coord + " °N");
@@ -92,10 +94,6 @@ public class MainView extends JFrame implements KeyListener {
 		coordinate.setForeground(Color.WHITE);
 		getLayeredPane().add(coordinate);
 		
-        this.setMinimumSize(new java.awt.Dimension(680, 420));
-		this.setExtendedState(Frame.MAXIMIZED_BOTH);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.getContentPane().setBackground(Color.BLACK);
 
         buttonsPanel = new Buttons(0.1);
 		buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()/2), 5);
@@ -135,13 +133,15 @@ public class MainView extends JFrame implements KeyListener {
 		getLayeredPane().add(compassPanel);
 		getLayeredPane().add(inclinometerPanel);
 		getLayeredPane().add(skymap);
+
+        this.setMinimumSize(new java.awt.Dimension(680, 420));
 		
 		this.setVisible(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.getContentPane().setBackground(Color.BLACK);
 		repaint();
-		pack();
+		//pack();
 		
 		Timer timer = createTimer();
 		timer.start();
@@ -277,6 +277,7 @@ public class MainView extends JFrame implements KeyListener {
 		
 		skymap.setBounds(0, 0, this.getWidth(), this.getHeight());
 		skymap.setZoom(zoom);
+		name.setBounds((int)(10*w), (int)(10*w), 100, this.getHeight());
 		
 		coordinate.setBounds(this.getWidth()-100, this.getHeight()-70, 100, 20);
 		
@@ -297,8 +298,8 @@ public class MainView extends JFrame implements KeyListener {
     } 
     
     public static BufferedImage resizeImage2(BufferedImage bImage, double w, double h) {
-        int destWidth = (int)(w*bImage.getWidth());
-        int destHeight = (int)(h*bImage.getHeight());
+        int destWidth = (int)(w);//*bImage.getWidth());
+        int destHeight = (int)(h);//*bImage.getHeight());
         GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bImageNew = configuration.createCompatibleImage(destWidth, destHeight, 2);
         Graphics2D graphics = bImageNew.createGraphics();
@@ -486,9 +487,8 @@ public class MainView extends JFrame implements KeyListener {
     	BufferedImage internalMid;
     	BufferedImage internalBot;
     	
-	    JScrollPane scrollPane;
     	JLabel titre;
-    	JTextArea text;
+    	JLabel text;
     	
     	public Help(double _scale)
     	{
@@ -504,37 +504,40 @@ public class MainView extends JFrame implements KeyListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    			scrollPane = new JScrollPane();
-    			titre = new JLabel();
-    			titre.setText("Help");
-    			titre.setBounds(0 , backgroundTop.getHeight(), 100, 25);
+    			titre = new JLabel("Help", JLabel.CENTER);
+    			titre.setFont(new Font("Calibri", Font.BOLD, 36));
+    			titre.setBounds(0, backgroundTop.getHeight(), (int)(scale*345), (int)(scale*34));
     			titre.setForeground(Color.WHITE);
     			this.add(titre);
     			
-    			text = new JTextArea("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque imperdiet, nisi \nornare molestie tempor, tellus mi dictum erat, at sagittis nunc dolor pulvinar justo. \nVivamus ullamcorper, arcu non laoreet suscipit, risus ligula consequat sapien, in \ntempus turpis \nelit imperdiet dolor. Proin elit augue, facilisis eu luctus at, pellentesque id tortor. \nLorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet imperdiet \nlibero. Etiam sagittis lorem non tellus mollis tristique. In euismod commodo nibh in \nultrices. ");
-    			text.setName("jTextArea1");
-    			scrollPane.setViewportView(text);
-    			scrollPane.setBounds(0, 0, (int)(internalMid.getWidth()-5*scale), (int)(internalMid.getHeight()+10*scale));
-    			scrollPane.setBackground(null);
-    			this.add(scrollPane);
+    			text = new JLabel("<html>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque imperdiet, nisi<br />ornare molestie tempor, tellus mi dictum erat, at sagittis nunc dolor pulvinar justo.<br />Vivamus ullamcorper, arcu non laoreet suscipit, risus ligula consequat sapien, in<br />tempus turpis<br />elit imperdiet dolor. Proin elit augue, facilisis eu luctus at, pellentesque id tortor.<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet imperdiet<br />libero. Etiam sagittis lorem non tellus mollis tristique. In euismod commodo nibh in<br />ultrices.<br /></html>");
+    			text.setFont(new Font("Calibri", Font.BOLD, (int)(scale*36)));
+    			text.setBounds(0, internalTop.getHeight(), (int)(scale*345), (int)(scale*34*8));
+    			text.setForeground(Color.BLACK);
+    			this.add(text);
     			
     			this.setBounds(0, 0, (int)(backgroundTop.getWidth()*2), (int)(500*scale));
     			this.setVisible(false);
+    			
     			this.repaint();
     	}
     	@Override 
         protected void paintComponent(Graphics g)
         { 
             super.paintComponent(g); 
+    		int posY = backgroundTop.getHeight();
             Graphics2D g2 = (Graphics2D) g; 
             g2.drawImage(backgroundTop, 0, 0, null); 
-            g2.drawImage(backgroundMid, 0, (int)(backgroundTop.getHeight()), null);
-            g2.drawImage(backgroundBot, 0, (int)(backgroundMid.getHeight()+backgroundTop.getHeight()), null);
-            g2.drawImage(internalTop, (int)(backgroundTop.getWidth()/2-internalTop.getWidth()/2), (int)(backgroundTop.getHeight()+25), null); 
-            g2.drawImage(internalMid, (int)(backgroundTop.getWidth()/2-internalTop.getWidth()/2), (int)(backgroundTop.getHeight()+internalTop.getHeight()+25), null);
-            g2.drawImage(internalBot, (int)(backgroundTop.getWidth()/2-internalTop.getWidth()/2), (int)(backgroundTop.getHeight()+internalTop.getHeight()+internalMid.getHeight()+25), null);
-
-			titre.setBounds(backgroundTop.getWidth()/2-10 , backgroundTop.getHeight(), 50, 25);
+            g2.drawImage(backgroundMid, 0, posY, null);
+            posY += backgroundMid.getHeight();
+            g2.drawImage(backgroundBot, 0, posY, null);
+            posY = backgroundTop.getHeight()+titre.getHeight();
+            int posX = (int)(backgroundTop.getWidth()/2-internalTop.getWidth()/2);
+            g2.drawImage(internalTop, posX, posY, null); 
+            posY += internalTop.getHeight();
+            g2.drawImage(internalMid, posX, posY, null);
+            posY += internalMid.getHeight();
+            g2.drawImage(internalBot, posX, posY, null);
         }
 
 		public void setScale(double _scale)
@@ -544,20 +547,27 @@ public class MainView extends JFrame implements KeyListener {
 		}
 		public void update()
 		{
+			
 			try {
     			backgroundTop = resizeImage(ImageIO.read(new File("res/haut-fond.png")), scale/2);
-    			backgroundMid = resizeImage2(ImageIO.read(new File("res/mid-fond.png")), scale/2, 250*scale);
     			backgroundBot = resizeImage(ImageIO.read(new File("res/bas-fond.png")), scale/2);
     			internalTop = resizeImage(ImageIO.read(new File("res/haut-interieur.png")), scale/2);
-    			internalMid = resizeImage2(ImageIO.read(new File("res/mid-interne.png")), scale/2, 50*scale);
+    			
+    			titre.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
+    			titre.setBounds(0, backgroundTop.getHeight(), backgroundTop.getWidth(), (int)(scale*35));
+    		
+    			text.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*24)));
+    			text.setBounds((int)(40*scale), backgroundTop.getHeight()+internalTop.getHeight(), (int)(internalTop.getWidth()), (int)(scale*26*9));
+    			
+    			
+    			internalMid = resizeImage2(ImageIO.read(new File("res/mid-interne.png")), text.getWidth(), text.getHeight()-52*scale);
+    			backgroundMid = resizeImage2(ImageIO.read(new File("res/mid-fond.png")), backgroundTop.getWidth(), text.getHeight()+titre.getHeight()*3);
     			internalBot = resizeImage(ImageIO.read(new File("res/bas-interieur.png")), scale/2);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			this.setBounds(0, 0, (int)(backgroundTop.getWidth()*2), (int)(500*scale));
-			//scrollPane.setBounds(0, 0, internalMid.getWidth(), internalMid.getHeight());
-			scrollPane.setBounds((int)(backgroundTop.getWidth()/2-internalTop.getWidth()/2), (int)(backgroundTop.getHeight()+internalTop.getHeight()+25),(int)(internalMid.getWidth()-5*scale), (int)(internalMid.getHeight()+10*scale));
 			repaint();
 		}
     }
@@ -613,7 +623,9 @@ public class MainView extends JFrame implements KeyListener {
     	double scale;
     	int hig;
     	JTextField jtextField;
-    	JTextArea complement;
+    	JList jList1;
+    	ListModel list;
+    	JScrollPane jScrollPane = new JScrollPane();
     	public SearchBar(double _scale)
     	{
     		scale = _scale;
@@ -622,40 +634,50 @@ public class MainView extends JFrame implements KeyListener {
     		jtextField = new JTextField();
     		jtextField.setBounds(0, 0, (int)(width()/2), hig);
     		jtextField.addKeyListener(new java.awt.event.KeyAdapter() {
-                public void keyTyped(java.awt.event.KeyEvent evt) {
-                    jTextField1KeyTyped(evt);
+    			public void keyReleased(java.awt.event.KeyEvent evt) {
+                    jSlider1KeyReleased(evt);
                 }
             });
-    		complement = new JTextArea();
-    		complement.setBounds(0, 0, 10, 10);
-    		complement.setVisible(false);
+
     		jtextField.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                     MouseClicked(evt);
                 }
     		});
+    		
+    		list = new ListModel();
+    		jList1 = new JList();
+    		jList1.setModel(list);
+    		jList1.setBounds(0, 0, 300, 400);
+    		jScrollPane.setViewportView(jList1);
+            
     		this.add(jtextField);
-    		this.add(complement);
+    		this.add(jScrollPane);
 			this.setVisible(true);
 			this.repaint();
     	}
 
     	private void MouseClicked(java.awt.event.MouseEvent evt) {
+    		
+    		jtextField.setText((String)jList1.getSelectedValue());
 
-
-    		if(complement.isVisible())
-    			complement.setVisible(false);
-    		else
-        		complement.setVisible(true);
-    		repaint();
     	}
-    	private void jTextField1KeyTyped(java.awt.event.KeyEvent evt) {
-    		//test = jtextField.getText().getChars(1, 3, test, 1);
-    		System.out.print(jtextField.getText() + "\n");
+    	private void jSlider1KeyReleased(java.awt.event.KeyEvent evt) {
+
+
     		if(jtextField.getText().equals("t"))
     		{
-    			complement.setText("test");
-        		complement.setVisible(true);
+    			list.setElement("test");
+    			list.setElement("tout");
+    			list.setElement("tartine");
+    			System.out.print(list.getElementAt(0));
+    			jScrollPane.setBounds(0, 20, 300, 400);
+    			jScrollPane.setVisible(true);
+    		}
+    		else
+    		{
+    			list.removeAll();
+    			jScrollPane.setVisible(false);
     		}
     		repaint();
     	}
@@ -670,7 +692,7 @@ public class MainView extends JFrame implements KeyListener {
 			
 			this.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(100*scale));
     		jtextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
-    		complement.setBounds(0, hig, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(100*scale));
+    		//complement.setBounds(0, hig, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(100*scale));
     		repaint();
 		}
     }
@@ -709,14 +731,6 @@ public class MainView extends JFrame implements KeyListener {
 			greenNeedle.setBounds(0, 0, (int)(scale*345), (int)(scale*304));
 			greenNeedle.setOpaque(false);
 			this.add(greenNeedle, new Integer(2));
-
-			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
-			coordinate = new JLabel("-10:2'13'' N", JLabel.CENTER);
-			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
-			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
-			coordinate.setForeground(Color.WHITE);
-			
-			this.add(coordinate, new Integer(3));
 			
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			this.repaint();
@@ -724,6 +738,7 @@ public class MainView extends JFrame implements KeyListener {
 			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
 			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*34));
 			coordinate.setForeground(Color.WHITE);
+			this.add(coordinate, new Integer(3));
 		}
 		
 		@Override 
