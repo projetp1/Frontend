@@ -293,13 +293,15 @@ public class RS232 implements SerialPortEventListener
 			{
 				com = new RS232Command(chain);
 				if(com.getCommandNumber() != RS232CommandType.EMPTY)
+				{
 					commandQueue.add(com);
+					newComs = true;
+				}
 				else
 				{
 					timeoutTimer.stop();
 					log.info("Ping received");
 				}
-				newComs = true;
 			}
 			catch (CrcException e1)
 			{
