@@ -8,6 +8,7 @@ package com.github.projetp1;
  */
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Logger;
 
 import jssc.SerialPortException;
 
@@ -36,6 +37,8 @@ public class Pic extends Thread
 
 	private PicMode mode = PicMode.SIMULATION;
 
+	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	
 	public enum PicMode
 	{
 		/**
@@ -97,7 +100,8 @@ public class Pic extends Thread
 	 */
 	public void setLongitude(double _longitude)
 	{
-
+		if(Math.abs(_longitude) <= 180)
+			this.longitude = _longitude;
 	}
 
 	/**
@@ -115,7 +119,8 @@ public class Pic extends Thread
 	 */
 	public void setLatitude(double _latitude)
 	{
-
+		if(Math.abs(_latitude) <= 90)
+			this.latitude = _latitude;
 	}
 
 	/**
@@ -133,7 +138,8 @@ public class Pic extends Thread
 	 */
 	public void setAngle(double _angle)
 	{
-
+		if(Math.abs(_angle) <= 90)
+			this.angle = _angle;
 	}
 
 	/**
@@ -151,7 +157,8 @@ public class Pic extends Thread
 	 */
 	public void setCompass(double _compass)
 	{
-
+		if(_compass >= 0 && _compass < 360)
+			this.compass = _compass;
 	}
 
 	public PicMode getMode()
@@ -174,6 +181,9 @@ public class Pic extends Thread
 			switch (commande.getCommandNumber())
 			{
 				case LOCATION_UPDATE:
+					String[] locComponents = commande.getDatas().split(",", 4);
+					this.setLongitude(Mathematics.picLon2Lon(Double.parseDouble(locComponents[0]), locComponents[1].charAt(0)));
+					this.setLatitude(Mathematics.picLat2Lat(Double.parseDouble(locComponents[2]), locComponents[3].charAt(0)));
 					break;
 				case ACCELEROMETER_UPDATE:
 				case MAGNETOMETER_UPDATE:
@@ -190,9 +200,10 @@ public class Pic extends Thread
 								values[2]);
 					break;
 				case PIC_STATUS:
-					// TODO: Traitement du message de statut
+					log.info("Error received from the Pic : " + commande.getDatas());
 					break;
 				default:
+					log.severe("Unknown command number received");
 					break;
 			}
 		}
