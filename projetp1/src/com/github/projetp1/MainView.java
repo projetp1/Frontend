@@ -44,12 +44,12 @@ public class MainView extends JFrame implements KeyListener {
 	private Help helpPanel;
 	private SettingsConfig settingsPanel;
 	private JLabel coordinate;
-	private int zoom = 1;
+	private int zoom = 2;
 	private int coord;
 	private int degree;
 	private double xOrigin = 0;
 	private double yOrigin = 0;
-	private double w = calculateScale();
+	private double w = 1;
 	private double w_old = w;
 	
 	private double width()
@@ -81,6 +81,14 @@ public class MainView extends JFrame implements KeyListener {
 				compassPanel.setRedNeedle(-degree);
 				inclinometerPanel.setRedNeedle(degree);
 				inclinometerPanel.setGreenNeedle(-degree);
+				compassPanel.update();
+				inclinometerPanel.update();
+				coordinate.setText(coord + "°N");
+				
+				compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
+				inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight()));
+				coordinate.setBounds((int)width()-100, (int)height()-70, 100, 20);
+
 		    }
 		};
 		return new Timer (50, action);
@@ -88,7 +96,6 @@ public class MainView extends JFrame implements KeyListener {
 		      
 	public MainView() {
 		
-		w = calculateScale();
 		this.addKeyListener(this);
 		name = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
 		name.setBounds(100, 100, 100, 200);
@@ -100,14 +107,13 @@ public class MainView extends JFrame implements KeyListener {
 		coordinate.setForeground(Color.WHITE);
 		getLayeredPane().add(coordinate);
 		
-
-        buttonsPanel = new Buttons(0.1);
+        buttonsPanel = new Buttons(w);
 		buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()/2), 5);
 		
-		helpPanel = new Help(1);
+		helpPanel = new Help(w);
 		helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()/2-10*w), buttonsPanel.getHeight());
 		
-		settingsPanel = new SettingsConfig(1);
+		settingsPanel = new SettingsConfig(w);
 		settingsPanel.setLocation((int)(width()/2-2*buttonsPanel.getWidth()), buttonsPanel.getHeight());
 		
 		searchBarPanel = new SearchBar(w);
@@ -116,12 +122,11 @@ public class MainView extends JFrame implements KeyListener {
 		zoomBarPanel = new ZoomBar(w);
 		zoomBarPanel.setLocation(5, 5);
 		
-		compassPanel = new Compass(0.8);
+		compassPanel = new Compass(w);
 		compassPanel.setLocation((int)(width()-10-compassPanel.getWidth()), 50);		
 		
-		inclinometerPanel = new Inclinometer(0.8);
+		inclinometerPanel = new Inclinometer(w);
 		inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
-
 
 		skymap = new SkyMap("hyg.db",";",this);
 		
@@ -146,9 +151,7 @@ public class MainView extends JFrame implements KeyListener {
 		this.setExtendedState(this.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.getContentPane().setBackground(Color.BLACK);
-		repaint();
-		//pack();
-		
+
 		Timer timer = createTimer();
 		timer.start();
 		
@@ -208,8 +211,6 @@ public class MainView extends JFrame implements KeyListener {
         skymap.setXOrigin(xOrigin);
         skymap.setYOrigin(yOrigin);
         skymap.updateSkyMap();
-		
-		repaint();
     }
 	
 	public void showHelpView() {
@@ -261,9 +262,7 @@ public class MainView extends JFrame implements KeyListener {
 		return w;
 	}
 
-	int i;
 	private void formComponentResized(java.awt.event.ComponentEvent evt) {
-		
 		
 	    w = calculateScale();
 	    
@@ -284,13 +283,13 @@ public class MainView extends JFrame implements KeyListener {
 			settingsPanel.setLocation((int)(width()/2-settingsPanel.getWidth()+80*w), buttonsPanel.getHeight()+(int)(20*w));
 			searchBarPanel.setLocation((int)(width()/2+buttonsPanel.getWidth()-(w*70)), (int)(buttonsPanel.getHeight()/2-10)+5);
 			zoomBarPanel.setLocation(5, (int)(buttonsPanel.getHeight()/2-zoomBarPanel.getHeight()/2)+5);
-			compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
-			inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight()));
 			
 			skymap.setBounds(0, 0, this.getWidth(), this.getHeight());
 			skymap.setZoom(zoom);
 			name.setBounds((int)(10*w), (int)(10*w), 100, this.getHeight());
 			
+			compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
+			inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight()));
 			coordinate.setBounds(this.getWidth()-100, this.getHeight()-70, 100, 20);
 
 	    }
