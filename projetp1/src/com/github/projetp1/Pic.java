@@ -14,53 +14,56 @@ import jssc.SerialPortException;
 import com.github.projetp1.*;
 import com.github.projetp1.rs232.*;
 
-public class Pic extends Thread{
+public class Pic extends Thread
+{
 
 	/**
-	 * @uml.property  name="longitude"
+	 * @uml.property name="longitude"
 	 */
 	private double longitude;
 	/**
-	 * @uml.property  name="latitude"
+	 * @uml.property name="latitude"
 	 */
 	private double latitude;
 	/**
-	 * @uml.property  name="angle"
+	 * @uml.property name="angle"
 	 */
 	private double angle;
 	/**
-	 * @uml.property  name="compass"
+	 * @uml.property name="compass"
 	 */
 	private double compass;
-	
+
 	private PicMode mode = PicMode.SIMULATION;
-	
-	public enum PicMode {
+
+	public enum PicMode
+	{
 		/**
 		 * The default mode : point, click and see
 		 */
-		POINTING, 
+		POINTING,
 		/**
 		 * The searching star mode
 		 */
-		GUIDING, 
+		GUIDING,
 		/**
 		 * The simulation mode. No PIC is connected, user commands come from the keyboard
 		 */
-		SIMULATION
-		; }
-	
+		SIMULATION;
+	}
+
 	protected MainView mainview;
-	
+
 	private RS232 rs;
-	
+
 	/**
 	 * 
 	 */
-	public Pic(MainView _mainview) {
+	public Pic(MainView _mainview)
+	{
 		// TODO Auto-generated constructor stub
 		this.mainview = _mainview;
-		
+
 		try
 		{
 			rs = new RS232(mainview.getSettings(), this);
@@ -75,90 +78,100 @@ public class Pic extends Thread{
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		}
-		
+
 		this.start();
 	}
 
 	/**
 	 * @return
-	 * @uml.property  name="longitude"
+	 * @uml.property name="longitude"
 	 */
-	public double getLongitude () {
+	public double getLongitude()
+	{
 		return longitude;
 	}
-	
+
 	/**
-	 * @param  _longitude
-	 * @uml.property  name="longitude"
+	 * @param _longitude
+	 * @uml.property name="longitude"
 	 */
-	public void setLongitude (double _longitude) {
-		
-	}
-	
-	/**
-	 * @return
-	 * @uml.property  name="latitude"
-	 */
-	public double getLatitude () {
-		return latitude;
-	}
-	
-	/**
-	 * @param  _latitude
-	 * @uml.property  name="latitude"
-	 */
-	public void setLatitude (double _latitude) {
-		
-	}
-	
-	/**
-	 * @return
-	 * @uml.property  name="angle"
-	 */
-	public double getAngle () {
-		return angle;
-	}
-	
-	/**
-	 * @param  _angle
-	 * @uml.property  name="angle"
-	 */
-	public void setAngle (double _angle) {
-		
-	}
-	
-	/**
-	 * @return
-	 * @uml.property  name="compass"
-	 */
-	public double getCompass () {
-		return compass;
-	}
-	
-	/**
-	 * @param  _compass
-	 * @uml.property  name="compass"
-	 */
-	public void setCompass (double _compass) {
-		
+	public void setLongitude(double _longitude)
+	{
+
 	}
 
-	public PicMode getMode() {
+	/**
+	 * @return
+	 * @uml.property name="latitude"
+	 */
+	public double getLatitude()
+	{
+		return latitude;
+	}
+
+	/**
+	 * @param _latitude
+	 * @uml.property name="latitude"
+	 */
+	public void setLatitude(double _latitude)
+	{
+
+	}
+
+	/**
+	 * @return
+	 * @uml.property name="angle"
+	 */
+	public double getAngle()
+	{
+		return angle;
+	}
+
+	/**
+	 * @param _angle
+	 * @uml.property name="angle"
+	 */
+	public void setAngle(double _angle)
+	{
+
+	}
+
+	/**
+	 * @return
+	 * @uml.property name="compass"
+	 */
+	public double getCompass()
+	{
+		return compass;
+	}
+
+	/**
+	 * @param _compass
+	 * @uml.property name="compass"
+	 */
+	public void setCompass(double _compass)
+	{
+
+	}
+
+	public PicMode getMode()
+	{
 		return mode;
 	}
 
-	public void setMode(PicMode mode) {
+	public void setMode(PicMode mode)
+	{
 		this.mode = mode;
 	}
-	
+
 	public void run()
 	{
 		RS232Command commande;
-		//Reception des données
-		while((commande = rs.getLastCommand()) != null)
+		// Reception des données
+		while ((commande = rs.getLastCommand()) != null)
 		{
-			//Switch pour trier les données
-			switch(commande.getCommandNumber())
+			// Switch pour trier les données
+			switch (commande.getCommandNumber())
 			{
 				case LOCATION_UPDATE:
 					break;
@@ -168,11 +181,13 @@ public class Pic extends Thread{
 					double[] values = new double[3];
 					for (int l_i = 0; l_i < components.length; l_i++)
 						values[l_i] = Double.parseDouble(components[l_i]);
-					
-					if(commande.getCommandNumber() == RS232CommandType.ACCELEROMETER_UPDATE)
-						this.angle = Mathematics.calculateAngleInclinometer(values[0], values[1], values[2]);
+
+					if (commande.getCommandNumber() == RS232CommandType.ACCELEROMETER_UPDATE)
+						this.angle = Mathematics.calculateAngleInclinometer(values[0], values[1],
+								values[2]);
 					else
-						this.compass = Mathematics.calculateAngleCompass(values[0], values[1], values[2]);
+						this.compass = Mathematics.calculateAngleCompass(values[0], values[1],
+								values[2]);
 					break;
 				case PIC_STATUS:
 					// TODO: Traitement du message de statut
