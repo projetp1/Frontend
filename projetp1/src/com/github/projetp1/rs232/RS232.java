@@ -1,9 +1,11 @@
 package com.github.projetp1.rs232;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
+
+import javax.swing.Timer;
 
 import com.github.projetp1.*;
 import com.github.projetp1.Pic.PicMode;
@@ -28,8 +30,20 @@ public class RS232 implements SerialPortEventListener
 	private ConcurrentLinkedQueue<RS232Command> commandQueue = new ConcurrentLinkedQueue<RS232Command>();
 	/** The buffer in which the received datas are temporarily put. */
 	private StringBuffer buffer = new StringBuffer();
-	private Timer pingTimer;
-	private Timer timeoutTimer;
+	private Timer pingTimer = new Timer(PINGDELAY, new ActionListener()
+	{
+		public void actionPerformed(ActionEvent _arg0)
+		{
+			sendPing();
+		}
+	});
+	private Timer timeoutTimer = new Timer(PINGTIMEOUT, new ActionListener()
+	{
+		public void actionPerformed(ActionEvent _e)
+		{
+			disconnect();
+		}
+	});
 	
 	Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -100,16 +114,22 @@ public class RS232 implements SerialPortEventListener
 			throw ex;
 		}
 
+		
+		timeoutTimer.setRepeats(false);
+		timeoutTimer.setInitialDelay(PINGTIMEOUT);
+		pingTimer.setRepeats(true);
+		pingTimer.setInitialDelay(PINGDELAY);
+		
 		if (!this.sendPing())
 		{
 			Exception ex = new Exception("The initial ping could not be sent, aborting...");
 			log.warning(ex.getMessage());
 			throw ex;
 		}
+		
 		log.info("Serial port opened");
-
-		this.connect();
-		log.info("RS232 object created");
+		
+		log.info("RS232 object created, waiting for the ping reply to finish");
 	}
 
 	/**
@@ -122,12 +142,14 @@ public class RS232 implements SerialPortEventListener
 		try
 		{
 			this.sendFrame(RS232CommandType.EMPTY, "");
+			timeoutTimer.restart();
 			log.info("Ping sent");
 			return true;
 		}
 		catch (SerialPortException ex)
 		{
 			log.warning("Unable to send ping");
+			disconnect();
 			return false;
 		}
 	}
@@ -137,26 +159,10 @@ public class RS232 implements SerialPortEventListener
 	 */
 	private void connect()
 	{
-		if(pingTimer != null)
-		{
-			pingTimer.cancel();
-			pingTimer = null;
-		}
-		
 		if(pic.getMode() == PicMode.SIMULATION)
 			pic.setMode(PicMode.POINTING);
-		if(pic.getMode() == PicMode.POINTING)
-		{
-			pingTimer = new Timer("pingDaemon", true);
-			pingTimer.schedule(new TimerTask()
-			{
-				public void run()
-				{
-					sendPing();
-					resetTimeout();
-				}
-			}, 0, PINGDELAY);
-		}
+		sendPing();
+		pingTimer.restart();
 	}
 	
 	/**
@@ -166,16 +172,8 @@ public class RS232 implements SerialPortEventListener
 	{
 		log.info("Disconnecting the PIC");
 		
-		if(pingTimer != null)
-		{
-			pingTimer.cancel();
-			pingTimer = null;
-		}
-		if(timeoutTimer != null)
-		{
-			timeoutTimer.cancel();
-			timeoutTimer = null;
-		}
+		pingTimer.stop();
+		timeoutTimer.stop();
 		
 		pic.setMode(PicMode.SIMULATION);
 	}
@@ -253,34 +251,7 @@ public class RS232 implements SerialPortEventListener
 		String trame = "$" + cNum.toString() + "," + datas + "*";
 		trame += hexToAscii(RS232.computeCrc(trame)) + "\r\n";
 		sp.writeString(trame);
-		log.info("Frame sent : " + trame);
-	}
-
-	/**
-	 * Reset the timeout of the ping
-	 */
-	private void resetTimeout()
-	{
-		log.info("Timeout reset");
-		
-		if(timeoutTimer != null)
-		{
-			timeoutTimer.cancel();
-			timeoutTimer = null;
-		}
-
-		if(pic.getMode() == PicMode.POINTING)
-		{
-			timeoutTimer = new Timer();
-			timeoutTimer.schedule(new TimerTask()
-			{
-				@Override
-				public void run()
-				{
-					disconnect();
-				}
-			}, PINGTIMEOUT);
-		}
+		log.fine("Frame sent : " + trame);
 	}
 
 	/**
@@ -293,11 +264,13 @@ public class RS232 implements SerialPortEventListener
 		if (!e.isRXCHAR()) // If no data is available
 			return;
 
+		
+		pingTimer.restart();
 		String received;
 		try
 		{
 			received = sp.readString();
-			log.info("Data received : " + received);
+			log.fine("Data received : " + received);
 		}
 		catch (SerialPortException ex)
 		{
@@ -323,8 +296,8 @@ public class RS232 implements SerialPortEventListener
 					commandQueue.add(com);
 				else
 				{
+					timeoutTimer.stop();
 					log.info("Ping received");
-					resetTimeout();
 				}
 				newComs = true;
 			}

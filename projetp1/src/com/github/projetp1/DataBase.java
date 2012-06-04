@@ -536,7 +536,6 @@ public class DataBase
 	    	}
 	    	
 	    	l_star = null;
-	    	l_calc = null;
 		}
 		result.close();
 		

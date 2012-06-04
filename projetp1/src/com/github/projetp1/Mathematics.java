@@ -328,6 +328,16 @@ public class Mathematics
 		return 0;
 	}
 	
+	static public double picLon2Lon(double _duLon,char _cHemisphere)
+	{
+		return 0;
+	}
+	
+	static public double picLat2Lat(double _duLat,char _cHemisphere)
+	{
+		return 0;
+	}
+	
 	/**
 	 * calculateSideralHourAngle Calculates the sideral hour angle
 	 * 
