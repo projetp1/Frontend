@@ -330,12 +330,28 @@ public class Mathematics
 	
 	static public double picLon2Lon(double _duLon,char _cHemisphere)
 	{
-		return 0;
+		int dd = (int) (_duLon / 100);
+		double mm = _duLon - (dd * 100.0);
+		
+		double ret = (double)dd + mm / 60.0;
+		
+		if(_cHemisphere == 'W' || _cHemisphere == 'w')
+			ret *= -1.0;
+		
+		return ret;
 	}
 	
 	static public double picLat2Lat(double _duLat,char _cHemisphere)
 	{
-		return 0;
+		int dd = (int) (_duLat / 100);
+		double mm = _duLat - (dd * 100.0);
+		
+		double ret = (double)dd + mm / 60.0;
+		
+		if(_cHemisphere == 'S' || _cHemisphere == 's')
+			ret *= -1.0;
+		
+		return ret;
 	}
 	
 	/**
