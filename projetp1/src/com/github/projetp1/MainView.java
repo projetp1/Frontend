@@ -4,7 +4,10 @@
 package com.github.projetp1;
 
 import com.github.projetp1.ListModel;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -46,8 +49,9 @@ public class MainView extends JFrame implements KeyListener {
 	private int degree;
 	private double xOrigin = 0;
 	private double yOrigin = 0;
-	private double w = ((100/Toolkit.getDefaultToolkit().getScreenSize().width)*this.getWidth());
-	private double h = ((100/Toolkit.getDefaultToolkit().getScreenSize().height)*this.getHeight());
+	private double w = calculateScale();
+	private double w_old = w;
+	
 	private double width()
 	{
 		return this.getWidth();
@@ -84,9 +88,11 @@ public class MainView extends JFrame implements KeyListener {
 		      
 	public MainView() {
 		
+		w = calculateScale();
 		this.addKeyListener(this);
 		name = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
 		name.setBounds(100, 100, 100, 200);
+		name.setForeground(new Color(250,250,250));
 		getLayeredPane().add(name);
 		
 		coordinate = new JLabel(coord + " °N");
@@ -102,7 +108,7 @@ public class MainView extends JFrame implements KeyListener {
 		helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()/2-10*w), buttonsPanel.getHeight());
 		
 		settingsPanel = new SettingsConfig(1);
-		settingsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()), buttonsPanel.getHeight());
+		settingsPanel.setLocation((int)(width()/2-2*buttonsPanel.getWidth()), buttonsPanel.getHeight());
 		
 		searchBarPanel = new SearchBar(w);
 		searchBarPanel.setLocation(0, 5);
@@ -255,32 +261,39 @@ public class MainView extends JFrame implements KeyListener {
 		return w;
 	}
 
+	int i;
 	private void formComponentResized(java.awt.event.ComponentEvent evt) {
+		
 		
 	    w = calculateScale();
 	    
-		buttonsPanel.setScale(w/3);
-		compassPanel.setScale(w);
-		inclinometerPanel.setScale(w);
-		searchBarPanel.setScale(w);
-		zoomBarPanel.setScale(w);
-		helpPanel.setScale(w);
-		settingsPanel.setScale(w);
-		
-		buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(w*70)), 5);
-		helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(w*70)-10*w), buttonsPanel.getHeight()+(int)(20*w));
-		settingsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()), buttonsPanel.getHeight());
-		searchBarPanel.setLocation((int)(width()/2+buttonsPanel.getWidth()-(w*70)), (int)(buttonsPanel.getHeight()/2-10)+5);
-		zoomBarPanel.setLocation(5, (int)(buttonsPanel.getHeight()/2-zoomBarPanel.getHeight()/2)+5);
-		compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
-		inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight()));
-		
-		skymap.setBounds(0, 0, this.getWidth(), this.getHeight());
-		skymap.setZoom(zoom);
-		name.setBounds((int)(10*w), (int)(10*w), 100, this.getHeight());
-		
-		coordinate.setBounds(this.getWidth()-100, this.getHeight()-70, 100, 20);
-		
+	    if (w - w_old > 0.001 || w- w_old < -0.001)
+	    {
+	    	w_old = w;
+	    	
+			buttonsPanel.setScale(w/3);
+			compassPanel.setScale(w);
+			inclinometerPanel.setScale(w);
+			searchBarPanel.setScale(w);
+			zoomBarPanel.setScale(w);
+			helpPanel.setScale(w);
+			settingsPanel.setScale(w);
+			
+			buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(w*70)), 5);
+			helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(w*70)-10*w), buttonsPanel.getHeight()+(int)(20*w));
+			settingsPanel.setLocation((int)(width()/2-settingsPanel.getWidth()+80*w), buttonsPanel.getHeight()+(int)(20*w));
+			searchBarPanel.setLocation((int)(width()/2+buttonsPanel.getWidth()-(w*70)), (int)(buttonsPanel.getHeight()/2-10)+5);
+			zoomBarPanel.setLocation(5, (int)(buttonsPanel.getHeight()/2-zoomBarPanel.getHeight()/2)+5);
+			compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
+			inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight()));
+			
+			skymap.setBounds(0, 0, this.getWidth(), this.getHeight());
+			skymap.setZoom(zoom);
+			name.setBounds((int)(10*w), (int)(10*w), 100, this.getHeight());
+			
+			coordinate.setBounds(this.getWidth()-100, this.getHeight()-70, 100, 20);
+
+	    }
 	}
 
     public static BufferedImage resizeImage(BufferedImage bImage, double _scale) {
@@ -401,6 +414,9 @@ public class MainView extends JFrame implements KeyListener {
     	BufferedImage InternalTop;
     	BufferedImage[] InternalMid = new BufferedImage[number];
     	BufferedImage InternalBot;
+    	JList settingsList;
+    	ListModel settingsModel;
+    	JScrollPane jScrollPane;
     	
     	public SettingsConfig(double _scale)
     	{
@@ -419,7 +435,41 @@ public class MainView extends JFrame implements KeyListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+    		
 
+    		settingsModel = new ListModel();
+    		
+    		String port[] = {"COM0", "COM1", "COM2","COM3", "COM4"};	//détection automatique à faire
+    		String speed[] = {"test"};
+    		String databit[] = {"test"};
+    		String stopbit[] = {"test"};
+    		String parity[] = {"test"};
+    		String flowControl[] = {"test"};
+    		String samplingRate[] = {"test"};
+    		String databaseName[] = {"test"};
+    		String imputDelimiter[] = {"test"};
+    		String simulation[] = {"ON", "OFF"};
+    		
+    		settingsModel.setElement("port");
+    		settingsModel.setElement("speed");
+    		settingsModel.setElement("databit");
+    		settingsModel.setElement("stopbit");
+    		settingsModel.setElement("parity");
+    		settingsModel.setElement("flowControl");
+    		settingsModel.setElement("samplingRate");
+    		settingsModel.setElement("databaseName");
+    		settingsModel.setElement("imputDelimiter");
+    		settingsModel.setElement("simulation");
+    		
+    		
+    		settingsList = new JList();
+    		settingsList.setModel(settingsModel);
+    		jScrollPane = new JScrollPane();
+    		jScrollPane.setViewportView(settingsList);
+    		settingsList.setBounds(0, 0, 300, 400);
+    		
+    		this.add(jScrollPane);
+    		
     		this.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                     MouseClicked(evt);
@@ -466,13 +516,14 @@ public class MainView extends JFrame implements KeyListener {
 				for(int i = 0; i < number; i++)
 				{
 					InternalMid[i] = resizeImage(ImageIO.read(new File("res/settings-mid-internal.png")), scale/2);
+					jScrollPane.setBounds(0, 20*i, InternalMid[i].getWidth(), 100);
 				}
 				InternalBot = resizeImage(ImageIO.read(new File("res/settings-bot-internal.png")), scale/2);
     		} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			this.setBounds(0, 0, (int)(backgroundTop.getWidth()*2), (int)(500*scale));
+			this.setBounds(0, 0, (int)(backgroundTop.getWidth()), (int)(500*scale));
 			repaint();
 		}
     }
@@ -626,6 +677,10 @@ public class MainView extends JFrame implements KeyListener {
     	JList jList1;
     	ListModel list;
     	JScrollPane jScrollPane = new JScrollPane();
+    	DataBase db;
+    	ArrayList<CelestialObject> listCelestialObject;
+
+    	
     	public SearchBar(double _scale)
     	{
     		scale = _scale;
@@ -635,7 +690,15 @@ public class MainView extends JFrame implements KeyListener {
     		jtextField.setBounds(0, 0, (int)(width()/2), hig);
     		jtextField.addKeyListener(new java.awt.event.KeyAdapter() {
     			public void keyReleased(java.awt.event.KeyEvent evt) {
-                    jSlider1KeyReleased(evt);
+                    try
+					{
+						jSlider1KeyReleased(evt);
+					}
+					catch (Exception ex)
+					{
+						// TODO Auto-generated catch block
+						ex.printStackTrace();
+					}
                 }
             });
 
@@ -644,6 +707,8 @@ public class MainView extends JFrame implements KeyListener {
                     MouseClicked(evt);
                 }
     		});
+    		
+       
     		
     		list = new ListModel();
     		jList1 = new JList();
@@ -662,24 +727,44 @@ public class MainView extends JFrame implements KeyListener {
     		jtextField.setText((String)jList1.getSelectedValue());
 
     	}
-    	private void jSlider1KeyReleased(java.awt.event.KeyEvent evt) {
+    	private void jSlider1KeyReleased(java.awt.event.KeyEvent evt) throws Exception {
 
+    		System.out.print(jtextField.getText()+"\n");
+    		if(jtextField.getText().length()>4)
+    		{
+    			db = new DataBase("hyg.db", ";");
+    			listCelestialObject = new ArrayList<CelestialObject>();
+    			System.out.print(jtextField.getText()+"\nlength = "+jtextField.getText().length()+"\n");
+    			listCelestialObject = db.starsForText(jtextField.getText(), Calendar.getInstance(), 47.039448, 6.799734);
+        	 	
+    			if(listCelestialObject.size() != 0)
+    			{	
+    				for (int i = 0; i < listCelestialObject.size(); i++)
+    				{
+    					list.setElement(listCelestialObject.get(i).getId());
+    					System.out.println(listCelestialObject.get(i).getDistance());
+    				}
+    			}
+    			else
+    				System.out.println("Aucun résultat n'a été trouvé dans la base de données");
 
-    		if(jtextField.getText().equals("t"))
-    		{
-    			list.setElement("test");
-    			list.setElement("tout");
-    			list.setElement("tartine");
-    			System.out.print(list.getElementAt(0));
-    			jScrollPane.setBounds(0, 20, 300, 400);
-    			jScrollPane.setVisible(true);
+			db.closeConnection();
+
     		}
-    		else
-    		{
-    			list.removeAll();
-    			jScrollPane.setVisible(false);
-    		}
-    		repaint();
+			
+        	if (list.getSize() > 0)
+        	{
+        		//System.out.print(listCelestialObject.get(0).getId());
+            	//System.out.print(list.getElementAt(0));
+            	jScrollPane.setBounds(0, 20, 300, 400);
+            	jScrollPane.setVisible(true);
+        	} else
+        	{
+        		jScrollPane.setVisible(false);
+        	}
+       
+        	repaint();
+    	 	
     	}
 		public void setScale(double _scale)
 		{
