@@ -248,8 +248,8 @@ public class RS232 implements SerialPortEventListener
 	 */
 	public synchronized void sendFrame(RS232CommandType cNum, String datas) throws SerialPortException
 	{
-		String trame = "$" + cNum.toString() + "," + datas + "*";
-		trame += hexToAscii(RS232.computeCrc(trame)) + "\r\n";
+		String trame = cNum.toString() + "," + datas;
+		trame = "$" + trame + "*" + hexToAscii(RS232.computeCrc(trame)) + "\r\n";
 		sp.writeString(trame);
 		log.fine("Frame sent : " + trame);
 	}
@@ -270,6 +270,8 @@ public class RS232 implements SerialPortEventListener
 		try
 		{
 			received = sp.readString();
+			if(received == null)
+				return;
 			log.fine("Data received : " + received);
 		}
 		catch (SerialPortException ex)
@@ -289,6 +291,7 @@ public class RS232 implements SerialPortEventListener
 			RS232Command com;
 			String chain = buffer.substring(0, pos + 2);
 			buffer.delete(0, pos + 2);
+			log.info("Trame complète : '" + chain + "'");
 			try
 			{
 				com = new RS232Command(chain);
@@ -364,6 +367,6 @@ public class RS232 implements SerialPortEventListener
 	 */
 	public static String hexToAscii(byte b)
 	{
-		  return Integer.toString( ( b & 0xff ) + 0x100, 16).substring( 1 );
+		  return Integer.toString( ( b & 0xff ) + 0x100, 16).substring( 1 ).toUpperCase();
 	}
 }
