@@ -159,8 +159,7 @@ public class MainView extends JFrame implements KeyListener {
 		settings = new Settings();
 		Serializer.serialize("settings.lol",settings);
 		
-		pic = new Pic(this);
-		
+		//pic = new Pic(this);
 		
 		addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {

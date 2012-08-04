@@ -122,12 +122,17 @@ public class SkyMap extends Container implements MouseListener
 
 		g.setColor(Color.red);
 		g.fillOval(this.getWidth() / 2, this.getHeight() / 2, 30, 30);
-		/**
-		 * Graphics2D g2 = (Graphics2D) g; g2.rotate(-getArrowAngle(sun), this.getWidth()/2,
-		 * this.getHeight()/2); //TODO voir valeur non constante
-		 * g2.drawImage(getToolkit().getImage("res/arrow.png"), this.getWidth()/2,
-		 * this.getHeight()/2, null);
-		 */
+		
+		Image l_imgSun = getToolkit().getImage("res/arrow.png");
+		
+		Graphics2D g2 = (Graphics2D) g;
+		g2.rotate(-getArrowAngle(sun), this.getWidth() / 2, this.getHeight() / 2);
+		g2.drawImage(
+				l_imgSun, 
+				(int)(this.getWidth() / 2 + Math.cos(-getArrowAngle(sun)) * 50 - Math.sin(-getArrowAngle(sun)) * (l_imgSun.getHeight(null) / 2)), 
+				(int)(this.getHeight() / 2 - Math.sin(-getArrowAngle(sun)) * 50 + Math.cos(-getArrowAngle(sun)) * 0), 
+				null
+				);
 	}
 
 	private double getArrowAngle(CelestialObject _object)
@@ -137,12 +142,34 @@ public class SkyMap extends Container implements MouseListener
 		 * System.out.print("orign y : " + dYOrigin + ", obj y : " + _object.getYReal());
 		 */
 
-		double l_dangle = Math.atan((_object.getYReal() - dYOrigin)
-				/ (_object.getXReal() - dXOrigin));
-
-		if (dXOrigin > _object.getXReal())
+		double l_dangle = Math.atan((_object.getYReal() - dYOrigin) / (_object.getXReal() - dXOrigin));
+		
+		if (dXOrigin > _object.getXReal()) 
 			l_dangle += Math.PI;
 
+		
+		System.out.print("angle : " + Math.toDegrees(l_dangle));
+		
+		/*if(mainView.getPic().getMode() == Pic.PicMode.GUIDING)
+		{
+			if(l_dangle > 67.5 && l_dangle <= 112.5)
+				mainView.getPic().sendArrow;
+			else if(l_dangle > 112.5 && l_dangle <= 157.5)
+				1;
+			else if(l_dangle > 157.5 && l_dangle <= 202.5)
+				2;
+			else if(l_dangle > 202.5 && l_dangle <= 247.5)
+				3;
+			else if(l_dangle > 247.5 && l_dangle <= 292.5)
+				4;
+			else if(l_dangle > 292.5 && l_dangle <= 337.5)
+				5;
+			else if(l_dangle > 337.5 && l_dangle <= 22.5)
+				6;
+			else
+				7;
+		}
+		*/
 		return l_dangle;
 	}
 
@@ -157,8 +184,9 @@ public class SkyMap extends Container implements MouseListener
 	private int getSizeForMagnitude(double _mag)
 	{
 		int size = 0;
-
-		if (_mag >= 5.3)
+		if (_mag >= 6.0)
+			size = 0;
+		else if (_mag >= 5.3)
 			size = 1;
 		else if (_mag >= 4.0)
 			size = 2;
