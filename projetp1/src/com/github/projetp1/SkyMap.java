@@ -107,6 +107,9 @@ public class SkyMap extends Container implements MouseListener
 			l_x = l_xCenter + (int) (celestialObject.getXReal() * zoom * l_scale);
 			l_y = l_yCenter - (int) (celestialObject.getYReal() * zoom * l_scale);
 			g.setColor(getColorForColorIndex(celestialObject.getColorIndex()));
+			/**
+			 * voir pour faire un dégradé en modifiant l'alpha
+			 */
 			String l_name = celestialObject.getProperName();
 
 			if (l_name != null)
@@ -118,21 +121,30 @@ public class SkyMap extends Container implements MouseListener
 			}
 			else
 				g.fillOval(l_x, l_y, l_d, l_d);
+
+			sun = celestialObject;
 		}
 
 		g.setColor(Color.red);
-		g.fillOval(this.getWidth() / 2, this.getHeight() / 2, 30, 30);
+		g.fillOval(this.getWidth() / 2 - 15, this.getHeight() / 2 - 15, 30, 30);
 		
 		Image l_imgSun = getToolkit().getImage("res/arrow.png");
 		
+		double l_dangle = -getArrowAngle(sun);
 		Graphics2D g2 = (Graphics2D) g;
-		g2.rotate(-getArrowAngle(sun), this.getWidth() / 2, this.getHeight() / 2);
-		g2.drawImage(
+		g2.rotate(l_dangle, this.getWidth() / 2, this.getHeight() / 2);
+		g2.drawImage(l_imgSun, (int)(this.getWidth() / 2 + Math.cos(l_dangle)*200), (int)(this.getHeight() / 2 - Math.sin(l_dangle)*200), null);
+/*		g2.drawImage(
 				l_imgSun, 
 				(int)(this.getWidth() / 2 + Math.cos(-getArrowAngle(sun)) * 50 - Math.sin(-getArrowAngle(sun)) * (l_imgSun.getHeight(null) / 2)), 
 				(int)(this.getHeight() / 2 - Math.sin(-getArrowAngle(sun)) * 50 + Math.cos(-getArrowAngle(sun)) * 0), 
 				null
-				);
+				);*/
+		g.setColor(Color.green);
+		g.fillOval(
+				(int)(this.getWidth() / 2 + Math.cos(l_dangle)*200 + Math.sin(l_dangle) * (l_imgSun.getHeight(null) / 2)),
+				(int)(this.getHeight() / 2 - Math.sin(l_dangle)*200 - Math.cos(l_dangle) * (l_imgSun.getHeight(null) / 2)),
+				5, 5);
 	}
 
 	private double getArrowAngle(CelestialObject _object)
@@ -148,7 +160,7 @@ public class SkyMap extends Container implements MouseListener
 			l_dangle += Math.PI;
 
 		
-		System.out.print("angle : " + Math.toDegrees(l_dangle));
+		System.out.print("angle : " + Math.toDegrees(l_dangle) + "\r\n");
 		
 		/*if(mainView.getPic().getMode() == Pic.PicMode.GUIDING)
 		{
