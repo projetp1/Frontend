@@ -7,7 +7,6 @@ package com.github.projetp1;
  * @author   alexandr.perez
  */
 
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
 import jssc.SerialPortException;
@@ -21,11 +20,11 @@ public class Pic extends Thread
 	/**
 	 * @uml.property name="longitude"
 	 */
-	private double longitude;
+	private double longitude = 0.0;
 	/**
 	 * @uml.property name="latitude"
 	 */
-	private double latitude;
+	private double latitude = 0.0;
 	/**
 	 * @uml.property name="angle"
 	 */

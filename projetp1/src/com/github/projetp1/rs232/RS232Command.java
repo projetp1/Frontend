@@ -56,7 +56,7 @@ public class RS232Command
 		this.datas = extractDatas(chain);
 		this.commandNumber = extractCommand(chain);
 		
-		if(!RS232.checkCrc(chain.substring(0, chain.indexOf("*") + 1), extractCrc(chain)))
+		if(!RS232.checkCrc(chain.substring(1, chain.indexOf("*")), extractCrc(chain)))
 			throw new CrcException(extractCrc(chain));	
 	}
 	
