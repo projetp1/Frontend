@@ -39,14 +39,16 @@ public class SkyMap extends Container implements MouseListener
 	 *            : The name of the database that will use
 	 * @param _sDelimiter
 	 *            : The delimiter of the string of the searchbar
+	 * @param _mainView
+	 *            : The MainView class
 	 */
 	public SkyMap(String _sDataBase, String _sDelimiter, MainView _mainView)
 	{
 		mainView = _mainView;
 
 		this.addMouseListener(this);
-		this.setBackground(Color.BLACK);
-		// this.setOpaque(true);
+		Color l_BackgroundColor = new Color(5,30,50);
+		this.setBackground(l_BackgroundColor);
 		try
 		{
 			DataBase db = new DataBase(_sDataBase, _sDelimiter);
@@ -81,7 +83,6 @@ public class SkyMap extends Container implements MouseListener
 				l_nearestCelestialObject = celestialObject;
 			}
 		}
-
 		mainView.updateInfo(l_nearestCelestialObject);
 	}
 
@@ -97,30 +98,39 @@ public class SkyMap extends Container implements MouseListener
 	{
 		CelestialObject sun = null;
 
-		int l_scale = (int) (this.getHeight() / 2);
-		int l_xCenter = this.getWidth() / 2 - (int) (dXOrigin * l_scale * zoom);
-		int l_yCenter = this.getHeight() / 2 + (int) (dYOrigin * l_scale * zoom);
+		int l_scale = (int)(this.getHeight() / 2);
+		int l_xCenter = this.getWidth() / 2 - (int)(dXOrigin * l_scale * zoom);
+		int l_yCenter = this.getHeight() / 2 + (int)(dYOrigin * l_scale * zoom);
 		for (CelestialObject celestialObject : celestialObjects)
 		{
 			int l_x, l_y;
-			int l_d = getSizeForMagnitude(celestialObject.getMag()) + 1;
-			l_x = l_xCenter + (int) (celestialObject.getXReal() * zoom * l_scale);
-			l_y = l_yCenter - (int) (celestialObject.getYReal() * zoom * l_scale);
-			g.setColor(getColorForColorIndex(celestialObject.getColorIndex()));
-			/**
-			 * voir pour faire un dégradé en modifiant l'alpha
-			 */
+			int l_d = getSizeForMagnitude(celestialObject.getMag());
+			Color l_color = getColorForColorIndex(celestialObject.getColorIndex(), 255);
+			l_x = l_xCenter + (int) (celestialObject.getXReal() * zoom * l_scale) / 2;
+			l_y = l_yCenter - (int) (celestialObject.getYReal() * zoom * l_scale) / 2;
+			g.setColor(l_color);
 			String l_name = celestialObject.getProperName();
 
 			if (l_name != null)
-				g.drawString(l_name, l_x, l_y);
+				g.drawString(l_name, l_x, l_y - 10);
 			if (celestialObject.getMag() < -20)
 			{
-				g.drawImage(getToolkit().getImage("res/sun.png"), l_x, l_y, null);
+				Image l_imgSun = getToolkit().getImage("res/sun.png");
+				g.drawImage(l_imgSun, l_x - (l_imgSun.getHeight(null) / 2), l_y - (l_imgSun.getHeight(null) / 2), null);
 				sun = celestialObject;
 			}
 			else
-				g.fillOval(l_x, l_y, l_d, l_d);
+			{
+				g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
+				l_color = getColorForColorIndex(celestialObject.getColorIndex(), 200);
+				g.setColor(l_color);
+				l_d += 1;
+				g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
+				l_color = getColorForColorIndex(celestialObject.getColorIndex(), 100);
+				g.setColor(l_color);
+				l_d += 1;
+				g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
+			}
 
 			sun = celestialObject;
 		}
@@ -128,23 +138,21 @@ public class SkyMap extends Container implements MouseListener
 		g.setColor(Color.red);
 		g.fillOval(this.getWidth() / 2 - 15, this.getHeight() / 2 - 15, 30, 30);
 		
-		Image l_imgSun = getToolkit().getImage("res/arrow.png");
+		Image l_imgArrow = getToolkit().getImage("res/arrow.png");
 		
 		double l_dangle = -getArrowAngle(sun);
 		Graphics2D g2 = (Graphics2D) g;
-		g2.rotate(l_dangle, this.getWidth() / 2, this.getHeight() / 2);
-		g2.drawImage(l_imgSun, (int)(this.getWidth() / 2 + Math.cos(l_dangle)*200), (int)(this.getHeight() / 2 - Math.sin(l_dangle)*200), null);
-/*		g2.drawImage(
-				l_imgSun, 
-				(int)(this.getWidth() / 2 + Math.cos(-getArrowAngle(sun)) * 50 - Math.sin(-getArrowAngle(sun)) * (l_imgSun.getHeight(null) / 2)), 
-				(int)(this.getHeight() / 2 - Math.sin(-getArrowAngle(sun)) * 50 + Math.cos(-getArrowAngle(sun)) * 0), 
-				null
-				);*/
-		g.setColor(Color.green);
-		g.fillOval(
-				(int)(this.getWidth() / 2 + Math.cos(l_dangle)*200 + Math.sin(l_dangle) * (l_imgSun.getHeight(null) / 2)),
-				(int)(this.getHeight() / 2 - Math.sin(l_dangle)*200 - Math.cos(l_dangle) * (l_imgSun.getHeight(null) / 2)),
-				5, 5);
+		g2.rotate(l_dangle, this.getWidth() / 2,this.getHeight() / 2);
+		/*g2.drawImage(
+				l_imgArrow, 
+				(int)(this.getWidth() / 2 + Math.cos(l_dangle)*200 + Math.sin(l_dangle) * (l_imgArrow.getHeight(null) / 2)),
+				(int)(this.getHeight() / 2 - Math.sin(l_dangle)*200 - Math.cos(l_dangle) * (l_imgArrow.getHeight(null) / 2)), 
+				null);*/
+		g2.drawImage(
+				l_imgArrow, 
+				(int)(this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2),
+				(int)(this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), 
+				null);
 	}
 
 	private double getArrowAngle(CelestialObject _object)
@@ -160,7 +168,7 @@ public class SkyMap extends Container implements MouseListener
 			l_dangle += Math.PI;
 
 		
-		System.out.print("angle : " + Math.toDegrees(l_dangle) + "\r\n");
+		//System.out.print("angle : " + Math.toDegrees(l_dangle) + "\r\n");
 		
 		/*if(mainView.getPic().getMode() == Pic.PicMode.GUIDING)
 		{
@@ -224,21 +232,21 @@ public class SkyMap extends Container implements MouseListener
 	 *            : Color index of the star
 	 * @return Color of the point
 	 */
-	private Color getColorForColorIndex(double _colorIndex)
+	private Color getColorForColorIndex(double _colorIndex, int _alpha)
 	{
 		Color c;
 		if (_colorIndex >= 1.41)
-			c = new Color(255, 200, 200);
+			c = new Color(255, 200, 200, _alpha);
 		else if (_colorIndex >= 0.82)
-			c = new Color(255, 225, 150);
+			c = new Color(255, 225, 150, _alpha);
 		else if (_colorIndex >= 0.59)
-			c = new Color(255, 255, 130);
+			c = new Color(255, 255, 130, _alpha);
 		else if (_colorIndex >= 0.31)
-			c = new Color(255, 255, 200);
+			c = new Color(255, 255, 200, _alpha);
 		else if (_colorIndex >= 0.0)
-			c = Color.WHITE;
+			c = new Color(255, 255, 255, _alpha);
 		else
-			c = new Color(215, 215, 255);
+			c = new Color(215, 215, 255, _alpha);
 
 		return c;
 	}

@@ -150,7 +150,8 @@ public class MainView extends JFrame implements KeyListener {
 		this.setVisible(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.getContentPane().setBackground(Color.BLACK);
+		Color l_BackgroundColor = new Color(5,30,50);
+		this.getContentPane().setBackground(l_BackgroundColor);
 
 		Timer timer = createTimer();
 		timer.start();
@@ -176,25 +177,26 @@ public class MainView extends JFrame implements KeyListener {
 	public void keyReleased(KeyEvent evt){}  
 
 	public void keyPressed(KeyEvent evt) {
+		float l_fDelta = (float) (0.05 / zoom);
         if(evt.getKeyCode() == 37) //Left
         {
         	if(xOrigin > -1)
-        		xOrigin -= 0.02;
+        		xOrigin -= l_fDelta;
         }
         else if(evt.getKeyCode() == 39) //Right
         {
         	if(xOrigin < 1)
-        		xOrigin += 0.02;
+        		xOrigin += l_fDelta;
         }
         else if(evt.getKeyCode() == 38) // Up
         {
         	if(yOrigin < 1)
-        		yOrigin += 0.02;
+        		yOrigin += l_fDelta;
         }
         else if(evt.getKeyCode() == 40) // Down
         {
         	if(yOrigin > -1)
-        		yOrigin -= 0.02;
+        		yOrigin -= l_fDelta;
         }
         else if(evt.getKeyCode() == (int)'.') //+
         {
