@@ -234,31 +234,45 @@ public class DataBase
 	private ResultSet selectQuery(String _sFields[],String _sTable[],String _sWhere[][],String _sOrderBy[],int _Limit[],boolean _bsecured) throws SQLException
 	{
 		String l_sQuery;
-		
-		//Create the entire query with all the function
-		l_sQuery = "SELECT ";
-		l_sQuery += addFieldsQuery(_sFields);//Obligatory string for the query
-		l_sQuery += addTableQuery(_sTable);//Obligatory string for the query
-		if(_sWhere.length > 0)
-			l_sQuery += addWhereQuery(_sWhere,_bsecured);
-		if(_sOrderBy.length > 0)
-			l_sQuery += addOrderByQuery(_sOrderBy);
-		if(_Limit.length > 0)
-			l_sQuery += addLimitQuery(_Limit);
-		l_sQuery += ";";
-		
-		//If we want to have a prepare statement, we have to replace all value by the real value in s_Where[][]
-		if(_bsecured)
-		{
-			PreparedStatement pStatement = this.connection.prepareStatement(l_sQuery);
-			for(int i = 0;i<this.argumentCount;i++)
-				pStatement.setString(i+1, _sWhere[i][2]);
+		try
+		{	
+			//Create the entire query with all the function
+			l_sQuery = "SELECT ";
+			l_sQuery += addFieldsQuery(_sFields);//Obligatory string for the query
+			l_sQuery += addTableQuery(_sTable);//Obligatory string for the query
+			if(_sWhere.length > 0)
+				l_sQuery += addWhereQuery(_sWhere,_bsecured);
+			if(_sOrderBy.length > 0)
+				l_sQuery += addOrderByQuery(_sOrderBy);
+			if(_Limit.length > 0)
+				l_sQuery += addLimitQuery(_Limit);
+			l_sQuery += ";";
 			
-			this.argumentCount=0;
-			return pStatement.executeQuery();
+			//If we want to have a prepare statement, we have to replace all value by the real value in s_Where[][]
+			if(_bsecured)
+			{
+				PreparedStatement pStatement = this.connection.prepareStatement(l_sQuery);
+				for(int i = 0;i<this.argumentCount;i++)
+					pStatement.setString(i+1, _sWhere[i][2]);
+				
+				this.argumentCount=0;
+				return pStatement.executeQuery();
+			}
+			else
+				return this.statement.executeQuery(l_sQuery);
 		}
-		else
-			return this.statement.executeQuery(l_sQuery);
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		this.statement.close();
+			
+		l_sQuery = "SELECT * from " + this.sTable + " WHERE id=0"; //Return an empty Result
+		return this.statement.executeQuery(l_sQuery);
 	}
 	
 	/**
@@ -311,7 +325,7 @@ public class DataBase
 		return hs_Out;
 	}
 	
-
+	
 	/** 
 	 * starsForCoordinates
 	 * Search all the stars that could be in the hemisphere
@@ -348,8 +362,16 @@ public class DataBase
 		
 		boolean secured = false;
 		
-		if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
-			return null;
+		try
+		{
+			if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
+				throw new IllegalArgumentException("Error : Illegal latitude/longitude. Please check the coordinates !");
+		}
+		catch(IllegalArgumentException e)
+		{
+			System.err.println(e.getMessage());
+			_dLat = _dLon = 0;
+		}
 		
 		String[] field = {"*"};
 		String[] table = {this.sTable};
@@ -363,9 +385,6 @@ public class DataBase
 		//		{"ProperName","LIKE","A%"}};
 
 		ResultSet result = selectQuery(field,table,where,orderby,limit,secured);
-		
-		if(result == null)
-			return null;
 
 		Mathematics l_calc = new Mathematics(_date,_dLat, _dLon);
 		
@@ -419,7 +438,7 @@ public class DataBase
 		}
 		result.close();
 		
-		return al_stars;		
+		return al_stars;
 	}
 	
 	/**
@@ -481,10 +500,18 @@ public class DataBase
 		}
 	
 		ResultSet result = selectQuery(field,table,where,orderby,limit,secured);
-		
-		if(result == null)
-			return null;
 	    
+		try
+		{
+			if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
+				throw new IllegalArgumentException("Error : Illegal latitude/longitude. Please check the coordinates !");
+		}
+		catch(IllegalArgumentException e)
+		{
+			System.err.println(e.getMessage());
+			_dLat = _dLon = 0;
+		}
+		
 		Mathematics l_calc = new Mathematics(_date,_dLat, _dLon);
 		
 		while (result.next()) 
