@@ -12,6 +12,8 @@ import java.util.Calendar;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import com.github.projetp1.Observateur;
+
 import com.sun.servicetag.SystemEnvironment;
 
 import java.awt.*;
@@ -170,7 +172,14 @@ public class MainView extends JFrame implements KeyListener {
         });
 		
 		repaint();
-		//pic = new Pic(this);
+		
+		pic = new Pic(this);
+		this.pic.addObservateur(new Observateur(){
+			public void update() {
+				System.out.print("hello, v2.0 comm : ---->" + pic.getCompass());
+				skymap.updateSkyMap();
+			}
+		});
 	}
 	
 

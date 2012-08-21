@@ -7,16 +7,19 @@ package com.github.projetp1;
  * @author   alexandr.perez
  */
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
+
 
 import jssc.SerialPortException;
 
 import com.github.projetp1.*;
 import com.github.projetp1.rs232.*;
 
-public class Pic extends Thread
+public class Pic extends Thread implements Observer
 {
 
+	private ArrayList<Observateur> listObservateur = new ArrayList<Observateur>();
 	/**
 	 * @uml.property name="longitude"
 	 */
@@ -209,4 +212,26 @@ public class Pic extends Thread
 			}
 		}
 	}
+	
+	/**
+	 * Ajoute un observateur à la liste
+	 */
+	public void addObservateur(Observateur obs) {
+		this.listObservateur.add(obs);
+	}
+	/**
+	 * Retire tous les observateurs de la liste
+	 */
+	public void delObservateur() {
+		this.listObservateur = new ArrayList<Observateur>();
+	}
+	/**
+	 * Avertit les observateurs que l'observable a changé 
+	 * et invoque la méthode update de chaque observateur !
+	 */
+	public void updateObservateur() {
+		for(Observateur obs : this.listObservateur )
+			obs.update();
+	}
+	
 }
