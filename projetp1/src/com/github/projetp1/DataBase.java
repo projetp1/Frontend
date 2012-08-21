@@ -447,9 +447,15 @@ public class DataBase
 		    	//CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
 				CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
 		    	
-				if(l_id == 1)
+				if(l_id == 1)//Sun
 				{
 					l_calc.calculatePositionSun();
+					l_star.setdDec(l_calc.getDeclination());
+					l_star.setdRA(l_calc.getAscension());
+				}
+				else if(l_id == 2)//Moon
+				{
+					l_calc.calculatePositionMoon();
 					l_star.setdDec(l_calc.getDeclination());
 					l_star.setdRA(l_calc.getAscension());
 				}
@@ -585,6 +591,12 @@ public class DataBase
 				if(l_id == 1)
 				{
 					l_calc.calculatePositionSun();
+					l_star.setdDec(l_calc.getDeclination());
+					l_star.setdRA(l_calc.getAscension());
+				}
+				else if(l_id == 2)
+				{
+					l_calc.calculatePositionMoon();
 					l_star.setdDec(l_calc.getDeclination());
 					l_star.setdRA(l_calc.getAscension());
 				}
