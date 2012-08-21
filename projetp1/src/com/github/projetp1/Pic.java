@@ -205,9 +205,11 @@ public class Pic extends Thread
 						this.angle = Mathematics.calculateAngleInclinometer(values[0], values[1],
 								values[2]);
 					}
-					else
-						this.compass = Mathematics.calculateAngleCompass(values[0], values[1],
-								values[2], accX, accY, accZ);
+					else {
+						this.compass = Mathematics.calculateAngleCompass(accX, accY, accZ, values[0], values[1],
+								values[2]);
+						log.info("Heading : " + String.valueOf(compass));
+					}
 					break;
 				case PIC_STATUS:
 					log.info("Error received from the Pic : " + commande.getDatas());
