@@ -122,11 +122,16 @@ public class SkyMap extends Container implements MouseListener
 			g.setColor(l_color);
 			String l_name = celestialObject.getProperName();
 			
-			if (celestialObject.getMag() < -20)
+			if (l_name != null && l_name.equals("Sun"))
 			{
 				Image l_imgSun = getToolkit().getImage("res/sun.png");
 				g.drawImage(l_imgSun, l_x - (l_imgSun.getHeight(null) / 2), l_y - (l_imgSun.getHeight(null) / 2), null);
 				sun = celestialObject;
+			}
+			else if (l_name != null && l_name.equals("Moon"))
+			{
+				Image l_imgMoon = getToolkit().getImage("res/moon.png");
+				g.drawImage(l_imgMoon, l_x - (l_imgMoon.getHeight(null) / 2), l_y - (l_imgMoon.getHeight(null) / 2), null);				
 			}
 			else
 			{
