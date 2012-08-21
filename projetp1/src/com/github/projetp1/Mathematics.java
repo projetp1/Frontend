@@ -44,7 +44,6 @@ public class Mathematics
 	private double dDay;
 	private double dMonth;
 	private double dYear;
-	private double dDayYear;
 	
 	private double dDate_JulianCalendar;
 	private double dSideral_Time;
@@ -113,117 +112,81 @@ public class Mathematics
 	
 	/**
 	 * calculatePositionSun
-	 * Calculates the sun's declination and ascencion and uses calculateAll()
+	 * Calculates the sun's declination and ascension and uses calculateAll()
 	 */
 	public void calculatePositionSun()
 	{
-		//http://www.ehow.com/how_6904335_calculate-sun_s-declination.html
-		double T = (this.dDate_JulianCalendar - 2451545.0) / 36525.0;
-        double eps = 23.43929111 * Math.PI / 180.0;
-        double L,M;
-        double pi2 = 2.0 * Math.PI;
-        M  = pi2 * Frac ( 0.993133 + 99.997361*T);
-        L  = pi2 * Frac ( 0.7859453 + M/pi2 +
-                (6893.0*Math.sin(M)+72.0*Math.sin(2.0*M)+6191.2*T) / 1296.0e3);
-        
-        double S = Math.sin(-eps);
-        double C = Math.cos(-eps);
+         //Thank to Patrick Ellenberger
 		
-        double mat[][] = new double [3][3];
-        
-        mat[0][0] = 1.0;
-        mat[1][0] = 0.0;
-        mat[2][0] = 0.0;
-        mat[0][1] = 0.0;
-        mat[1][1] = +C;
-        mat[2][1] = -S;
-        mat[0][2] = 0.0;
-        mat[1][2] = +S;
-        mat[2][2] = +C;            
-                
-        double phi = L;
-        double theta = 0.0;
-        double r = 0.0;
-        
-        double vec[] = new double [3];
-        vec[0] = L;
-        vec[1] = 0.0;
-        vec[2] = 1.0;
-        
-        double cosEl = Math.cos(theta);            
-        vec[0] = 1 * Math.cos(phi) * cosEl;
-        vec[1] = 1 * Math.sin(phi) * cosEl;
-        vec[2] = 1 * Math.sin(theta);         
-        
-        double e_sun[] = new double [3];
-        
-        for (int i = 0; i < 3; i ++)
-        {
-            double Scalp = 0.0;
-            
-            for (int j = 0; j < 3; j ++)
-            {
-                Scalp += mat[i][j] * vec[j];                    
-            }
-            
-            e_sun[i] = Scalp;
-        }
-        
-        double rhoSqr = e_sun[0] * e_sun[0] + e_sun[1] * e_sun[1];
-        double m_r = Math.sqrt(rhoSqr + e_sun[2] * e_sun[2]);
-        
-        if ((e_sun[0] == 0.0) && (e_sun[1] == 0.0))
-            phi = 0.0;
-        else
-            phi = Math.atan2(e_sun[1], e_sun[0]);
-        
-        if (phi < 0.0)
-            phi += 2.0 * Math.PI;
-        
-        double rho = Math.sqrt(rhoSqr);
-        if ((e_sun[2] == 0.0) && (rho == 0.0))
-            theta = 0.0;
-        else
-            theta = Math.atan2(e_sun[2], rho);
-        
+         double T = (this.dDate_JulianCalendar - 2451545.0) / 36525.0;
+         double eps = 23.43929111 * Math.PI / 180.0;
+         double L,M;
+         double pi2 = 2.0 * Math.PI;
+         M  = pi2 * Frac ( 0.993133 + 99.997361*T);
+         L  = pi2 * Frac ( 0.7859453 + M/pi2 +
+                 (6893.0*sin(M)+72.0*sin(2.0*M)+6191.2*T) / 1296.0e3);
+         
+         double S = sin(-eps);
+         double C = cos(-eps);
+
+         double mat[][] = new double [3][3];
+         
+         mat[0][0] = 1.0;
+         mat[1][0] = 0.0;
+         mat[2][0] = 0.0;
+         mat[0][1] = 0.0;
+         mat[1][1] = +C;
+         mat[2][1] = -S;
+         mat[0][2] = 0.0;
+         mat[1][2] = +S;
+         mat[2][2] = +C;            
+                 
+         double phi = L;
+         double theta = 0.0;
+         
+         double vec[] = new double [3];
+         vec[0] = L;
+         vec[1] = 0.0;
+         vec[2] = 1.0;
+         
+         double cosEl = cos(theta);            
+         vec[0] = 1 * cos(phi) * cosEl;
+         vec[1] = 1 * sin(phi) * cosEl;
+         vec[2] = 1 * sin(theta);         
+         
+         double e_sun[] = new double [3];
+         
+         for (int i = 0; i < 3; i ++)
+         {
+             double Scalp = 0.0;
+             
+             for (int j = 0; j < 3; j ++)
+                 Scalp += mat[i][j] * vec[j];                    
+             
+             e_sun[i] = Scalp;
+         }
+         
+         double rhoSqr = e_sun[0] * e_sun[0] + e_sun[1] * e_sun[1];
+         double m_r = Math.sqrt(rhoSqr + e_sun[2] * e_sun[2]);
+         
+         if ((e_sun[0] == 0.0) && (e_sun[1] == 0.0))
+             phi = 0.0;
+         else
+             phi = Math.atan2(e_sun[1], e_sun[0]);
+         
+         if (phi < 0.0)
+             phi += 2.0 * Math.PI;
+         
+         double rho = Math.sqrt(rhoSqr);
+         if ((e_sun[2] == 0.0) && (rho == 0.0))
+             theta = 0.0;
+         else
+             theta = Math.atan2(e_sun[2], rho);
+         
         this.dAscension = phi*180/Math.PI;
         this.dDeclination = theta*180/Math.PI; 
         
-        
-        System.out.println(this.dDeclination + ":" + this.dAscension);
-		/*this.dDayYear = 0;
-		
-		for(int i = 1;i<this.dMonth;i++)
-			if(i<=7)
-				if(i%2 != 0)
-					this.dDayYear+=31;
-				else if(i==2)
-					if(isLeapYear((int)this.dYear))
-						this.dDayYear+=29;
-					else
-						this.dDayYear+=28;
-				else
-					this.dDayYear+=30;
-			else
-				if(i%2 != 0)
-					this.dDayYear+=30;
-				else
-					this.dDayYear+=31;
-		this.dDayYear += this.dDay;	
-		
-		int l_day = (int)this.dDayYear + 10;
-		
-		double l_div = 360;
-		
-		if(isLeapYear((int)this.dYear))
-			l_div/=366.0;
-		else
-			l_div/=365.0;
-		
-		double l_mul = l_div*l_day;
-		this.dDeclination = cos(l_mul*D2R)*(-23.44);
-		this.dAscension = 0;
-		System.out.println(this.dDeclination);*/
+        this.calculateAll(this.dDeclination, this.dAscension);
 	}
 	
 	/**
@@ -283,8 +246,6 @@ public class Mathematics
 		this.dDay = Mathematics.kAdditionnalDayOfDateObject + _date.get(Calendar.DATE);
 		this.dMonth = Mathematics.kAdditionnalMonthOfDateObject + _date.get(Calendar.MONTH);
 		this.dYear = Mathematics.kAdditionnalYearOfGregorianCalendar + _date.get(Calendar.YEAR);
-		
-		this.dDayYear = _date.DAY_OF_YEAR;
 	}
 	
 	static public boolean isLeapYear(int _year)
@@ -325,7 +286,7 @@ public class Mathematics
 	{
 		double l_x = 1*((-2.0/pi)*_dHeight+1);
 		
-		return -l_x*sin(_dAzimuth);
+		return l_x*sin(_dAzimuth);
 		//return (cos(_dHeight)*sin(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
@@ -340,7 +301,7 @@ public class Mathematics
 	{
 		double l_y = 1*((-2.0/pi)*_dHeight+1);
 		
-		return -l_y*cos(_dAzimuth);
+		return l_y*cos(_dAzimuth);
 		//return (cos(_dHeight)*cos(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
