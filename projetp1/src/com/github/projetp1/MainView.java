@@ -170,7 +170,7 @@ public class MainView extends JFrame implements KeyListener {
         });
 		
 		repaint();
-		//pic = new Pic(this);
+		pic = new Pic(this);
 	}
 	
 
