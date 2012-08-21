@@ -190,6 +190,103 @@ public class Mathematics
 	}
 	
 	/**
+	 * calculatePositionMoon
+	 * Calculates the moon's declination and ascension and uses calculateAll()
+	 */
+	public void calculatePositionMoon()
+	{
+         //Thank to Patrick Ellenberger
+		
+		double T = (this.dDate_JulianCalendar - 2451545.0) / 36525.0;
+        double eps = 23.43929111 * Math.PI / 180.0;
+        double Arcs = 3600.0 * 180.0 / Math.PI;
+        
+        
+        double pi2 = 2.0 * Math.PI;
+        double L_0, l, ls, F, D, dL, S, h, N, l_Moon, b_Moon;
+        L_0 = Frac(0.606433 + 1336.855225 * T);
+        l = pi2 * Frac(0.374897 + 1325.552410 * T);
+        ls = pi2 * Frac(0.993133 + 99.997361 * T);
+        D = pi2 * Frac(0.827361 + 1236.853086 * T);
+        F = pi2 * Frac(0.259086 + 1342.227825 * T);
+        
+        dL = +22640 * sin(l) - 4586 * sin(l-2*D) + 2370 * sin(2*D) + 769 * sin(2*l) - 668 * sin(ls) 
+                - 412 * sin(2*F) - 212 * sin(2*l-2*D) - 206 * sin(l+ls-2*D) + 192 * sin(l+2*D) 
+                - 165 * sin(ls-2*D) - 125 * sin(D) - 110 * sin(l+ls) + 148 * sin(l-ls) - 55 * sin(2*F-2*D);
+        S = F + (dL + 412 * sin(2*F) + 541 * sin(ls)) / Arcs;
+        h = F-2*D;
+        N = -526 * sin(h) + 44 * sin(l+h) - 31 * sin(-l+h) - 23 * sin(ls+h) + 11 * sin(-ls+h) 
+                - 25 * sin(-2*l+F) + 21 * sin(-l+F);
+        l_Moon = pi2 * Frac(L_0 + dL / 1296.0e3);
+        b_Moon = (18520.0 * sin(S) + N) / Arcs;
+        
+        double Srot = sin(-eps);
+        double Crot = cos(-eps);
+
+        double mat[][] = new double [3][3];
+        
+        mat[0][0] = 1.0;
+        mat[1][0] = 0.0;
+        mat[2][0] = 0.0;
+        mat[0][1] = 0.0;
+        mat[1][1] = +Crot;
+        mat[2][1] = -Srot;
+        mat[0][2] = 0.0;
+        mat[1][2] = +Srot;
+        mat[2][2] = +Crot;            
+                
+        double phi = l_Moon;
+        double theta = b_Moon;
+        double r = 0.0;
+        
+        double vec[] = new double [3];
+        vec[0] = l_Moon;
+        vec[1] = b_Moon;
+        vec[2] = 1.0;
+        
+        double cosEl = cos(theta);            
+        vec[0] = 1 * cos(phi) * cosEl;
+        vec[1] = 1 * sin(phi) * cosEl;
+        vec[2] = 1 * sin(theta);         
+        
+        double e_Moon[] = new double [3];
+        
+        for (int i = 0; i < 3; i ++)
+        {
+            double Scalp = 0.0;
+            
+            for (int j = 0; j < 3; j ++)
+            {
+                Scalp += mat[i][j] * vec[j];                    
+            }
+            
+            e_Moon[i] = Scalp;
+        }
+        
+        double rhoSqr = e_Moon[0] * e_Moon[0] + e_Moon[1] * e_Moon[1];
+        double m_r = Math.sqrt(rhoSqr + e_Moon[2] * e_Moon[2]);
+        
+        if ((e_Moon[0] == 0.0) && (e_Moon[1] == 0.0))
+            phi = 0.0;
+        else
+            phi = Math.atan2(e_Moon[1], e_Moon[0]);
+        
+        if (phi < 0.0)
+            phi += 2.0 * Math.PI;
+        
+        double rho = Math.sqrt(rhoSqr);
+        if ((e_Moon[2] == 0.0) && (rho == 0.0))
+            theta = 0.0;
+        else
+            theta = Math.atan2(e_Moon[2], rho);
+        
+        this.dAscension = phi*R2D;
+        this.dDeclination = theta*R2D;           
+        
+        this.calculateAll(this.dDeclination, this.dAscension);
+	}
+	
+	/**
 	 * getAll 
 	 * Give all the informations of the values calculated
 	 */
