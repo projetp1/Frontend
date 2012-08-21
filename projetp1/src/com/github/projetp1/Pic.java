@@ -11,46 +11,38 @@ import java.util.logging.Logger;
 
 import jssc.SerialPortException;
 
-import com.github.projetp1.*;
 import com.github.projetp1.rs232.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Pic.
+ */
 public class Pic extends Thread
 {
-
-	/**
-	 * @uml.property name="longitude"
-	 */
 	private double longitude = 0.0;
-	/**
-	 * @uml.property name="latitude"
-	 */
 	private double latitude = 0.0;
-	/**
-	 * @uml.property name="angle"
-	 */
-	private double angle;
-	/**
-	 * @uml.property name="compass"
-	 */
-	private double compass;
+
+	private double azimuth = 0.0;
+	private double pitch = 0.0;
+	private double roll = 0.0;
 	
-	private int accX = 0;
-	private int accY = 0;
-	private int accZ = 0;
+	private int[] acc = new int[3];
+	private int[] mag = new int[3];
 
 	private PicMode mode = PicMode.SIMULATION;
 
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
+	/**
+	 * The different modes in which the PIC may operate
+	 */
 	public enum PicMode
 	{
-		/**
-		 * The default mode : point, click and see
-		 */
+		
+		/** The default mode : point, click and see. */
 		POINTING,
-		/**
-		 * The searching star mode
-		 */
+		
+		/** The searching star mode. */
 		GUIDING,
 		/**
 		 * The simulation mode. No PIC is connected, user commands come from the keyboard
@@ -58,12 +50,15 @@ public class Pic extends Thread
 		SIMULATION;
 	}
 
+	/** The MainView object. */
 	protected MainView mainview;
 
 	private RS232 rs;
 
 	/**
-	 * 
+	 * Instantiates a new PIC.
+	 *
+	 * @param _mainview the _mainview
 	 */
 	public Pic(MainView _mainview)
 	{
@@ -89,8 +84,9 @@ public class Pic extends Thread
 	}
 
 	/**
-	 * @return
-	 * @uml.property name="longitude"
+	 * Gets the longitude.
+	 *
+	 * @return the longitude
 	 */
 	public double getLongitude()
 	{
@@ -98,18 +94,20 @@ public class Pic extends Thread
 	}
 
 	/**
-	 * @param _longitude
-	 * @uml.property name="longitude"
+	 * Sets the longitude.
+	 *
+	 * @param _longitude the new longitude
 	 */
-	public void setLongitude(double _longitude)
+	protected void setLongitude(double _longitude)
 	{
 		if(Math.abs(_longitude) <= 180)
 			this.longitude = _longitude;
 	}
 
 	/**
-	 * @return
-	 * @uml.property name="latitude"
+	 * Gets the latitude.
+	 *
+	 * @return the latitude
 	 */
 	public double getLatitude()
 	{
@@ -117,63 +115,92 @@ public class Pic extends Thread
 	}
 
 	/**
-	 * @param _latitude
-	 * @uml.property name="latitude"
+	 * Sets the latitude.
+	 *
+	 * @param _latitude the new latitude
 	 */
-	public void setLatitude(double _latitude)
+	protected void setLatitude(double _latitude)
 	{
 		if(Math.abs(_latitude) <= 90)
 			this.latitude = _latitude;
 	}
 
 	/**
-	 * @return
-	 * @uml.property name="angle"
+	 * Gets the angle.
+	 *
+	 * @return the angle
 	 */
+	@Deprecated
 	public double getAngle()
 	{
-		return angle;
+		return pitch;
 	}
 
 	/**
-	 * @param _angle
-	 * @uml.property name="angle"
+	 * Gets the compass.
+	 *
+	 * @return the compass
 	 */
-	public void setAngle(double _angle)
-	{
-		if(Math.abs(_angle) <= 90)
-			this.angle = _angle;
-	}
-
-	/**
-	 * @return
-	 * @uml.property name="compass"
-	 */
+	@Deprecated
 	public double getCompass()
 	{
-		return compass;
+		return azimuth;
+	}
+
+
+	/**
+	 * Gets the azimuth.
+	 *
+	 * @return the azimuth
+	 */
+	public double getAzimuth()
+	{
+		return azimuth;
 	}
 
 	/**
-	 * @param _compass
-	 * @uml.property name="compass"
+	 * Gets the pitch.
+	 *
+	 * @return the pitch
 	 */
-	public void setCompass(double _compass)
+	public double getPitch()
 	{
-		if(_compass >= 0 && _compass < 360)
-			this.compass = _compass;
+		return pitch;
 	}
 
+	/**
+	 * Gets the roll.
+	 *
+	 * @return the roll
+	 */
+	public double getRoll()
+	{
+		return roll;
+	}
+
+	/**
+	 * Gets the mode.
+	 *
+	 * @return the mode
+	 */
 	public PicMode getMode()
 	{
 		return mode;
 	}
 
+	/**
+	 * Sets the mode.
+	 *
+	 * @param mode the new mode
+	 */
 	public void setMode(PicMode mode)
 	{
 		this.mode = mode;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	public void run()
 	{
 		RS232Command commande;
@@ -198,18 +225,15 @@ public class Pic extends Thread
 						values[l_i] = Integer.parseInt(components[l_i]);
 
 					if (commande.getCommandNumber() == RS232CommandType.ACCELEROMETER_UPDATE)
-					{
-						accX = values[0];
-						accY = values[1];
-						accZ = values[2];
-						this.angle = Mathematics.calculateAngleInclinometer(values[0], values[1],
-								values[2]);
-					}
-					else {
-						this.compass = Mathematics.calculateAngleCompass(accX, accY, accZ, values[0], values[1],
-								values[2]);
-						log.info("Heading : " + String.valueOf(compass));
-					}
+						acc = values.clone();
+					else if (commande.getCommandNumber() == RS232CommandType.MAGNETOMETER_UPDATE)
+						mag = values.clone();
+					
+					double[] res = new double[3];
+					Mathematics.calculateAngles(res, acc, mag);
+					azimuth = res[0];
+					pitch = res[1];
+					roll = res[2];
 					break;
 				case PIC_STATUS:
 					log.info("Error received from the Pic : " + commande.getDatas());
