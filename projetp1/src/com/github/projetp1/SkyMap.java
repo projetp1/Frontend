@@ -159,16 +159,15 @@ public class SkyMap extends Container implements MouseListener
 		int l_xStarPointed = l_xCenter + (int) (sun.getXReal() * zoom * l_scale);
 		int l_yStarPointed =  l_yCenter - (int) (sun.getYReal() * zoom * l_scale);
 		
-		if(l_xStarPointed > 0 && l_xStarPointed < this.getWidth() && l_yStarPointed > 0 && l_yStarPointed < this.getHeight())
-		{
-			Image l_imgStarHighlight = getToolkit().getImage("res/star_highlight.png");
-			g.drawImage(
-					l_imgStarHighlight, 
-					l_xCenter + (int) (sun.getXReal() * zoom * l_scale) - l_imgStarHighlight.getWidth(null) / 2,
-					 l_yCenter - (int) (sun.getYReal() * zoom * l_scale)- l_imgStarHighlight.getHeight(null) / 2, 
-					null);
-		}
-		else
+		
+		Image l_imgStarHighlight = getToolkit().getImage("res/star_highlight.png");
+		g.drawImage(
+				l_imgStarHighlight, 
+				l_xCenter + (int) (sun.getXReal() * zoom * l_scale) - l_imgStarHighlight.getWidth(null) / 2,
+				 l_yCenter - (int) (sun.getYReal() * zoom * l_scale)- l_imgStarHighlight.getHeight(null) / 2, 
+				null);
+		
+		if(!(l_xStarPointed >  this.getWidth() * 0.1 && l_xStarPointed < this.getWidth() * 0.9 && l_yStarPointed > this.getHeight() * 0.1 && l_yStarPointed < this.getHeight() * 0.9))
 		{
 			Image l_imgArrow = getToolkit().getImage("res/arrow.png");
 			double l_dAngle = -getArrowAngle(sun);

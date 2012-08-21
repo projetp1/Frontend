@@ -145,7 +145,7 @@ public class MainView extends JFrame implements KeyListener {
 		getLayeredPane().add(inclinometerPanel);
 		getLayeredPane().add(skymap);
 
-        this.setMinimumSize(new java.awt.Dimension(680, 420));
+        this.setMinimumSize(new java.awt.Dimension(800, 600));
 		
 		this.setVisible(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
