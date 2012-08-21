@@ -51,7 +51,19 @@ public class SkyMap extends Container implements MouseListener
 		try
 		{
 			db = new DataBase(_sDataBase, _sDelimiter);
-			celestialObjects = db.starsForCoordinates(Calendar.getInstance(), 46.99943, 6.93852);
+			double lat;
+			if (this.mainView.getPic() == null)
+				lat = 47.039448;
+			else
+				lat = this.mainView.getPic().getLatitude();
+
+			double lon;
+			if (this.mainView.getPic() == null)
+				lon = 6.799734;
+			else
+				lon = this.mainView.getPic().getLongitude();
+			
+			celestialObjects = db.starsForCoordinates(Calendar.getInstance(), lat, lon);
 		}
 		catch (Exception ex)
 		{
