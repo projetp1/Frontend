@@ -318,11 +318,8 @@ public class Mathematics
 				+ (int) (kNumberOfDayInOneMonth * (_dMonth + 1)) + _dDay + l_t + l_b - 1524.5);
 	}
 
-	static public float calculateAngleCompass(float _accX, float _accY, float _accZ, float _magX, float _magY, float _magZ)
-	{
-		// Conversion du système du PIC vers le système standard
-		_accX *= -1.0;
-		
+	static public double calculateAngleCompass(float _accX, float _accY, float _accZ, float _magX, float _magY, float _magZ)
+	{		
 		// On repasse en signé
 		_accX -= 32768.0;
 		_accY -= 32768.0;
@@ -339,12 +336,20 @@ public class Mathematics
 		_magY /= 32768.0;
 		_magZ /= 32768.0;
 		
-		// On passe en Newton
+		// On passe en Newton et en uT
 		_accX *= 9.81;
 		_accY *= 9.81;
 		_accZ *= 9.81;
+		_magX *= 80.0;
+		_magY *= 80.0;
+		_magZ *= 80.0;
 		
+		// Conversion du système du PIC vers le système standard
+		_accZ *= -1.0;
+		_magX *= -1.0;
+		_magY *= -1.0;
 		
+		Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).info("x: " + _accX + "\ny: " + _accY + "\nz: " + _accZ + "\nx: " + _magX + "\ny: " + _magY + "\nz: " + _magZ);
 		float R[] = new float[9];
 		float I[] = new float[9];
 		float acc[] = new float[] {_accX, _accY, _accZ};
@@ -355,10 +360,10 @@ public class Mathematics
 			if (success) {
 				float orientation[] = new float[3];
 				getOrientation(R, orientation);
-				return orientation[0];
+				return Math.toDegrees(orientation[0]);
 			}
 		}
-		return 0.0f;
+		return 0.0;
 	}
 
 	static public double calculateAngleInclinometer(double _dX,double _dY,double _dZ)
