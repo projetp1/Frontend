@@ -213,9 +213,9 @@ public class Pic extends Thread
 				case LOCATION_UPDATE:
 					String[] locComponents = commande.getDatas().split(",", 4);
 					if(!locComponents[0].isEmpty() && !locComponents[1].isEmpty())
-						this.setLongitude(Mathematics.picLon2Lon(Double.parseDouble(locComponents[0]), locComponents[1].charAt(0)));
+						this.setLatitude(Mathematics.picLat2Lat(Double.parseDouble(locComponents[0]), locComponents[1].charAt(0)));
 					if(!locComponents[2].isEmpty() && !locComponents[3].isEmpty())
-						this.setLatitude(Mathematics.picLat2Lat(Double.parseDouble(locComponents[2]), locComponents[3].charAt(0)));
+						this.setLongitude(Mathematics.picLon2Lon(Double.parseDouble(locComponents[2]), locComponents[3].charAt(0)));
 					break;
 				case ACCELEROMETER_UPDATE:
 				case MAGNETOMETER_UPDATE:
