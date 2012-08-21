@@ -231,7 +231,7 @@ public class Pic extends Thread
 					
 					double[] res = new double[3];
 					Mathematics.calculateAngles(res, acc, mag);
-					azimuth = res[0];
+					azimuth = res[0] *= -1.0;
 					pitch = res[1];
 					roll = res[2];
 					break;
