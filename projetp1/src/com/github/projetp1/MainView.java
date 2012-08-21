@@ -49,7 +49,7 @@ public class MainView extends JFrame implements KeyListener {
 	private int degree;
 	private double xOrigin = 0;
 	private double yOrigin = 0;
-	private double w = 1;
+	private double w = 0.01;
 	private double w_old = w;
 	
 	private double width()
@@ -107,25 +107,25 @@ public class MainView extends JFrame implements KeyListener {
 		coordinate.setForeground(Color.WHITE);
 		getLayeredPane().add(coordinate);
 		
-        buttonsPanel = new Buttons(w);
+        buttonsPanel = new Buttons(1);
 		buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()/2), 5);
 		
-		helpPanel = new Help(w);
+		helpPanel = new Help(1);
 		helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()/2-10*w), buttonsPanel.getHeight());
 		
-		settingsPanel = new SettingsConfig(w);
+		settingsPanel = new SettingsConfig(1);
 		settingsPanel.setLocation((int)(width()/2-2*buttonsPanel.getWidth()), buttonsPanel.getHeight());
 		
-		searchBarPanel = new SearchBar(w);
+		searchBarPanel = new SearchBar(1);
 		searchBarPanel.setLocation(0, 5);
 		
-		zoomBarPanel = new ZoomBar(w);
+		zoomBarPanel = new ZoomBar(1);
 		zoomBarPanel.setLocation(5, 5);
 		
-		compassPanel = new Compass(w);
+		compassPanel = new Compass(1);
 		compassPanel.setLocation((int)(width()-10-compassPanel.getWidth()), 50);		
 		
-		inclinometerPanel = new Inclinometer(w);
+		inclinometerPanel = new Inclinometer(1);
 		inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
 
 		skymap = new SkyMap("hyg.db",";",this);
@@ -150,16 +150,17 @@ public class MainView extends JFrame implements KeyListener {
 		this.setVisible(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		this.getContentPane().setBackground(Color.BLACK);
+
 
 		Timer timer = createTimer();
 		timer.start();
 		
 		
 		settings = new Settings();
-		Serializer.serialize("settings.lol",settings);
-		
-		pic = new Pic(this);
+		Serializer.serialize("settings.conf",settings);
+
 		
 		
 		addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -169,6 +170,7 @@ public class MainView extends JFrame implements KeyListener {
         });
 		
 		repaint();
+		//pic = new Pic(this);
 	}
 	
 
@@ -244,7 +246,7 @@ public class MainView extends JFrame implements KeyListener {
 				_object.getColorIndex() +
 				"</html>");
 		
-		System.out.println("MainView.updateInfo()");
+	//	System.out.println("MainView.updateInfo()");
 	}
 	
 	public ArrayList<CelestialObject> searchForTextInSearchField() {
@@ -406,20 +408,63 @@ public class MainView extends JFrame implements KeyListener {
     private class SettingsConfig extends JLayeredPane
     {
     	double scale;
-    	int number = 5;
+    	int number = 9;
     	BufferedImage backgroundTop;
     	BufferedImage backgroundMid;
     	BufferedImage backgroundBot;
     	BufferedImage InternalTop;
     	BufferedImage[] InternalMid = new BufferedImage[number];
+
+    	JLabel titre;
+    	JLabel[] settingList = {new JLabel("port"),
+    			new JLabel("speed"),
+    			new JLabel("databit"),
+    			new JLabel("stopbit"),
+    			new JLabel("parity"),
+    			new JLabel("flowControl"),
+    			new JLabel("samplingRate"),
+    			new JLabel("databaseName"),
+    			new JLabel("ImputDelimiter"),
+    			new JLabel("simulation")
+    	};
+    	JComboBox[] comboBoxList = new JComboBox[number];
+    			
     	BufferedImage InternalBot;
-    	JList settingsList;
-    	ListModel settingsModel;
-    	JScrollPane jScrollPane;
     	
     	public SettingsConfig(double _scale)
     	{
     		scale = _scale;
+    		
+    		
+    		String port[] = jssc.SerialPortList.getPortNames();
+    		comboBoxList[0] = new JComboBox(port);
+    		String speed[] = {"110", "300", "600", "1200", "4800", "9600", "14400",
+    						"19200", "38400", "57600", "115200", "128000", "256000"};
+    		comboBoxList[1] = new JComboBox(speed);
+    		String databit[] = {"5", "6", "7", "8"};
+    		comboBoxList[2] = new JComboBox(databit);
+    		String stopbit[] = {"1", "2", "1_5"};
+    		comboBoxList[3] = new JComboBox(stopbit);
+    		String parity[] = {"NONE", "ODD", "EVEN", "MARK", "SPACE"};
+    		comboBoxList[4] = new JComboBox(parity);
+    		String flowControl[] = {"NONE", "RTSCTS_IN", "RTSCTS_OUT", "XONXOFF_IN","XONXOFF_OUT"};
+    		comboBoxList[5] = new JComboBox(flowControl);
+    	//	String samplingRate[] = {"?"};
+    	//	comboBoxList[6] = new JComboBox(samplingRate);
+    		String databaseName[] = {"hyz"};
+    		comboBoxList[6] = new JComboBox(databaseName);
+    		String imputDelimiter[] = {";", ":"};
+    		comboBoxList[7] = new JComboBox(imputDelimiter);
+    		String simulation[] = {"ON", "OFF"};
+    		comboBoxList[8] = new JComboBox(simulation);
+    		
+    		for(int i = 0; i < number; i++)  		
+    			comboBoxList[i].addActionListener(new java.awt.event.ActionListener() {
+    	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+    	                jComboBox1ActionPerformed(evt);
+    	            }
+    	        });
+    		
     		try {
     			backgroundTop = resizeImage(ImageIO.read(new File("res/settings-top-background.png")), scale/2);
     			backgroundMid = resizeImage(ImageIO.read(new File("res/settings-mid-background.png")), scale/2);
@@ -428,7 +473,18 @@ public class MainView extends JFrame implements KeyListener {
     			for(int i = 0; i< number; i++)
     			{
     				InternalMid[i] = resizeImage(ImageIO.read(new File("res/settings-mid-internal.png")), scale/2);
-    			}
+    				
+    				settingList[i].setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+25, (int)(500*scale), 30);
+                	settingList[i].setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
+        			settingList[i].setForeground(Color.BLACK);
+                	this.add(settingList[i]);
+            		comboBoxList[i].setBounds((int)(backgroundTop.getWidth()/2-100*scale), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+25, (int)(100*scale), 30);
+                	this.add(comboBoxList[i]);
+                	
+                }
+    				
+    			
+    			
     			InternalBot = resizeImage(ImageIO.read(new File("res/settings-bot-internal.png")), scale/2);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -436,38 +492,11 @@ public class MainView extends JFrame implements KeyListener {
 			}
     		
 
-    		settingsModel = new ListModel();
-    		
-    		String port[] = {"COM0", "COM1", "COM2","COM3", "COM4"};	//détection automatique à faire
-    		String speed[] = {"test"};
-    		String databit[] = {"test"};
-    		String stopbit[] = {"test"};
-    		String parity[] = {"test"};
-    		String flowControl[] = {"test"};
-    		String samplingRate[] = {"test"};
-    		String databaseName[] = {"test"};
-    		String imputDelimiter[] = {"test"};
-    		String simulation[] = {"ON", "OFF"};
-    		
-    		settingsModel.setElement("port");
-    		settingsModel.setElement("speed");
-    		settingsModel.setElement("databit");
-    		settingsModel.setElement("stopbit");
-    		settingsModel.setElement("parity");
-    		settingsModel.setElement("flowControl");
-    		settingsModel.setElement("samplingRate");
-    		settingsModel.setElement("databaseName");
-    		settingsModel.setElement("imputDelimiter");
-    		settingsModel.setElement("simulation");
-    		
-    		
-    		settingsList = new JList();
-    		settingsList.setModel(settingsModel);
-    		jScrollPane = new JScrollPane();
-    		jScrollPane.setViewportView(settingsList);
-    		settingsList.setBounds(0, 0, 300, 400);
-    		
-    		this.add(jScrollPane);
+    		titre = new JLabel("Setings", JLabel.CENTER);
+			titre.setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
+			titre.setBounds(0, backgroundTop.getHeight(), (int)(scale*345), (int)(scale*34));
+			titre.setForeground(Color.WHITE);
+			this.add(titre);
     		
     		this.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -490,6 +519,8 @@ public class MainView extends JFrame implements KeyListener {
             for(int i = 0; i < number; i++)
             {
             	g2.drawImage(InternalMid[i], (int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+25, null);
+            	
+            	
             }
             	g2.drawImage(InternalBot, (int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2), backgroundTop.getHeight()+InternalTop.getHeight()+number*InternalMid[0].getHeight()+25, null);
 		}
@@ -500,6 +531,22 @@ public class MainView extends JFrame implements KeyListener {
     			System.out.print("1\n");
     		}
     	}
+    		private void	jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
+
+    		settings.setPort((comboBoxList[0].getSelectedItem() != null)?comboBoxList[0].getSelectedItem().toString():"NONE");
+    		settings.setSpeed(Integer.parseInt(comboBoxList[1].getSelectedItem().toString()));
+    		settings.setDatabit(Integer.parseInt(comboBoxList[2].getSelectedItem().toString()));
+    		settings.setStopbit(Integer.parseInt(comboBoxList[3].getSelectedItem().toString()));
+    		settings.setParity(comboBoxList[4].getSelectedItem().toString());
+    		settings.setFlowControl(comboBoxList[5].getSelectedItem().toString());
+    		//settings.setSamplingRate(Integer.parseInt(comboBoxList[6].getSelectedItem().toString()));
+    		settings.setDatabaseName(comboBoxList[6].getSelectedItem().toString());
+    		settings.setInputDelimiter(comboBoxList[7].getSelectedItem().toString());
+    		settings.setSimulation((comboBoxList[8].getSelectedItem().toString().equals("ON"))?true:false);
+    		Serializer.serialize("settings.conf",settings);
+    		System.out.println("SETTINGS");
+    		
+    	}
 		public void setScale(double _scale)
 		{
 			scale = _scale;
@@ -509,20 +556,28 @@ public class MainView extends JFrame implements KeyListener {
 		{
 			try {
 				backgroundTop = resizeImage(ImageIO.read(new File("res/settings-top-background.png")), scale/2);
-				backgroundMid = resizeImage(ImageIO.read(new File("res/settings-mid-background.png")), scale/2);
+				backgroundMid = resizeImage2(ImageIO.read(new File("res/settings-mid-background.png")), backgroundTop.getWidth(), (int)(number*scale*70));
 				backgroundBot = resizeImage(ImageIO.read(new File("res/settings-bot-background.png")), scale/2);
 				InternalTop = resizeImage(ImageIO.read(new File("res/settings-top-internal.png")), scale/2);
 				for(int i = 0; i < number; i++)
 				{
 					InternalMid[i] = resizeImage(ImageIO.read(new File("res/settings-mid-internal.png")), scale/2);
-					jScrollPane.setBounds(0, 20*i, InternalMid[i].getWidth(), 100);
+				  	settingList[i].setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2+30*scale), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+27, (int)(500*scale), (int)(30*scale));
+				  	settingList[i].setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
+				  	comboBoxList[i].setBounds((int)(backgroundTop.getWidth()-200*scale), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+27, (int)(150*scale), (int)(40*scale));
+				  	comboBoxList[i].setFont(new Font("Calibri", Font.BOLD, (int)(25*scale)));
+				  	
 				}
 				InternalBot = resizeImage(ImageIO.read(new File("res/settings-bot-internal.png")), scale/2);
     		} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			this.setBounds(0, 0, (int)(backgroundTop.getWidth()), (int)(500*scale));
+			
+			titre.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
+			titre.setBounds(0, backgroundTop.getHeight(), backgroundTop.getWidth(), (int)(scale*35));
+			
+			this.setBounds(0, 0, (int)(backgroundTop.getWidth()), (int)(100*scale*number));
 			repaint();
 		}
     }
@@ -668,13 +723,15 @@ public class MainView extends JFrame implements KeyListener {
 		}
     }
 
-    private class SearchBar extends JLayeredPane
+    private class SearchBar extends JLayeredPane 
     {
     	double scale;
     	int hig;
     	JTextField jtextField;
     	JList jList1;
     	ListModel list;
+    	ListModel list2;
+    	String[] Keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex "};
     	JScrollPane jScrollPane = new JScrollPane();
     	DataBase db;
     	ArrayList<CelestialObject> listCelestialObject;
@@ -683,7 +740,7 @@ public class MainView extends JFrame implements KeyListener {
     	public SearchBar(double _scale)
     	{
     		scale = _scale;
-    		hig = (int)(30*scale);
+    		hig = (int)(300*scale);
     		this.setBounds(0, 0, (int)(width()/2), hig);
     		jtextField = new JTextField();
     		jtextField.setBounds(0, 0, (int)(width()/2), hig);
@@ -701,69 +758,101 @@ public class MainView extends JFrame implements KeyListener {
                 }
             });
 
-    		jtextField.addMouseListener(new java.awt.event.MouseAdapter() {
+    	
+    		
+    		
+    		list = new ListModel();
+    		list2 = new ListModel();
+    		jList1 = new JList();
+    		jList1.setModel(list);
+    		jList1.setBounds(0, 0, 300, 400);
+    		jScrollPane.setFocusable(false);
+    		jList1.setFocusable(false);
+    		jScrollPane.setViewportView(jList1);
+    		
+    		jList1.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                     MouseClicked(evt);
                 }
     		});
     		
-       
-    		
-    		list = new ListModel();
-    		jList1 = new JList();
-    		jList1.setModel(list);
-    		jList1.setBounds(0, 0, 300, 400);
-    		jScrollPane.setViewportView(jList1);
-            
     		this.add(jtextField);
     		this.add(jScrollPane);
 			this.setVisible(true);
 			this.repaint();
     	}
 
+    	
     	private void MouseClicked(java.awt.event.MouseEvent evt) {
+
     		
-    		jtextField.setText((String)jList1.getSelectedValue());
+        	jScrollPane.setVisible(false);
+        	
+        	if(jtextField.getText().split(" ").length>1)
+        	{
+             	int index = jList1.getSelectedIndex();
+        		updateInfo((CelestialObject)list2.getElementAt(index));
+        	}
+        	jtextField.setText(jList1.getSelectedValue().toString());
+
 
     	}
-    	private void jSlider1KeyReleased(java.awt.event.KeyEvent evt) throws Exception {
+    	private void jSlider1KeyReleased(java.awt.event.KeyEvent evt) {
+    		
+    		list.removeAll();
+    		list2.removeAll();
+    		
+	     	if(jtextField.getText().equals("!"))
+	     	{
+	     		for (int i = 0; i < Keys.length; i++)
+     			{
+     				list.setElement(Keys[i]);
+     			}
+	     	}
+	     	else if(jtextField.getText().split(" ").length>1)
+	     	{
+	     		try{
+		     		db = new DataBase("hyg.db", ";");
+		     		listCelestialObject = new ArrayList<CelestialObject>();
+		     		listCelestialObject = db.starsForText(jtextField.getText(), Calendar.getInstance(), 47.039448, 6.799734);
 
-    		System.out.print(jtextField.getText()+"\n");
-    		if(jtextField.getText().length()>4)
-    		{
-    			db = new DataBase("hyg.db", ";");
-    			listCelestialObject = new ArrayList<CelestialObject>();
-    			System.out.print(jtextField.getText()+"\nlength = "+jtextField.getText().length()+"\n");
-    			listCelestialObject = db.starsForText(jtextField.getText(), Calendar.getInstance(), 47.039448, 6.799734);
-        	 	
-    			if(listCelestialObject.size() != 0)
-    			{	
-    				for (int i = 0; i < listCelestialObject.size(); i++)
-    				{
-    					list.setElement(listCelestialObject.get(i).getId());
-    					System.out.println(listCelestialObject.get(i).getDistance());
-    				}
-    			}
-    			else
-    				System.out.println("Aucun résultat n'a été trouvé dans la base de données");
+		     		
+		     		if(listCelestialObject.size() != 0)
+		     		{	
+		     			for (int i = 0; i < listCelestialObject.size(); i++)
+		     			{
+		     				System.out.println(i);
+		     				list.setElement(listCelestialObject.get(i).getId());
+		     				list2.setElement(listCelestialObject.get(i));
+		     			}
+			     		
 
-			db.closeConnection();
+		     		}
+		     		else
+		     			System.out.println("Aucun résultat n'a été trouvé dans la base de données");
 
-    		}
-			
-        	if (list.getSize() > 0)
-        	{
-        		//System.out.print(listCelestialObject.get(0).getId());
-            	//System.out.print(list.getElementAt(0));
-            	jScrollPane.setBounds(0, 20, 300, 400);
-            	jScrollPane.setVisible(true);
-        	} else
-        	{
-        		jScrollPane.setVisible(false);
-        	}
-       
-        	repaint();
-    	 	
+		     		db.closeConnection();
+		     			
+	     			} catch(Exception ex)
+	     			{
+	     				ex.printStackTrace();
+	     			}
+
+     		}
+	     	
+	        if (list.getSize() > 0)
+	        {
+	        	//System.out.print(listCelestialObject.get(0).getId());
+	           	//System.out.print(list.getElementAt(0));
+	        	int min = (list.getSize() < 5)?list.getSize()*21:(int)(200*scale);
+	        	jScrollPane.setBounds(0, 20, (int)(500*scale), min);
+	           	jScrollPane.setVisible(true);
+	           	
+	        } 
+	        else
+	        	jScrollPane.setVisible(false);
+	        
+	        repaint();
     	}
 		public void setScale(double _scale)
 		{
@@ -774,11 +863,13 @@ public class MainView extends JFrame implements KeyListener {
 		public void update()
 		{
 			
-			this.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(100*scale));
+			this.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(400*scale));
     		jtextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
     		//complement.setBounds(0, hig, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(100*scale));
     		repaint();
 		}
+		
+		
     }
 
 	private class Compass extends JLayeredPane
