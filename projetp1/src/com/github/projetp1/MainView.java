@@ -208,6 +208,8 @@ public class MainView extends JFrame implements KeyListener {
         		zoom--;
         }
 
+        zoomBarPanel.zoomSlider.setValue(zoom);
+        
         skymap.setZoom(zoom);
         skymap.setXOrigin(xOrigin);
         skymap.setYOrigin(yOrigin);

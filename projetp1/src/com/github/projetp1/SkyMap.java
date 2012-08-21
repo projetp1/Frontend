@@ -21,8 +21,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import com.sun.org.apache.bcel.internal.generic.LXOR;
-
 @SuppressWarnings("serial")
 public class SkyMap extends Container implements MouseListener
 {
@@ -30,6 +28,7 @@ public class SkyMap extends Container implements MouseListener
 	private double dXOrigin = 0;
 	private double dYOrigin = 0;
 	private ArrayList<CelestialObject> celestialObjects;
+	private DataBase db = null;
 	MainView mainView = null;
 
 	/**
@@ -51,8 +50,8 @@ public class SkyMap extends Container implements MouseListener
 		this.setBackground(l_BackgroundColor);
 		try
 		{
-			DataBase db = new DataBase(_sDataBase, _sDelimiter);
-			celestialObjects = db.starsForCoordinates(Calendar.getInstance(), 47.039448, 6.799734);
+			db = new DataBase(_sDataBase, _sDelimiter);
+			celestialObjects = db.starsForCoordinates(Calendar.getInstance(), 46.99943, 6.93852);
 		}
 		catch (Exception ex)
 		{
@@ -62,13 +61,12 @@ public class SkyMap extends Container implements MouseListener
 
 	public void mousePressed(MouseEvent e)
 	{
-
 		int l_scale = (int) (this.getHeight() / 2);
 		int l_xCenter = this.getWidth() / 2 - (int) (dXOrigin * l_scale * zoom);
 		int l_yCenter = this.getHeight() / 2 + (int) (dYOrigin * l_scale * zoom);
-		double l_dLastDelta = 10;
+		double l_dLastDelta = 10; //big value for be sure that will be changed
 		double l_dXPressed = (double) (e.getX() - l_xCenter) / zoom / l_scale;
-		double l_dYPressed = (double) (e.getY() - l_yCenter) / zoom / l_scale * -1;
+		double l_dYPressed = (double) ((e.getY() - l_yCenter) / zoom / l_scale) * -1;
 		CelestialObject l_nearestCelestialObject = null;
 
 		for (CelestialObject celestialObject : celestialObjects)
@@ -83,6 +81,7 @@ public class SkyMap extends Container implements MouseListener
 				l_nearestCelestialObject = celestialObject;
 			}
 		}
+		
 		mainView.updateInfo(l_nearestCelestialObject);
 	}
 
@@ -106,13 +105,11 @@ public class SkyMap extends Container implements MouseListener
 			int l_x, l_y;
 			int l_d = getSizeForMagnitude(celestialObject.getMag());
 			Color l_color = getColorForColorIndex(celestialObject.getColorIndex(), 255);
-			l_x = l_xCenter + (int) (celestialObject.getXReal() * zoom * l_scale) / 2;
-			l_y = l_yCenter - (int) (celestialObject.getYReal() * zoom * l_scale) / 2;
+			l_x = l_xCenter + (int) (celestialObject.getXReal() * zoom * l_scale);
+			l_y = l_yCenter - (int) (celestialObject.getYReal() * zoom * l_scale);
 			g.setColor(l_color);
 			String l_name = celestialObject.getProperName();
-
-			if (l_name != null)
-				g.drawString(l_name, l_x, l_y - 10);
+			
 			if (celestialObject.getMag() < -20)
 			{
 				Image l_imgSun = getToolkit().getImage("res/sun.png");
@@ -132,65 +129,89 @@ public class SkyMap extends Container implements MouseListener
 				g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
 			}
 
+
+			if (l_name != null)
+				g.drawString(l_name, l_x, l_y - 10);
 			sun = celestialObject;
 		}
 
-		g.setColor(Color.red);
-		g.fillOval(this.getWidth() / 2 - 15, this.getHeight() / 2 - 15, 30, 30);
-		
-		Image l_imgArrow = getToolkit().getImage("res/arrow.png");
-		
-		double l_dangle = -getArrowAngle(sun);
-		Graphics2D g2 = (Graphics2D) g;
-		g2.rotate(l_dangle, this.getWidth() / 2,this.getHeight() / 2);
-		/*g2.drawImage(
-				l_imgArrow, 
-				(int)(this.getWidth() / 2 + Math.cos(l_dangle)*200 + Math.sin(l_dangle) * (l_imgArrow.getHeight(null) / 2)),
-				(int)(this.getHeight() / 2 - Math.sin(l_dangle)*200 - Math.cos(l_dangle) * (l_imgArrow.getHeight(null) / 2)), 
-				null);*/
-		g2.drawImage(
-				l_imgArrow, 
-				(int)(this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2),
-				(int)(this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), 
+		Image l_imgCenter = getToolkit().getImage("res/center.png");
+		g.drawImage(
+				l_imgCenter, 
+				(int)(this.getWidth() / 2 - l_imgCenter.getWidth(null) / 2),
+				(int)(this.getHeight() / 2 - l_imgCenter.getHeight(null) / 2), 
 				null);
+		
+		
+		
+		int l_xStarPointed = l_xCenter + (int) (sun.getXReal() * zoom * l_scale);
+		int l_yStarPointed =  l_yCenter - (int) (sun.getYReal() * zoom * l_scale);
+		
+		if(l_xStarPointed > 0 && l_xStarPointed < this.getWidth() && l_yStarPointed > 0 && l_yStarPointed < this.getHeight())
+		{
+			Image l_imgStarHighlight = getToolkit().getImage("res/star_highlight.png");
+			g.drawImage(
+					l_imgStarHighlight, 
+					l_xCenter + (int) (sun.getXReal() * zoom * l_scale) - l_imgStarHighlight.getWidth(null) / 2,
+					 l_yCenter - (int) (sun.getYReal() * zoom * l_scale)- l_imgStarHighlight.getHeight(null) / 2, 
+					null);
+		}
+		else
+		{
+			Image l_imgArrow = getToolkit().getImage("res/arrow.png");
+			double l_dAngle = -getArrowAngle(sun);
+			Graphics2D g2 = (Graphics2D) g;
+			g2.rotate(l_dAngle, this.getWidth() / 2,this.getHeight() / 2);
+			g2.drawImage(
+					l_imgArrow, 
+					(int)(this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2),
+					(int)(this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), 
+					null);
+		}
+		
 	}
-
+	
+	/**
+	 * Returns the angle between the PIC and the star selected.
+	 * And send the code of the arrow who's displayed on the PIC. 
+	 * 0 is for the arrow that point the top and each incrementation correspond to 45° in trigonometric sense.
+	 * 
+	 * @param _object
+	 *            : The star object
+	 * @return The angle
+	 */
 	private double getArrowAngle(CelestialObject _object)
 	{
-		/**
-		 * System.out.print("orign x : " + dXOrigin + ", obj x : " + _object.getXReal());
-		 * System.out.print("orign y : " + dYOrigin + ", obj y : " + _object.getYReal());
-		 */
-
-		double l_dangle = Math.atan((_object.getYReal() - dYOrigin) / (_object.getXReal() - dXOrigin));
+		double l_dAngle = Math.atan((_object.getYReal() - dYOrigin) / (_object.getXReal() - dXOrigin));
 		
 		if (dXOrigin > _object.getXReal()) 
-			l_dangle += Math.PI;
+			l_dAngle += Math.PI;
 
+		//mainView.getPic().sendArrow;
 		
 		//System.out.print("angle : " + Math.toDegrees(l_dangle) + "\r\n");
 		
 		/*if(mainView.getPic().getMode() == Pic.PicMode.GUIDING)
 		{
-			if(l_dangle > 67.5 && l_dangle <= 112.5)
-				mainView.getPic().sendArrow;
-			else if(l_dangle > 112.5 && l_dangle <= 157.5)
-				1;
-			else if(l_dangle > 157.5 && l_dangle <= 202.5)
-				2;
-			else if(l_dangle > 202.5 && l_dangle <= 247.5)
-				3;
-			else if(l_dangle > 247.5 && l_dangle <= 292.5)
-				4;
-			else if(l_dangle > 292.5 && l_dangle <= 337.5)
-				5;
-			else if(l_dangle > 337.5 && l_dangle <= 22.5)
-				6;
+			if(l_dAngle > 67.5 && l_dAngle <= 112.5)
+				return 0;
+			else if(l_dAngle > 112.5 && l_dAngle <= 157.5)
+				return 1;
+			else if(l_dAngle > 157.5 && l_dAngle <= 202.5)
+				return 2;
+			else if(l_dAngle > 202.5 && l_dAngle <= 247.5)
+				return 3;
+			else if(l_dAngle > 247.5 && l_dAngle <= 292.5)
+				return 4;
+			else if(l_dAngle > 292.5 && l_dAngle <= 337.5)
+				return 5;
+			else if(l_dAngle > 337.5 && l_dAngle <= 22.5)
+				return 6;
 			else
-				7;
-		}
-		*/
-		return l_dangle;
+				return 7;
+		}*/
+		
+		return l_dAngle;
 	}
 
 	/**
@@ -203,25 +224,25 @@ public class SkyMap extends Container implements MouseListener
 	 */
 	private int getSizeForMagnitude(double _mag)
 	{
-		int size = 0;
+		int l_size = 0;
 		if (_mag >= 6.0)
-			size = 0;
+			l_size = 0;
 		else if (_mag >= 5.3)
-			size = 1;
+			l_size = 1;
 		else if (_mag >= 4.0)
-			size = 2;
+			l_size = 2;
 		else if (_mag >= 2.7)
-			size = 3;
+			l_size = 3;
 		else if (_mag >= 1.4)
-			size = 4;
+			l_size = 4;
 		else if (_mag >= 0.1)
-			size = 5;
+			l_size = 5;
 		else if (_mag >= -1.2)
-			size = 6;
+			l_size = 6;
 		else
-			size = 7;
+			l_size = 7;
 
-		return size;
+		return l_size;
 	}
 
 	/**
@@ -266,19 +287,11 @@ public class SkyMap extends Container implements MouseListener
 		this.dYOrigin = _yOrigin;
 	}
 
-	public void mouseClicked(MouseEvent _arg0)
-	{
-	}
+	public void mouseClicked(MouseEvent _arg0) {}
 
-	public void mouseEntered(MouseEvent _arg0)
-	{
-	}
+	public void mouseEntered(MouseEvent _arg0) {}
 
-	public void mouseExited(MouseEvent _arg0)
-	{
-	}
+	public void mouseExited(MouseEvent _arg0) {}
 
-	public void mouseReleased(MouseEvent _arg0)
-	{
-	}
+	public void mouseReleased(MouseEvent _arg0) {}
 }
