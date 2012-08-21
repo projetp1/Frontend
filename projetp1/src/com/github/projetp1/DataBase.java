@@ -39,22 +39,50 @@ public class DataBase
 	 * Constructor
 	 * @param _sDataBase : It's the name of the database that will use
 	 * @param _sDelimiter : It's the delimiter of the string of the searchbar
-	 * @throws SQLException,Exception
+	 * @throws SQLException,ClassNotFoundException
 	 */
-	public DataBase(String _sDataBase,String _sDelimiter) throws SQLException, Exception
+	public DataBase(String _sDataBase,String _sDelimiter) throws SQLException,ClassNotFoundException
 	{
-		Class.forName("org.sqlite.JDBC");//Load the drivers for SQLite
-		this.argumentCount = 0;
-		this.sDataBase = _sDataBase;
-		this.sDelimiter = _sDelimiter;
-		this.connection = createConnection();
-		this.statement = createStatement();
-		this.sTable = "stars";
+		try
+		{
+			Class.forName("org.sqlite.JDBC");//Load the drivers for SQLite
+			this.argumentCount = 0;
+			this.sDataBase = _sDataBase;
+			this.sDelimiter = _sDelimiter;
+			this.sTable = "stars";
+		}
+		catch(ClassNotFoundException e)
+		{
+			System.err.println("Can't load the SQLite's drivers !");
+			System.exit(1);
+		}
+		
+		try
+		{
+			openConnection();
+		}
+		catch(SQLException e)
+		{
+			System.err.println("Impossible to open a connection !");
+			System.exit(1);
+		}
+		
+		try
+		{
+			this.statement = createStatement();
+		}
+		catch(SQLException e)
+		{
+			System.err.println("Impossible to execute SQL queries !");
+			System.exit(1);
+		}
+		
 	}
 	
 	/** 
 	 * closeConnection
 	 *  You can close the connection of a connection object
+	 *  @throws SQLException
 	 */
 	public void closeConnection() throws SQLException
 	{
@@ -64,6 +92,7 @@ public class DataBase
 	/** 
 	 * OpenConnection
 	 * You can open the connection of a connection object. After that, you can do everything in the database
+	 * @throws SQLException
 	 */
 	public void openConnection() throws SQLException
 	{
@@ -73,6 +102,7 @@ public class DataBase
 	/** 
 	 * createConnection
 	 * After open a connection, you have to load the database and create a connection to this
+	 * @throws SQLException
 	 *@return return a Connection object that has loaded the database
 	 */
 	private Connection createConnection() throws SQLException
@@ -83,11 +113,12 @@ public class DataBase
 	/** 
 	 * createStatement
 	 * When you have create a connection, load the database you can now do sql queries
+	 * @throws SQLException
 	 * @return : return a Statement object that will be use for queries
 	 */
 	private Statement createStatement() throws SQLException
 	{
-		return connection.createStatement();
+		return this.connection.createStatement();
 	}
 
 	/** 
@@ -234,31 +265,41 @@ public class DataBase
 	private ResultSet selectQuery(String _sFields[],String _sTable[],String _sWhere[][],String _sOrderBy[],int _Limit[],boolean _bsecured) throws SQLException
 	{
 		String l_sQuery;
-		
-		//Create the entire query with all the function
-		l_sQuery = "SELECT ";
-		l_sQuery += addFieldsQuery(_sFields);//Obligatory string for the query
-		l_sQuery += addTableQuery(_sTable);//Obligatory string for the query
-		if(_sWhere.length > 0)
-			l_sQuery += addWhereQuery(_sWhere,_bsecured);
-		if(_sOrderBy.length > 0)
-			l_sQuery += addOrderByQuery(_sOrderBy);
-		if(_Limit.length > 0)
-			l_sQuery += addLimitQuery(_Limit);
-		l_sQuery += ";";
-		
-		//If we want to have a prepare statement, we have to replace all value by the real value in s_Where[][]
-		if(_bsecured)
-		{
-			PreparedStatement pStatement = this.connection.prepareStatement(l_sQuery);
-			for(int i = 0;i<this.argumentCount;i++)
-				pStatement.setString(i+1, _sWhere[i][2]);
+		try
+		{	
+			//Create the entire query with all the function
+			l_sQuery = "SELECT ";
+			l_sQuery += addFieldsQuery(_sFields);//Obligatory string for the query
+			l_sQuery += addTableQuery(_sTable);//Obligatory string for the query
+			if(_sWhere.length > 0)
+				l_sQuery += addWhereQuery(_sWhere,_bsecured);
+			if(_sOrderBy.length > 0)
+				l_sQuery += addOrderByQuery(_sOrderBy);
+			if(_Limit.length > 0)
+				l_sQuery += addLimitQuery(_Limit);
+			l_sQuery += ";";
 			
-			this.argumentCount=0;
-			return pStatement.executeQuery();
+			//If we want to have a prepare statement, we have to replace all value by the real value in s_Where[][]
+			if(_bsecured)
+			{
+				PreparedStatement pStatement = this.connection.prepareStatement(l_sQuery);
+				for(int i = 0;i<this.argumentCount;i++)
+					pStatement.setString(i+1, _sWhere[i][2]);
+				
+				this.argumentCount=0;
+				return pStatement.executeQuery();
+			}
+			else
+				return this.statement.executeQuery(l_sQuery);
 		}
-		else
+		catch(SQLException e)
+		{
+			System.err.println("Error in the query !");
+			this.statement.close();
+			
+			l_sQuery = "SELECT * from " + this.sTable + " WHERE id=0"; //Return an empty Result
 			return this.statement.executeQuery(l_sQuery);
+		}
 	}
 	
 	/**
@@ -298,7 +339,8 @@ public class DataBase
 			{
 				l_sValue = l_sTemp.substring(l_sTemp.indexOf(' '),l_sTemp.length()-2);
 				l_sUnit = l_sTemp.substring(l_sTemp.length()-2, l_sTemp.length());
-				if(l_sUnit.matches("(km)$")){//Convert the km to year light
+				if(l_sUnit.matches("(km)$"))//Convert the km to year light
+				{
 					double l_dAnneeLumiere = Double.parseDouble(l_sValue)/kdAL_KM;
 					l_sValue = String.valueOf(l_dAnneeLumiere);
 				}
@@ -311,7 +353,7 @@ public class DataBase
 		return hs_Out;
 	}
 	
-
+	
 	/** 
 	 * starsForCoordinates
 	 * Search all the stars that could be in the hemisphere
@@ -348,8 +390,16 @@ public class DataBase
 		
 		boolean secured = false;
 		
-		if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
-			return null;
+		try
+		{
+			if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
+				throw new IllegalArgumentException("Error : Illegal latitude/longitude. Please check the coordinates !");
+		}
+		catch(IllegalArgumentException e)
+		{
+			System.err.println(e.getMessage());
+			_dLat = _dLon = 0;
+		}
 		
 		String[] field = {"*"};
 		String[] table = {this.sTable};
@@ -361,65 +411,68 @@ public class DataBase
 		//Injection SQL
 		//String where[][] = {{"id","=","'UNION SELECT * FROM stars WHERE id = 1 ;--"},
 		//		{"ProperName","LIKE","A%"}};
-
 		ResultSet result = selectQuery(field,table,where,orderby,limit,secured);
 		
-		if(result == null)
-			return null;
-
-		Mathematics l_calc = new Mathematics(_date,_dLat, _dLon);
-		
-		while (result.next()) 
-	    {
-	    	l_id = result.getInt("id");
-	    	//l_StarId = result.getInt("StarID");
-			l_HIP = result.getInt("HIP");
-			l_HD = result.getInt("HD");
-			l_HR = result.getInt("HR");
-			//l_Gliese = result.getInt("Gliese");
-			//l_BayerFlamsteed = result.getInt("BayerFlamsteed");
-			l_ProperName = result.getString("ProperName");
-			l_dRA = result.getDouble("RA");
-			l_Dec = result.getDouble("Dec");
-			l_dDistance = result.getDouble("Distance");
-			//l_dPMRA = result.getDouble("PMRA");
-			//l_dPMDec = result.getDouble("PMDec");
-			//l_dRV = result.getDouble("RV");
-			l_dMag = result.getDouble("Mag");
-			//l_dAbsMag = result.getDouble("AbsMag");
-			//l_sSpectrum = result.getString("Spectrum");
-			l_dColorIndex = result.getDouble("ColorIndex");
-			//l_dXYZ[0] = result.getDouble("VX");
-			//l_dXYZ[1] = result.getDouble("VY");
-			//l_dXYZ[2] = result.getDouble("VZ");
-			//l_dVXYZ[0] = result.getDouble("VX");
-			//l_dVXYZ[1] = result.getDouble("VY");
-			//l_dVXYZ[2] = result.getDouble("VZ");
+		try
+		{
+			Mathematics l_calc = new Mathematics(_date,_dLat, _dLon);
 			
-	    	//CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
-			CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
-	    	
-			if(l_id == 1)
-			{
-				l_calc.calculatePositionSun();
-				l_star.setdDec(l_calc.getDeclination());
-				l_star.setdRA(l_calc.getAscension());
+			while (result.next()) 
+		    {
+		    	l_id = result.getInt("id");
+		    	//l_StarId = result.getInt("StarID");
+				l_HIP = result.getInt("HIP");
+				l_HD = result.getInt("HD");
+				l_HR = result.getInt("HR");
+				//l_Gliese = result.getInt("Gliese");
+				//l_BayerFlamsteed = result.getInt("BayerFlamsteed");
+				l_ProperName = result.getString("ProperName");
+				l_dRA = result.getDouble("RA");
+				l_Dec = result.getDouble("Dec");
+				l_dDistance = result.getDouble("Distance");
+				//l_dPMRA = result.getDouble("PMRA");
+				//l_dPMDec = result.getDouble("PMDec");
+				//l_dRV = result.getDouble("RV");
+				l_dMag = result.getDouble("Mag");
+				//l_dAbsMag = result.getDouble("AbsMag");
+				//l_sSpectrum = result.getString("Spectrum");
+				l_dColorIndex = result.getDouble("ColorIndex");
+				//l_dXYZ[0] = result.getDouble("VX");
+				//l_dXYZ[1] = result.getDouble("VY");
+				//l_dXYZ[2] = result.getDouble("VZ");
+				//l_dVXYZ[0] = result.getDouble("VX");
+				//l_dVXYZ[1] = result.getDouble("VY");
+				//l_dVXYZ[2] = result.getDouble("VZ");
+				
+		    	//CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
+				CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
+		    	
+				if(l_id == 1)
+				{
+					l_calc.calculatePositionSun();
+					l_star.setdDec(l_calc.getDeclination());
+					l_star.setdRA(l_calc.getAscension());
+				}
+				else
+					l_calc.calculateAll(l_star.getDec(),l_star.getRA());
+				
+		    	if(l_calc.getHeight() >= 0)
+		    	{
+			    	l_star.setXReal(l_calc.getX());
+			    	l_star.setYReal(l_calc.getY());
+			    	al_stars.add(l_star);
+		    	}
+		    	
+		    	l_star = null;
 			}
-			else
-				l_calc.calculateAll(l_star.getDec(),l_star.getRA());
-			
-	    	if(l_calc.getHeight() >= 0)
-	    	{
-		    	l_star.setXReal(l_calc.getX());
-		    	l_star.setYReal(l_calc.getY());
-		    	al_stars.add(l_star);
-	    	}
-	    	
-	    	l_star = null;
 		}
-		result.close();
+		catch(SQLException e)
+		{
+			System.err.println("Problem with the query's result !");
+		}
 		
-		return al_stars;		
+		result.close();
+		return al_stars;
 	}
 	
 	/**
@@ -481,64 +534,78 @@ public class DataBase
 		}
 	
 		ResultSet result = selectQuery(field,table,where,orderby,limit,secured);
-		
-		if(result == null)
-			return null;
 	    
+		try
+		{
+			if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
+				throw new IllegalArgumentException("Error : Illegal latitude/longitude. Please check the coordinates !");
+		}
+		catch(IllegalArgumentException e)
+		{
+			System.err.println(e.getMessage());
+			_dLat = _dLon = 0;
+		}
+		
 		Mathematics l_calc = new Mathematics(_date,_dLat, _dLon);
 		
-		while (result.next()) 
-	    {
-	    	l_id = result.getInt("id");
-	    	//l_StarId = result.getInt("StarID");
-			l_HIP = result.getInt("HIP");
-			l_HD = result.getInt("HD");
-			l_HR = result.getInt("HR");
-			//l_Gliese = result.getInt("Gliese");
-			//l_BayerFlamsteed = result.getInt("BayerFlamsteed");
-			l_ProperName = result.getString("ProperName");
-			l_dRA = result.getDouble("RA");
-			l_Dec = result.getDouble("Dec");
-			l_dDistance = result.getDouble("Distance");
-			//l_dPMRA = result.getDouble("PMRA");
-			//l_dPMDec = result.getDouble("PMDec");
-			//l_dRV = result.getDouble("RV");
-			l_dMag = result.getDouble("Mag");
-			//l_dAbsMag = result.getDouble("AbsMag");
-			//l_sSpectrum = result.getString("Spectrum");
-			l_dColorIndex = result.getDouble("ColorIndex");
-			//l_dXYZ[0] = result.getDouble("VX");
-			//l_dXYZ[1] = result.getDouble("VY");
-			//l_dXYZ[2] = result.getDouble("VZ");
-			//l_dVXYZ[0] = result.getDouble("VX");
-			//l_dVXYZ[1] = result.getDouble("VY");
-			//l_dVXYZ[2] = result.getDouble("VZ");
-
-			
-	    	//CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
-	    	
-			CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
-			
-			if(l_id == 1)
-			{
-				l_calc.calculatePositionSun();
-				l_star.setdDec(l_calc.getDeclination());
-				l_star.setdRA(l_calc.getAscension());
+		try
+		{
+			while (result.next()) 
+		    {
+		    	l_id = result.getInt("id");
+		    	//l_StarId = result.getInt("StarID");
+				l_HIP = result.getInt("HIP");
+				l_HD = result.getInt("HD");
+				l_HR = result.getInt("HR");
+				//l_Gliese = result.getInt("Gliese");
+				//l_BayerFlamsteed = result.getInt("BayerFlamsteed");
+				l_ProperName = result.getString("ProperName");
+				l_dRA = result.getDouble("RA");
+				l_Dec = result.getDouble("Dec");
+				l_dDistance = result.getDouble("Distance");
+				//l_dPMRA = result.getDouble("PMRA");
+				//l_dPMDec = result.getDouble("PMDec");
+				//l_dRV = result.getDouble("RV");
+				l_dMag = result.getDouble("Mag");
+				//l_dAbsMag = result.getDouble("AbsMag");
+				//l_sSpectrum = result.getString("Spectrum");
+				l_dColorIndex = result.getDouble("ColorIndex");
+				//l_dXYZ[0] = result.getDouble("VX");
+				//l_dXYZ[1] = result.getDouble("VY");
+				//l_dXYZ[2] = result.getDouble("VZ");
+				//l_dVXYZ[0] = result.getDouble("VX");
+				//l_dVXYZ[1] = result.getDouble("VY");
+				//l_dVXYZ[2] = result.getDouble("VZ");
+	
+				
+		    	//CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
+		    	
+				CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
+				
+				if(l_id == 1)
+				{
+					l_calc.calculatePositionSun();
+					l_star.setdDec(l_calc.getDeclination());
+					l_star.setdRA(l_calc.getAscension());
+				}
+				else
+					l_calc.calculateAll(l_star.getDec(),l_star.getRA());
+	
+		    	if(l_calc.getHeight() > 0)
+		    	{
+			    	l_star.setXReal(l_calc.getX());
+			    	l_star.setYReal(l_calc.getY());
+			    	al_stars.add(l_star);
+		    	}
+		    	
+		    	l_star = null;
 			}
-			else
-				l_calc.calculateAll(l_star.getDec(),l_star.getRA());
-
-	    	if(l_calc.getHeight() > 0)
-	    	{
-		    	l_star.setXReal(l_calc.getX());
-		    	l_star.setYReal(l_calc.getY());
-		    	al_stars.add(l_star);
-	    	}
-	    	
-	    	l_star = null;
+		}
+		catch(SQLException e)
+		{
+			System.err.println("Problem with the query's result !");
 		}
 		result.close();
-		
 		return al_stars;		
 	}
 }
