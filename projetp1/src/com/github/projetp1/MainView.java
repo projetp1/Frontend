@@ -3,8 +3,6 @@
  */
 package com.github.projetp1;
 
-import com.github.projetp1.ListModel;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,9 +10,7 @@ import java.util.Calendar;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import com.github.projetp1.Observateur;
 import com.github.projetp1.rs232.RS232.PicArrowDirection;
-
 import com.sun.servicetag.SystemEnvironment;
 
 import java.awt.*;
@@ -99,7 +95,6 @@ public class MainView extends JFrame implements KeyListener {
 		      
 	public MainView() {
 
-		pic = new Pic(this);
 		this.addKeyListener(this);
 		name = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
 		name.setBounds(100, 100, 100, 200);
@@ -172,11 +167,11 @@ public class MainView extends JFrame implements KeyListener {
         });
 		
 		repaint();
-		
-			//pic.setPicArrow(PicArrowDirection.EAST);
+
+		pic = new Pic(this);
 			pic.addObservateur(new Observateur(){
 				public void update() {
-					System.out.println("olol");
+					pic.setPicArrow(PicArrowDirection.EAST);
 					skymap.updateSkyMap();
 				}
 			});

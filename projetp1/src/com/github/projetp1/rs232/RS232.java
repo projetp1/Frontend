@@ -224,10 +224,7 @@ public class RS232 implements SerialPortEventListener
 	 * @throws SerialPortException 
 	 */
 	public void sendArrowToPic(PicArrowDirection _dir) throws SerialPortException
-	{
-		
-		System.out.print("hello, this is the direction : --> " + _dir);
-		
+	{	
 		this.sendFrame(RS232CommandType.CHANGE_TO_ARROW_MODE, String.valueOf(_dir.number));
 	}
 
