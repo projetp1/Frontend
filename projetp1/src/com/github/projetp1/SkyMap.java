@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 public class SkyMap extends Container implements MouseListener
@@ -31,6 +32,7 @@ public class SkyMap extends Container implements MouseListener
 	private CelestialObject celestialObjectPointed = null;
 	private DataBase db = null;
 	MainView mainView = null;
+	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 
 	/**
 	 * SkyMap Constructor
@@ -201,7 +203,7 @@ public class SkyMap extends Container implements MouseListener
 
 		//mainView.getPic().sendArrow;
 		
-		//System.out.print("angle : " + Math.toDegrees(l_dangle) + "\r\n");
+		//log.info("angle : " + Math.toDegrees(l_dangle) + "\r\n");
 		/*
 		if(mainView.getPic().getMode() == Pic.PicMode.GUIDING)
 		{
