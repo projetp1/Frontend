@@ -107,7 +107,7 @@ public class SkyMap extends Container implements MouseListener
 
 	public void paint(Graphics g)
 	{
-		CelestialObject sun = null;
+		CelestialObject fuckyeah = null;
 
 		int l_scale = (int)(this.getHeight() / 2);
 		int l_xCenter = this.getWidth() / 2 - (int)(dXOrigin * l_scale * zoom);
@@ -122,11 +122,16 @@ public class SkyMap extends Container implements MouseListener
 			g.setColor(l_color);
 			String l_name = celestialObject.getProperName();
 			
-			if (celestialObject.getMag() < -20)
+			if (l_name != null && l_name.equals("Sun"))
 			{
 				Image l_imgSun = getToolkit().getImage("res/sun.png");
 				g.drawImage(l_imgSun, l_x - (l_imgSun.getHeight(null) / 2), l_y - (l_imgSun.getHeight(null) / 2), null);
-				sun = celestialObject;
+				fuckyeah = celestialObject;
+			}
+			else if (l_name != null && l_name.equals("Moon"))
+			{
+				Image l_imgMoon = getToolkit().getImage("res/moon_3.png");
+				g.drawImage(l_imgMoon, l_x - (l_imgMoon.getHeight(null) / 2), l_y - (l_imgMoon.getHeight(null) / 2), null);				
 			}
 			else
 			{
@@ -144,7 +149,9 @@ public class SkyMap extends Container implements MouseListener
 
 			if (l_name != null)
 				g.drawString(l_name, l_x, l_y - 10);
-			sun = celestialObject;
+			
+			if(fuckyeah == null)
+				fuckyeah = celestialObject;
 		}
 
 		Image l_imgCenter = getToolkit().getImage("res/center.png");
@@ -156,22 +163,21 @@ public class SkyMap extends Container implements MouseListener
 		
 		
 		
-		int l_xStarPointed = l_xCenter + (int) (sun.getXReal() * zoom * l_scale);
-		int l_yStarPointed =  l_yCenter - (int) (sun.getYReal() * zoom * l_scale);
+		int l_xStarPointed = l_xCenter + (int) (fuckyeah.getXReal() * zoom * l_scale);
+		int l_yStarPointed =  l_yCenter - (int) (fuckyeah.getYReal() * zoom * l_scale);
 		
-		if(l_xStarPointed > 0 && l_xStarPointed < this.getWidth() && l_yStarPointed > 0 && l_yStarPointed < this.getHeight())
-		{
-			Image l_imgStarHighlight = getToolkit().getImage("res/star_highlight.png");
-			g.drawImage(
-					l_imgStarHighlight, 
-					l_xCenter + (int) (sun.getXReal() * zoom * l_scale) - l_imgStarHighlight.getWidth(null) / 2,
-					 l_yCenter - (int) (sun.getYReal() * zoom * l_scale)- l_imgStarHighlight.getHeight(null) / 2, 
-					null);
-		}
-		else
+		
+		Image l_imgStarHighlight = getToolkit().getImage("res/star_highlight.png");
+		g.drawImage(
+				l_imgStarHighlight, 
+				l_xCenter + (int) (fuckyeah.getXReal() * zoom * l_scale) - l_imgStarHighlight.getWidth(null) / 2,
+				 l_yCenter - (int) (fuckyeah.getYReal() * zoom * l_scale)- l_imgStarHighlight.getHeight(null) / 2, 
+				null);
+		
+		if(!(l_xStarPointed >  this.getWidth() * 0.1 && l_xStarPointed < this.getWidth() * 0.9 && l_yStarPointed > this.getHeight() * 0.1 && l_yStarPointed < this.getHeight() * 0.9))
 		{
 			Image l_imgArrow = getToolkit().getImage("res/arrow.png");
-			double l_dAngle = -getArrowAngle(sun);
+			double l_dAngle = -getArrowAngle(fuckyeah);
 			Graphics2D g2 = (Graphics2D) g;
 			g2.rotate(l_dAngle, this.getWidth() / 2,this.getHeight() / 2);
 			g2.drawImage(
@@ -202,25 +208,25 @@ public class SkyMap extends Container implements MouseListener
 		//mainView.getPic().sendArrow;
 		
 		//System.out.print("angle : " + Math.toDegrees(l_dangle) + "\r\n");
-		
-		/*if(mainView.getPic().getMode() == Pic.PicMode.GUIDING)
+		/*
+		if(mainView.getPic().getMode() == Pic.PicMode.GUIDING)
 		{
 			if(l_dAngle > 67.5 && l_dAngle <= 112.5)
-				return 0;
+				RS232.PicArrowDirection.NORTH;
 			else if(l_dAngle > 112.5 && l_dAngle <= 157.5)
-				return 1;
+				RS232.PicArrowDirection.NORTHWEST;
 			else if(l_dAngle > 157.5 && l_dAngle <= 202.5)
-				return 2;
+				RS232.PicArrowDirection.WEST;
 			else if(l_dAngle > 202.5 && l_dAngle <= 247.5)
-				return 3;
+				RS232.PicArrowDirection.SOUTHWEST;
 			else if(l_dAngle > 247.5 && l_dAngle <= 292.5)
-				return 4;
+				RS232.PicArrowDirection.SOUTH;
 			else if(l_dAngle > 292.5 && l_dAngle <= 337.5)
-				return 5;
+				RS232.PicArrowDirection.SOUTHEAST;
 			else if(l_dAngle > 337.5 && l_dAngle <= 22.5)
-				return 6;
+				RS232.PicArrowDirection.EAST;
 			else
-				return 7;
+				RS232.PicArrowDirection.NORTHEAST;
 		}*/
 		
 		return l_dAngle;

@@ -3,8 +3,6 @@
  */
 package com.github.projetp1;
 
-import com.github.projetp1.ListModel;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,6 +10,7 @@ import java.util.Calendar;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import com.github.projetp1.rs232.RS232.PicArrowDirection;
 import com.sun.servicetag.SystemEnvironment;
 
 import java.awt.*;
@@ -108,7 +107,7 @@ public class MainView extends JFrame implements KeyListener {
   }
 		      
 	public MainView() {
-		
+
 		this.addKeyListener(this);
 		name = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
 		name.setBounds(100, 100, 100, 200);
@@ -158,7 +157,7 @@ public class MainView extends JFrame implements KeyListener {
 		getLayeredPane().add(inclinometerPanel);
 		getLayeredPane().add(skymap);
 
-        this.setMinimumSize(new java.awt.Dimension(680, 420));
+        this.setMinimumSize(new java.awt.Dimension(800, 600));
 		
 		this.setVisible(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
@@ -179,7 +178,13 @@ public class MainView extends JFrame implements KeyListener {
         });
 		
 		repaint();
+
 		pic = new Pic(this);
+			pic.addObservateur(new Observateur(){
+				public void update() {
+					skymap.updateSkyMap();
+				}
+			});
 	}
 	
 
@@ -257,8 +262,6 @@ public class MainView extends JFrame implements KeyListener {
 				"<br /><br />Couleur<br />" +
 				_object.getColorIndex() +
 				"</html>");
-		
-	//	System.out.println("MainView.updateInfo()");
 	}
 	
 	public ArrayList<CelestialObject> searchForTextInSearchField() {
@@ -542,7 +545,7 @@ public class MainView extends JFrame implements KeyListener {
     	private void MouseClicked(java.awt.event.MouseEvent evt) {
     		if (evt.getY() > backgroundTop.getHeight()+25 && evt.getY() < backgroundTop.getHeight()+InternalTop.getHeight()+25)
     		{
-    			System.out.print("1\n");
+    			
     		}
     	}
     		private void	jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
@@ -558,7 +561,6 @@ public class MainView extends JFrame implements KeyListener {
     		settings.setInputDelimiter(comboBoxList[7].getSelectedItem().toString());
     		settings.setSimulation((comboBoxList[8].getSelectedItem().toString().equals("ON"))?true:false);
     		Serializer.serialize("settings.conf",settings);
-    		System.out.println("SETTINGS");
     		
     	}
 		public void setScale(double _scale)
@@ -741,24 +743,33 @@ public class MainView extends JFrame implements KeyListener {
     {
     	double scale;
     	int hig;
-    	JTextField jtextField;
-    	JList jList1;
-    	ListModel list;
-    	ListModel list2;
-    	String[] Keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex "};
+    	JTextField searchBarTextField;
+    	JList listNameOrID;
+    	ListModel listModelNameOrID;
+    	ListModel listModelObjects;
+    	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex "};
     	JScrollPane jScrollPane = new JScrollPane();
     	DataBase db;
-    	ArrayList<CelestialObject> listCelestialObject;
+    	ArrayList<CelestialObject> listCelestialObject = new ArrayList<CelestialObject>();
 
     	
     	public SearchBar(double _scale)
     	{
+     		try
+			{
+				db = new DataBase("hyg.db", ";");
+			}
+     		catch(Exception ex)
+			{
+				ex.printStackTrace();
+			}
+     		
     		scale = _scale;
     		hig = (int)(300*scale);
     		this.setBounds(0, 0, (int)(width()/2), hig);
-    		jtextField = new JTextField();
-    		jtextField.setBounds(0, 0, (int)(width()/2), hig);
-    		jtextField.addKeyListener(new java.awt.event.KeyAdapter() {
+    		searchBarTextField = new JTextField();
+    		searchBarTextField.setBounds(0, 0, (int)(width()/2), hig);
+    		searchBarTextField.addKeyListener(new java.awt.event.KeyAdapter() {
     			public void keyReleased(java.awt.event.KeyEvent evt) {
                     try
 					{
@@ -771,26 +782,23 @@ public class MainView extends JFrame implements KeyListener {
 					}
                 }
             });
-
-    	
     		
-    		
-    		list = new ListModel();
-    		list2 = new ListModel();
-    		jList1 = new JList();
-    		jList1.setModel(list);
-    		jList1.setBounds(0, 0, 300, 400);
+    		listModelNameOrID = new ListModel();
+    		listModelObjects = new ListModel();
+    		listNameOrID = new JList();
+    		listNameOrID.setModel(listModelNameOrID);
+    		listNameOrID.setBounds(0, 0, 300, 400);
     		jScrollPane.setFocusable(false);
-    		jList1.setFocusable(false);
-    		jScrollPane.setViewportView(jList1);
+    		listNameOrID.setFocusable(false);
+    		jScrollPane.setViewportView(listNameOrID);
     		
-    		jList1.addMouseListener(new java.awt.event.MouseAdapter() {
+    		listNameOrID.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                     MouseClicked(evt);
                 }
     		});
     		
-    		this.add(jtextField);
+    		this.add(searchBarTextField);
     		this.add(jScrollPane);
 			this.setVisible(true);
 			this.repaint();
@@ -801,64 +809,67 @@ public class MainView extends JFrame implements KeyListener {
 
     		
         	jScrollPane.setVisible(false);
-        	
-        	if(jtextField.getText().split(" ").length>1)
+        	String[] searchBarText = searchBarTextField.getText().split("[; ]");
+        	String[] searchFeatures = searchBarTextField.getText().split(";");
+    		String searchFeature = searchFeatures[searchFeatures.length - 1];
+    				
+			//System.out.print("\n>" + searchFeature + "<->" + searchFeature.split(" ").length + "\n");
+        	if(searchFeature.split(" ").length > 1)
         	{
-             	int index = jList1.getSelectedIndex();
-        		updateInfo((CelestialObject)list2.getElementAt(index));
+             	int index = listNameOrID.getSelectedIndex();
+        		updateInfo((CelestialObject)listModelObjects.getElementAt(index));
         	}
-        	jtextField.setText(jList1.getSelectedValue().toString());
-
-
+    		
+        	String regex = searchBarText[searchBarText.length - 1] + "$";
+        	searchBarTextField.setText(searchBarTextField.getText().replaceFirst(regex, listNameOrID.getSelectedValue().toString()));
     	}
-    	private void jSlider1KeyReleased(java.awt.event.KeyEvent evt) {
-    		
-    		list.removeAll();
-    		list2.removeAll();
-    		
-	     	if(jtextField.getText().equals("!"))
-	     	{
-	     		for (int i = 0; i < Keys.length; i++)
-     			{
-     				list.setElement(Keys[i]);
-     			}
-	     	}
-	     	else if(jtextField.getText().split(" ").length>1)
+    	
+    	private void jSlider1KeyReleased(java.awt.event.KeyEvent evt) 
+    	{    		
+    		listModelNameOrID.removeAll();
+    		listModelObjects.removeAll();
+    		boolean canQueryDB = true;
+    		String[] searchFeatures = searchBarTextField.getText().split(";");
+    		for (String searchFeature : searchFeatures)
+			{
+	    		for (String key : keys)
+				{
+					if(key.toLowerCase().startsWith(searchFeature.toLowerCase()))
+	     			{
+						listModelNameOrID.setElement(key);
+	     			}
+		     	}
+	    		if(searchFeature.split(" ").length <= 1)
+	    			canQueryDB = false;
+			}
+	     	if(canQueryDB)
 	     	{
 	     		try{
-		     		db = new DataBase("hyg.db", ";");
-		     		listCelestialObject = new ArrayList<CelestialObject>();
-		     		listCelestialObject = db.starsForText(jtextField.getText(), Calendar.getInstance(), 47.039448, 6.799734);
+		     		listCelestialObject = db.starsForText(searchBarTextField.getText(), Calendar.getInstance(), 47.039448, 6.799734); //TODO: get lat and lon from pic 
 
-		     		
 		     		if(listCelestialObject.size() != 0)
 		     		{	
-		     			for (int i = 0; i < listCelestialObject.size(); i++)
+		     			for (CelestialObject celestialObject : listCelestialObject)
 		     			{
-		     				System.out.println(i);
-		     				list.setElement(listCelestialObject.get(i).getId());
-		     				list2.setElement(listCelestialObject.get(i));
+		     				if(celestialObject.getProperName() != null)
+		     					listModelNameOrID.setElement(celestialObject.getProperName());
+		     				else
+		     					listModelNameOrID.setElement(celestialObject.getId());
+		     				listModelObjects.setElement(celestialObject);
 		     			}
-			     		
-
 		     		}
 		     		else
-		     			System.out.println("Aucun résultat n'a été trouvé dans la base de données");
+		     			listModelNameOrID.setElement("Aucun résultat n'a été trouvé dans la base de données");
 
-		     		db.closeConnection();
-		     			
 	     			} catch(Exception ex)
 	     			{
 	     				ex.printStackTrace();
 	     			}
-
      		}
 	     	
-	        if (list.getSize() > 0)
+	        if (listModelNameOrID.getSize() > 0)
 	        {
-	        	//System.out.print(listCelestialObject.get(0).getId());
-	           	//System.out.print(list.getElementAt(0));
-	        	int min = (list.getSize() < 5)?list.getSize()*21:(int)(200*scale);
+	        	int min = (listModelNameOrID.getSize() < 5)?listModelNameOrID.getSize()*21:(int)(200*scale);
 	        	jScrollPane.setBounds(0, 20, (int)(500*scale), min);
 	           	jScrollPane.setVisible(true);
 	           	
@@ -876,9 +887,8 @@ public class MainView extends JFrame implements KeyListener {
 		}
 		public void update()
 		{
-			
 			this.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(400*scale));
-    		jtextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
+    		searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
     		//complement.setBounds(0, hig, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(100*scale));
     		repaint();
 		}

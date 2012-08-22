@@ -7,18 +7,22 @@ package com.github.projetp1;
  * @author   alexandr.perez
  */
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
+
 
 import jssc.SerialPortException;
 
 import com.github.projetp1.rs232.*;
+import com.github.projetp1.rs232.RS232.PicArrowDirection;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Pic.
- */
-public class Pic extends Thread
+public class Pic extends Thread implements Observer
 {
+
+	private ArrayList<Observateur> listObservateur = new ArrayList<Observateur>();
+	/**
+	 * @uml.property name="longitude"
+	 */
 	private double longitude = 0.0;
 	private double latitude = 0.0;
 
@@ -32,7 +36,7 @@ public class Pic extends Thread
 	private PicMode mode = PicMode.SIMULATION;
 
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	
+
 	/**
 	 * The different modes in which the PIC may operate
 	 */
@@ -198,9 +202,19 @@ public class Pic extends Thread
 		this.mode = mode;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
+	public void setPicArrow(PicArrowDirection direction)
+	{
+		try
+		{
+			rs.sendArrowToPic(direction);
+		}
+		catch (SerialPortException ex)
+		{
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
+	}
+	
 	public void run()
 	{
 		RS232Command commande;
@@ -242,6 +256,29 @@ public class Pic extends Thread
 					log.severe("Unknown command number received");
 					break;
 			}
+			
+		updateObservateur();
 		}
+	}
+	
+	/**
+	 * Ajoute un observateur à la liste
+	 */
+	public void addObservateur(Observateur obs) {
+		this.listObservateur.add(obs);
+	}
+	/**
+	 * Retire tous les observateurs de la liste
+	 */
+	public void delObservateur() {
+		this.listObservateur = new ArrayList<Observateur>();
+	}
+	/**
+	 * Avertit les observateurs que l'observable a changé 
+	 * et invoque la méthode update de chaque observateur !
+	 */
+	public void updateObservateur() {
+		for(Observateur obs : this.listObservateur )
+			obs.update();
 	}
 }

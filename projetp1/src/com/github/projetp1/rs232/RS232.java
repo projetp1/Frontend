@@ -18,7 +18,7 @@ import jssc.*;
  * @author alexandr.perez
  * @author sebastie.vaucher
  */
-public class RS232 implements SerialPortEventListener
+public class RS232 implements SerialPortEventListener 
 {
 	/** The Settings */
 	protected Settings settings;
@@ -78,8 +78,18 @@ public class RS232 implements SerialPortEventListener
 		this.settings = _settings;
 		this.pic = _pic;
 
+		/*
+		this.pic.addObservateur(new Observateur(){
+			public void update() {
+				//QUE FAIRE DE CET ANGLE
+				System.out.print("Mainview to RS232 : OK  " + pic);
+			}
+		});*/
+		
 		// Initialisation du sp
-		String port = settings.getPort();
+		String port = null;
+		if(settings != null)
+			port = settings.getPort();
 		if (port == null || port.equals(""))
 		{
 			try
@@ -215,7 +225,7 @@ public class RS232 implements SerialPortEventListener
 	 * @throws SerialPortException 
 	 */
 	public void sendArrowToPic(PicArrowDirection _dir) throws SerialPortException
-	{
+	{	
 		this.sendFrame(RS232CommandType.CHANGE_TO_ARROW_MODE, String.valueOf(_dir.number));
 	}
 
