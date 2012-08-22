@@ -201,7 +201,7 @@ public class DataBase
 		//If secured = true, the function will prepared a prepared statement, replace all the value by "?"
 		for(int i=0;i<_sWhere.length;i++)
 		{
-			l_sOut += _sWhere[i][0] +  " " + _sWhere[i][1];
+			l_sOut += "LOWER(" + _sWhere[i][0] + ")" +  " " + _sWhere[i][1];
 			if(_bsecured)
 			{
 				l_sOut += " ? ";
@@ -310,7 +310,7 @@ public class DataBase
 	 * 				The key of the hashmap is the string word
 	 * 				The value is the number after the space
 	 */
-	private HashMap<String, String> decryptText(String _sText)
+	public HashMap<String, String> decryptText(String _sText)
 	{
 		//If the string is null or haven't a "!" return a wrong hashmap
 		if(_sText.length()==0 || _sText.charAt(0)!='!')
@@ -333,7 +333,7 @@ public class DataBase
 		{
 			l_sTemp = l_sString[i];
 			l_sKey = l_sTemp.substring(1, l_sTemp.indexOf(' '));//Key is the word string
-			
+
 			//If the string is "distance", it could have a unity 
 			if(l_sKey.matches("distance"))
 			{
@@ -347,6 +347,7 @@ public class DataBase
 			}
 			else
 				l_sValue = l_sTemp.substring(l_sTemp.indexOf(' '),l_sTemp.length());
+
 			hs_Out.put(l_sKey, l_sValue);
 		}
 		
