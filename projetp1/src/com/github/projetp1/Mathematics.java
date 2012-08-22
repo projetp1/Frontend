@@ -498,14 +498,6 @@ public class Mathematics
 
         double pmax = 0;
         double pmin = 1;
-        int ymax=0;
-        int mmax=0;
-        int dmax=0;
-        int hmax=0;
-        int ymin=0;
-        int mmin=0;
-        int dmin=0;
-        int hmin=0;
         double plast = 0;
         double brightness = 0;
         double p;
@@ -520,21 +512,9 @@ public class Mathematics
             if (begun != 0)
             {
                  if (p > plast && p > pmax)
-                 {
                        pmax = p;
-                       ymax = y;
-                       mmax = m;
-                       dmax = d;
-                       hmax = (int)h;
-                 }
                   if (p < plast && p < pmin)
-                 {
                        pmin = p;
-                       ymin = y;
-                       mmin = m;
-                       dmin = d;
-                       hmin = (int)h;
-                 }
                  if (h == 16)
                 	 brightness = Math.floor(p * 1000 + 0.5) / 10;
             }
