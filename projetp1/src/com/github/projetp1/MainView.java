@@ -18,6 +18,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -739,10 +741,11 @@ public class MainView extends JFrame implements KeyListener {
 		}
     }
 
-    private class SearchBar extends JLayeredPane 
+    private class SearchBar extends JLayeredPane
     {
     	double scale;
     	int hig;
+    	String l_sSavedSearch = null;
     	JTextField searchBarTextField;
     	JList listNameOrID;
     	ListModel listModelNameOrID;
@@ -783,6 +786,16 @@ public class MainView extends JFrame implements KeyListener {
                 }
             });
     		
+    		searchBarTextField.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                	if(l_sSavedSearch != null)
+        			{
+        				searchBarTextField.setText(l_sSavedSearch);
+        				l_sSavedSearch = null;
+        			}		
+                }
+    		});
+    		
     		listModelNameOrID = new ListModel();
     		listModelObjects = new ListModel();
     		listNameOrID = new JList();
@@ -818,6 +831,13 @@ public class MainView extends JFrame implements KeyListener {
         	{
              	int index = listNameOrID.getSelectedIndex();
         		updateInfo((CelestialObject)listModelObjects.getElementAt(index));
+        		skymap.setCelestialObjectPointed((CelestialObject)listModelObjects.getElementAt(index));
+        		skymap.updateSkyMap();
+        		l_sSavedSearch = searchBarTextField.getText();
+        		searchBarTextField.setText(listNameOrID.getSelectedValue().toString());
+        		//skymap.requestFocus();
+        		skymap.transferFocusBackward();
+        		return;
         	}
     		
         	String regex = searchBarText[searchBarText.length - 1] + "$";
@@ -891,9 +911,7 @@ public class MainView extends JFrame implements KeyListener {
     		searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
     		//complement.setBounds(0, hig, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(100*scale));
     		repaint();
-		}
-		
-		
+		}		
     }
 
 	private class Compass extends JLayeredPane

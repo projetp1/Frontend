@@ -28,6 +28,7 @@ public class SkyMap extends Container implements MouseListener
 	private double dXOrigin = 0;
 	private double dYOrigin = 0;
 	private ArrayList<CelestialObject> celestialObjects;
+	private CelestialObject celestialObjectPointed = null;
 	private DataBase db = null;
 	MainView mainView = null;
 
@@ -107,8 +108,6 @@ public class SkyMap extends Container implements MouseListener
 
 	public void paint(Graphics g)
 	{
-		CelestialObject fuckyeah = null;
-
 		int l_scale = (int)(this.getHeight() / 2);
 		int l_xCenter = this.getWidth() / 2 - (int)(dXOrigin * l_scale * zoom);
 		int l_yCenter = this.getHeight() / 2 + (int)(dYOrigin * l_scale * zoom);
@@ -126,7 +125,6 @@ public class SkyMap extends Container implements MouseListener
 			{
 				Image l_imgSun = getToolkit().getImage("res/sun.png");
 				g.drawImage(l_imgSun, l_x - (l_imgSun.getHeight(null) / 2), l_y - (l_imgSun.getHeight(null) / 2), null);
-				fuckyeah = celestialObject;
 			}
 			else if (l_name != null && l_name.equals("Moon"))
 			{
@@ -149,9 +147,6 @@ public class SkyMap extends Container implements MouseListener
 
 			if (l_name != null)
 				g.drawString(l_name, l_x, l_y - 10);
-			
-			if(fuckyeah == null)
-				fuckyeah = celestialObject;
 		}
 
 		Image l_imgCenter = getToolkit().getImage("res/center.png");
@@ -161,32 +156,31 @@ public class SkyMap extends Container implements MouseListener
 				(int)(this.getHeight() / 2 - l_imgCenter.getHeight(null) / 2), 
 				null);
 		
-		
-		
-		int l_xStarPointed = l_xCenter + (int) (fuckyeah.getXReal() * zoom * l_scale);
-		int l_yStarPointed =  l_yCenter - (int) (fuckyeah.getYReal() * zoom * l_scale);
-		
-		
-		Image l_imgStarHighlight = getToolkit().getImage("res/star_highlight.png");
-		g.drawImage(
-				l_imgStarHighlight, 
-				l_xCenter + (int) (fuckyeah.getXReal() * zoom * l_scale) - l_imgStarHighlight.getWidth(null) / 2,
-				 l_yCenter - (int) (fuckyeah.getYReal() * zoom * l_scale)- l_imgStarHighlight.getHeight(null) / 2, 
-				null);
-		
-		if(!(l_xStarPointed >  this.getWidth() * 0.1 && l_xStarPointed < this.getWidth() * 0.9 && l_yStarPointed > this.getHeight() * 0.1 && l_yStarPointed < this.getHeight() * 0.9))
+		if(celestialObjectPointed != null) 
 		{
-			Image l_imgArrow = getToolkit().getImage("res/arrow.png");
-			double l_dAngle = -getArrowAngle(fuckyeah);
-			Graphics2D g2 = (Graphics2D) g;
-			g2.rotate(l_dAngle, this.getWidth() / 2,this.getHeight() / 2);
-			g2.drawImage(
-					l_imgArrow, 
-					(int)(this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2),
-					(int)(this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), 
+			int l_xStarPointed = l_xCenter + (int) (celestialObjectPointed.getXReal() * zoom * l_scale);
+			int l_yStarPointed =  l_yCenter - (int) (celestialObjectPointed.getYReal() * zoom * l_scale);
+			
+			Image l_imgStarHighlight = getToolkit().getImage("res/star_highlight.png");
+			g.drawImage(
+					l_imgStarHighlight, 
+					l_xCenter + (int) (celestialObjectPointed.getXReal() * zoom * l_scale) - l_imgStarHighlight.getWidth(null) / 2,
+					 l_yCenter - (int) (celestialObjectPointed.getYReal() * zoom * l_scale)- l_imgStarHighlight.getHeight(null) / 2, 
 					null);
-		}
-		
+			
+			if(!(l_xStarPointed >  this.getWidth() * 0.1 && l_xStarPointed < this.getWidth() * 0.9 && l_yStarPointed > this.getHeight() * 0.1 && l_yStarPointed < this.getHeight() * 0.9))
+			{
+				Image l_imgArrow = getToolkit().getImage("res/arrow.png");
+				double l_dAngle = -getArrowAngle(celestialObjectPointed);
+				Graphics2D g2 = (Graphics2D) g;
+				g2.rotate(l_dAngle, this.getWidth() / 2,this.getHeight() / 2);
+				g2.drawImage(
+						l_imgArrow, 
+						(int)(this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2),
+						(int)(this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), 
+						null);
+			}
+		}		
 	}
 	
 	/**
@@ -303,6 +297,11 @@ public class SkyMap extends Container implements MouseListener
 	public void setYOrigin(double _yOrigin)
 	{
 		this.dYOrigin = _yOrigin;
+	}
+	
+	public void setCelestialObjectPointed(CelestialObject _celestialObjectPointed)
+	{
+		celestialObjectPointed = _celestialObjectPointed;
 	}
 
 	public void mouseClicked(MouseEvent _arg0) {}
