@@ -130,7 +130,7 @@ public class SkyMap extends Container implements MouseListener
 			}
 			else if (l_name != null && l_name.equals("Moon"))
 			{
-				Image l_imgMoon = getToolkit().getImage("res/moon.png");
+				Image l_imgMoon = getToolkit().getImage("res/moon_3.png");
 				g.drawImage(l_imgMoon, l_x - (l_imgMoon.getHeight(null) / 2), l_y - (l_imgMoon.getHeight(null) / 2), null);				
 			}
 			else
@@ -149,7 +149,9 @@ public class SkyMap extends Container implements MouseListener
 
 			if (l_name != null)
 				g.drawString(l_name, l_x, l_y - 10);
-			sun = celestialObject;
+			
+			if(sun == null)
+				sun = celestialObject;
 		}
 
 		Image l_imgCenter = getToolkit().getImage("res/center.png");
