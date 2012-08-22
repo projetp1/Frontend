@@ -15,6 +15,7 @@ import jssc.SerialPortException;
 
 import com.github.projetp1.*;
 import com.github.projetp1.rs232.*;
+import com.github.projetp1.rs232.RS232.PicArrowDirection;
 
 public class Pic extends Thread implements Observer
 {
@@ -44,6 +45,8 @@ public class Pic extends Thread implements Observer
 	private PicMode mode = PicMode.SIMULATION;
 
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	
+	private double picAngle;
 	
 	public enum PicMode
 	{
@@ -177,6 +180,19 @@ public class Pic extends Thread implements Observer
 		this.mode = mode;
 	}
 
+	public void setPicArrow(PicArrowDirection direction)
+	{
+		try
+		{
+			rs.sendArrowToPic(direction);
+		}
+		catch (SerialPortException ex)
+		{
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
+	}
+	
 	public void run()
 	{
 		RS232Command commande;
@@ -221,6 +237,8 @@ public class Pic extends Thread implements Observer
 					log.severe("Unknown command number received");
 					break;
 			}
+			
+		updateObservateur();
 		}
 	}
 	
@@ -244,5 +262,4 @@ public class Pic extends Thread implements Observer
 		for(Observateur obs : this.listObservateur )
 			obs.update();
 	}
-	
 }

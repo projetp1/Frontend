@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import com.github.projetp1.Observateur;
+import com.github.projetp1.rs232.RS232.PicArrowDirection;
 
 import com.sun.servicetag.SystemEnvironment;
 
@@ -97,7 +98,8 @@ public class MainView extends JFrame implements KeyListener {
   }
 		      
 	public MainView() {
-		
+
+		pic = new Pic(this);
 		this.addKeyListener(this);
 		name = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
 		name.setBounds(100, 100, 100, 200);
@@ -162,7 +164,6 @@ public class MainView extends JFrame implements KeyListener {
 		settings = new Settings();
 		Serializer.serialize("settings.conf",settings);
 		
-		pic = new Pic(this);
 		
 		addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -172,13 +173,13 @@ public class MainView extends JFrame implements KeyListener {
 		
 		repaint();
 		
-		pic = new Pic(this);
-		this.pic.addObservateur(new Observateur(){
-			public void update() {
-				System.out.print("hello, v2.0 comm : ---->" + pic.getCompass());
-				skymap.updateSkyMap();
-			}
-		});
+			//pic.setPicArrow(PicArrowDirection.EAST);
+			pic.addObservateur(new Observateur(){
+				public void update() {
+					System.out.println("olol");
+					skymap.updateSkyMap();
+				}
+			});
 	}
 	
 
@@ -539,7 +540,7 @@ public class MainView extends JFrame implements KeyListener {
     	private void MouseClicked(java.awt.event.MouseEvent evt) {
     		if (evt.getY() > backgroundTop.getHeight()+25 && evt.getY() < backgroundTop.getHeight()+InternalTop.getHeight()+25)
     		{
-    			System.out.print("1\n");
+    			//System.out.print("1\n");
     		}
     	}
     		private void	jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
@@ -555,7 +556,7 @@ public class MainView extends JFrame implements KeyListener {
     		settings.setInputDelimiter(comboBoxList[7].getSelectedItem().toString());
     		settings.setSimulation((comboBoxList[8].getSelectedItem().toString().equals("ON"))?true:false);
     		Serializer.serialize("settings.conf",settings);
-    		System.out.println("SETTINGS");
+    		//System.out.println("SETTINGS");
     		
     	}
 		public void setScale(double _scale)
@@ -832,7 +833,7 @@ public class MainView extends JFrame implements KeyListener {
 		     		{	
 		     			for (int i = 0; i < listCelestialObject.size(); i++)
 		     			{
-		     				System.out.println(i);
+		     				//System.out.println(i);
 		     				list.setElement(listCelestialObject.get(i).getId());
 		     				list2.setElement(listCelestialObject.get(i));
 		     			}

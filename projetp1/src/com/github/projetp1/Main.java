@@ -18,7 +18,7 @@ public class Main {
 			
 			public boolean isLoggable(LogRecord _arg0)
 			{
-				return true;
+				return false;
 			}
 		});
 		
