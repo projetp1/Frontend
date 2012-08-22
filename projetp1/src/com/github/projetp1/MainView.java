@@ -46,7 +46,6 @@ public class MainView extends JFrame implements KeyListener {
 	private JLabel coordinate;
 	private int zoom = 2;
 	private double coord;
-	private double degree;
 	private double xOrigin = 0;
 	private double yOrigin = 0;
 	private double w = 0.01;
@@ -75,15 +74,29 @@ public class MainView extends JFrame implements KeyListener {
 			public void actionPerformed (ActionEvent event)
 			{
 				//w = calculateScale();
-				degree=pic.getCompass();
-				//coord++;
+				double degree = 0.0;
+				if(pic != null)
+					degree = pic.getAzimuth();
+				
 				compassPanel.setGreenNeedle(degree);
-				compassPanel.setRedNeedle(-degree);
-				inclinometerPanel.setRedNeedle(degree);
-				inclinometerPanel.setGreenNeedle(-degree);
+				// TODO Set the values for the red needles
+				compassPanel.setRedNeedle(0);
+				inclinometerPanel.setRedNeedle(0);
+				if(pic != null)
+					inclinometerPanel.setGreenNeedle(pic.getPitch());
 				compassPanel.update();
 				inclinometerPanel.update();
-				coordinate.setText(pic.getLongitude() + "°N  " + pic.getLatitude() + "°E");
+				if(pic != null)
+				{
+					char hemNS = 'N', hemWE = 'E';
+					double lat = pic.getLatitude(), lon = pic.getLongitude();
+				
+					if(lat < 0.0)
+						hemNS = 'S';
+					if(lon < 0.0)
+						hemWE = 'W';
+					coordinate.setText(Math.abs(lat) + "° " + hemNS + ", " + Math.abs(lon) + "° " + hemWE);
+				}
 				
 				compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
 				inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight()));

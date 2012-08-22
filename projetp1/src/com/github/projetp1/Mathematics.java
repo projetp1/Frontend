@@ -490,60 +490,87 @@ public class Mathematics
 				+ (int) (kNumberOfDayInOneMonth * (_dMonth + 1)) + _dDay + l_t + l_b - 1524.5);
 	}
 
-	static public double calculateAngleCompass(float _accX, float _accY, float _accZ, float _magX, float _magY, float _magZ)
-	{		
+	
+	/**
+	 * Calculate the 3 angles, which are azimuth, pitch and roll.
+	 *
+	 * @param res A 3 values array which will contains the results (heading, pitch, roll)
+	 * @param acc The 3 vectors of the accelerometer, in the PIC standard (0-65536).
+	 * @param mag The 3 vectors of the magnetometer, in the PIC standard (0-65536).
+	 * @return true, if successful
+	 */
+	static public boolean calculateAngles(double[] res, int[] acc, int[] mag)
+	{
+		if(res.length != 3 || acc.length != 3 || mag.length != 3)
+			return false;
+		
+		float accX = acc[0], accY = acc[1], accZ = acc[2];
+		float magX = mag[0], magY = mag[1], magZ = mag[2];
 		// On repasse en signé
-		_accX -= 32768.0;
-		_accY -= 32768.0;
-		_accZ -= 32768.0;
-		_magX -= 32768.0;
-		_magY -= 32768.0;
-		_magZ -= 32768.0;
+		accX -= 32768.0;
+		accY -= 32768.0;
+		accZ -= 32768.0;
+		magX -= 32768.0;
+		magY -= 32768.0;
+		magZ -= 32768.0;
 		
 		// On repasse à des valeurs non bornée
-		_accX /= 16384.0;
-		_accY /= 16384.0;
-		_accZ /= 16384.0;
-		_magX /= 32768.0;
-		_magY /= 32768.0;
-		_magZ /= 32768.0;
+		accX /= 16384.0;
+		accY /= 16384.0;
+		accZ /= 16384.0;
+		magX /= 32768.0;
+		magY /= 32768.0;
+		magZ /= 32768.0;
 		
 		// On passe en Newton et en uT
-		_accX *= 9.81;
-		_accY *= 9.81;
-		_accZ *= 9.81;
-		_magX *= 80.0;
-		_magY *= 80.0;
-		_magZ *= 80.0;
+		accX *= 9.81;
+		accY *= 9.81;
+		accZ *= 9.81;
+		magX *= 80.0;
+		magY *= 80.0;
+		magZ *= 80.0;
 		
 		// Conversion du système du PIC vers le système standard
-		_accZ *= -1.0;
-		_magX *= -1.0;
-		_magY *= -1.0;
+		accZ *= -1.0;
+		magX *= -1.0;
+		magY *= -1.0;
 		
-		Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).info("x: " + _accX + "\ny: " + _accY + "\nz: " + _accZ + "\nx: " + _magX + "\ny: " + _magY + "\nz: " + _magZ);
+		Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).info("x: " + accX + "\ny: " + accY + "\nz: " + accZ + "\nx: " + magX + "\ny: " + magY + "\nz: " + magZ);
 		float R[] = new float[9];
-		float I[] = new float[9];
-		float acc[] = new float[] {_accX, _accY, _accZ};
-		float mag[] = new float[] {_magX, _magY, _magZ};
+		float andacc[] = new float[] {accX, accY, accZ};
+		float andmag[] = new float[] {magX, magY, magZ};
 
 		if(mag != null && acc != null) {
-			boolean success = getRotationMatrix(R, I, acc, mag);
+			boolean success = getRotationMatrix(R, null, andacc, andmag);
 			if (success) {
 				float orientation[] = new float[3];
 				getOrientation(R, orientation);
-				return Math.toDegrees(orientation[0]);
+				for (int l_j = 0; l_j < orientation.length; l_j++)
+				{
+					res[l_j] = Math.toDegrees(orientation[l_j]);
+				}
+				
+				return true;
 			}
 		}
-		return 0.0;
-	}
-
-	static public double calculateAngleInclinometer(double _dX,double _dY,double _dZ)
-	{
-		return 0;
+		return false;
 	}
 	
 	/**
+	 * Copyright (C) 2008 The Android Open Source Project
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *      http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 * 
      * <p>
      * Computes the inclination matrix <b>I</b> as well as the rotation matrix
      * <b>R</b> transforming a vector from the device coordinate system to the
