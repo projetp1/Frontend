@@ -143,6 +143,7 @@ public class Mathematics
                  
          double phi = L;
          double theta = 0.0;
+         //double r = 0.0;
          
          double vec[] = new double [3];
          vec[0] = L;
@@ -237,7 +238,7 @@ public class Mathematics
                 
         double phi = l_Moon;
         double theta = b_Moon;
-        double r = 0.0;
+        //double r = 0.0;
         
         double vec[] = new double [3];
         vec[0] = l_Moon;
@@ -256,9 +257,7 @@ public class Mathematics
             double Scalp = 0.0;
             
             for (int j = 0; j < 3; j ++)
-            {
                 Scalp += mat[i][j] * vec[j];                    
-            }
             
             e_Moon[i] = Scalp;
         }
