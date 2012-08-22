@@ -356,5 +356,12 @@ public class CelestialObject {
 	public void setdDec(double y) {
 		this.dDec = y;
 	}
-
+	
+	/**
+	 * setdMag
+	 * setter of the private value
+	 */
+	public void setdMag(double x) {
+		this.dMag = x;
+	}
 }

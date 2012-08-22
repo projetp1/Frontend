@@ -22,6 +22,180 @@ import java.util.logging.Logger;
 
 public class Mathematics
 {
+	//Source http://www.voidware.com/moon_phase.htm
+	//Adapted in Java by Diego Antognini 
+	public static class TimePlace
+	{
+	      public int year;
+	      public int month;
+	      public int day;
+	      public double hour;
+	}
+
+	public final static class RefObject<T>
+	{
+	      public T argvalue;
+	      public RefObject(T refarg)
+	      {
+	            argvalue = refarg;
+	      }
+	}
+	
+	public static class GlobalMembers
+	{
+	      public static void JulianToDate(TimePlace now, double jd)
+	      {
+	            int jdi;
+	            int b;
+	            int c;
+	            int d;
+	            int e;
+	            int g;
+	            int g1;
+
+	            jd += 0.5;
+	            jdi = (int)jd;
+	            if (jdi > 2299160)
+	            {
+	                  int a = (int)((jdi - 1867216.25) / 36524.25);
+	                  b = jdi + 1 + a - a / 4;
+	            }
+	            else
+	                  b = jdi;
+
+	            c = b + 1524;
+	            d = (int)((c - 122.1) / 365.25);
+	            e = (int)(365.25 * d);
+	            g = (int)((c - e) / 30.6001);
+	            g1 = (int)(30.6001 * g);
+	            now.day = c - e - g1;
+	            now.hour = (jd - jdi) * 24.0;
+	            if (g <= 13)
+	                  now.month = g - 1;
+	            else
+	                  now.month = g - 13;
+	            if (now.month > 2)
+	                  now.year = d - 4716;
+	            else
+	                  now.year = d - 4715;
+	      }
+
+	      public static double Julian(int year,int month,double day)
+	      {
+	            int a;
+	            int b=0;
+	            int c;
+	            int e;
+	            if (month < 3)
+	            {
+		            year--;
+		            month += 12;
+	            }
+	            if (year > 1582 || (year == 1582 && month > 10) || (year == 1582 && month == 10 && day > 15))
+	            {
+		            a = year / 100;
+		            b = 2 - a + a / 4;
+	            }
+	            c = (int)(365.25 * year);
+	            e = (int)(30.6001 * (month + 1));
+	            return b + c + e + day + 1720994.5;
+	      }
+
+	      public static double sun_position(double j)
+	      {
+	            double n;
+	            double x;
+	            double e;
+	            double l;
+	            double dl;
+	            double v;
+	            int i;
+
+	            n = 360 / 365.2422 * j;
+	            i = (int)(n / 360);
+	            n = n - i * 360.0;
+	            x = n - 3.762863;
+	            if (x < 0)
+	                  x += 360;
+	            x *= (3.1415926535897932384626433832795 / 180.0);
+	            e = x;
+	            do
+	            {
+		            dl = e - .016718 * Math.sin(e) - x;
+		            e = e - dl / (1 - .016718 * Math.cos(e));
+	            } while (Math.abs(dl) >= (1e-12));
+	            v = 360 / 3.1415926535897932384626433832795 * Math.atan(1.01686011182 * Math.tan(e / 2));
+	            l = v + 282.596403;
+	            i = (int)(l / 360);
+	            l = l - i * 360.0;
+	            return l;
+	      }
+
+	      public static double moon_position(double j, double ls)
+	      {
+	            double ms;
+	            double l;
+	            double mm;
+	            double n;
+	            double ev;
+	            double sms;
+	            double ae;
+	            double ec;
+	            int i;
+
+	            /* ls = sun_position(j) */
+	            ms = 0.985647332099 * j - 3.762863;
+	            if (ms < 0)
+	                  ms += 360.0;
+	            l = 13.176396 * j + 64.975464;
+	            i = (int)(l / 360);
+	            l = l - i * 360.0;
+	            if (l < 0)
+	                  l += 360.0;
+	            mm = l - 0.1114041 * j - 349.383063;
+	            i = (int)(mm / 360);
+	            mm -= i * 360.0;
+	            n = 151.950429 - 0.0529539 * j;
+	            i = (int)(n / 360);
+	            n -= i * 360.0;
+	            ev = 1.2739 * Math.sin((2 * (l - ls) - mm) * (3.1415926535897932384626433832795 / 180.0));
+	            sms = Math.sin(ms * (3.1415926535897932384626433832795 / 180.0));
+	            ae = 0.1858 * sms;
+	            mm += ev - ae - 0.37 * sms;
+	            ec = 6.2886 * Math.sin(mm * (3.1415926535897932384626433832795 / 180.0));
+	            l += ev + ec - ae + 0.214 * Math.sin(2 * mm * (3.1415926535897932384626433832795 / 180.0));
+	            l = 0.6583 * Math.sin(2 * (l - ls) * (3.1415926535897932384626433832795 / 180.0)) + l;
+	            return l;
+	      }
+
+	      public static double moon_phase(int year, int month, int day, double hour, RefObject<Integer> ip)
+	      {
+	            double j = Julian(year, month, (double)day + hour / 24.0) - 2444238.5;
+	            double ls = sun_position(j);
+	            double lm = moon_position(j, ls);
+
+	            double t = lm - ls;
+	            if (t < 0)
+	                  t += 360;
+	            ip.argvalue = (int)((t + 22.5) / 45) & 0x7;
+	            return (1.0 - Math.cos((lm - ls) * (3.1415926535897932384626433832795 / 180.0))) / 2;
+	      }
+
+	      public static void nextDay(RefObject<Integer> y, RefObject<Integer> m, RefObject<Integer> d, double dd)
+	      {
+	            TimePlace tp = new TimePlace();
+	            double jd = Julian(y.argvalue, m.argvalue, (double) d.argvalue);
+
+	            jd += dd;
+	            JulianToDate(tp, jd);
+
+	            y.argvalue = tp.year;
+	            m.argvalue = tp.month;
+	            d.argvalue = tp.day;
+	      }
+	}
+	
+	
 	static private final double pi = Math.PI;
 	static private final double D2R = pi / 180.0;
 	static private final double R2D = 180.0 / pi;
@@ -168,7 +342,7 @@ public class Mathematics
          }
          
          double rhoSqr = e_sun[0] * e_sun[0] + e_sun[1] * e_sun[1];
-         double m_r = Math.sqrt(rhoSqr + e_sun[2] * e_sun[2]);
+         //double m_r = Math.sqrt(rhoSqr + e_sun[2] * e_sun[2]);
          
          if ((e_sun[0] == 0.0) && (e_sun[1] == 0.0))
              phi = 0.0;
@@ -263,7 +437,7 @@ public class Mathematics
         }
         
         double rhoSqr = e_Moon[0] * e_Moon[0] + e_Moon[1] * e_Moon[1];
-        double m_r = Math.sqrt(rhoSqr + e_Moon[2] * e_Moon[2]);
+        //double m_r = Math.sqrt(rhoSqr + e_Moon[2] * e_Moon[2]);
         
         if ((e_Moon[0] == 0.0) && (e_Moon[1] == 0.0))
             phi = 0.0;
@@ -283,6 +457,71 @@ public class Mathematics
         this.dDeclination = theta*R2D;           
         
         this.calculateAll(this.dDeclination, this.dAscension);
+	}
+	
+	public double getMoonBrightness()
+	{
+		int y=2012;
+        int m=8;
+        int d=2;
+        double h;
+        double step = 1;
+        int begun = 0;
+
+        double pmax = 0;
+        double pmin = 1;
+        int ymax=0;
+        int mmax=0;
+        int dmax=0;
+        int hmax=0;
+        int ymin=0;
+        int mmin=0;
+        int dmin=0;
+        int hmin=0;
+        double plast = 0;
+        double brightness = 0;
+        double p;
+        int ip = 0;
+
+          for (h = 0; h < 24; h += step)
+          {
+        	RefObject<Integer> tempRef_ip = new RefObject<Integer>(ip);
+            p = GlobalMembers.moon_phase(y, m, d, h, tempRef_ip);
+            ip = tempRef_ip.argvalue;
+
+            if (begun != 0)
+            {
+                 if (p > plast && p > pmax)
+                 {
+                       pmax = p;
+                       ymax = y;
+                       mmax = m;
+                       dmax = d;
+                       hmax = (int)h;
+                 }
+                  if (p < plast && p < pmin)
+                 {
+                       pmin = p;
+                       ymin = y;
+                       mmin = m;
+                       dmin = d;
+                       hmin = (int)h;
+                 }
+                 if (h == 16)
+                	 brightness = Math.floor(p * 1000 + 0.5) / 10;
+            }
+            else
+                 begun = 1;
+            plast = p;
+          }
+	      RefObject<Integer> tempRef_y = new RefObject<Integer>(y);
+	      RefObject<Integer> tempRef_m = new RefObject<Integer>(m);
+	      RefObject<Integer> tempRef_d = new RefObject<Integer>(d);
+          GlobalMembers.nextDay(tempRef_y, tempRef_m, tempRef_d, 1.0);
+          y = tempRef_y.argvalue;
+          m = tempRef_m.argvalue;
+          d = tempRef_d.argvalue;
+          return brightness;
 	}
 	
 	/**

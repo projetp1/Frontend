@@ -459,6 +459,7 @@ public class DataBase
 					l_calc.calculatePositionMoon();
 					l_star.setdDec(l_calc.getDeclination());
 					l_star.setdRA(l_calc.getAscension());
+					l_star.setdMag(l_calc.getMoonBrightness());
 				}
 				else
 					l_calc.calculateAll(l_star.getDec(),l_star.getRA());
