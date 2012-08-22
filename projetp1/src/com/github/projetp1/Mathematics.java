@@ -32,6 +32,8 @@ public class Mathematics
 	      public double hour;
 	}
 
+	//Source http://www.voidware.com/moon_phase.htm
+	//Adapted in Java by Diego Antognini 
 	public final static class RefObject<T>
 	{
 	      public T argvalue;
@@ -41,6 +43,8 @@ public class Mathematics
 	      }
 	}
 	
+	//Source http://www.voidware.com/moon_phase.htm
+	//Adapted in Java by Diego Antognini 
 	public static class GlobalMembers
 	{
 	      public static void JulianToDate(TimePlace now, double jd)
@@ -194,7 +198,6 @@ public class Mathematics
 	            d.argvalue = tp.day;
 	      }
 	}
-	
 	
 	static private final double pi = Math.PI;
 	static private final double D2R = pi / 180.0;
@@ -459,25 +462,45 @@ public class Mathematics
         this.calculateAll(this.dDeclination, this.dAscension);
 	}
 	
-	public double getMoonBrightness()
+	public double getMoonBrightness(boolean _yesterday)
 	{
-		int y=2012;
-        int m=8;
-        int d=2;
+		int y=(int)this.dYear;
+        int m=(int)this.dMonth;
+        int d=(int)this.dDay;
+        
+		if(_yesterday)
+			if(d>1)
+				d--;
+			else
+			{
+				if(m == 1)
+				{
+					d=31;
+					m=12;
+					y--;
+				}
+				else
+				{
+					m--;
+					if(m==3 || m==5 || m==7 || m==8 || m==10 || m==12)
+						d=31;
+					else if(m==2)
+						if(isLeapYear(y))
+							d=29;
+						else
+							d=28;
+					else
+						d=30;
+				}
+			}
+				
+		
         double h;
         double step = 1;
         int begun = 0;
 
         double pmax = 0;
         double pmin = 1;
-        int ymax=0;
-        int mmax=0;
-        int dmax=0;
-        int hmax=0;
-        int ymin=0;
-        int mmin=0;
-        int dmin=0;
-        int hmin=0;
         double plast = 0;
         double brightness = 0;
         double p;
@@ -492,21 +515,9 @@ public class Mathematics
             if (begun != 0)
             {
                  if (p > plast && p > pmax)
-                 {
                        pmax = p;
-                       ymax = y;
-                       mmax = m;
-                       dmax = d;
-                       hmax = (int)h;
-                 }
                   if (p < plast && p < pmin)
-                 {
                        pmin = p;
-                       ymin = y;
-                       mmin = m;
-                       dmin = d;
-                       hmin = (int)h;
-                 }
                  if (h == 16)
                 	 brightness = Math.floor(p * 1000 + 0.5) / 10;
             }

@@ -459,7 +459,12 @@ public class DataBase
 					l_calc.calculatePositionMoon();
 					l_star.setdDec(l_calc.getDeclination());
 					l_star.setdRA(l_calc.getAscension());
-					l_star.setdMag(l_calc.getMoonBrightness());
+					double l_now = l_calc.getMoonBrightness(false);
+					double l_yes = l_calc.getMoonBrightness(true);
+					if(l_yes>l_now)
+						l_now*=-1;
+						
+					l_star.setdMag(l_now);
 				}
 				else
 					l_calc.calculateAll(l_star.getDec(),l_star.getRA());
@@ -601,6 +606,12 @@ public class DataBase
 					l_calc.calculatePositionMoon();
 					l_star.setdDec(l_calc.getDeclination());
 					l_star.setdRA(l_calc.getAscension());
+					double l_now = l_calc.getMoonBrightness(false);
+					double l_yes = l_calc.getMoonBrightness(true);
+					if(l_yes>l_now)
+						l_now*=-1;
+						
+					l_star.setdMag(l_now);
 				}
 				else
 					l_calc.calculateAll(l_star.getDec(),l_star.getRA());
