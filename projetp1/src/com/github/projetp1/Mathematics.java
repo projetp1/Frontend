@@ -459,11 +459,39 @@ public class Mathematics
         this.calculateAll(this.dDeclination, this.dAscension);
 	}
 	
-	public double getMoonBrightness()
+	public double getMoonBrightness(boolean _yesterday)
 	{
-		int y=2012;
-        int m=8;
-        int d=2;
+		int y=(int)this.dYear;
+        int m=(int)this.dMonth;
+        int d=(int)this.dDay;
+        
+		if(_yesterday)
+			if(d>1)
+				d--;
+			else
+			{
+				if(m == 1)
+				{
+					d=31;
+					m=12;
+					y--;
+				}
+				else
+				{
+					m--;
+					if(m==3 || m==5 || m==7 || m==8 || m==10 || m==12)
+						d=31;
+					else if(m==2)
+						if(isLeapYear(y))
+							d=29;
+						else
+							d=28;
+					else
+						d=30;
+				}
+			}
+				
+		
         double h;
         double step = 1;
         int begun = 0;
