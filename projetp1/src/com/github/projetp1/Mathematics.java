@@ -32,6 +32,8 @@ public class Mathematics
 	      public double hour;
 	}
 
+	//Source http://www.voidware.com/moon_phase.htm
+	//Adapted in Java by Diego Antognini 
 	public final static class RefObject<T>
 	{
 	      public T argvalue;
@@ -41,6 +43,8 @@ public class Mathematics
 	      }
 	}
 	
+	//Source http://www.voidware.com/moon_phase.htm
+	//Adapted in Java by Diego Antognini 
 	public static class GlobalMembers
 	{
 	      public static void JulianToDate(TimePlace now, double jd)
@@ -194,7 +198,6 @@ public class Mathematics
 	            d.argvalue = tp.day;
 	      }
 	}
-	
 	
 	static private final double pi = Math.PI;
 	static private final double D2R = pi / 180.0;
