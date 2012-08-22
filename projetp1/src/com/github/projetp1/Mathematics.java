@@ -105,26 +105,184 @@ public class Mathematics
 		this.dY = calculateY(this.dHeight,this.dAzimuth);
 	}
 
+    private double Frac(double x)
+    {
+        return x - Math.floor(x);
+    }
+	
 	/**
 	 * calculatePositionSun
-	 * Calculates the sun's declination and ascencion and uses calculateAll()
+	 * Calculates the sun's declination and ascension and uses calculateAll()
 	 */
 	public void calculatePositionSun()
 	{
-		//http://www.cppfrance.com/codes/CALCUL-POSITION-SOLEIL-DECLINAISON-ANGLE-HORAIRE-ALTITUDE-AZIMUT_31774.aspx
-		double g=357.529+0.98560028*this.dDate_JulianCalendar;
-		double q=280.459+0.98564736*this.dDate_JulianCalendar;
-		double l=q+1.915*sin(g*D2R)+0.020*sin(2*g*D2R);
-		double e=23.439-0.00000036*this.dDate_JulianCalendar;
+         //Thank to Patrick Ellenberger
+		
+         double T = (this.dDate_JulianCalendar - 2451545.0) / 36525.0;
+         double eps = 23.43929111 * Math.PI / 180.0;
+         double L,M;
+         double pi2 = 2.0 * Math.PI;
+         M  = pi2 * Frac ( 0.993133 + 99.997361*T);
+         L  = pi2 * Frac ( 0.7859453 + M/pi2 +
+                 (6893.0*sin(M)+72.0*sin(2.0*M)+6191.2*T) / 1296.0e3);
+         
+         double S = sin(-eps);
+         double C = cos(-eps);
 
-		this.dAscension = arctan(cos(e*D2R)*sin(l*D2R)/cos(l*D2R))*(R2D);
-		if(cos(l*D2R)<0)
-			this.dAscension = 12.0+this.dAscension;
-		else if(cos(l*D2R)>0 && sin(l*D2R)<0)
-			this.dAscension = this.dAscension+24.0;
-		this.dDeclination = arcsin(sin(e*D2R)*sin(l*D2R))*R2D;
+         double mat[][] = new double [3][3];
+         
+         mat[0][0] = 1.0;
+         mat[1][0] = 0.0;
+         mat[2][0] = 0.0;
+         mat[0][1] = 0.0;
+         mat[1][1] = +C;
+         mat[2][1] = -S;
+         mat[0][2] = 0.0;
+         mat[1][2] = +S;
+         mat[2][2] = +C;            
+                 
+         double phi = L;
+         double theta = 0.0;
+         //double r = 0.0;
+         
+         double vec[] = new double [3];
+         vec[0] = L;
+         vec[1] = 0.0;
+         vec[2] = 1.0;
+         
+         double cosEl = cos(theta);            
+         vec[0] = 1 * cos(phi) * cosEl;
+         vec[1] = 1 * sin(phi) * cosEl;
+         vec[2] = 1 * sin(theta);         
+         
+         double e_sun[] = new double [3];
+         
+         for (int i = 0; i < 3; i ++)
+         {
+             double Scalp = 0.0;
+             
+             for (int j = 0; j < 3; j ++)
+                 Scalp += mat[i][j] * vec[j];                    
+             
+             e_sun[i] = Scalp;
+         }
+         
+         double rhoSqr = e_sun[0] * e_sun[0] + e_sun[1] * e_sun[1];
+         double m_r = Math.sqrt(rhoSqr + e_sun[2] * e_sun[2]);
+         
+         if ((e_sun[0] == 0.0) && (e_sun[1] == 0.0))
+             phi = 0.0;
+         else
+             phi = Math.atan2(e_sun[1], e_sun[0]);
+         
+         if (phi < 0.0)
+             phi += 2.0 * Math.PI;
+         
+         double rho = Math.sqrt(rhoSqr);
+         if ((e_sun[2] == 0.0) && (rho == 0.0))
+             theta = 0.0;
+         else
+             theta = Math.atan2(e_sun[2], rho);
+         
+        this.dAscension = phi*180/Math.PI;
+        this.dDeclination = theta*180/Math.PI; 
+        
+        this.calculateAll(this.dDeclination, this.dAscension);
+	}
+	
+	/**
+	 * calculatePositionMoon
+	 * Calculates the moon's declination and ascension and uses calculateAll()
+	 */
+	public void calculatePositionMoon()
+	{
+         //Thank to Patrick Ellenberger
+		
+		double T = (this.dDate_JulianCalendar - 2451545.0) / 36525.0;
+        double eps = 23.43929111 * Math.PI / 180.0;
+        double Arcs = 3600.0 * 180.0 / Math.PI;
+        
+        
+        double pi2 = 2.0 * Math.PI;
+        double L_0, l, ls, F, D, dL, S, h, N, l_Moon, b_Moon;
+        L_0 = Frac(0.606433 + 1336.855225 * T);
+        l = pi2 * Frac(0.374897 + 1325.552410 * T);
+        ls = pi2 * Frac(0.993133 + 99.997361 * T);
+        D = pi2 * Frac(0.827361 + 1236.853086 * T);
+        F = pi2 * Frac(0.259086 + 1342.227825 * T);
+        
+        dL = +22640 * sin(l) - 4586 * sin(l-2*D) + 2370 * sin(2*D) + 769 * sin(2*l) - 668 * sin(ls) 
+                - 412 * sin(2*F) - 212 * sin(2*l-2*D) - 206 * sin(l+ls-2*D) + 192 * sin(l+2*D) 
+                - 165 * sin(ls-2*D) - 125 * sin(D) - 110 * sin(l+ls) + 148 * sin(l-ls) - 55 * sin(2*F-2*D);
+        S = F + (dL + 412 * sin(2*F) + 541 * sin(ls)) / Arcs;
+        h = F-2*D;
+        N = -526 * sin(h) + 44 * sin(l+h) - 31 * sin(-l+h) - 23 * sin(ls+h) + 11 * sin(-ls+h) 
+                - 25 * sin(-2*l+F) + 21 * sin(-l+F);
+        l_Moon = pi2 * Frac(L_0 + dL / 1296.0e3);
+        b_Moon = (18520.0 * sin(S) + N) / Arcs;
+        
+        double Srot = sin(-eps);
+        double Crot = cos(-eps);
 
-		calculateAll(this.dDeclination,this.dAscension);
+        double mat[][] = new double [3][3];
+        
+        mat[0][0] = 1.0;
+        mat[1][0] = 0.0;
+        mat[2][0] = 0.0;
+        mat[0][1] = 0.0;
+        mat[1][1] = +Crot;
+        mat[2][1] = -Srot;
+        mat[0][2] = 0.0;
+        mat[1][2] = +Srot;
+        mat[2][2] = +Crot;            
+                
+        double phi = l_Moon;
+        double theta = b_Moon;
+        //double r = 0.0;
+        
+        double vec[] = new double [3];
+        vec[0] = l_Moon;
+        vec[1] = b_Moon;
+        vec[2] = 1.0;
+        
+        double cosEl = cos(theta);            
+        vec[0] = 1 * cos(phi) * cosEl;
+        vec[1] = 1 * sin(phi) * cosEl;
+        vec[2] = 1 * sin(theta);         
+        
+        double e_Moon[] = new double [3];
+        
+        for (int i = 0; i < 3; i ++)
+        {
+            double Scalp = 0.0;
+            
+            for (int j = 0; j < 3; j ++)
+                Scalp += mat[i][j] * vec[j];                    
+            
+            e_Moon[i] = Scalp;
+        }
+        
+        double rhoSqr = e_Moon[0] * e_Moon[0] + e_Moon[1] * e_Moon[1];
+        double m_r = Math.sqrt(rhoSqr + e_Moon[2] * e_Moon[2]);
+        
+        if ((e_Moon[0] == 0.0) && (e_Moon[1] == 0.0))
+            phi = 0.0;
+        else
+            phi = Math.atan2(e_Moon[1], e_Moon[0]);
+        
+        if (phi < 0.0)
+            phi += 2.0 * Math.PI;
+        
+        double rho = Math.sqrt(rhoSqr);
+        if ((e_Moon[2] == 0.0) && (rho == 0.0))
+            theta = 0.0;
+        else
+            theta = Math.atan2(e_Moon[2], rho);
+        
+        this.dAscension = phi*R2D;
+        this.dDeclination = theta*R2D;           
+        
+        this.calculateAll(this.dDeclination, this.dAscension);
 	}
 	
 	/**
@@ -186,13 +344,27 @@ public class Mathematics
 		this.dYear = Mathematics.kAdditionnalYearOfGregorianCalendar + _date.get(Calendar.YEAR);
 	}
 	
+	static public boolean isLeapYear(int _year)
+	{
+		if(_year%4 == 0)
+			if(_year%100 == 0)
+				if(_year%400 == 0)
+					return true;
+				else
+					return false;
+			else
+				return true;
+		else
+			return false;
+	}
+	
 	/**
 	 * calculateHourGMT
 	 * Gives the hour from HMT
 	 * @param _cal : Use a calendar for calculate the GTM hour
 	 * @return : Return an int that's the hour GMT
 	 */
-	static private int calculateHourGMT(Calendar _cal)
+	static public int calculateHourGMT(Calendar _cal)
 	{
 	    TimeZone l_t = _cal.getTimeZone();
 	    
@@ -206,11 +378,11 @@ public class Mathematics
 	 * @param _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
 	 * @return : Return a double that contains the X coordinate
 	 */
-	static private double calculateX(double _dHeight,double _dAzimuth)
+	static public double calculateX(double _dHeight,double _dAzimuth)
 	{
 		double l_x = 1*((-2.0/pi)*_dHeight+1);
 		
-		return -l_x*sin(_dAzimuth);
+		return l_x*sin(_dAzimuth);
 		//return (cos(_dHeight)*sin(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
@@ -221,11 +393,11 @@ public class Mathematics
 	 * @param _dAzimuth : The Azimuth of the star, calculated with "calculate_Azimuth()";
 	 * @return : Return a double that contains the Y coordinate
 	 */
-	static private double calculateY(double _dHeight,double _dAzimuth)
+	static public double calculateY(double _dHeight,double _dAzimuth)
 	{
 		double l_y = 1*((-2.0/pi)*_dHeight+1);
 		
-		return -l_y*cos(_dAzimuth);
+		return l_y*cos(_dAzimuth);
 		//return (cos(_dHeight)*cos(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
@@ -237,7 +409,7 @@ public class Mathematics
 	 * @param _dSecond : The Second of the value
 	 * @return : Return a double that's the degree dAngle
 	 */
-	static private double hms(double _dHour, double _dMinute, double _dSecond)
+	static public double hms(double _dHour, double _dMinute, double _dSecond)
 	{
 		double sign;
 		sign = (_dHour < 0 || _dMinute < 0 || _dSecond < 0) ? -1 : 1;
@@ -252,7 +424,7 @@ public class Mathematics
 	 * @param _dSecond : The Second of the value
 	 * @return : Return a double that contains the value
 	 */
-	static private double fractionOfDay(double _dHour, double _dMinute, double _dSecond)
+	static public double fractionOfDay(double _dHour, double _dMinute, double _dSecond)
 	{
 		return _dHour / 24 + _dMinute / (24 * 60) + _dSecond / (24 * 60 * 60);
 	}
@@ -265,7 +437,7 @@ public class Mathematics
 	 * @param _star_angle : The hour angle star
 	 * @return : Return a double that's the Height of the star
 	 */
-	static private double calculate_height(double _dec, double _dLat, double _star_angle)
+	static public double calculate_height(double _dec, double _dLat, double _star_angle)
 	{
 		double l_sinh = sin(_dec) * sin(_dLat) - cos(_dec) * cos(_dLat)* cos(_star_angle);
 		return arcsin(l_sinh);
@@ -280,7 +452,7 @@ public class Mathematics
 	 * @param _star_angle : The star's dAngle
 	 * @return : Return a double that's the dAzimuth of the star
 	 */
-	static private double calculate_azimuth(double _dec, double _dLat, double _dHeight, double _star_angle)
+	static public double calculate_azimuth(double _dec, double _dLat, double _dHeight, double _star_angle)
 	{
 		double l_cos_az = (sin(_dec) - sin(_dLat) * sin(_dHeight))/(cos(_dLat) * cos(_dHeight));
 		double l_sin_a = (cos(_dec) * sin(_star_angle)) / cos(_dHeight);
@@ -302,7 +474,7 @@ public class Mathematics
 	 * @param _dSeconde : The second
 	 * @return : Return a double that's the result
 	 */
-	static private double calculate_JulianDate(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
+	static public double calculate_JulianDate(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
 	{
 		if (_dMonth < 3)
 		{
@@ -318,60 +490,87 @@ public class Mathematics
 				+ (int) (kNumberOfDayInOneMonth * (_dMonth + 1)) + _dDay + l_t + l_b - 1524.5);
 	}
 
-	static public double calculateAngleCompass(float _accX, float _accY, float _accZ, float _magX, float _magY, float _magZ)
-	{		
+	
+	/**
+	 * Calculate the 3 angles, which are azimuth, pitch and roll.
+	 *
+	 * @param res A 3 values array which will contains the results (heading, pitch, roll)
+	 * @param acc The 3 vectors of the accelerometer, in the PIC standard (0-65536).
+	 * @param mag The 3 vectors of the magnetometer, in the PIC standard (0-65536).
+	 * @return true, if successful
+	 */
+	static public boolean calculateAngles(double[] res, int[] acc, int[] mag)
+	{
+		if(res.length != 3 || acc.length != 3 || mag.length != 3)
+			return false;
+		
+		float accX = acc[0], accY = acc[1], accZ = acc[2];
+		float magX = mag[0], magY = mag[1], magZ = mag[2];
 		// On repasse en signé
-		_accX -= 32768.0;
-		_accY -= 32768.0;
-		_accZ -= 32768.0;
-		_magX -= 32768.0;
-		_magY -= 32768.0;
-		_magZ -= 32768.0;
+		accX -= 32768.0;
+		accY -= 32768.0;
+		accZ -= 32768.0;
+		magX -= 32768.0;
+		magY -= 32768.0;
+		magZ -= 32768.0;
 		
 		// On repasse à des valeurs non bornée
-		_accX /= 16384.0;
-		_accY /= 16384.0;
-		_accZ /= 16384.0;
-		_magX /= 32768.0;
-		_magY /= 32768.0;
-		_magZ /= 32768.0;
+		accX /= 16384.0;
+		accY /= 16384.0;
+		accZ /= 16384.0;
+		magX /= 32768.0;
+		magY /= 32768.0;
+		magZ /= 32768.0;
 		
 		// On passe en Newton et en uT
-		_accX *= 9.81;
-		_accY *= 9.81;
-		_accZ *= 9.81;
-		_magX *= 80.0;
-		_magY *= 80.0;
-		_magZ *= 80.0;
+		accX *= 9.81;
+		accY *= 9.81;
+		accZ *= 9.81;
+		magX *= 80.0;
+		magY *= 80.0;
+		magZ *= 80.0;
 		
 		// Conversion du système du PIC vers le système standard
-		_accZ *= -1.0;
-		_magX *= -1.0;
-		_magY *= -1.0;
+		accZ *= -1.0;
+		magX *= -1.0;
+		magY *= -1.0;
 		
-		Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).info("x: " + _accX + "\ny: " + _accY + "\nz: " + _accZ + "\nx: " + _magX + "\ny: " + _magY + "\nz: " + _magZ);
+		Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).info("x: " + accX + "\ny: " + accY + "\nz: " + accZ + "\nx: " + magX + "\ny: " + magY + "\nz: " + magZ);
 		float R[] = new float[9];
-		float I[] = new float[9];
-		float acc[] = new float[] {_accX, _accY, _accZ};
-		float mag[] = new float[] {_magX, _magY, _magZ};
+		float andacc[] = new float[] {accX, accY, accZ};
+		float andmag[] = new float[] {magX, magY, magZ};
 
 		if(mag != null && acc != null) {
-			boolean success = getRotationMatrix(R, I, acc, mag);
+			boolean success = getRotationMatrix(R, null, andacc, andmag);
 			if (success) {
 				float orientation[] = new float[3];
 				getOrientation(R, orientation);
-				return Math.toDegrees(orientation[0]);
+				for (int l_j = 0; l_j < orientation.length; l_j++)
+				{
+					res[l_j] = Math.toDegrees(orientation[l_j]);
+				}
+				
+				return true;
 			}
 		}
-		return 0.0;
-	}
-
-	static public double calculateAngleInclinometer(double _dX,double _dY,double _dZ)
-	{
-		return 0;
+		return false;
 	}
 	
 	/**
+	 * Copyright (C) 2008 The Android Open Source Project
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *      http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 * 
      * <p>
      * Computes the inclination matrix <b>I</b> as well as the rotation matrix
      * <b>R</b> transforming a vector from the device coordinate system to the
@@ -662,7 +861,7 @@ public class Mathematics
 	 * @param _dSideral_Time : The Sideral time
 	 * @return : Return a double that's the result
 	 */
-	static private double calculateSideralHourAngle(double _dSideral_Time)
+	static public double calculateSideralHourAngle(double _dSideral_Time)
 	{
 		return 2.0 * pi * _dSideral_Time / hms(23.0, 56.0, 4.0);
 	}
@@ -675,7 +874,7 @@ public class Mathematics
 	 * @param _dGMT : The GMT zone
 	 * @return : Return a double that's the result
 	 */
-	static private double calculateHourAngle(double _dHour, double _dMin, double _dGMT)
+	static public double calculateHourAngle(double _dHour, double _dMin, double _dGMT)
 	{
 		return (_dHour - 12 + _dMin / 60 - _dGMT) * 2 * pi / hms(23.0, 56.0, 4.0);
 	}
@@ -691,7 +890,7 @@ public class Mathematics
 	 * @param _dSecond : The second
 	 * @return : Return a double that's the result
 	 */
-	static private double calculateSideralTime(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
+	static public double calculateSideralTime(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
 	{
 		double l_JJ = calculate_JulianDate(_dDay, _dMonth, _dYear, _dHour, _dMinute, _dSecond);
 		double l_T = (l_JJ - 2451545.0) / 36525.0;
@@ -708,7 +907,7 @@ public class Mathematics
 	 * @param _dX : The value to transform
 	 * @return : Return the result of the operation
 	 */
-	static private double cos(double _dX)
+	static public double cos(double _dX)
 	{
 		return Math.cos(_dX);
 	}
@@ -719,7 +918,7 @@ public class Mathematics
 	 * @param _dX : The value to transform
 	 * @return : Return the result of the operation
 	 */
-	static private double sin(double _dX)
+	static public double sin(double _dX)
 	{
 		return Math.sin(_dX);
 	}
@@ -730,7 +929,7 @@ public class Mathematics
 	 * @param _dX : The value to transform
 	 * @return : Return the result of the operation
 	 */
-	static private double arccos(double _dX)
+	static public double arccos(double _dX)
 	{
 		return Math.acos(_dX);
 	}
@@ -741,7 +940,7 @@ public class Mathematics
 	 * @param _dX : The value to transform
 	 * @return : Return the result of the operation
 	 */
-	static private double arcsin(double _dX)
+	static public double arcsin(double _dX)
 	{
 		return Math.asin(_dX);
 	}
@@ -752,7 +951,7 @@ public class Mathematics
 	 * @param _dX : The value to transform
 	 * @return : Return the result of the operation
 	 */
-	static private double tan(double _dX)
+	static public double tan(double _dX)
 	{
 		return Math.tan(_dX);
 	}
@@ -763,7 +962,7 @@ public class Mathematics
 	 * @param _dX : The value to transform
 	 * @return : Return the result of the operation
 	 */
-	static private double arctan(double _dX)
+	static public double arctan(double _dX)
 	{
 		return Math.atan(_dX);
 	}

@@ -44,8 +44,7 @@ public class MainView extends JFrame implements KeyListener {
 	private SettingsConfig settingsPanel;
 	private JLabel coordinate;
 	private int zoom = 2;
-	private int coord;
-	private int degree;
+	private double coord;
 	private double xOrigin = 0;
 	private double yOrigin = 0;
 	private double w = 0.01;
@@ -74,15 +73,29 @@ public class MainView extends JFrame implements KeyListener {
 			public void actionPerformed (ActionEvent event)
 			{
 				//w = calculateScale();
-				degree++;
-				coord++;
+				double degree = 0.0;
+				if(pic != null)
+					degree = pic.getAzimuth();
+				
 				compassPanel.setGreenNeedle(degree);
-				compassPanel.setRedNeedle(-degree);
-				inclinometerPanel.setRedNeedle(degree);
-				inclinometerPanel.setGreenNeedle(-degree);
+				// TODO Set the values for the red needles
+				compassPanel.setRedNeedle(0);
+				inclinometerPanel.setRedNeedle(0);
+				if(pic != null)
+					inclinometerPanel.setGreenNeedle(pic.getPitch());
 				compassPanel.update();
 				inclinometerPanel.update();
-				coordinate.setText(coord + "°N");
+				if(pic != null)
+				{
+					char hemNS = 'N', hemWE = 'E';
+					double lat = pic.getLatitude(), lon = pic.getLongitude();
+				
+					if(lat < 0.0)
+						hemNS = 'S';
+					if(lon < 0.0)
+						hemWE = 'W';
+					coordinate.setText(Math.abs(lat) + "° " + hemNS + ", " + Math.abs(lon) + "° " + hemWE);
+				}
 				
 				compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
 				inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight()));
@@ -155,10 +168,8 @@ public class MainView extends JFrame implements KeyListener {
 		Timer timer = createTimer();
 		timer.start();
 		
-		
 		settings = new Settings();
 		Serializer.serialize("settings.conf",settings);
-		
 		
 		addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -466,11 +477,13 @@ public class MainView extends JFrame implements KeyListener {
     		comboBoxList[8] = new JComboBox(simulation);
     		
     		for(int i = 0; i < number; i++)  		
+    		{
     			comboBoxList[i].addActionListener(new java.awt.event.ActionListener() {
     	            public void actionPerformed(java.awt.event.ActionEvent evt) {
     	                jComboBox1ActionPerformed(evt);
     	            }
     	        });
+    		}
     		
     		try {
     			backgroundTop = resizeImage(ImageIO.read(new File("res/settings-top-background.png")), scale/2);
@@ -486,7 +499,7 @@ public class MainView extends JFrame implements KeyListener {
         			settingList[i].setForeground(Color.BLACK);
                 	this.add(settingList[i]);
             		comboBoxList[i].setBounds((int)(backgroundTop.getWidth()/2-100*scale), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+25, (int)(100*scale), 30);
-                	this.add(comboBoxList[i]);
+            		this.add(comboBoxList[i]);
                 	
                 }
     				
@@ -699,7 +712,7 @@ public class MainView extends JFrame implements KeyListener {
     		zoomSlider.setMinimum(1);
     		zoomSlider.setMaximum(40);
     		zoomSlider.setValue(zoom);
-    		zoomSlider.setBackground(Color.BLACK);
+    		zoomSlider.setOpaque(false);
     		this.add(zoomSlider);
 			this.setVisible(true);
 			this.repaint();

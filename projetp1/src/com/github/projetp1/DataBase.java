@@ -201,7 +201,7 @@ public class DataBase
 		//If secured = true, the function will prepared a prepared statement, replace all the value by "?"
 		for(int i=0;i<_sWhere.length;i++)
 		{
-			l_sOut += _sWhere[i][0] +  " " + _sWhere[i][1];
+			l_sOut += "LOWER(" + _sWhere[i][0] + ")" +  " " + _sWhere[i][1];
 			if(_bsecured)
 			{
 				l_sOut += " ? ";
@@ -310,7 +310,7 @@ public class DataBase
 	 * 				The key of the hashmap is the string word
 	 * 				The value is the number after the space
 	 */
-	private HashMap<String, String> decryptText(String _sText)
+	public HashMap<String, String> decryptText(String _sText)
 	{
 		//If the string is null or haven't a "!" return a wrong hashmap
 		if(_sText.length()==0 || _sText.charAt(0)!='!')
@@ -333,7 +333,7 @@ public class DataBase
 		{
 			l_sTemp = l_sString[i];
 			l_sKey = l_sTemp.substring(1, l_sTemp.indexOf(' '));//Key is the word string
-			
+
 			//If the string is "distance", it could have a unity 
 			if(l_sKey.matches("distance"))
 			{
@@ -347,6 +347,7 @@ public class DataBase
 			}
 			else
 				l_sValue = l_sTemp.substring(l_sTemp.indexOf(' '),l_sTemp.length());
+
 			hs_Out.put(l_sKey, l_sValue);
 		}
 		
@@ -447,9 +448,15 @@ public class DataBase
 		    	//CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
 				CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
 		    	
-				if(l_id == 1)
+				if(l_id == 1)//Sun
 				{
 					l_calc.calculatePositionSun();
+					l_star.setdDec(l_calc.getDeclination());
+					l_star.setdRA(l_calc.getAscension());
+				}
+				else if(l_id == 2)//Moon
+				{
+					l_calc.calculatePositionMoon();
 					l_star.setdDec(l_calc.getDeclination());
 					l_star.setdRA(l_calc.getAscension());
 				}
@@ -585,6 +592,12 @@ public class DataBase
 				if(l_id == 1)
 				{
 					l_calc.calculatePositionSun();
+					l_star.setdDec(l_calc.getDeclination());
+					l_star.setdRA(l_calc.getAscension());
+				}
+				else if(l_id == 2)
+				{
+					l_calc.calculatePositionMoon();
 					l_star.setdDec(l_calc.getDeclination());
 					l_star.setdRA(l_calc.getAscension());
 				}
