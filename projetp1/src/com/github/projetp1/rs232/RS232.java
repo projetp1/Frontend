@@ -87,8 +87,9 @@ public class RS232 implements SerialPortEventListener
 		});*/
 		
 		// Initialisation du sp
-		//TODO: String port = settings.getPort();
-		String port = "COM3";
+		String port = null;
+		if(settings != null)
+			port = settings.getPort();
 		if (port == null || port.equals(""))
 		{
 			try
