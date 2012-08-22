@@ -182,7 +182,6 @@ public class MainView extends JFrame implements KeyListener {
 		pic = new Pic(this);
 			pic.addObservateur(new Observateur(){
 				public void update() {
-					pic.setPicArrow(PicArrowDirection.EAST);
 					skymap.updateSkyMap();
 				}
 			});
