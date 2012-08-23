@@ -136,8 +136,28 @@ public class SkyMap extends Container implements MouseListener
 			}
 			else if (l_name != null && l_name.equals("Moon"))
 			{
-				Image l_imgMoon = getToolkit().getImage("res/moon_3.png");
-				g.drawImage(l_imgMoon, l_x - (l_imgMoon.getHeight(null) / 2), l_y - (l_imgMoon.getHeight(null) / 2), null);				
+				double l_dMoon = celestialObject.getMag();
+				System.out.print(l_dMoon + "\n");
+				Image l_imgMoon = null;
+				if(l_dMoon > 87 || l_dMoon < -87)
+					l_imgMoon = getToolkit().getImage("res/moon_0.png");
+				else if(l_dMoon > -88 && l_dMoon < -62)
+					l_imgMoon = getToolkit().getImage("res/moon_1.png");
+				else if(l_dMoon > -63 && l_dMoon < -37)
+					l_imgMoon = getToolkit().getImage("res/moon_2.png");
+				else if(l_dMoon > -38 && l_dMoon < -12)
+					l_imgMoon = getToolkit().getImage("res/moon_3.png");
+				else if(l_dMoon > -13 && l_dMoon < 13)
+					l_imgMoon = null;//getToolkit().getImage("res/moon_0.png");
+				else if(l_dMoon > 14 && l_dMoon < 38)
+					l_imgMoon = getToolkit().getImage("res/moon_4.png");
+				else if(l_dMoon > 39 && l_dMoon < 63)
+					l_imgMoon = getToolkit().getImage("res/moon_5.png");
+				else if(l_dMoon > 64 && l_dMoon < 88)
+					l_imgMoon = getToolkit().getImage("res/moon_6.png");
+					
+				if(l_imgMoon != null)
+					g.drawImage(l_imgMoon, l_x - (l_imgMoon.getHeight(null) / 2), l_y - (l_imgMoon.getHeight(null) / 2), null);				
 			}
 			else
 			{
