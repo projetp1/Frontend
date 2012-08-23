@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,9 @@ public class DataBase
 	private String sTable;
 	private Connection connection;
 	private Statement statement;
-
+	
+	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	
 	private int argumentCount;
 	static private final double kdAL_KM = 9435053029704.605;//Source wikipédia
 	
@@ -53,7 +56,7 @@ public class DataBase
 		}
 		catch(ClassNotFoundException e)
 		{
-			System.err.println("Can't load the SQLite's drivers !");
+			log.warning("Can't load the SQLite's drivers !");
 			System.exit(1);
 		}
 		
@@ -63,7 +66,7 @@ public class DataBase
 		}
 		catch(SQLException e)
 		{
-			System.err.println("Impossible to open a connection !");
+			log.warning("Impossible to open a connection !");
 			System.exit(1);
 		}
 		
@@ -73,7 +76,7 @@ public class DataBase
 		}
 		catch(SQLException e)
 		{
-			System.err.println("Impossible to execute SQL queries !");
+			log.warning("Impossible to execute SQL queries !");
 			System.exit(1);
 		}
 		
@@ -294,7 +297,7 @@ public class DataBase
 		}
 		catch(SQLException e)
 		{
-			System.err.println("Error in the query !");
+			log.warning("Error in the query !");
 			this.statement.close();
 			
 			l_sQuery = "SELECT * from " + this.sTable + " WHERE id=0"; //Return an empty Result
@@ -398,7 +401,7 @@ public class DataBase
 		}
 		catch(IllegalArgumentException e)
 		{
-			System.err.println(e.getMessage());
+			log.warning(e.getMessage());
 			_dLat = _dLon = 0;
 		}
 		
@@ -481,7 +484,7 @@ public class DataBase
 		}
 		catch(SQLException e)
 		{
-			System.err.println("Problem with the query's result !");
+			log.warning("Problem with the query's result !");
 		}
 		
 		result.close();
@@ -555,7 +558,7 @@ public class DataBase
 		}
 		catch(IllegalArgumentException e)
 		{
-			System.err.println(e.getMessage());
+			log.warning(e.getMessage());
 			_dLat = _dLon = 0;
 		}
 		
@@ -628,7 +631,7 @@ public class DataBase
 		}
 		catch(SQLException e)
 		{
-			System.err.println("Problem with the query's result !");
+			log.warning("Problem with the query's result !");
 		}
 		result.close();
 		return al_stars;		

@@ -14,8 +14,11 @@
 
 package com.github.projetp1;
 
+import java.util.logging.Logger;
+
 public class CelestialObject {
 
+	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private int id;
 	//private int StarId;
 	private int HIP;
@@ -115,7 +118,7 @@ public class CelestialObject {
 	// */
 	//public void getHeader()
 	//{
-	//	System.out.println("ID\tStarID\tHIP\tHD\tHR\tGliese\tBayerFlamsteed\tProperName\tRA\tDec\tDistance\tPMRA\tPMDec\tRV\tMag\tAbsMag\tSpectrum\tColorIndex\tX\tY\tZ\tVX\tVY\tVZ\tXReal\tYReal");
+	//	log.info("ID\tStarID\tHIP\tHD\tHR\tGliese\tBayerFlamsteed\tProperName\tRA\tDec\tDistance\tPMRA\tPMDec\tRV\tMag\tAbsMag\tSpectrum\tColorIndex\tX\tY\tZ\tVX\tVY\tVZ\tXReal\tYReal");
 	//}
 	
 	/*
@@ -124,7 +127,7 @@ public class CelestialObject {
 	 */
 	//public void getInfos()
 	//{
-	//	System.out.println(this.id + "\t" + this.StarId+ "\t" + this.HIP+ "\t" + this.HD + "\t" + this.HR + "\t" + this.Gliese + "\t" + this.BayerFlamsteed + "\t\t" + this.sProperName + "\t\t" + this.dRA + "\t" + this.dDec + "\t" + this.dDistance + "\t" + this.dPMRA + "\t" + this.dPMDec + "\t" + this.dRV + "\t" + this.dMag + "\t" + this.dAbsMag + "\t" + this.sSpectrum + "\t\t" + this.dColorIndex + "\t\t" + this.dXYZ[0] + "\t" + this.dXYZ[1] + "\t" + this.dXYZ[2] + "\t" + this.dVXYZ[0] + "\t" + this.dVXYZ[1] + "\t" + this.dVXYZ[2] + "\t" + this.dXReal + "\t" + this.dYReal);
+	//	log.info(this.id + "\t" + this.StarId+ "\t" + this.HIP+ "\t" + this.HD + "\t" + this.HR + "\t" + this.Gliese + "\t" + this.BayerFlamsteed + "\t\t" + this.sProperName + "\t\t" + this.dRA + "\t" + this.dDec + "\t" + this.dDistance + "\t" + this.dPMRA + "\t" + this.dPMDec + "\t" + this.dRV + "\t" + this.dMag + "\t" + this.dAbsMag + "\t" + this.sSpectrum + "\t\t" + this.dColorIndex + "\t\t" + this.dXYZ[0] + "\t" + this.dXYZ[1] + "\t" + this.dXYZ[2] + "\t" + this.dVXYZ[0] + "\t" + this.dVXYZ[1] + "\t" + this.dVXYZ[2] + "\t" + this.dXReal + "\t" + this.dYReal);
 	//}
 	
 	/**

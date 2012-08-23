@@ -8,6 +8,7 @@ import com.github.projetp1.ListModel;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -38,6 +39,8 @@ public class MainView extends JFrame implements KeyListener {
 	private Pic pic;
 	public Pic getPic() { return pic; }
 	SkyMap skymap;
+	
+	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private Compass compassPanel;
 	private Inclinometer inclinometerPanel;
@@ -967,7 +970,7 @@ public class MainView extends JFrame implements KeyListener {
         	String[] searchFeatures = searchBarTextField.getText().split(";");
     		String searchFeature = searchFeatures[searchFeatures.length - 1];
     				
-			//System.out.print("\n>" + searchFeature + "<->" + searchFeature.split(" ").length + "\n");
+			//log.info("\n>" + searchFeature + "<->" + searchFeature.split(" ").length + "\n");
         	if(searchFeature.split(" ").length > 1)
         	{
              	int index = listNameOrID.getSelectedIndex();
@@ -1151,7 +1154,7 @@ public class MainView extends JFrame implements KeyListener {
 			}
 			catch(Exception e)
 			{
-				System.out.print(e);
+				log.warning(e.toString());
 			}
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
@@ -1334,7 +1337,7 @@ public class MainView extends JFrame implements KeyListener {
 			}
 			catch(Exception e)
 			{
-				System.out.print(e);
+				log.warning(e.toString());
 			}
 			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));

@@ -82,7 +82,7 @@ public class RS232 implements SerialPortEventListener
 		this.pic.addObservateur(new Observateur(){
 			public void update() {
 				//QUE FAIRE DE CET ANGLE
-				System.out.print("Mainview to RS232 : OK  " + pic);
+				log.info("Mainview to RS232 : OK  " + pic);
 			}
 		});*/
 		
