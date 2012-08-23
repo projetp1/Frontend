@@ -18,8 +18,10 @@ package com.github.projetp1;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 public class SkyMap extends Container implements MouseListener
@@ -27,10 +29,14 @@ public class SkyMap extends Container implements MouseListener
 	private int zoom = 1;
 	private double dXOrigin = 0;
 	private double dYOrigin = 0;
+	private double dLongitude = 6.799734;
+	private double dLatitude = 47.039448;
+	
 	private ArrayList<CelestialObject> celestialObjects;
 	private CelestialObject celestialObjectPointed = null;
 	private DataBase db = null;
 	MainView mainView = null;
+	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 
 	/**
 	 * SkyMap Constructor
@@ -52,19 +58,6 @@ public class SkyMap extends Container implements MouseListener
 		try
 		{
 			db = new DataBase(_sDataBase, _sDelimiter);
-			double lat;
-			if (this.mainView.getPic() == null)
-				lat = 47.039448;
-			else
-				lat = this.mainView.getPic().getLatitude();
-
-			double lon;
-			if (this.mainView.getPic() == null)
-				lon = 6.799734;
-			else
-				lon = this.mainView.getPic().getLongitude();
-			
-			celestialObjects = db.starsForCoordinates(Calendar.getInstance(), lat, lon);
 		}
 		catch (Exception ex)
 		{
@@ -103,6 +96,21 @@ public class SkyMap extends Container implements MouseListener
 	 */
 	public void updateSkyMap()
 	{
+		if (this.mainView.getPic() != null)
+			dLatitude = this.mainView.getPic().getLatitude();
+
+		if (this.mainView.getPic() != null)
+			dLongitude = this.mainView.getPic().getLongitude();
+		
+		try
+		{
+			celestialObjects = db.starsForCoordinates(Calendar.getInstance(), dLatitude, dLongitude);
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		
 		this.repaint();
 	}
 
@@ -128,8 +136,28 @@ public class SkyMap extends Container implements MouseListener
 			}
 			else if (l_name != null && l_name.equals("Moon"))
 			{
-				Image l_imgMoon = getToolkit().getImage("res/moon_3.png");
-				g.drawImage(l_imgMoon, l_x - (l_imgMoon.getHeight(null) / 2), l_y - (l_imgMoon.getHeight(null) / 2), null);				
+				double l_dMoon = celestialObject.getMag();
+				System.out.print(l_dMoon + "\n");
+				Image l_imgMoon = null;
+				if(l_dMoon > 87 || l_dMoon < -87)
+					l_imgMoon = getToolkit().getImage("res/moon_0.png");
+				else if(l_dMoon > -88 && l_dMoon < -62)
+					l_imgMoon = getToolkit().getImage("res/moon_1.png");
+				else if(l_dMoon > -63 && l_dMoon < -37)
+					l_imgMoon = getToolkit().getImage("res/moon_2.png");
+				else if(l_dMoon > -38 && l_dMoon < -12)
+					l_imgMoon = getToolkit().getImage("res/moon_3.png");
+				else if(l_dMoon > -13 && l_dMoon < 13)
+					l_imgMoon = null;//getToolkit().getImage("res/moon_0.png");
+				else if(l_dMoon > 14 && l_dMoon < 38)
+					l_imgMoon = getToolkit().getImage("res/moon_4.png");
+				else if(l_dMoon > 39 && l_dMoon < 63)
+					l_imgMoon = getToolkit().getImage("res/moon_5.png");
+				else if(l_dMoon > 64 && l_dMoon < 88)
+					l_imgMoon = getToolkit().getImage("res/moon_6.png");
+					
+				if(l_imgMoon != null)
+					g.drawImage(l_imgMoon, l_x - (l_imgMoon.getHeight(null) / 2), l_y - (l_imgMoon.getHeight(null) / 2), null);				
 			}
 			else
 			{
@@ -201,7 +229,7 @@ public class SkyMap extends Container implements MouseListener
 
 		//mainView.getPic().sendArrow;
 		
-		//System.out.print("angle : " + Math.toDegrees(l_dangle) + "\r\n");
+		//log.info("angle : " + Math.toDegrees(l_dangle) + "\r\n");
 		/*
 		if(mainView.getPic().getMode() == Pic.PicMode.GUIDING)
 		{

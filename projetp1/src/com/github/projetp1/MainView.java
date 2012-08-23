@@ -7,6 +7,7 @@ import com.github.projetp1.ListModel;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -32,6 +33,8 @@ public class MainView extends JFrame implements KeyListener {
 	private Pic pic;
 	public Pic getPic() { return pic; }
 	SkyMap skymap;
+	
+	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private Compass compassPanel;
 	private Inclinometer inclinometerPanel;
@@ -384,7 +387,6 @@ public class MainView extends JFrame implements KeyListener {
                 }
     		});
     		this.setBounds(0, 0, (int)(imgSettings.getWidth()*2), (int)(imgHelp.getHeight()));
-    	//	this.setVisible(true);
     	}
     	@Override 
         protected void paintComponent(Graphics g)
@@ -873,7 +875,6 @@ public class MainView extends JFrame implements KeyListener {
     		
     		this.add(searchBarTextField);
     		this.add(jScrollPane);
-		//	this.setVisible(true);
     	}
 
     	/**
@@ -888,7 +889,7 @@ public class MainView extends JFrame implements KeyListener {
         	String[] searchFeatures = searchBarTextField.getText().split(";");
     		String searchFeature = searchFeatures[searchFeatures.length - 1];
     				
-			//System.out.print("\n>" + searchFeature + "<->" + searchFeature.split(" ").length + "\n");
+			//log.info("\n>" + searchFeature + "<->" + searchFeature.split(" ").length + "\n");
         	if(searchFeature.split(" ").length > 1)
         	{
              	int index = listNameOrID.getSelectedIndex();
@@ -983,7 +984,6 @@ public class MainView extends JFrame implements KeyListener {
 			scale = _scale;
 			hig = 20;
 			this.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(400*scale));
-			//searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
 			searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
     		int min = (listModelNameOrID.getSize() < 5)?listModelNameOrID.getSize()*21:(int)(200*scale);
         	jScrollPane.setBounds(0, 20, searchBarTextField.getWidth(), min);
@@ -1015,8 +1015,6 @@ public class MainView extends JFrame implements KeyListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			//this.setVisible(true);
-			//this.setBackground(Color.BLACK);
 			
 			redNeedle = new Needle("res/aiguille_rouge.png", scale);
 			greenNeedle = new Needle("res/aiguille_vert.png", scale);
@@ -1076,7 +1074,7 @@ public class MainView extends JFrame implements KeyListener {
 			}
 			catch(Exception e)
 			{
-				System.out.print(e);
+				log.warning(e.toString());
 			}
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
@@ -1101,6 +1099,61 @@ public class MainView extends JFrame implements KeyListener {
 		{
             _angle = Math.toRadians(_angle);
             greenAngle =_angle;
+		}
+
+		private class Needle extends JPanel
+		{
+		    BufferedImage needleImage;
+		    double angle = 0;
+		    double scale = 1;
+		    String adresseImage;
+		    
+			public Needle(String _adresseImage, double _scale)
+			{
+				scale = _scale;
+				adresseImage = _adresseImage;
+				try
+				{
+					needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			public void scale(double _scale)
+			{
+				if(scale != _scale)
+				{
+					scale = _scale;
+					try {
+						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			public void rotate(double _angle)
+			{
+				angle = _angle;
+				repaint();
+			}
+			
+			@Override 
+            public Dimension getPreferredSize()
+			{ 
+                return new Dimension(needleImage.getWidth(), needleImage.getHeight()); 
+            } 
+            @Override 
+            protected void paintComponent(Graphics g)
+            { 
+                super.paintComponent(g); 
+                Graphics2D g2 = (Graphics2D) g; 
+                g2.rotate(angle, needleImage.getWidth() / 2, needleImage.getHeight() / 2); 
+                g2.drawImage(needleImage, 0, 0, null); 
+            }
 		}
 	}
 
@@ -1131,8 +1184,6 @@ public class MainView extends JFrame implements KeyListener {
 				e.printStackTrace();
 			}
 			
-		//	this.setVisible(true);
-		//	this.setBackground(Color.BLACK);
 			
 			redNeedle = new Needle("res/aiguille_rouge_inclinometer.png", scale);
 			greenNeedle = new Needle("res/aiguille_vert_inclinometer.png", scale);
@@ -1197,7 +1248,7 @@ public class MainView extends JFrame implements KeyListener {
 			}
 			catch(Exception e)
 			{
-				System.out.print(e);
+				log.warning(e.toString());
 			}
 			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
@@ -1222,84 +1273,84 @@ public class MainView extends JFrame implements KeyListener {
 			greenAngle = _greenAngle;
 		}
 
-	
-}
-	
-/** 
- *  private class Needle
- */
-private class Needle extends JPanel
-{
-	BufferedImage needleImage;
-	double angle = 0;
-	double scale = 1;
-	String adresseImage;
-	    
-	/** 
-	 *  private class Needle
-	 *  @param _adressImage : the path of the image
-	 *  @param _scale : the scale for resize the image
-	 */
-	public Needle(String _adresseImage, double _scale)
-	{
-		scale = _scale;
-		adresseImage = _adresseImage;
-		try
+		/** 
+		 *  private class Needle
+		 */
+		private class Needle extends JPanel
 		{
-			needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-		
-	/**
-	 * used of resize the components
-	 * @param _scale : the scalar with the components are resized
-	 */
-	public void scale(double _scale)
-	{
-		if(scale != _scale)
-		{
-			scale = _scale;
-			try {
-				needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
-			} catch (IOException e) {
-				e.printStackTrace();
+			BufferedImage needleImage;
+			double angle = 0;
+			double scale = 1;
+			String adresseImage;
+			    
+			/** 
+			 *  private class Needle
+			 *  @param _adressImage : the path of the image
+			 *  @param _scale : the scale for resize the image
+			 */
+			public Needle(String _adresseImage, double _scale)
+			{
+				scale = _scale;
+				adresseImage = _adresseImage;
+				try
+				{
+					needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+				
+			/**
+			 * used of resize the components
+			 * @param _scale : the scalar with the components are resized
+			 */
+			public void scale(double _scale)
+			{
+				if(scale != _scale)
+				{
+					scale = _scale;
+					try {
+						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			/**
+			 * used for rotate the needles
+			 * @param _angle : the new angle of the needle.
+			 */
+			public void rotate(double _angle)
+			{
+				angle = Math.toRadians(_angle);				
+				
+				if(Math.sin(angle) < 0 && Math.cos(angle) < 0)
+					angle = angle + 2 * (3*Math.PI/2 - angle);
+				if(Math.sin(angle) > 0 && Math.cos(angle) < 0)
+					angle = angle - 2 * (angle - Math.PI/2);
+					
+				repaint();
+			}
+				
+			@Override 
+			public Dimension getPreferredSize()
+			{ 
+				return new Dimension(needleImage.getWidth(), needleImage.getHeight()); 
+			} 
+			@Override 
+			protected void paintComponent(Graphics g)
+			{ 
+				super.paintComponent(g); 
+				Graphics2D g2 = (Graphics2D) g;
+				g2.rotate(-angle, scale*5, needleImage.getHeight() / 2); //TODO voir valeur non constante
+				g2.drawImage(needleImage, 0, 0, null); 
 			}
 		}
 	}
-	
-	/**
-	 * used for rotate the needles
-	 * @param _angle : the new angle of the needle.
-	 */
-	public void rotate(double _angle)
-	{
-		angle = Math.toRadians(_angle);				
-		
-		if(Math.sin(angle) < 0 && Math.cos(angle) < 0)
-			angle = angle + 2 * (3*Math.PI/2 - angle);
-		if(Math.sin(angle) > 0 && Math.cos(angle) < 0)
-			angle = angle - 2 * (angle - Math.PI/2);
-			
-		//repaint();
-	}
-		
-	@Override 
-	public Dimension getPreferredSize()
-	{ 
-		return new Dimension(needleImage.getWidth(), needleImage.getHeight()); 
-	} 
-	@Override 
-	protected void paintComponent(Graphics g)
-	{ 
-		super.paintComponent(g); 
-		Graphics2D g2 = (Graphics2D) g;
-		g2.rotate(-angle, scale*5, needleImage.getHeight() / 2);
-		g2.drawImage(needleImage, 0, 0, null); 
-	}
 }
 
-}
+
+
