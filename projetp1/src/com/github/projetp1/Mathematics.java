@@ -282,6 +282,11 @@ public class Mathematics
 		this.dY = calculateY(this.dHeight,this.dAzimuth);
 	}
 
+	/**Frac
+	 * Number - Math.floor(Number)
+	 * @param double x : The number
+	 * @return double : Result of the operation
+	 */
     private double Frac(double x)
     {
         return x - Math.floor(x);
@@ -293,7 +298,7 @@ public class Mathematics
 	 */
 	public void calculatePositionSun()
 	{
-         //Thank to Patrick Ellenberger
+         //Thank to Patrick Ellenberger for the translating C++ to Java with the book "Astronomy on the Personal Computer"
 		
          double T = (this.dDate_JulianCalendar - 2451545.0) / 36525.0;
          double eps = 23.43929111 * D2R;
@@ -373,7 +378,7 @@ public class Mathematics
 	 */
 	public void calculatePositionMoon()
 	{
-         //Thank to Patrick Ellenberger
+        //Thank to Patrick Ellenberger for the translating C++ to Java with the book "Astronomy on the Personal Computer"
 		
 		double T = (this.dDate_JulianCalendar - 2451545.0) / 36525.0;
         double eps = 23.43929111 * D2R;
@@ -464,8 +469,16 @@ public class Mathematics
         this.calculateAll(this.dDeclination, this.dAscension);
 	}
 	
+	/**
+	 * getMoonBrightness
+	 * Give a percentage that represents the moon's brightness
+	 * @param boolean _yesterday : True if you want the moon's brightness for yesterday
+	 * @return double : Return a percentage
+	 */
 	public double getMoonBrightness(boolean _yesterday)
 	{
+		//Source : http://www.voidware.com/moon_phase.htm
+		//Adapted in Java and modified by Diego Antognini 
 		int y=(int)this.dYear;
         int m=(int)this.dMonth;
         int d=(int)this.dDay;
@@ -596,6 +609,12 @@ public class Mathematics
 		this.dYear = Mathematics.kAdditionnalYearOfGregorianCalendar + _date.get(Calendar.YEAR);
 	}
 	
+	/**
+	 * isLeapYear
+	 * Say if the year is leap or not
+	 * @param int _year : Year to check
+	 * @return boolean : True if yes or false
+	 */
 	static public boolean isLeapYear(int _year)
 	{
 		if(_year%4 == 0)
@@ -766,7 +785,7 @@ public class Mathematics
 
 	/** 
 	 * calculateSideralTime
-	 * Calculates the sideral time
+	 * Calculate the sideral time
 	 * @param _dDay : The day
 	 * @param _dMonth : The month
 	 * @param _dYear : The year
@@ -801,6 +820,7 @@ public class Mathematics
 		
 		float accX = acc[0], accY = acc[1], accZ = acc[2];
 		float magX = mag[0], magY = mag[1], magZ = mag[2];
+		
 		// On repasse en signé
 		accX -= 32768.0;
 		accY -= 32768.0;
@@ -1261,6 +1281,13 @@ public class Mathematics
         return values;
     }
 	
+    /**
+     * picLon2Lon
+     * Convert the pic's longitude to real longitude
+     * @param double _duLon : Pic's longitude
+     * @param double _cHemisphere : The actual hemisphere
+     * @return double : Return the real longitude
+     */
 	static public double picLon2Lon(double _duLon,char _cHemisphere)
 	{
 		int dd = (int) (_duLon / 100);
@@ -1274,6 +1301,13 @@ public class Mathematics
 		return ret;
 	}
 	
+    /**
+     * picLat2Lat
+     * Convert the pic's latitude to real longitude
+     * @param double _duLat : Pic's latitude
+     * @param double _cHemisphere : The actual hemisphere
+     * @return double : Return the real latitude
+     */
 	static public double picLat2Lat(double _duLat,char _cHemisphere)
 	{
 		int dd = (int) (_duLat / 100);
