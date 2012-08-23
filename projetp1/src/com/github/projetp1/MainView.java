@@ -919,8 +919,9 @@ public class MainView extends JFrame implements KeyListener {
     	 */
     	private void searchBarKeyReleased(java.awt.event.KeyEvent evt) 
     	{    		
-    		listCelestialObject.clear();
-    		listModelNameOrID.removeAll();
+    		//listCelestialObject.clear();
+    		if (listModelNameOrID.getSize()>0)
+    			listModelNameOrID.removeAll();
     		listModelObjects.clear();
     		
     		boolean canQueryDB = true;
@@ -952,7 +953,7 @@ public class MainView extends JFrame implements KeyListener {
 		     				if(celestialObject.getProperName() != null)
 		     					listModelNameOrID.setElement(celestialObject.getProperName());
 		     				else
-		     					listModelNameOrID.list.add(String.valueOf(celestialObject.getId()));
+		     					listModelNameOrID.setElement(String.valueOf(celestialObject.getId()));
 		     				listModelObjects.add(celestialObject);
 		     			}
 		     		}

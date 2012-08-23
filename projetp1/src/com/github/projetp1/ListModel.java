@@ -34,11 +34,13 @@ public class ListModel<F> extends AbstractListModel {
 
     public void removeElement(int index){
         list.remove(index);
-//        super.fireIntervalAdded(this, 0, list.size() - 1);
+        super.fireIntervalRemoved(this, 0, list.size() - 1);
     }
 
     public void removeAll() {
+        super.fireIntervalRemoved(this, 0, list.size());
         list.clear();
+        
     }
 
     public void setNewList(Set<String> keySet) {
