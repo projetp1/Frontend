@@ -35,6 +35,7 @@ public class Pic extends Thread implements Observer
 	
 	// Déclinaison magnétique pour l'endroit en cours
 	float magneticDeclination = 0.0f;
+	boolean magSet = false;
 
 	private PicMode mode = PicMode.SIMULATION;
 
@@ -234,7 +235,11 @@ public class Pic extends Thread implements Observer
 					if(!locComponents[2].isEmpty() && !locComponents[3].isEmpty())
 						this.setLongitude(Mathematics.picLon2Lon(Double.parseDouble(locComponents[2]), locComponents[3].charAt(0)));
 					
-					magneticDeclination = (new GeomagneticField((float)latitude, (float)longitude, 200, System.currentTimeMillis()).getDeclination());
+					if(!magSet)
+					{
+						magneticDeclination = (new GeomagneticField((float)latitude, (float)longitude, 200, System.currentTimeMillis()).getDeclination());
+						magSet = true;
+					}
 					break;
 				case ACCELEROMETER_UPDATE:
 				case MAGNETOMETER_UPDATE:
