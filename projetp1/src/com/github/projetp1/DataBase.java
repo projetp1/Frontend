@@ -31,8 +31,7 @@ public class DataBase
 	private String sTable;
 	private Connection connection;
 	private Statement statement;
-	private ResultSet allStars;
-	private int first;
+	private ArrayList<CelestialObject> allStars = new ArrayList<CelestialObject>();
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private int argumentCount;
@@ -54,7 +53,6 @@ public class DataBase
 			this.sDataBase = _sDataBase;
 			this.sDelimiter = _sDelimiter;
 			this.sTable = "stars";
-			this.first = 0;
 		}
 		catch(ClassNotFoundException e)
 		{
@@ -81,6 +79,44 @@ public class DataBase
 			log.warning("Impossible to execute SQL queries !");
 			System.exit(1);
 		}
+		
+		//Generate the ArrayList with all the stars
+		int l_id;
+		int l_HIP;
+		int l_HD;
+		int l_HR;
+		String l_ProperName;
+		double l_dRA;
+		double l_Dec;
+		double l_dDistance;
+		double l_dMag;
+		double l_dColorIndex;
+		
+		String[] field = {"*"};
+		String[] table = {this.sTable};
+		String[][] where = {};
+		String[] orderby={"id","ASC"}; 
+		int[] limit = {};
+		boolean secured = true;
+		ResultSet result = selectQuery(field,table,where,orderby,limit,secured);
+		
+		while (result.next()) 
+	    {
+	    	l_id = result.getInt("id");
+			l_HIP = result.getInt("HIP");
+			l_HD = result.getInt("HD");
+			l_HR = result.getInt("HR");
+			l_ProperName = result.getString("ProperName");
+			l_dRA = result.getDouble("RA");
+			l_Dec = result.getDouble("Dec");
+			l_dDistance = result.getDouble("Distance");
+			l_dMag = result.getDouble("Mag");
+			l_dColorIndex = result.getDouble("ColorIndex");
+
+			CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
+			this.allStars.add(l_star);
+	    }
+		result.close();
 	}
 	
 	/** 
@@ -358,7 +394,6 @@ public class DataBase
 		return hs_Out;
 	}
 	
-	
 	/** 
 	 * starsForCoordinates
 	 * Search all the stars that could be in the hemisphere
@@ -373,26 +408,16 @@ public class DataBase
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
 		int l_id;
-		//int l_StarId;
 		int l_HIP;
 		int l_HD;
 		int l_HR;
-		//int l_Gliese;
-		//int l_BayerFlamsteed;
 		String l_ProperName;
 		double l_dRA;
 		double l_Dec;
 		double l_dDistance;
-		//double l_dPMRA;
-		//double l_dPMDec;
-		//double l_dRV;
 		double l_dMag;
-		//double l_dAbsMag;
-		//String l_sSpectrum;
 		double l_dColorIndex;
-		//double l_dXYZ[] = new double[3];
-		//double l_dVXYZ[] = new double[3];
-		
+
 		try
 		{
 			if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
@@ -404,91 +429,56 @@ public class DataBase
 			_dLat = _dLon = 0;
 		}
 		
-		if(this.first++ == 0)
-		{
-			String[] field = {"*"};
-			String[] table = {this.sTable};
-			String[][] where = {};
-			String[] orderby={"id","ASC"}; 
-			int[] limit = {};
-			boolean secured = true;
-			this.allStars = selectQuery(field,table,where,orderby,limit,secured);
-		}
-		ResultSet result = this.allStars;
+		Mathematics l_calc = new Mathematics(_date,_dLat, _dLon);
 		
-		try
+		for (CelestialObject star : this.allStars)
 		{
-			Mathematics l_calc = new Mathematics(_date,_dLat, _dLon);
-			
-			while (result.next()) 
-		    {
-		    	l_id = result.getInt("id");
-		    	//l_StarId = result.getInt("StarID");
-				l_HIP = result.getInt("HIP");
-				l_HD = result.getInt("HD");
-				l_HR = result.getInt("HR");
-				//l_Gliese = result.getInt("Gliese");
-				//l_BayerFlamsteed = result.getInt("BayerFlamsteed");
-				l_ProperName = result.getString("ProperName");
-				l_dRA = result.getDouble("RA");
-				l_Dec = result.getDouble("Dec");
-				l_dDistance = result.getDouble("Distance");
-				//l_dPMRA = result.getDouble("PMRA");
-				//l_dPMDec = result.getDouble("PMDec");
-				//l_dRV = result.getDouble("RV");
-				l_dMag = result.getDouble("Mag");
-				//l_dAbsMag = result.getDouble("AbsMag");
-				//l_sSpectrum = result.getString("Spectrum");
-				l_dColorIndex = result.getDouble("ColorIndex");
-				//l_dXYZ[0] = result.getDouble("VX");
-				//l_dXYZ[1] = result.getDouble("VY");
-				//l_dXYZ[2] = result.getDouble("VZ");
-				//l_dVXYZ[0] = result.getDouble("VX");
-				//l_dVXYZ[1] = result.getDouble("VY");
-				//l_dVXYZ[2] = result.getDouble("VZ");
-				
-		    	//CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
-				CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
-		    	
-				if(l_id == 1)//Sun
-				{
-					l_calc.calculatePositionSun();
-					l_star.setDec(l_calc.getDeclination());
-					l_star.setRA(l_calc.getAscension());
-				}
-				else if(l_id == 2)//Moon
-				{
-					l_calc.calculatePositionMoon();
-					l_star.setDec(l_calc.getDeclination());
-					l_star.setRA(l_calc.getAscension());
-					double l_now = l_calc.getMoonBrightness(false);
-					double l_yes = l_calc.getMoonBrightness(true);
-					if(l_yes>l_now)
-						l_now*=-1;
-						
-					l_star.setMag(l_now);
-				}
-				else
-					l_calc.calculateAll(l_star.getDec(),l_star.getRA());
-				
-		    	if(l_calc.getHeight() >= 0)
-		    	{
-			    	l_star.setXReal(l_calc.getX());
-			    	l_star.setYReal(l_calc.getY());
-			    	l_star.SetAzimuth(l_calc.getAzimuth());
-			    	l_star.SetHeight(l_calc.getHeight());
-			    	al_stars.add(l_star);
-		    	}
-		    	
-		    	l_star = null;
+	    	l_id = star.getId();
+			l_HIP = star.getHIP();
+			l_HD = star.getHD();
+			l_HR = star.getHR();
+			l_ProperName = star.getProperName();
+			l_dRA = star.getRA();
+			l_Dec = star.getDec();
+			l_dDistance = star.getDistance();
+			l_dMag = star.getMag();
+			l_dColorIndex = star.getColorIndex();
+
+			CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
+	    	
+			if(l_id == 1)//Sun
+			{
+				l_calc.calculatePositionSun();
+				l_star.setDec(l_calc.getDeclination());
+				l_star.setRA(l_calc.getAscension());
 			}
-		}
-		catch(SQLException e)
-		{
-			log.warning("Problem with the query's result !");
+			else if(l_id == 2)//Moon
+			{
+				l_calc.calculatePositionMoon();
+				l_star.setDec(l_calc.getDeclination());
+				l_star.setRA(l_calc.getAscension());
+				double l_now = l_calc.getMoonBrightness(false);
+				double l_yes = l_calc.getMoonBrightness(true);
+				if(l_yes>l_now)
+					l_now*=-1;
+					
+				l_star.setMag(l_now);
+			}
+			else
+				l_calc.calculateAll(l_star.getDec(),l_star.getRA());
+			
+	    	if(l_calc.getHeight() >= 0)
+	    	{
+		    	l_star.setXReal(l_calc.getX());
+		    	l_star.setYReal(l_calc.getY());
+		    	l_star.SetAzimuth(l_calc.getAzimuth());
+		    	l_star.SetHeight(l_calc.getHeight());
+		    	al_stars.add(l_star);
+	    	}
+	    	
+	    	l_star = null;
 		}
 		
-		result.close();
 		return al_stars;
 	}
 	
@@ -507,25 +497,15 @@ public class DataBase
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 		
 		int l_id;
-		//int l_StarId;
 		int l_HIP;
 		int l_HD;
 		int l_HR;
-		//int l_Gliese;
-		//int l_BayerFlamsteed;
 		String l_ProperName;
 		double l_dRA;
 		double l_Dec;
 		double l_dDistance;
-		//double l_dPMRA;
-		//double l_dPMDec;
-		//double l_dRV;
 		double l_dMag;
-		//double l_dAbsMag;
-		//String l_sSpectrum;
 		double l_dColorIndex;
-		//double l_dXYZ[] = new double[3];
-		//double l_dVXYZ[] = new double[3];
 		
 		boolean secured = false;
 		
@@ -570,33 +550,16 @@ public class DataBase
 			while (result.next()) 
 		    {
 		    	l_id = result.getInt("id");
-		    	//l_StarId = result.getInt("StarID");
 				l_HIP = result.getInt("HIP");
 				l_HD = result.getInt("HD");
 				l_HR = result.getInt("HR");
-				//l_Gliese = result.getInt("Gliese");
-				//l_BayerFlamsteed = result.getInt("BayerFlamsteed");
 				l_ProperName = result.getString("ProperName");
 				l_dRA = result.getDouble("RA");
 				l_Dec = result.getDouble("Dec");
 				l_dDistance = result.getDouble("Distance");
-				//l_dPMRA = result.getDouble("PMRA");
-				//l_dPMDec = result.getDouble("PMDec");
-				//l_dRV = result.getDouble("RV");
 				l_dMag = result.getDouble("Mag");
-				//l_dAbsMag = result.getDouble("AbsMag");
-				//l_sSpectrum = result.getString("Spectrum");
 				l_dColorIndex = result.getDouble("ColorIndex");
-				//l_dXYZ[0] = result.getDouble("VX");
-				//l_dXYZ[1] = result.getDouble("VY");
-				//l_dXYZ[2] = result.getDouble("VZ");
-				//l_dVXYZ[0] = result.getDouble("VX");
-				//l_dVXYZ[1] = result.getDouble("VY");
-				//l_dVXYZ[2] = result.getDouble("VZ");
-	
-				
-		    	//CelestialObject l_star = new CelestialObject(l_id,l_StarId,l_HIP,l_HD,l_HR,l_Gliese,l_BayerFlamsteed,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dPMRA,l_dPMDec,l_dRV,l_dMag,l_dAbsMag,l_sSpectrum,l_dColorIndex,l_dXYZ[0],l_dXYZ[1],l_dXYZ[2],l_dVXYZ[0],l_dVXYZ[1],l_dVXYZ[2]);
-		    	
+
 				CelestialObject l_star = new CelestialObject(l_id,l_HIP,l_HD,l_HR,l_ProperName,l_dRA,l_Dec,l_dDistance,l_dMag,l_dColorIndex);
 				
 				if(l_id == 1)
