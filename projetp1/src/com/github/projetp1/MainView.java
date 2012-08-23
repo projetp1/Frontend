@@ -292,15 +292,6 @@ public class MainView extends JFrame implements KeyListener {
 		}		
 	}
 	
-	/*
-	public ArrayList<CelestialObject> searchForTextInSearchField() {
-		//request ddb
-		//text form search field
-		return null;
-=======
->>>>>>> master
-	}
-	
 	/**
 	 * calcul the beast scalar for resize the component
 	 */  
