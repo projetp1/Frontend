@@ -131,7 +131,7 @@ public class MainView extends JFrame implements KeyListener {
 		}
 		this.addKeyListener(this);
 		//TODO : mettre des valeurs non arbitraire.
-		leftPanel = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
+		leftPanel = new JLabel("");
 		leftPanel.setBounds(100, 100, 100, 200);
 		leftPanel.setForeground(new Color(250,250,250));
 		getLayeredPane().add(leftPanel);
@@ -285,8 +285,8 @@ public class MainView extends JFrame implements KeyListener {
 				"<br /><br />Magnitude<br />" +
 				_object.getMag() +
 				"<br /><br />Distance(Terre)<br />" +
-				_object.getDistance() +
-				"<br /><br />Couleur<br />" +
+				(int)(_object.getDistance()*3.2616) +
+				" a.l<br /><br />Couleur<br />" +
 				_object.getColorIndex() +
 				"</html>");
 		}		

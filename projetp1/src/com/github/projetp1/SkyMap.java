@@ -116,8 +116,6 @@ public class SkyMap extends Container implements MouseListener
 				ex.printStackTrace();
 			}
 		}
-
-		log.info(""+celestialObjects.size());
 		
 		this.repaint();
 	}
@@ -251,7 +249,6 @@ public class SkyMap extends Container implements MouseListener
 		dblAngle += 90;
 		dblAngle /= 45;
 		int iAngle = (int) Math.round(dblAngle);
-		//mainView.getPic().sendArrow;
 		
 		//log.info("angle : " + Math.toDegrees(l_dangle) + "\r\n");
 		
