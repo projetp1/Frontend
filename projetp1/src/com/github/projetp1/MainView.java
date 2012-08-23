@@ -38,6 +38,8 @@ public class MainView extends JFrame implements KeyListener {
 	public Settings getSettings() { return settings; }
 	private Pic pic;
 	public Pic getPic() { return pic; }
+	private DataBase db = null;
+	public DataBase getDataBase() { return db; }
 	SkyMap skymap;
 	
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -123,6 +125,14 @@ public class MainView extends JFrame implements KeyListener {
 	 * Constructor    
 	 */
 	public MainView() {
+		try
+		{
+			db = new DataBase("hyg.db",";");
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
 		
 		this.addKeyListener(this);
 		//TODO : mettre des valeurs non arbitraire.
@@ -159,7 +169,7 @@ public class MainView extends JFrame implements KeyListener {
 		inclinometerPanel = new Inclinometer(0.1);
 		inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
 
-		skymap = new SkyMap("hyg.db",";",this);
+		skymap = new SkyMap(this);
 		
 		this.setFocusable(true);
 
@@ -898,21 +908,11 @@ public class MainView extends JFrame implements KeyListener {
     	ListModel listModelObjects;
     	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex "};
     	JScrollPane jScrollPane = new JScrollPane();
-    	DataBase db;
     	ArrayList<CelestialObject> listCelestialObject = new ArrayList<CelestialObject>();
 
     	
     	public SearchBar(double _scale)
-    	{
-     		try
-			{
-				db = new DataBase("hyg.db", ";");
-			}
-     		catch(Exception ex)
-			{
-				ex.printStackTrace();
-			}
-     		
+    	{     		
     		scale = _scale;
     		hig = (int)(300*scale);
     		this.setBounds(0, 0, (int)(width()/2), hig);

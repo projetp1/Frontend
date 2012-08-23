@@ -33,7 +33,6 @@ public class SkyMap extends Container implements MouseListener
 	
 	private ArrayList<CelestialObject> celestialObjects;
 	private CelestialObject celestialObjectPointed = null; //TODO: CHANGER LE NOM EN celestialObjectSearched
-	private DataBase db = null;
 	MainView mainView = null;
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 
@@ -47,21 +46,13 @@ public class SkyMap extends Container implements MouseListener
 	 * @param _mainView
 	 *            : The MainView class
 	 */
-	public SkyMap(String _sDataBase, String _sDelimiter, MainView _mainView)
+	public SkyMap(MainView _mainView)
 	{
 		this.addMouseListener(this);
 		Color l_BackgroundColor = new Color(5,30,50);
 		this.setBackground(l_BackgroundColor);
 		
-		mainView = _mainView;		
-		try
-		{
-			db = new DataBase(_sDataBase, _sDelimiter);
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
+		mainView = _mainView;
 	}
 	
 	/**
@@ -107,19 +98,25 @@ public class SkyMap extends Container implements MouseListener
 	public void updateSkyMap()
 	{
 		if (this.mainView.getPic() != null)
+		{
 			dLatitude = this.mainView.getPic().getLatitude();
-
-		if (this.mainView.getPic() != null)
 			dLongitude = this.mainView.getPic().getLongitude();
+		}
 		
-		try
+		if(mainView.getDataBase() != null)
 		{
-			celestialObjects = db.starsForCoordinates(Calendar.getInstance(), dLatitude, dLongitude);
+			try
+			{
+				celestialObjects = mainView.getDataBase().starsForCoordinates(Calendar.getInstance(), dLatitude, dLongitude);
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
 		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
+
+		log.info(""+celestialObjects.size());
+		
 		this.repaint();
 	}
 
@@ -142,6 +139,7 @@ public class SkyMap extends Container implements MouseListener
 		int l_yCenter = this.getHeight() / 2 + (int)(dYOrigin * l_scale * zoom);
 		for (CelestialObject celestialObject : celestialObjects)
 		{
+			
 			int l_x, l_y;
 			int l_d = getSizeForMagnitude(celestialObject.getMag());
 			Color l_color = getColorForColorIndex(celestialObject.getColorIndex(), 255);
@@ -158,7 +156,6 @@ public class SkyMap extends Container implements MouseListener
 			else if (l_name != null && l_name.equals("Moon"))
 			{
 				double l_dMoon = celestialObject.getMag();
-				System.out.print(l_dMoon + "\n");
 				Image l_imgMoon = null;
 				if(l_dMoon > 87 || l_dMoon < -87)
 					l_imgMoon = getToolkit().getImage("res/moon_0.png");
