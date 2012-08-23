@@ -125,10 +125,10 @@ public class Mathematics
 	            e = x;
 	            do
 	            {
-		            dl = e - .016718 * Math.sin(e) - x;
-		            e = e - dl / (1 - .016718 * Math.cos(e));
+		            dl = e - .016718 * sin(e) - x;
+		            e = e - dl / (1 - .016718 * cos(e));
 	            } while (Math.abs(dl) >= (1e-12));
-	            v = 360 / 3.1415926535897932384626433832795 * Math.atan(1.01686011182 * Math.tan(e / 2));
+	            v = 360 / 3.1415926535897932384626433832795 * Math.atan(1.01686011182 * tan(e / 2));
 	            l = v + 282.596403;
 	            i = (int)(l / 360);
 	            l = l - i * 360.0;
@@ -162,13 +162,13 @@ public class Mathematics
 	            n = 151.950429 - 0.0529539 * j;
 	            i = (int)(n / 360);
 	            n -= i * 360.0;
-	            ev = 1.2739 * Math.sin((2 * (l - ls) - mm) * (3.1415926535897932384626433832795 / 180.0));
-	            sms = Math.sin(ms * (3.1415926535897932384626433832795 / 180.0));
+	            ev = 1.2739 * sin((2 * (l - ls) - mm) * (3.1415926535897932384626433832795 / 180.0));
+	            sms = sin(ms * (3.1415926535897932384626433832795 / 180.0));
 	            ae = 0.1858 * sms;
 	            mm += ev - ae - 0.37 * sms;
-	            ec = 6.2886 * Math.sin(mm * (3.1415926535897932384626433832795 / 180.0));
-	            l += ev + ec - ae + 0.214 * Math.sin(2 * mm * (3.1415926535897932384626433832795 / 180.0));
-	            l = 0.6583 * Math.sin(2 * (l - ls) * (3.1415926535897932384626433832795 / 180.0)) + l;
+	            ec = 6.2886 * sin(mm * (3.1415926535897932384626433832795 / 180.0));
+	            l += ev + ec - ae + 0.214 * sin(2 * mm * (3.1415926535897932384626433832795 / 180.0));
+	            l = 0.6583 * sin(2 * (l - ls) * (3.1415926535897932384626433832795 / 180.0)) + l;
 	            return l;
 	      }
 
@@ -182,7 +182,7 @@ public class Mathematics
 	            if (t < 0)
 	                  t += 360;
 	            ip.argvalue = (int)((t + 22.5) / 45) & 0x7;
-	            return (1.0 - Math.cos((lm - ls) * (3.1415926535897932384626433832795 / 180.0))) / 2;
+	            return (1.0 - cos((lm - ls) * (3.1415926535897932384626433832795 / 180.0))) / 2;
 	      }
 
 	      public static void nextDay(RefObject<Integer> y, RefObject<Integer> m, RefObject<Integer> d, double dd)
@@ -251,8 +251,8 @@ public class Mathematics
 	{
 		calculateDateTime(_date);
 
-		this.dLatitude = _dLat;
-		this.dLongitude = _dLon;
+		this.dLatitude = _dLat*D2R;
+		this.dLongitude = _dLon*D2R;
 		
 		this.dDate_JulianCalendar = calculate_JulianDate(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
 		this.dSideral_Time = calculateSideralTime(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
@@ -270,7 +270,7 @@ public class Mathematics
 	 */
 	public void calculateAll(double _dDec,double _dAsc)
 	{
-		this.dDeclination = _dDec;
+		this.dDeclination = _dDec*D2R;
 		this.dAscension = _dAsc;
 
 		this.dHour_Angle_Star = this.dAngle - this.dAscension + this.dLongitude;
@@ -296,9 +296,9 @@ public class Mathematics
          //Thank to Patrick Ellenberger
 		
          double T = (this.dDate_JulianCalendar - 2451545.0) / 36525.0;
-         double eps = 23.43929111 * Math.PI / 180.0;
+         double eps = 23.43929111 * D2R;
          double L,M;
-         double pi2 = 2.0 * Math.PI;
+         double pi2 = 2.0 * pi;
          M  = pi2 * Frac ( 0.993133 + 99.997361*T);
          L  = pi2 * Frac ( 0.7859453 + M/pi2 +
                  (6893.0*sin(M)+72.0*sin(2.0*M)+6191.2*T) / 1296.0e3);
@@ -353,7 +353,7 @@ public class Mathematics
              phi = Math.atan2(e_sun[1], e_sun[0]);
          
          if (phi < 0.0)
-             phi += 2.0 * Math.PI;
+             phi += 2.0 * pi;
          
          double rho = Math.sqrt(rhoSqr);
          if ((e_sun[2] == 0.0) && (rho == 0.0))
@@ -361,8 +361,8 @@ public class Mathematics
          else
              theta = Math.atan2(e_sun[2], rho);
          
-        this.dAscension = phi*180/Math.PI;
-        this.dDeclination = theta*180/Math.PI; 
+        this.dAscension = phi;
+        this.dDeclination = theta*R2D; 
         
         this.calculateAll(this.dDeclination, this.dAscension);
 	}
@@ -376,11 +376,11 @@ public class Mathematics
          //Thank to Patrick Ellenberger
 		
 		double T = (this.dDate_JulianCalendar - 2451545.0) / 36525.0;
-        double eps = 23.43929111 * Math.PI / 180.0;
-        double Arcs = 3600.0 * 180.0 / Math.PI;
+        double eps = 23.43929111 * D2R;
+        double Arcs = 3600.0 * R2D;
         
         
-        double pi2 = 2.0 * Math.PI;
+        double pi2 = 2.0 * pi;
         double L_0, l, ls, F, D, dL, S, h, N, l_Moon, b_Moon;
         L_0 = Frac(0.606433 + 1336.855225 * T);
         l = pi2 * Frac(0.374897 + 1325.552410 * T);
@@ -434,7 +434,9 @@ public class Mathematics
             double Scalp = 0.0;
             
             for (int j = 0; j < 3; j ++)
+            {
                 Scalp += mat[i][j] * vec[j];                    
+            }
             
             e_Moon[i] = Scalp;
         }
@@ -448,7 +450,7 @@ public class Mathematics
             phi = Math.atan2(e_Moon[1], e_Moon[0]);
         
         if (phi < 0.0)
-            phi += 2.0 * Math.PI;
+            phi += 2.0 * pi;
         
         double rho = Math.sqrt(rhoSqr);
         if ((e_Moon[2] == 0.0) && (rho == 0.0))
@@ -456,7 +458,7 @@ public class Mathematics
         else
             theta = Math.atan2(e_Moon[2], rho);
         
-        this.dAscension = phi*R2D;
+        this.dAscension = phi;
         this.dDeclination = theta*R2D;           
         
         this.calculateAll(this.dDeclination, this.dAscension);
@@ -630,10 +632,9 @@ public class Mathematics
 	 */
 	static public double calculateX(double _dHeight,double _dAzimuth)
 	{
-		double l_x = 1*((-2.0/pi)*_dHeight+1);
+		double l_x = -1*((-2.0/pi)*_dHeight+1);
 		
 		return l_x*sin(_dAzimuth);
-		//return (cos(_dHeight)*sin(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
 	/**
@@ -648,7 +649,6 @@ public class Mathematics
 		double l_y = 1*((-2.0/pi)*_dHeight+1);
 		
 		return l_y*cos(_dAzimuth);
-		//return (cos(_dHeight)*cos(_dAzimuth)/(sin(_dHeight)+1));
 	}
 	
 	/** 
@@ -739,7 +739,52 @@ public class Mathematics
 		return ((int) (kNumberOfDayInOneYear * (_dYear + kInitialYear))
 				+ (int) (kNumberOfDayInOneMonth * (_dMonth + 1)) + _dDay + l_t + l_b - 1524.5);
 	}
+	
+	/**
+	 * calculateSideralHourAngle Calculates the sideral hour angle
+	 * 
+	 * @param _dSideral_Time : The Sideral time
+	 * @return : Return a double that's the result
+	 */
+	static public double calculateSideralHourAngle(double _dSideral_Time)
+	{
+		return 2.0 * pi * _dSideral_Time / hms(23.0, 56.0, 4.0);
+	}
 
+	/** 
+	 * calculateHourAngle
+	 * Calculates the hours dAngle
+	 * @param _dHour : The hour
+	 * @param _dMin : The minute
+	 * @param _dGMT : The GMT zone
+	 * @return : Return a double that's the result
+	 */
+	static public double calculateHourAngle(double _dHour, double _dMin, double _dGMT)
+	{
+		return (_dHour - 12 + _dMin / 60 - _dGMT) * 2 * pi / hms(23.0, 56.0, 4.0);
+	}
+
+	/** 
+	 * calculateSideralTime
+	 * Calculates the sideral time
+	 * @param _dDay : The day
+	 * @param _dMonth : The month
+	 * @param _dYear : The year
+	 * @param _dHour : The hour
+	 * @param _min : The _minute
+	 * @param _dSecond : The second
+	 * @return : Return a double that's the result
+	 */
+	static public double calculateSideralTime(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
+	{
+		double l_JJ = calculate_JulianDate(_dDay, _dMonth, _dYear, _dHour, _dMinute, _dSecond);
+		double l_T = (l_JJ - 2451545.0) / 36525.0;
+		double l_H1 = 24110.54841 + 8640184.812866 * l_T + 0.093104 * l_T * l_T - 0.0000062 * l_T* l_T * l_T;
+		double l_HSH = l_H1 / 3600.0;
+		double l_HS = (l_HSH / 24.0 - (int) (l_HSH / 24.0)) * 24.0;
+
+		return l_HS;
+	}
 	
 	/**
 	 * Calculate the 3 angles, which are azimuth, pitch and roll.
@@ -1240,52 +1285,6 @@ public class Mathematics
 			ret *= -1.0;
 		
 		return ret;
-	}
-	
-	/**
-	 * calculateSideralHourAngle Calculates the sideral hour angle
-	 * 
-	 * @param _dSideral_Time : The Sideral time
-	 * @return : Return a double that's the result
-	 */
-	static public double calculateSideralHourAngle(double _dSideral_Time)
-	{
-		return 2.0 * pi * _dSideral_Time / hms(23.0, 56.0, 4.0);
-	}
-
-	/** 
-	 * calculateHourAngle
-	 * Calculates the hours dAngle
-	 * @param _dHour : The hour
-	 * @param _dMin : The minute
-	 * @param _dGMT : The GMT zone
-	 * @return : Return a double that's the result
-	 */
-	static public double calculateHourAngle(double _dHour, double _dMin, double _dGMT)
-	{
-		return (_dHour - 12 + _dMin / 60 - _dGMT) * 2 * pi / hms(23.0, 56.0, 4.0);
-	}
-
-	/** 
-	 * calculateSideralTime
-	 * Calculates the sideral time
-	 * @param _dDay : The day
-	 * @param _dMonth : The month
-	 * @param _dYear : The year
-	 * @param _dHour : The hour
-	 * @param _min : The _minute
-	 * @param _dSecond : The second
-	 * @return : Return a double that's the result
-	 */
-	static public double calculateSideralTime(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
-	{
-		double l_JJ = calculate_JulianDate(_dDay, _dMonth, _dYear, _dHour, _dMinute, _dSecond);
-		double l_T = (l_JJ - 2451545.0) / 36525.0;
-		double l_H1 = 24110.54841 + 8640184.812866 * l_T + 0.093104 * l_T * l_T - 0.0000062 * l_T* l_T * l_T;
-		double l_HSH = l_H1 / 3600.0;
-		double l_HS = (l_HSH / 24.0 - (int) (l_HSH / 24.0)) * 24.0;
-
-		return l_HS;
 	}
 	
 	/**
