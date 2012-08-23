@@ -38,6 +38,7 @@ public class ListModel<F> extends AbstractListModel {
     }
 
     public void removeAll() {
+        super.fireIntervalRemoved(this, 0, list.size());
         list.clear();
     }
 
