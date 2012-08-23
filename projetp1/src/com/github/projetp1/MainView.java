@@ -298,7 +298,9 @@ public class MainView extends JFrame implements KeyListener {
 	 * Update the information of the star in the leftPanel.
 	 */  
 	public void updateInfo(CelestialObject _object) {
-		leftPanel.setText("<html>Nom de l'astre<br />" +
+		if(_object != null)
+		{
+			leftPanel.setText("<html>Nom de l'astre<br />" +
 				_object.getProperName() +
 				"<br /><br />Magnitude<br />" +
 				_object.getMag() +
@@ -307,7 +309,7 @@ public class MainView extends JFrame implements KeyListener {
 				"<br /><br />Couleur<br />" +
 				_object.getColorIndex() +
 				"</html>");
-		
+		}		
 	}
 	
 	/*

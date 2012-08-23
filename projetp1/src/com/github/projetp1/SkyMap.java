@@ -72,6 +72,12 @@ public class SkyMap extends Container implements MouseListener
 	 */
 	public void mousePressed(MouseEvent _e)
 	{
+		if(celestialObjects == null)
+		{
+			log.severe("No celestial object in celestialObjects");
+			return;
+		}
+		
 		int l_scale = (int) (this.getHeight() / 2);
 		int l_xCenter = this.getWidth() / 2 - (int) (dXOrigin * l_scale * zoom);
 		int l_yCenter = this.getHeight() / 2 + (int) (dYOrigin * l_scale * zoom);
@@ -92,7 +98,6 @@ public class SkyMap extends Container implements MouseListener
 				l_nearestCelestialObject = celestialObject;
 			}
 		}
-		
 		mainView.updateInfo(l_nearestCelestialObject);
 	}
 
@@ -126,9 +131,6 @@ public class SkyMap extends Container implements MouseListener
 	 */
 	public void paint(Graphics _g)
 	{
-		
-		celestialObjects = null;
-		
 		if(celestialObjects == null)
 		{
 			log.severe("No celestial objects to display");
