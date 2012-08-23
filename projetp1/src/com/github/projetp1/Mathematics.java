@@ -793,8 +793,10 @@ public class Mathematics
 		if(mag != null && acc != null) {
 			boolean success = getRotationMatrix(R, null, andacc, andmag);
 			if (success) {
+				float outR[] = new float[9];
+				remapCoordinateSystem(R, 1, 3, outR); 
 				float orientation[] = new float[3];
-				getOrientation(R, orientation);
+				getOrientation(outR, orientation);
 				for (int l_j = 0; l_j < orientation.length; l_j++)
 				{
 					res[l_j] = Math.toDegrees(orientation[l_j]);
@@ -1011,6 +1013,141 @@ public class Mathematics
                 I[3] = I[7] = I[11] = I[12] = I[13] = I[14] = 0;
                 I[15] = 1;
             }
+        }
+        return true;
+    }
+	
+	/**
+     * <p>
+     * Rotates the supplied rotation matrix so it is expressed in a different
+     * coordinate system. This is typically used when an application needs to
+     * compute the three orientation angles of the device (see
+     * {@link #getOrientation}) in a different coordinate system.
+     * </p>
+     *
+     * <p>
+     * When the rotation matrix is used for drawing (for instance with OpenGL
+     * ES), it usually <b>doesn't need</b> to be transformed by this function,
+     * unless the screen is physically rotated, in which case you can use
+     * {@link android.view.Display#getRotation() Display.getRotation()} to
+     * retrieve the current rotation of the screen. Note that because the user
+     * is generally free to rotate their screen, you often should consider the
+     * rotation in deciding the parameters to use here.
+     * </p>
+     *
+     * <p>
+     * <u>Examples:</u>
+     * <p>
+     *
+     * <ul>
+     * <li>Using the camera (Y axis along the camera's axis) for an augmented
+     * reality application where the rotation angles are needed:</li>
+     *
+     * <p>
+     * <ul>
+     * <code>remapCoordinateSystem(inR, AXIS_X, AXIS_Z, outR);</code>
+     * </ul>
+     * </p>
+     *
+     * <li>Using the device as a mechanical compass when rotation is
+     * {@link android.view.Surface#ROTATION_90 Surface.ROTATION_90}:</li>
+     *
+     * <p>
+     * <ul>
+     * <code>remapCoordinateSystem(inR, AXIS_Y, AXIS_MINUS_X, outR);</code>
+     * </ul>
+     * </p>
+     *
+     * Beware of the above example. This call is needed only to account for a
+     * rotation from its natural orientation when calculating the rotation
+     * angles (see {@link #getOrientation}). If the rotation matrix is also used
+     * for rendering, it may not need to be transformed, for instance if your
+     * {@link android.app.Activity Activity} is running in landscape mode.
+     * </ul>
+     *
+     * <p>
+     * Since the resulting coordinate system is orthonormal, only two axes need
+     * to be specified.
+     *
+     * @param inR
+     *        the rotation matrix to be transformed. Usually it is the matrix
+     *        returned by {@link #getRotationMatrix}.
+     *
+     * @param X
+     *        defines on which world axis and direction the X axis of the device
+     *        is mapped.
+     *
+     * @param Y
+     *        defines on which world axis and direction the Y axis of the device
+     *        is mapped.
+     *
+     * @param outR
+     *        the transformed rotation matrix. inR and outR can be the same
+     *        array, but it is not recommended for performance reason.
+     *
+     * @return <code>true</code> on success. <code>false</code> if the input
+     *         parameters are incorrect, for instance if X and Y define the same
+     *         axis. Or if inR and outR don't have the same length.
+     *
+     * @see #getRotationMatrix(float[], float[], float[], float[])
+     */
+	private static boolean remapCoordinateSystem(float[] inR, int X, int Y,
+            float[] outR)
+    {
+        /*
+         * X and Y define a rotation matrix 'r':
+         *
+         *  (X==1)?((X&0x80)?-1:1):0    (X==2)?((X&0x80)?-1:1):0    (X==3)?((X&0x80)?-1:1):0
+         *  (Y==1)?((Y&0x80)?-1:1):0    (Y==2)?((Y&0x80)?-1:1):0    (Y==3)?((X&0x80)?-1:1):0
+         *                              r[0] ^ r[1]
+         *
+         * where the 3rd line is the vector product of the first 2 lines
+         *
+         */
+
+        final int length = outR.length;
+        if (inR.length != length)
+            return false;   // invalid parameter
+        if ((X & 0x7C)!=0 || (Y & 0x7C)!=0)
+            return false;   // invalid parameter
+        if (((X & 0x3)==0) || ((Y & 0x3)==0))
+            return false;   // no axis specified
+        if ((X & 0x3) == (Y & 0x3))
+            return false;   // same axis specified
+
+        // Z is "the other" axis, its sign is either +/- sign(X)*sign(Y)
+        // this can be calculated by exclusive-or'ing X and Y; except for
+        // the sign inversion (+/-) which is calculated below.
+        int Z = X ^ Y;
+
+        // extract the axis (remove the sign), offset in the range 0 to 2.
+        final int x = (X & 0x3)-1;
+        final int y = (Y & 0x3)-1;
+        final int z = (Z & 0x3)-1;
+
+        // compute the sign of Z (whether it needs to be inverted)
+        final int axis_y = (z+1)%3;
+        final int axis_z = (z+2)%3;
+        if (((x^axis_y)|(y^axis_z)) != 0)
+            Z ^= 0x80;
+
+        final boolean sx = (X>=0x80);
+        final boolean sy = (Y>=0x80);
+        final boolean sz = (Z>=0x80);
+
+        // Perform R * r, in avoiding actual muls and adds.
+        final int rowLength = ((length==16)?4:3);
+        for (int j=0 ; j<3 ; j++) {
+            final int offset = j*rowLength;
+            for (int i=0 ; i<3 ; i++) {
+                if (x==i)   outR[offset+i] = sx ? -inR[offset+0] : inR[offset+0];
+                if (y==i)   outR[offset+i] = sy ? -inR[offset+1] : inR[offset+1];
+                if (z==i)   outR[offset+i] = sz ? -inR[offset+2] : inR[offset+2];
+            }
+        }
+        if (length == 16) {
+            outR[3] = outR[7] = outR[11] = outR[12] = outR[13] = outR[14] = 0;
+            outR[15] = 1;
         }
         return true;
     }
