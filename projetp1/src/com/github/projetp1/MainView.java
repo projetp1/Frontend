@@ -1181,7 +1181,7 @@ public class MainView extends JFrame implements KeyListener {
             _angle = Math.toRadians(_angle);
             greenAngle =_angle;
 		}
-		/*
+
 		private class Needle extends JPanel
 		{
 		    BufferedImage needleImage;
@@ -1236,7 +1236,6 @@ public class MainView extends JFrame implements KeyListener {
                 g2.drawImage(needleImage, 0, 0, null); 
             }
 		}
-	*/
 	}
 
 	/**
@@ -1362,84 +1361,81 @@ public class MainView extends JFrame implements KeyListener {
 			greenAngle = _greenAngle;
 		}
 
-	
-}
-	
-/** 
- *  private class Needle
- */
-private class Needle extends JPanel
-{
-	BufferedImage needleImage;
-	double angle = 0;
-	double scale = 1;
-	String adresseImage;
-	    
-	/** 
-	 *  private class Needle
-	 *  @param _adressImage : the path of the image
-	 *  @param _scale : the scale for resize the image
-	 */
-	public Needle(String _adresseImage, double _scale)
-	{
-		scale = _scale;
-		adresseImage = _adresseImage;
-		try
+		/** 
+		 *  private class Needle
+		 */
+		private class Needle extends JPanel
 		{
-			needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-		
-	/**
-	 * used of resize the components
-	 * @param _scale : the scalar with the components are resized
-	 */
-	public void scale(double _scale)
-	{
-		if(scale != _scale)
-		{
-			scale = _scale;
-			try {
-				needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
-			} catch (IOException e) {
-				e.printStackTrace();
+			BufferedImage needleImage;
+			double angle = 0;
+			double scale = 1;
+			String adresseImage;
+			    
+			/** 
+			 *  private class Needle
+			 *  @param _adressImage : the path of the image
+			 *  @param _scale : the scale for resize the image
+			 */
+			public Needle(String _adresseImage, double _scale)
+			{
+				scale = _scale;
+				adresseImage = _adresseImage;
+				try
+				{
+					needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+				
+			/**
+			 * used of resize the components
+			 * @param _scale : the scalar with the components are resized
+			 */
+			public void scale(double _scale)
+			{
+				if(scale != _scale)
+				{
+					scale = _scale;
+					try {
+						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			/**
+			 * used for rotate the needles
+			 * @param _angle : the new angle of the needle.
+			 */
+			public void rotate(double _angle)
+			{
+				angle = Math.toRadians(_angle);				
+				
+				if(Math.sin(angle) < 0 && Math.cos(angle) < 0)
+					angle = angle + 2 * (3*Math.PI/2 - angle);
+				if(Math.sin(angle) > 0 && Math.cos(angle) < 0)
+					angle = angle - 2 * (angle - Math.PI/2);
+					
+				repaint();
+			}
+				
+			@Override 
+			public Dimension getPreferredSize()
+			{ 
+				return new Dimension(needleImage.getWidth(), needleImage.getHeight()); 
+			} 
+			@Override 
+			protected void paintComponent(Graphics g)
+			{ 
+				super.paintComponent(g); 
+				Graphics2D g2 = (Graphics2D) g;
+				g2.rotate(-angle, scale*5, needleImage.getHeight() / 2); //TODO voir valeur non constante
+				g2.drawImage(needleImage, 0, 0, null); 
 			}
 		}
 	}
-	
-	/**
-	 * used for rotate the needles
-	 * @param _angle : the new angle of the needle.
-	 */
-	public void rotate(double _angle)
-	{
-		angle = Math.toRadians(_angle);				
-		
-		if(Math.sin(angle) < 0 && Math.cos(angle) < 0)
-			angle = angle + 2 * (3*Math.PI/2 - angle);
-		if(Math.sin(angle) > 0 && Math.cos(angle) < 0)
-			angle = angle - 2 * (angle - Math.PI/2);
-			
-		repaint();
-	}
-		
-	@Override 
-	public Dimension getPreferredSize()
-	{ 
-		return new Dimension(needleImage.getWidth(), needleImage.getHeight()); 
-	} 
-	@Override 
-	protected void paintComponent(Graphics g)
-	{ 
-		super.paintComponent(g); 
-		Graphics2D g2 = (Graphics2D) g;
-		g2.rotate(-angle, scale*5, needleImage.getHeight() / 2); //TODO voir valeur non constante
-		g2.drawImage(needleImage, 0, 0, null); 
-	}
-}
-
 }

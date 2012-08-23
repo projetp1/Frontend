@@ -32,6 +32,9 @@ public class Pic extends Thread implements Observer
 	
 	private int[] acc = new int[3];
 	private int[] mag = new int[3];
+	
+	// Déclinaison magnétique pour l'endroit en cours
+	float magneticDeclination = 0.0f;
 
 	private PicMode mode = PicMode.SIMULATION;
 
@@ -230,6 +233,8 @@ public class Pic extends Thread implements Observer
 						this.setLatitude(Mathematics.picLat2Lat(Double.parseDouble(locComponents[0]), locComponents[1].charAt(0)));
 					if(!locComponents[2].isEmpty() && !locComponents[3].isEmpty())
 						this.setLongitude(Mathematics.picLon2Lon(Double.parseDouble(locComponents[2]), locComponents[3].charAt(0)));
+					
+					magneticDeclination = (new GeomagneticField((float)latitude, (float)longitude, 200, System.currentTimeMillis()).getDeclination());
 					break;
 				case ACCELEROMETER_UPDATE:
 				case MAGNETOMETER_UPDATE:
@@ -245,9 +250,11 @@ public class Pic extends Thread implements Observer
 					
 					double[] res = new double[3];
 					Mathematics.calculateAngles(res, acc, mag);
-					azimuth = res[0];
+					azimuth = res[0] + magneticDeclination;
 					pitch = res[1] * -1.0;
 					roll = res[2];
+					
+					log.info("A: " + res[0] + "\nP: " + res[1] + "\nR: " + res[2]);
 					break;
 				case PIC_STATUS:
 					log.info("Error received from the Pic : " + commande.getDatas());
