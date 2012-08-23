@@ -251,8 +251,8 @@ public class Mathematics
 	{
 		calculateDateTime(_date);
 
-		this.dLatitude = _dLat;
-		this.dLongitude = _dLon;
+		this.dLatitude = _dLat*D2R;
+		this.dLongitude = _dLon*D2R;
 		
 		this.dDate_JulianCalendar = calculate_JulianDate(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
 		this.dSideral_Time = calculateSideralTime(this.dDay, this.dMonth, this.dYear, this.dHour,this.dMinute, this.dSecond);
@@ -270,7 +270,7 @@ public class Mathematics
 	 */
 	public void calculateAll(double _dDec,double _dAsc)
 	{
-		this.dDeclination = _dDec;
+		this.dDeclination = _dDec*D2R;
 		this.dAscension = _dAsc;
 
 		this.dHour_Angle_Star = this.dAngle - this.dAscension + this.dLongitude;
@@ -361,7 +361,7 @@ public class Mathematics
          else
              theta = Math.atan2(e_sun[2], rho);
          
-        this.dAscension = phi*R2D;
+        this.dAscension = phi;
         this.dDeclination = theta*R2D; 
         
         this.calculateAll(this.dDeclination, this.dAscension);
@@ -458,7 +458,7 @@ public class Mathematics
         else
             theta = Math.atan2(e_Moon[2], rho);
         
-        this.dAscension = phi*R2D;
+        this.dAscension = phi;
         this.dDeclination = theta*R2D;           
         
         this.calculateAll(this.dDeclination, this.dAscension);
@@ -632,10 +632,9 @@ public class Mathematics
 	 */
 	static public double calculateX(double _dHeight,double _dAzimuth)
 	{
-		double l_x = 1*((-2.0/pi)*_dHeight+1);
+		double l_x = -1*((-2.0/pi)*_dHeight+1);
 		
-		return l_x*cos(_dAzimuth);
-        //return cos(_dHeight)*sin(_dAzimuth)/(sin(_dHeight)+1.0);
+		return l_x*sin(_dAzimuth);
 	}
 	
 	/**
@@ -649,8 +648,7 @@ public class Mathematics
 	{
 		double l_y = 1*((-2.0/pi)*_dHeight+1);
 		
-		return l_y*sin(_dAzimuth);
-		//return cos(_dHeight)*cos(_dAzimuth)/(sin(_dAzimuth)+1.0);
+		return l_y*cos(_dAzimuth);
 	}
 	
 	/** 
