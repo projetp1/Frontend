@@ -739,7 +739,52 @@ public class Mathematics
 		return ((int) (kNumberOfDayInOneYear * (_dYear + kInitialYear))
 				+ (int) (kNumberOfDayInOneMonth * (_dMonth + 1)) + _dDay + l_t + l_b - 1524.5);
 	}
+	
+	/**
+	 * calculateSideralHourAngle Calculates the sideral hour angle
+	 * 
+	 * @param _dSideral_Time : The Sideral time
+	 * @return : Return a double that's the result
+	 */
+	static public double calculateSideralHourAngle(double _dSideral_Time)
+	{
+		return 2.0 * pi * _dSideral_Time / hms(23.0, 56.0, 4.0);
+	}
 
+	/** 
+	 * calculateHourAngle
+	 * Calculates the hours dAngle
+	 * @param _dHour : The hour
+	 * @param _dMin : The minute
+	 * @param _dGMT : The GMT zone
+	 * @return : Return a double that's the result
+	 */
+	static public double calculateHourAngle(double _dHour, double _dMin, double _dGMT)
+	{
+		return (_dHour - 12 + _dMin / 60 - _dGMT) * 2 * pi / hms(23.0, 56.0, 4.0);
+	}
+
+	/** 
+	 * calculateSideralTime
+	 * Calculates the sideral time
+	 * @param _dDay : The day
+	 * @param _dMonth : The month
+	 * @param _dYear : The year
+	 * @param _dHour : The hour
+	 * @param _min : The _minute
+	 * @param _dSecond : The second
+	 * @return : Return a double that's the result
+	 */
+	static public double calculateSideralTime(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
+	{
+		double l_JJ = calculate_JulianDate(_dDay, _dMonth, _dYear, _dHour, _dMinute, _dSecond);
+		double l_T = (l_JJ - 2451545.0) / 36525.0;
+		double l_H1 = 24110.54841 + 8640184.812866 * l_T + 0.093104 * l_T * l_T - 0.0000062 * l_T* l_T * l_T;
+		double l_HSH = l_H1 / 3600.0;
+		double l_HS = (l_HSH / 24.0 - (int) (l_HSH / 24.0)) * 24.0;
+
+		return l_HS;
+	}
 	
 	/**
 	 * Calculate the 3 angles, which are azimuth, pitch and roll.
@@ -1240,52 +1285,6 @@ public class Mathematics
 			ret *= -1.0;
 		
 		return ret;
-	}
-	
-	/**
-	 * calculateSideralHourAngle Calculates the sideral hour angle
-	 * 
-	 * @param _dSideral_Time : The Sideral time
-	 * @return : Return a double that's the result
-	 */
-	static public double calculateSideralHourAngle(double _dSideral_Time)
-	{
-		return 2.0 * pi * _dSideral_Time / hms(23.0, 56.0, 4.0);
-	}
-
-	/** 
-	 * calculateHourAngle
-	 * Calculates the hours dAngle
-	 * @param _dHour : The hour
-	 * @param _dMin : The minute
-	 * @param _dGMT : The GMT zone
-	 * @return : Return a double that's the result
-	 */
-	static public double calculateHourAngle(double _dHour, double _dMin, double _dGMT)
-	{
-		return (_dHour - 12 + _dMin / 60 - _dGMT) * 2 * pi / hms(23.0, 56.0, 4.0);
-	}
-
-	/** 
-	 * calculateSideralTime
-	 * Calculates the sideral time
-	 * @param _dDay : The day
-	 * @param _dMonth : The month
-	 * @param _dYear : The year
-	 * @param _dHour : The hour
-	 * @param _min : The _minute
-	 * @param _dSecond : The second
-	 * @return : Return a double that's the result
-	 */
-	static public double calculateSideralTime(double _dDay, double _dMonth, double _dYear, double _dHour,double _dMinute, double _dSecond)
-	{
-		double l_JJ = calculate_JulianDate(_dDay, _dMonth, _dYear, _dHour, _dMinute, _dSecond);
-		double l_T = (l_JJ - 2451545.0) / 36525.0;
-		double l_H1 = 24110.54841 + 8640184.812866 * l_T + 0.093104 * l_T * l_T - 0.0000062 * l_T* l_T * l_T;
-		double l_HSH = l_H1 / 3600.0;
-		double l_HS = (l_HSH / 24.0 - (int) (l_HSH / 24.0)) * 24.0;
-
-		return l_HS;
 	}
 	
 	/**
