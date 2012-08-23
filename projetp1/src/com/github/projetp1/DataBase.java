@@ -31,7 +31,8 @@ public class DataBase
 	private String sTable;
 	private Connection connection;
 	private Statement statement;
-	
+	private ResultSet allStars;
+	private int first;
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private int argumentCount;
@@ -53,6 +54,7 @@ public class DataBase
 			this.sDataBase = _sDataBase;
 			this.sDelimiter = _sDelimiter;
 			this.sTable = "stars";
+			this.first = 0;
 		}
 		catch(ClassNotFoundException e)
 		{
@@ -79,7 +81,6 @@ public class DataBase
 			log.warning("Impossible to execute SQL queries !");
 			System.exit(1);
 		}
-		
 	}
 	
 	/** 
@@ -392,8 +393,6 @@ public class DataBase
 		//double l_dXYZ[] = new double[3];
 		//double l_dVXYZ[] = new double[3];
 		
-		boolean secured = false;
-		
 		try
 		{
 			if(!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
@@ -405,17 +404,17 @@ public class DataBase
 			_dLat = _dLon = 0;
 		}
 		
-		String[] field = {"*"};
-		String[] table = {this.sTable};
-		String[][] where = {};
-		String[] orderby={"id","ASC"}; 
-		int[] limit = {};
-		secured = true;
-
-		//Injection SQL
-		//String where[][] = {{"id","=","'UNION SELECT * FROM stars WHERE id = 1 ;--"},
-		//		{"ProperName","LIKE","A%"}};
-		ResultSet result = selectQuery(field,table,where,orderby,limit,secured);
+		if(this.first++ == 0)
+		{
+			String[] field = {"*"};
+			String[] table = {this.sTable};
+			String[][] where = {};
+			String[] orderby={"id","ASC"}; 
+			int[] limit = {};
+			boolean secured = true;
+			this.allStars = selectQuery(field,table,where,orderby,limit,secured);
+		}
+		ResultSet result = this.allStars;
 		
 		try
 		{
