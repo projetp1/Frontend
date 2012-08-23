@@ -32,6 +32,8 @@ public class MainView extends JFrame implements KeyListener {
 	public Settings getSettings() { return settings; }
 	private Pic pic;
 	public Pic getPic() { return pic; }
+	private DataBase db = null;
+	public DataBase getDataBase() { return db; }
 	SkyMap skymap;
 	
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -119,10 +121,17 @@ public class MainView extends JFrame implements KeyListener {
 	 * Constructor    
 	 */
 	public MainView() {
-
+		try
+		{
+			db = new DataBase("hyg.db",";");
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
 		this.addKeyListener(this);
 		//TODO : mettre des valeurs non arbitraire.
-		leftPanel = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
+		leftPanel = new JLabel("");
 		leftPanel.setBounds(100, 100, 100, 200);
 		leftPanel.setForeground(new Color(250,250,250));
 		getLayeredPane().add(leftPanel);
@@ -155,7 +164,7 @@ public class MainView extends JFrame implements KeyListener {
 		inclinometerPanel = new Inclinometer(scalar);
 		inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
 
-		skymap = new SkyMap("hyg.db",";",this);
+		skymap = new SkyMap(this);
 		
 		this.setFocusable(true);
 
@@ -269,15 +278,18 @@ public class MainView extends JFrame implements KeyListener {
 	 * Update the information of the star in the leftPanel.
 	 */  
 	public void updateInfo(CelestialObject _object) {
-		leftPanel.setText("<html>Nom de l'astre<br />" +
+		if(_object != null)
+		{
+			leftPanel.setText("<html>Nom de l'astre<br />" +
 				_object.getProperName() +
 				"<br /><br />Magnitude<br />" +
 				_object.getMag() +
 				"<br /><br />Distance(Terre)<br />" +
-				_object.getDistance() +
-				"<br /><br />Couleur<br />" +
+				(int)(_object.getDistance()*3.2616) +
+				" a.l<br /><br />Couleur<br />" +
 				_object.getColorIndex() +
 				"</html>");
+		}		
 	}
 	
 	/**
@@ -812,7 +824,6 @@ public class MainView extends JFrame implements KeyListener {
     	ArrayList<CelestialObject> listModelObjects;
     	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex "};
     	JScrollPane jScrollPane = new JScrollPane();
-    	DataBase db;
     	ArrayList<CelestialObject> listCelestialObject = new ArrayList<CelestialObject>();
 
     	/**
@@ -820,16 +831,7 @@ public class MainView extends JFrame implements KeyListener {
     	 * @param _scale
     	 */
     	public SearchBar(double _scale)
-    	{
-     		try
-			{
-				db = new DataBase("hyg.db", ";");
-			}
-     		catch(Exception ex)
-			{
-				ex.printStackTrace();
-			}
-     		
+    	{     		
     		scale = _scale;
     		hig = (int)(300*scale);
     		this.setBounds(0, 0, (int)(width()/2), hig);

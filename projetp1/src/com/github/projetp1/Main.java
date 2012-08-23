@@ -18,7 +18,7 @@ public class Main {
 			
 			public boolean isLoggable(LogRecord _arg0)
 			{
-				return _arg0.getSourceClassName().equalsIgnoreCase("com.github.projetp1.skymap");
+				return !_arg0.getSourceClassName().equalsIgnoreCase("com.github.projetp1.rs232.RS232");
 			}
 		});
 		
