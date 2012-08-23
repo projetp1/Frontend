@@ -18,6 +18,7 @@ package com.github.projetp1;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
@@ -28,6 +29,9 @@ public class SkyMap extends Container implements MouseListener
 	private int zoom = 1;
 	private double dXOrigin = 0;
 	private double dYOrigin = 0;
+	private double dLongitude = 6.799734;
+	private double dLatitude = 47.039448;
+	
 	private ArrayList<CelestialObject> celestialObjects;
 	private CelestialObject celestialObjectPointed = null;
 	private DataBase db = null;
@@ -54,19 +58,6 @@ public class SkyMap extends Container implements MouseListener
 		try
 		{
 			db = new DataBase(_sDataBase, _sDelimiter);
-			double lat;
-			if (this.mainView.getPic() == null)
-				lat = 47.039448;
-			else
-				lat = this.mainView.getPic().getLatitude();
-
-			double lon;
-			if (this.mainView.getPic() == null)
-				lon = 6.799734;
-			else
-				lon = this.mainView.getPic().getLongitude();
-			
-			celestialObjects = db.starsForCoordinates(Calendar.getInstance(), lat, lon);
 		}
 		catch (Exception ex)
 		{
@@ -105,6 +96,21 @@ public class SkyMap extends Container implements MouseListener
 	 */
 	public void updateSkyMap()
 	{
+		if (this.mainView.getPic() != null)
+			dLatitude = this.mainView.getPic().getLatitude();
+
+		if (this.mainView.getPic() != null)
+			dLongitude = this.mainView.getPic().getLongitude();
+		
+		try
+		{
+			celestialObjects = db.starsForCoordinates(Calendar.getInstance(), dLatitude, dLongitude);
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		
 		this.repaint();
 	}
 
