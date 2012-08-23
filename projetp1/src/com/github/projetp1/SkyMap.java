@@ -139,7 +139,6 @@ public class SkyMap extends Container implements MouseListener
 			else if (l_name != null && l_name.equals("Moon"))
 			{
 				double l_dMoon = celestialObject.getMag();
-				System.out.print(l_dMoon + "\n");
 				Image l_imgMoon = null;
 				if(l_dMoon > 87 || l_dMoon < -87)
 					l_imgMoon = getToolkit().getImage("res/moon_0.png");
