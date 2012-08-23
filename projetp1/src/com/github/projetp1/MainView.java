@@ -5,23 +5,17 @@ package com.github.projetp1;
 
 import com.github.projetp1.ListModel;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import com.github.projetp1.rs232.RS232.PicArrowDirection;
-import com.sun.servicetag.SystemEnvironment;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -49,11 +43,12 @@ public class MainView extends JFrame implements KeyListener {
 	private JLabel coordinate;
 	private JLabel leftPanel; 
 	private int zoom = 2;
-	private double coord;
+	private double angInclinometer;
+	private double degCompass;
 	private double xOrigin = 0;
 	private double yOrigin = 0;
-	private double w = 0.01;
-	private double w_old = w;
+	private double scalar = 0.1;
+	private double scalar_old = scalar;
 	
 	/**
 	 * return the width of the main window.
@@ -83,21 +78,22 @@ public class MainView extends JFrame implements KeyListener {
 		    // Méthode appelée à chaque tic du timer
 			public void actionPerformed (ActionEvent event)
 			{
-				//w = calculateScale();
 				double degree = 0.0;
 				if(pic != null)
 					degree = pic.getAzimuth();
 				
 				compassPanel.setGreenNeedle(degree);
-				// TODO Set the values for the red needles
-				compassPanel.setRedNeedle(0);
-				inclinometerPanel.setRedNeedle(0);
-				if(pic != null)
-					inclinometerPanel.setGreenNeedle(pic.getPitch());
-				compassPanel.update();
-				inclinometerPanel.update();
+				
+				compassPanel.setRedNeedle(degCompass);
+				inclinometerPanel.setRedNeedle(angInclinometer);
+
+				compassPanel.update(scalar);
+				inclinometerPanel.update(scalar);
+				
 				if(pic != null)
 				{
+					inclinometerPanel.setGreenNeedle(pic.getPitch());
+					
 					char hemNS = 'N', hemWE = 'E';
 					double lat = pic.getLatitude(), lon = pic.getLongitude();
 				
@@ -109,7 +105,7 @@ public class MainView extends JFrame implements KeyListener {
 				}
 				
 				compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
-				inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight()));
+				inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(scalar*70)), (100+inclinometerPanel.getHeight()));
 				coordinate.setBounds((int)width()-100, (int)height()-70, 100, 20);
 
 		    }
@@ -120,7 +116,7 @@ public class MainView extends JFrame implements KeyListener {
 	 * Constructor    
 	 */
 	public MainView() {
-		
+
 		this.addKeyListener(this);
 		//TODO : mettre des valeurs non arbitraire.
 		leftPanel = new JLabel("<html>Nom de l'astre<br />Jupiter<br /><br />Coordonnées<br />13,123<br /><br />Masse<br />1,8986*10^27<br /><br />Magnitude<br />-2,8<br /><br />Distance(Terre)<br />628 000 000 km<br /><br />Diamètre<br />142983 km<br /><br />Température<br />-161°C<br /><br />Couleur<br />Beige</html>");
@@ -130,30 +126,30 @@ public class MainView extends JFrame implements KeyListener {
 
 		settings = new Settings();
 		
-		coordinate = new JLabel(coord + " °N" + coord + "°S");
+		coordinate = new JLabel(0 + " °N" + 0 + "°S");
 		coordinate.setBounds(this.getWidth()-200, this.getHeight()-20, 200, 20);
 		coordinate.setForeground(Color.WHITE);
 		getLayeredPane().add(coordinate);
 		
-        buttonsPanel = new Buttons(0.1);
+        buttonsPanel = new Buttons(scalar);
 		buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()/2), 5);
 		
-		helpPanel = new Help(0.1);
-		helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()/2-10*w), buttonsPanel.getHeight());
+		helpPanel = new Help(scalar);
+		helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()/2-10*scalar), buttonsPanel.getHeight());
 		
-		settingsPanel = new SettingsConfig(0.1);
+		settingsPanel = new SettingsConfig(scalar);
 		settingsPanel.setLocation((int)(width()/2-2*buttonsPanel.getWidth()), buttonsPanel.getHeight());
 		
-		searchBarPanel = new SearchBar(0.1);
+		searchBarPanel = new SearchBar(scalar);
 		searchBarPanel.setLocation(0, 5);
 		
-		zoomBarPanel = new ZoomBar(0.1);
+		zoomBarPanel = new ZoomBar(scalar);
 		zoomBarPanel.setLocation(5, 5);
 		
-		compassPanel = new Compass(0.1);
+		compassPanel = new Compass(scalar);
 		compassPanel.setLocation((int)(width()-10-compassPanel.getWidth()), 50);		
 		
-		inclinometerPanel = new Inclinometer(0.1);
+		inclinometerPanel = new Inclinometer(scalar);
 		inclinometerPanel.setLocation((int)(width()-10-inclinometerPanel.getWidth()), (100+inclinometerPanel.getHeight()));
 
 		skymap = new SkyMap("hyg.db",";",this);
@@ -180,7 +176,6 @@ public class MainView extends JFrame implements KeyListener {
 
         this.setMinimumSize(new java.awt.Dimension(680, 420));
 		
-		this.setVisible(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Color l_BackgroundColor = new Color(5,30,50);
@@ -188,22 +183,20 @@ public class MainView extends JFrame implements KeyListener {
 
 		Timer timer = createTimer();
 		timer.start();
-		
 
-		
 		this.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
             }
         });
 
+		this.setVisible(true);
 		pic = new Pic(this);
 		pic.addObservateur(new Observateur(){
 			public void update() {
 				skymap.updateSkyMap();
 			}
 		});
-		repaint();
 	}
 	
 	/**
@@ -251,11 +244,11 @@ public class MainView extends JFrame implements KeyListener {
         	if(yOrigin > -1)
         		yOrigin -= l_fDelta;
         }
-        else if(evt.getKeyCode() == (int)'.') //+
+        else if(evt.getKeyCode() == (int)'.') //zoom +
         {
         	zoom++;
         }
-        else if(evt.getKeyCode() == (int)'-') //-
+        else if(evt.getKeyCode() == (int)'-') //zoom -
         {
         	if(zoom>1)
         		zoom--;
@@ -268,28 +261,6 @@ public class MainView extends JFrame implements KeyListener {
         skymap.setYOrigin(yOrigin);
         skymap.updateSkyMap();
     }
-	
-	/*//a supprimer
-	public void showHelpView() {
-		
-	}
-
-	public void showSettingsView() {
-		
-	}
-	
-	public void updateCompass(double _degree) {
-		
-	}
-	
-	public void updateAngle(double _degree) {
-		
-	}
-	
-	public void setZoom(int _zoom) {
-		//update skymap
-	}
-	*/
 	
 	/**
 	 * Update the information of the star in the leftPanel.
@@ -304,16 +275,7 @@ public class MainView extends JFrame implements KeyListener {
 				"<br /><br />Couleur<br />" +
 				_object.getColorIndex() +
 				"</html>");
-		
 	}
-	
-	/*
-	public ArrayList<CelestialObject> searchForTextInSearchField() {
-		//request ddb
-		//text form search field
-		return null;
-	}
-	*/
 	
 	/**
 	 * calcul the beast scalar for resize the component
@@ -332,32 +294,33 @@ public class MainView extends JFrame implements KeyListener {
 	 */  
 	private void formComponentResized(java.awt.event.ComponentEvent evt) {
 		
-	    w = calculateScale();
+	    scalar = calculateScale();
 	    
-	    if (w - w_old > 0.001 || w- w_old < -0.001)
+	    if (scalar - scalar_old > 0.001 || scalar- scalar_old < -0.001)
 	    {
-	    	w_old = w;
+	    	scalar_old = scalar;
 	    	
-			buttonsPanel.setScale(w/3);
-			compassPanel.setScale(w);
-			inclinometerPanel.setScale(w);
-			searchBarPanel.setScale(w);
-			zoomBarPanel.setScale(w);
-			helpPanel.setScale(w);
-			settingsPanel.setScale(w);
+			buttonsPanel.update(scalar/3);
+			compassPanel.update(scalar);
+			inclinometerPanel.update(scalar);
+			searchBarPanel.update(scalar);
+			zoomBarPanel.update(scalar);
+			helpPanel.update(scalar);
+			settingsPanel.update(scalar);
 			
-			buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(w*70)), 5);
-			helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(w*70)-10*w), buttonsPanel.getHeight()+(int)(20*w));
-			settingsPanel.setLocation((int)(width()/2-settingsPanel.getWidth()+80*w), buttonsPanel.getHeight()+(int)(20*w));
-			searchBarPanel.setLocation((int)(width()/2+buttonsPanel.getWidth()-(w*70)), (int)(buttonsPanel.getHeight()/2-10)+5);
+			buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(scalar*70)), 5);
+			helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(scalar*70)-10*scalar), buttonsPanel.getHeight()+(int)(20*scalar));
+			settingsPanel.setLocation((int)(width()/2-settingsPanel.getWidth()+80*scalar), buttonsPanel.getHeight()+(int)(20*scalar));
+			searchBarPanel.setLocation((int)(width()/2+buttonsPanel.getWidth()-(scalar*70)), (int)(buttonsPanel.getHeight()/2-10)+5);
 			zoomBarPanel.setLocation(5, (int)(buttonsPanel.getHeight()/2-zoomBarPanel.getHeight()/2)+5);
 			
 			skymap.setBounds(0, 0, this.getWidth(), this.getHeight());
 			skymap.setZoom(zoom);
-			leftPanel.setBounds((int)(10*w), (int)(10*w), 150, this.getHeight());
+			
+			leftPanel.setBounds((int)(10*scalar), (int)(10*scalar), 150, this.getHeight());
 			
 			compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
-			inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(w*70)), (100+inclinometerPanel.getHeight()));
+			inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(scalar*70)), (100+inclinometerPanel.getHeight()));
 			coordinate.setBounds(this.getWidth()-100, this.getHeight()-70, 100, 20);
 
 	    }
@@ -412,7 +375,6 @@ public class MainView extends JFrame implements KeyListener {
     			imgSettings = resizeImage(ImageIO.read(new File("res/SettingsIcon.png")), scale);
     			imgHelp = resizeImage(ImageIO.read(new File("res/HelpIcon.png")), scale);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     		
@@ -422,8 +384,7 @@ public class MainView extends JFrame implements KeyListener {
                 }
     		});
     		this.setBounds(0, 0, (int)(imgSettings.getWidth()*2), (int)(imgHelp.getHeight()));
-    		this.setVisible(true);
-    		this.repaint();
+    	//	this.setVisible(true);
     	}
     	@Override 
         protected void paintComponent(Graphics g)
@@ -459,30 +420,20 @@ public class MainView extends JFrame implements KeyListener {
     		}
     	}
     	
-    	/**
-    	 * update the scale variable and call the update method.
+		/** 
+		 * update the scale variable and resize the components
     	 * @param _scale : the scalar
-    	 */
-		public void setScale(double _scale)
+		 */
+		public void update(double _scale)
 		{
 			scale = _scale;
-			update();
-		}
-
-		/** 
-		 * Resize the components
-		 */
-		public void update()
-		{
 			try {
 				imgSettings = resizeImage(ImageIO.read(new File("res/SettingsIcon.png")), scale);
     			imgHelp = resizeImage(ImageIO.read(new File("res/HelpIcon.png")), scale);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			this.setBounds(0, 0, (int)(imgSettings.getWidth()*2), (int)(imgHelp.getHeight()));
-			repaint();
 		}
     }
     
@@ -492,7 +443,7 @@ public class MainView extends JFrame implements KeyListener {
     private class SettingsConfig extends JLayeredPane
     {
     	double scale;
-    	int number = 9;
+    	int number = 10;
     	BufferedImage backgroundTop;
     	BufferedImage backgroundMid;
     	BufferedImage backgroundBot;
@@ -542,18 +493,18 @@ public class MainView extends JFrame implements KeyListener {
     		String flowControl[] = {"NONE", "RTSCTS_IN", "RTSCTS_OUT", "XONXOFF_IN","XONXOFF_OUT"};
     		comboBoxList[5] = new JComboBox<String>(flowControl);
     		comboBoxList[5].setSelectedItem(settings.getFlowControl());
-    	//	String samplingRate[] = {"?"};
-    	//	comboBoxList[6] = new JComboBox<String>(samplingRate);
-    	//	comboBoxList[6].setSelectedItem(String.valueOf(settings.getSamplingRate()));
+    		String samplingRate[] = {"25"};
+    		comboBoxList[6] = new JComboBox<String>(samplingRate);
+    		comboBoxList[6].setSelectedItem(String.valueOf(settings.getSamplingRate()));
     		String databaseName[] = {"hyz.db"};
-    		comboBoxList[6] = new JComboBox<String>(databaseName);
-    		comboBoxList[6].setSelectedItem(settings.getDatabaseName());
+    		comboBoxList[7] = new JComboBox<String>(databaseName);
+    		comboBoxList[7].setSelectedItem(settings.getDatabaseName());
     		String imputDelimiter[] = {";", ":"};
-    		comboBoxList[7] = new JComboBox<String>(imputDelimiter);
-    		comboBoxList[7].setSelectedItem(settings.getInputDelimiter());
+    		comboBoxList[8] = new JComboBox<String>(imputDelimiter);
+    		comboBoxList[8].setSelectedItem(settings.getInputDelimiter());
     		String simulation[] = {"ON", "OFF"};
-    		comboBoxList[8] = new JComboBox<String>(simulation);
-    		comboBoxList[8].setSelectedItem((settings.getSimulation())?"ON":"OFF");
+    		comboBoxList[9] = new JComboBox<String>(simulation);
+    		comboBoxList[9].setSelectedItem((settings.getSimulation())?"ON":"OFF");
     		
     		for(int i = 0; i < number; i++)  		
     		{
@@ -583,7 +534,6 @@ public class MainView extends JFrame implements KeyListener {
                 }
     			InternalBot = resizeImage(ImageIO.read(new File("res/settings-bot-internal.png")), scale/2);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     		
@@ -601,7 +551,6 @@ public class MainView extends JFrame implements KeyListener {
     		});
     		this.setBounds(0, 0, (int)(backgroundTop.getWidth()*2), (int)(500*scale));
     		this.setVisible(false);
-    		this.repaint();
     	}
     	@Override 
         protected void paintComponent(Graphics g)
@@ -637,29 +586,21 @@ public class MainView extends JFrame implements KeyListener {
     		settings.setStopbit(Integer.parseInt(comboBoxList[3].getSelectedItem().toString()));
     		settings.setParity(comboBoxList[4].getSelectedItem().toString());
     		settings.setFlowControl(comboBoxList[5].getSelectedItem().toString());
-    		//settings.setSamplingRate(Integer.parseInt(comboBoxList[6].getSelectedItem().toString()));
+    		settings.setSamplingRate(Integer.parseInt(comboBoxList[6].getSelectedItem().toString()));
     		settings.setDatabaseName(comboBoxList[6].getSelectedItem().toString());
     		settings.setInputDelimiter(comboBoxList[7].getSelectedItem().toString());
     		settings.setSimulation((comboBoxList[8].getSelectedItem().toString().equals("ON"))?true:false);
     		Serializer.serialize("settings.conf",settings);
     		
     	}
-    		
-    	/**
-    	 * update the scale variable and call the update method.
+    	
+		/** 
+		 * update the scale variable and resize the components
     	 * @param _scale : the scalar
-    	 */
-		public void setScale(double _scale)
+		 */
+		public void update(double _scale)
 		{
 			scale = _scale;
-			update();
-		}
-
-		/** 
-		 * Resize the components
-		 */
-		public void update()
-		{
 
 			try {
 				backgroundTop = resizeImage(ImageIO.read(new File("res/settings-top-background.png")), scale/2);
@@ -667,7 +608,6 @@ public class MainView extends JFrame implements KeyListener {
 				titre.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 				titre.setBounds(0, backgroundTop.getHeight(), backgroundTop.getWidth(), (int)(scale*35));
 				
-				backgroundMid = resizeImage2(ImageIO.read(new File("res/settings-mid-background.png")), backgroundTop.getWidth(), (int)(number*scale*67));
 				backgroundBot = resizeImage(ImageIO.read(new File("res/settings-bot-background.png")), scale/2);
 				InternalTop = resizeImage(ImageIO.read(new File("res/settings-top-internal.png")), scale/2);
 				for(int i = 0; i < number; i++)
@@ -677,17 +617,14 @@ public class MainView extends JFrame implements KeyListener {
 				  	settingList[i].setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
 				  	comboBoxList[i].setBounds((int)(backgroundTop.getWidth()-300*scale), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight()+(int)(4*scale), (int)(250*scale), (int)(40*scale));
 				  	comboBoxList[i].setFont(new Font("Calibri", Font.BOLD, (int)(25*scale)));
-				  	
 				}
+				backgroundMid = resizeImage2(ImageIO.read(new File("res/settings-mid-background.png")), backgroundTop.getWidth(), (number+2)*InternalMid[0].getHeight()+titre.getHeight()+ (int)(15*scale));
 				InternalBot = resizeImage(ImageIO.read(new File("res/settings-bot-internal.png")), scale/2);
     		} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
-			this.setBounds(0, 0, (int)(backgroundTop.getWidth()), (int)(100*scale*number));
-			repaint();
+
+			this.setBounds(0, 0, (int)(backgroundTop.getWidth()), backgroundTop.getHeight()+backgroundMid.getHeight()+backgroundBot.getHeight());
 		}
     }
    
@@ -721,7 +658,6 @@ public class MainView extends JFrame implements KeyListener {
     			internalMid = resizeImage2(ImageIO.read(new File("res/mid-interne.png")), 1, 50*scale/2);
     			internalBot = resizeImage(ImageIO.read(new File("res/bas-interieur.png")), scale/2);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     			titre = new JLabel("Help", JLabel.CENTER);
@@ -744,7 +680,6 @@ public class MainView extends JFrame implements KeyListener {
                         MouseClicked(evt);
                     }
         		});
-    			this.repaint();
     	}
     	@Override 
         protected void paintComponent(Graphics g)
@@ -773,21 +708,13 @@ public class MainView extends JFrame implements KeyListener {
     		//nothing
     	}
     	
-    	/**
-    	 * update the scale variable and call the update method.
+		/** 
+		 * update the scale variable and resize the components
     	 * @param _scale : the scalar
-    	 */
-		public void setScale(double _scale)
+		 */
+		public void update(double _scale)
 		{
 			scale = _scale;
-			update();
-		}
-
-		/** 
-		 * Resize the components
-		 */
-		public void update()
-		{
 			
 			try {
     			backgroundTop = resizeImage(ImageIO.read(new File("res/haut-fond.png")), scale/2);
@@ -805,11 +732,9 @@ public class MainView extends JFrame implements KeyListener {
     			backgroundMid = resizeImage2(ImageIO.read(new File("res/mid-fond.png")), backgroundTop.getWidth(), text.getHeight()+titre.getHeight()*2.7);
     			internalBot = resizeImage(ImageIO.read(new File("res/bas-interieur.png")), scale/2);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			this.setBounds(0, 0, (int)(backgroundTop.getWidth()*2), (int)(500*scale));
-			repaint();
+			this.setBounds(0, 0, (int)(backgroundTop.getWidth()), backgroundTop.getHeight()+backgroundMid.getHeight()+backgroundBot.getHeight());
 		}
     }
    
@@ -839,7 +764,6 @@ public class MainView extends JFrame implements KeyListener {
     		zoomSlider.setOpaque(false);
     		this.add(zoomSlider);
 			this.setVisible(true);
-			this.repaint();
 			zoomSlider.addChangeListener(new javax.swing.event.ChangeListener() {
 	            public void stateChanged(javax.swing.event.ChangeEvent evt) {
 	                jSlider1StateChanged(evt);
@@ -857,31 +781,24 @@ public class MainView extends JFrame implements KeyListener {
     		skymap.setZoom(zoom);
     		skymap.updateSkyMap();
     	}
-    	
-    	/**
-    	 * update the scale variable and call the update method.
+    			
+		/** 
+		 * update the scale variable and resize the components
     	 * @param _scale : the scalar
-    	 */
-		public void setScale(double _scale)
+		 */
+		public void update(double _scale)
 		{
 			scale = _scale;
-    		//hig = (int)(30*scale);
 			hig = 30;
-			update();
-		}
-
-		/** 
-		 * Resize the components
-		 */
-		public void update()
-		{
 			
 			this.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale), hig);
 			zoomSlider.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale), hig);
-			repaint();
 		}
     }
     
+    /**
+	 * The SearchBar class
+	 */ 
     private class SearchBar extends JLayeredPane
     {
     	double scale;
@@ -889,14 +806,17 @@ public class MainView extends JFrame implements KeyListener {
     	String l_sSavedSearch = null;
     	JTextField searchBarTextField;
     	JList listNameOrID;
-    	ListModel listModelNameOrID;
-    	ListModel listModelObjects;
+    	ListModel<Comparable> listModelNameOrID;
+    	ListModel<CelestialObject> listModelObjects;
     	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex "};
     	JScrollPane jScrollPane = new JScrollPane();
     	DataBase db;
     	ArrayList<CelestialObject> listCelestialObject = new ArrayList<CelestialObject>();
 
-    	
+    	/**
+    	 * Constructor
+    	 * @param _scale
+    	 */
     	public SearchBar(double _scale)
     	{
      		try
@@ -917,11 +837,10 @@ public class MainView extends JFrame implements KeyListener {
     			public void keyReleased(java.awt.event.KeyEvent evt) {
                     try
 					{
-						jSlider1KeyReleased(evt);
+						searchBarKeyReleased(evt);
 					}
 					catch (Exception ex)
 					{
-						// TODO Auto-generated catch block
 						ex.printStackTrace();
 					}
                 }
@@ -937,8 +856,8 @@ public class MainView extends JFrame implements KeyListener {
                 }
     		});
     		
-    		listModelNameOrID = new ListModel();
-    		listModelObjects = new ListModel();
+    		listModelNameOrID = new ListModel<Comparable>();
+    		listModelObjects = new ListModel<CelestialObject>();
     		listNameOrID = new JList();
     		listNameOrID.setModel(listModelNameOrID);
     		listNameOrID.setBounds(0, 0, 300, 400);
@@ -948,18 +867,20 @@ public class MainView extends JFrame implements KeyListener {
     		
     		listNameOrID.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    MouseClicked(evt);
+                	listNameOrIDMouseClicked(evt);
                 }
     		});
     		
     		this.add(searchBarTextField);
     		this.add(jScrollPane);
-			this.setVisible(true);
-			this.repaint();
+		//	this.setVisible(true);
     	}
 
-    	
-    	private void MouseClicked(java.awt.event.MouseEvent evt) {
+    	/**
+    	 * used then the user select an element of the list.
+    	 * @param evt
+    	 */
+    	private void listNameOrIDMouseClicked(java.awt.event.MouseEvent evt) {
 
     		
         	jScrollPane.setVisible(false);
@@ -971,8 +892,13 @@ public class MainView extends JFrame implements KeyListener {
         	if(searchFeature.split(" ").length > 1)
         	{
              	int index = listNameOrID.getSelectedIndex();
-        		updateInfo((CelestialObject)listModelObjects.getElementAt(index));
-        		skymap.setCelestialObjectPointed((CelestialObject)listModelObjects.getElementAt(index));
+        		CelestialObject celObjt = (CelestialObject)listModelObjects.getElementAt(index);
+        		updateInfo(celObjt);
+        		skymap.setCelestialObjectPointed(celObjt);
+        		
+        		angInclinometer = celObjt.getDec();  //TODO : mettre la bonne valeur
+        		degCompass = celObjt.getRA();		 //TODO : mettre la bonne valeur
+    			
         		skymap.updateSkyMap();
         		l_sSavedSearch = searchBarTextField.getText();
         		searchBarTextField.setText(listNameOrID.getSelectedValue().toString());
@@ -983,9 +909,14 @@ public class MainView extends JFrame implements KeyListener {
     		
         	String regex = searchBarText[searchBarText.length - 1] + "$";
         	searchBarTextField.setText(searchBarTextField.getText().replaceFirst(regex, listNameOrID.getSelectedValue().toString()));
+    		
     	}
     	
-    	private void jSlider1KeyReleased(java.awt.event.KeyEvent evt) 
+    	/**
+    	 * search in the database the stars corresponding with the textField.
+    	 * @param evt
+    	 */
+    	private void searchBarKeyReleased(java.awt.event.KeyEvent evt) 
     	{    		
     		listModelNameOrID.removeAll();
     		listModelObjects.removeAll();
@@ -1006,8 +937,11 @@ public class MainView extends JFrame implements KeyListener {
 	     	if(canQueryDB)
 	     	{
 	     		try{
-		     		listCelestialObject = db.starsForText(searchBarTextField.getText(), Calendar.getInstance(), 47.039448, 6.799734); //TODO: get lat and lon from pic 
-
+	     			if(pic == null)
+	     				listCelestialObject = db.starsForText(searchBarTextField.getText(), Calendar.getInstance(), 47.039448, 6.799734);
+	     			else
+	     				listCelestialObject = db.starsForText(searchBarTextField.getText(), Calendar.getInstance(), pic.getLatitude(), pic.getLongitude());
+	     			
 		     		if(listCelestialObject.size() != 0)
 		     		{	
 		     			for (CelestialObject celestialObject : listCelestialObject)
@@ -1031,28 +965,29 @@ public class MainView extends JFrame implements KeyListener {
 	        if (listModelNameOrID.getSize() > 0)
 	        {
 	        	int min = (listModelNameOrID.getSize() < 5)?listModelNameOrID.getSize()*21:(int)(200*scale);
-	        	jScrollPane.setBounds(0, 20, (int)(500*scale), min);
+	        	jScrollPane.setBounds(0, 20, searchBarTextField.getWidth(), min);
 	           	jScrollPane.setVisible(true);
 	           	
 	        } 
 	        else
 	        	jScrollPane.setVisible(false);
 	        
-	        repaint();
     	}
-		public void setScale(double _scale)
+
+    	/** 
+		 * update the scale variable and resize the components
+		 * @param _scale : the scalar
+		 */
+		public void update(double _scale)
 		{
 			scale = _scale;
 			hig = 20;
-			update();
-		}
-		public void update()
-		{
 			this.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(400*scale));
-    		searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
-    		//complement.setBounds(0, hig, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig+(int)(100*scale));
-    		repaint();
-		}		
+			//searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
+			searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
+    		int min = (listModelNameOrID.getSize() < 5)?listModelNameOrID.getSize()*21:(int)(200*scale);
+        	jScrollPane.setBounds(0, 20, searchBarTextField.getWidth(), min);
+		}	
     }
 
     /**
@@ -1080,9 +1015,8 @@ public class MainView extends JFrame implements KeyListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			repaint();
-			this.setVisible(true);
-			this.setBackground(Color.BLACK);
+			//this.setVisible(true);
+			//this.setBackground(Color.BLACK);
 			
 			redNeedle = new Needle("res/aiguille_rouge.png", scale);
 			greenNeedle = new Needle("res/aiguille_vert.png", scale);
@@ -1098,7 +1032,6 @@ public class MainView extends JFrame implements KeyListener {
 			this.add(greenNeedle, new Integer(2));
 			
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
-			this.repaint();
 			coordinate = new JLabel("-10:2'13'' N", JLabel.CENTER);
 			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
 			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*34));
@@ -1118,22 +1051,14 @@ public class MainView extends JFrame implements KeyListener {
             Graphics2D g2 = (Graphics2D) g; 
             g2.drawImage(background, 0, 0, null); 
         }
-        
-        /**
-		 * update the scale variable and call the update method.
-		 * @param _scale : the scalar
-		 */
-		public void setScale (double _scale)
-		{
-			scale = _scale;
-			update();
-		}
 		
 		/** 
-		 * Resize the components
+		 * update the scale variable and resize the components
+		 * @param _scale : the scalar
 		 */
-		public void update()
+		public void update (double _scale)
 		{
+			scale = _scale;
 			try {
 				background = resizeImage(ImageIO.read(new File("res/backgroundCompass.png")),scale);
 			} catch (IOException e) {
@@ -1156,7 +1081,6 @@ public class MainView extends JFrame implements KeyListener {
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*35));
-			repaint();
 		}
 
 		/** 
@@ -1178,62 +1102,6 @@ public class MainView extends JFrame implements KeyListener {
             _angle = Math.toRadians(_angle);
             greenAngle =_angle;
 		}
-		/*
-		private class Needle extends JPanel
-		{
-		    BufferedImage needleImage;
-		    double angle = 0;
-		    double scale = 1;
-		    String adresseImage;
-		    
-			public Needle(String _adresseImage, double _scale)
-			{
-				scale = _scale;
-				adresseImage = _adresseImage;
-				try
-				{
-					needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-			
-			public void scale(double _scale)
-			{
-				if(scale != _scale)
-				{
-					scale = _scale;
-					try {
-						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			
-			public void rotate(double _angle)
-			{
-				angle = _angle;
-				repaint();
-			}
-			
-			@Override 
-            public Dimension getPreferredSize()
-			{ 
-                return new Dimension(needleImage.getWidth(), needleImage.getHeight()); 
-            } 
-            @Override 
-            protected void paintComponent(Graphics g)
-            { 
-                super.paintComponent(g); 
-                Graphics2D g2 = (Graphics2D) g; 
-                g2.rotate(angle, needleImage.getWidth() / 2, needleImage.getHeight() / 2); 
-                g2.drawImage(needleImage, 0, 0, null); 
-            }
-		}
-	*/
 	}
 
 	/**
@@ -1262,18 +1130,20 @@ public class MainView extends JFrame implements KeyListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			repaint();
-			this.setVisible(true);
-			this.setBackground(Color.BLACK);
+			
+		//	this.setVisible(true);
+		//	this.setBackground(Color.BLACK);
 			
 			redNeedle = new Needle("res/aiguille_rouge_inclinometer.png", scale);
 			greenNeedle = new Needle("res/aiguille_vert_inclinometer.png", scale);
+			
 			
 			redNeedle.setBackground(this.getBackground());
 			redNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
 			redNeedle.setOpaque(false);
 			this.add(redNeedle, new Integer(1));
 			
+
 			greenNeedle.setBackground(this.getBackground());
 			greenNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
 			greenNeedle.setOpaque(false);
@@ -1301,30 +1171,23 @@ public class MainView extends JFrame implements KeyListener {
             g2.drawImage(background, 0, 0, null); 
         }
 		
-        /**
-		 * update the scale variable and call the update method.
+		/** 
+		 *  update the scale variable and resize the components
 		 * @param _scale : the scalar
 		 */
-		public void setScale (double _scale)
-		{ 
-			scale = _scale;
-			update();
-		}
-		
-		/** 
-		 * Resize the components
-		 */
-		public void update()
+		public void update(double _scale)
 		{
+			scale = _scale;
 			try {
 				background = resizeImage(ImageIO.read(new File("res/backgroundInclinometer.png")),scale);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			repaint();
+			
 			redNeedle.scale(scale);
-            redNeedle.rotate(redAngle);
+			redNeedle.rotate(redAngle);
 			redNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
+			
             greenNeedle.scale(scale);
             greenNeedle.rotate(greenAngle);
 			greenNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
@@ -1421,7 +1284,7 @@ private class Needle extends JPanel
 		if(Math.sin(angle) > 0 && Math.cos(angle) < 0)
 			angle = angle - 2 * (angle - Math.PI/2);
 			
-		repaint();
+		//repaint();
 	}
 		
 	@Override 
@@ -1434,7 +1297,7 @@ private class Needle extends JPanel
 	{ 
 		super.paintComponent(g); 
 		Graphics2D g2 = (Graphics2D) g;
-		g2.rotate(-angle, scale*5, needleImage.getHeight() / 2); //TODO voir valeur non constante
+		g2.rotate(-angle, scale*5, needleImage.getHeight() / 2);
 		g2.drawImage(needleImage, 0, 0, null); 
 	}
 }
