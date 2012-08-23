@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
+import com.github.projetp1.rs232.RS232.PicArrowDirection;
+
 @SuppressWarnings("serial")
 public class SkyMap extends Container implements MouseListener
 {
@@ -244,30 +246,52 @@ public class SkyMap extends Container implements MouseListener
 		
 		if (dXOrigin > _object.getXReal()) 
 			l_dAngle += Math.PI;
-
+		
+		double dblAngle = Math.toDegrees(l_dAngle);
+		dblAngle += 90;
+		dblAngle /= 45;
+		int iAngle = (int) Math.round(dblAngle);
 		//mainView.getPic().sendArrow;
 		
 		//log.info("angle : " + Math.toDegrees(l_dangle) + "\r\n");
-		/*
+		
+		
 		if(mainView.getPic().getMode() == Pic.PicMode.GUIDING)
 		{
-			if(l_dAngle > 67.5 && l_dAngle <= 112.5)
-				RS232.PicArrowDirection.NORTH;
-			else if(l_dAngle > 112.5 && l_dAngle <= 157.5)
-				RS232.PicArrowDirection.NORTHWEST;
-			else if(l_dAngle > 157.5 && l_dAngle <= 202.5)
-				RS232.PicArrowDirection.WEST;
-			else if(l_dAngle > 202.5 && l_dAngle <= 247.5)
-				RS232.PicArrowDirection.SOUTHWEST;
-			else if(l_dAngle > 247.5 && l_dAngle <= 292.5)
-				RS232.PicArrowDirection.SOUTH;
-			else if(l_dAngle > 292.5 && l_dAngle <= 337.5)
-				RS232.PicArrowDirection.SOUTHEAST;
-			else if(l_dAngle > 337.5 && l_dAngle <= 22.5)
-				RS232.PicArrowDirection.EAST;
-			else
-				RS232.PicArrowDirection.NORTHEAST;
-		}*/
+			PicArrowDirection dir = null;
+			
+				switch(iAngle)
+				{
+					case 0:
+						dir = PicArrowDirection.SOUTH;
+						break;
+					case 1:
+						dir = PicArrowDirection.SOUTHEAST;
+						break;
+					case 2:
+						dir = PicArrowDirection.EAST;
+						break;
+					case 3:
+						dir = PicArrowDirection.NORTHEAST;
+						break;
+					case 4:
+						dir = PicArrowDirection.NORTH;
+						break;
+					case 5:
+						dir = PicArrowDirection.NORTHWEST;
+						break;
+					case 6:
+						dir = PicArrowDirection.WEST;
+						break;
+					case 7:
+						dir = PicArrowDirection.SOUTHWEST;
+						break;
+					default:
+						break;
+				}
+				if(dir != null)
+					mainView.getPic().setPicArrow(dir);
+		}
 		
 		return l_dAngle;
 	}

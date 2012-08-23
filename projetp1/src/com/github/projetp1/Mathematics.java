@@ -705,7 +705,7 @@ public class Mathematics
 	static public double calculate_azimuth(double _dec, double _dLat, double _dHeight, double _star_angle)
 	{
 		double l_cos_az = (sin(_dec) - sin(_dLat) * sin(_dHeight))/(cos(_dLat) * cos(_dHeight));
-		double l_sin_a = (cos(_dec) * sin(_star_angle)) / cos(_dHeight);
+		double l_sin_a = cos(_dec) * sin(_star_angle) / cos(_dHeight);
 
 		if (l_sin_a > 0)
 			return arccos(l_cos_az);
@@ -761,7 +761,7 @@ public class Mathematics
 	 */
 	static public double calculateHourAngle(double _dHour, double _dMin, double _dGMT)
 	{
-		return (_dHour - 12 + _dMin / 60 - _dGMT) * 2 * pi / hms(23.0, 56.0, 4.0);
+		return (_dHour - 12.0 + _dMin / 60.0 - _dGMT) * 2.0 * pi / hms(23.0, 56.0, 4.0);
 	}
 
 	/** 

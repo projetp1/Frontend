@@ -453,20 +453,20 @@ public class DataBase
 				if(l_id == 1)//Sun
 				{
 					l_calc.calculatePositionSun();
-					l_star.setdDec(l_calc.getDeclination());
-					l_star.setdRA(l_calc.getAscension());
+					l_star.setDec(l_calc.getDeclination());
+					l_star.setRA(l_calc.getAscension());
 				}
 				else if(l_id == 2)//Moon
 				{
 					l_calc.calculatePositionMoon();
-					l_star.setdDec(l_calc.getDeclination());
-					l_star.setdRA(l_calc.getAscension());
+					l_star.setDec(l_calc.getDeclination());
+					l_star.setRA(l_calc.getAscension());
 					double l_now = l_calc.getMoonBrightness(false);
 					double l_yes = l_calc.getMoonBrightness(true);
 					if(l_yes>l_now)
 						l_now*=-1;
 						
-					l_star.setdMag(l_now);
+					l_star.setMag(l_now);
 				}
 				else
 					l_calc.calculateAll(l_star.getDec(),l_star.getRA());
@@ -475,6 +475,8 @@ public class DataBase
 		    	{
 			    	l_star.setXReal(l_calc.getX());
 			    	l_star.setYReal(l_calc.getY());
+			    	l_star.SetAzimuth(l_calc.getAzimuth());
+			    	l_star.SetHeight(l_calc.getHeight());
 			    	al_stars.add(l_star);
 		    	}
 		    	
@@ -600,20 +602,20 @@ public class DataBase
 				if(l_id == 1)
 				{
 					l_calc.calculatePositionSun();
-					l_star.setdDec(l_calc.getDeclination());
-					l_star.setdRA(l_calc.getAscension());
+					l_star.setDec(l_calc.getDeclination());
+					l_star.setRA(l_calc.getAscension());
 				}
 				else if(l_id == 2)
 				{
 					l_calc.calculatePositionMoon();
-					l_star.setdDec(l_calc.getDeclination());
-					l_star.setdRA(l_calc.getAscension());
+					l_star.setDec(l_calc.getDeclination());
+					l_star.setRA(l_calc.getAscension());
 					double l_now = l_calc.getMoonBrightness(false);
 					double l_yes = l_calc.getMoonBrightness(true);
 					if(l_yes>l_now)
 						l_now*=-1;
 						
-					l_star.setdMag(l_now);
+					l_star.setMag(l_now);
 				}
 				else
 					l_calc.calculateAll(l_star.getDec(),l_star.getRA());
@@ -622,6 +624,8 @@ public class DataBase
 		    	{
 			    	l_star.setXReal(l_calc.getX());
 			    	l_star.setYReal(l_calc.getY());
+			    	l_star.SetAzimuth(l_calc.getAzimuth());
+			    	l_star.SetHeight(l_calc.getHeight());
 			    	al_stars.add(l_star);
 		    	}
 		    	
