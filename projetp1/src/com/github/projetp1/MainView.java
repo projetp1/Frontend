@@ -807,9 +807,9 @@ public class MainView extends JFrame implements KeyListener {
     	int hig;
     	String l_sSavedSearch = null;
     	JTextField searchBarTextField;
-    	JList listNameOrID;
-    	ListModel<Comparable> listModelNameOrID;
-    	ListModel<CelestialObject> listModelObjects;
+    	JList<String> listNameOrID;
+    	ListModel<String> listModelNameOrID;
+    	ArrayList<CelestialObject> listModelObjects;
     	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex "};
     	JScrollPane jScrollPane = new JScrollPane();
     	DataBase db;
@@ -858,9 +858,9 @@ public class MainView extends JFrame implements KeyListener {
                 }
     		});
     		
-    		listModelNameOrID = new ListModel<Comparable>();
-    		listModelObjects = new ListModel<CelestialObject>();
-    		listNameOrID = new JList();
+    		listModelNameOrID = new ListModel<String>();
+    		listModelObjects = new ArrayList<CelestialObject>();
+    		listNameOrID = new JList<String>();
     		listNameOrID.setModel(listModelNameOrID);
     		listNameOrID.setBounds(0, 0, 300, 400);
     		jScrollPane.setFocusable(false);
@@ -893,12 +893,12 @@ public class MainView extends JFrame implements KeyListener {
         	if(searchFeature.split(" ").length > 1)
         	{
              	int index = listNameOrID.getSelectedIndex();
-        		CelestialObject celObjt = (CelestialObject)listModelObjects.getElementAt(index);
+        		CelestialObject celObjt = (CelestialObject)listModelObjects.get(index);
         		updateInfo(celObjt);
         		skymap.setCelestialObjectPointed(celObjt);
-        		
-        		angInclinometer = celObjt.getDec();  //TODO : mettre la bonne valeur
-        		degCompass = celObjt.getRA();		 //TODO : mettre la bonne valeur
+
+        		degCompass = celObjt.getAzimuth();
+        		angInclinometer = celObjt.getHeight();
     			
         		skymap.updateSkyMap();
         		l_sSavedSearch = searchBarTextField.getText();
@@ -919,8 +919,10 @@ public class MainView extends JFrame implements KeyListener {
     	 */
     	private void searchBarKeyReleased(java.awt.event.KeyEvent evt) 
     	{    		
+    		listCelestialObject.clear();
     		listModelNameOrID.removeAll();
-    		listModelObjects.removeAll();
+    		listModelObjects.clear();
+    		
     		boolean canQueryDB = true;
     		String[] searchFeatures = searchBarTextField.getText().split(";");
     		for (String searchFeature : searchFeatures)
@@ -950,8 +952,8 @@ public class MainView extends JFrame implements KeyListener {
 		     				if(celestialObject.getProperName() != null)
 		     					listModelNameOrID.setElement(celestialObject.getProperName());
 		     				else
-		     					listModelNameOrID.setElement(celestialObject.getId());
-		     				listModelObjects.setElement(celestialObject);
+		     					listModelNameOrID.list.add(String.valueOf(celestialObject.getId()));
+		     				listModelObjects.add(celestialObject);
 		     			}
 		     		}
 		     		else
@@ -1345,7 +1347,7 @@ public class MainView extends JFrame implements KeyListener {
 			{ 
 				super.paintComponent(g); 
 				Graphics2D g2 = (Graphics2D) g;
-				g2.rotate(-angle, scale*5, needleImage.getHeight() / 2); //TODO voir valeur non constante
+				g2.rotate(-angle, scale*5, needleImage.getHeight() / 2);
 				g2.drawImage(needleImage, 0, 0, null); 
 			}
 		}
