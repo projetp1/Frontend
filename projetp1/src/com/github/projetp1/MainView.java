@@ -6,12 +6,12 @@ package com.github.projetp1;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-//import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -33,7 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-//import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 
@@ -141,11 +140,15 @@ public class MainView extends JFrame implements KeyListener
 		};
 		return new Timer(50, action);
   }
+	
 	/**
 	 * Constructor
 	 */
 	public MainView()
 	{
+		super("Projet P1");
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/moon_6.png"));
+
 		try
 		{
 			db = new DataBase("hyg.db",";");
@@ -220,6 +223,7 @@ public class MainView extends JFrame implements KeyListener
 		Color l_BackgroundColor = new Color(5, 30, 50);
 		this.getContentPane().setBackground(l_BackgroundColor);
 
+		//TODO : à régler ou remplacer <= Ce timer prend 250 Mo sur les 350 du processus.
 		Timer timer = createTimer();
 		timer.start();
 
@@ -230,6 +234,7 @@ public class MainView extends JFrame implements KeyListener
         });
 
 		this.setVisible(true);
+		
 		pic = new Pic(this);
 		pic.addObservateur(new Observateur(){
 			public void update() {
@@ -245,7 +250,8 @@ public class MainView extends JFrame implements KeyListener
 		settingsPanel.setVisible(false);
 		helpPanel.setVisible(false);
 		searchBarPanel.jScrollPane.setVisible(false);
-	//	skymap.transferFocusBackward();
+		if(!this.hasFocus())
+			skymap.transferFocusBackward();
 	}
 	
 	/**
@@ -965,13 +971,12 @@ public class MainView extends JFrame implements KeyListener
         		updateInfo(celObjt);
         		skymap.setCelestialObjectPointed(celObjt);
 
-        		degCompass = celObjt.getAzimuth();
-        		angInclinometer = celObjt.getHeight();
+        		degCompass = -celObjt.getAzimuth() * 180 / 3.14;
+        		angInclinometer = celObjt.getHeight() * 180 / 3.14;
     			
         		skymap.updateSkyMap();
         		l_sSavedSearch = searchBarTextField.getText();
         		searchBarTextField.setText(listNameOrID.getSelectedValue().toString());
-        		//skymap.requestFocus();
         		skymap.transferFocusBackward();
         		return;
         	}
@@ -1070,7 +1075,7 @@ public class MainView extends JFrame implements KeyListener
 			public StopButton(double _scale){
 				try
 				{
-					cross = resizeImage2(ImageIO.read(new File("res/Cross.png")),hig/2, hig/2); // TODO: adapter taille avec nouvelle image à faire
+					cross = resizeImage2(ImageIO.read(new File("res/Cross.png")),hig/2, hig/2);
 				}
 				catch (IOException ex)
 				{
