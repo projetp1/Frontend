@@ -255,9 +255,9 @@ public class Pic extends Thread implements Observer
 					
 					double[] res = new double[3];
 					Mathematics.calculateAngles(res, acc, mag);
-					azimuth = res[0] + magneticDeclination;
-					pitch = res[1] * -1.0;
-					roll = res[2];
+					azimuth = Mathematics.smooth(res[0] + magneticDeclination, azimuth, 0.5, 40);
+					pitch = Mathematics.smooth(res[1] * -1.0, pitch, 0.5, 25);
+					roll = Mathematics.smooth(res[2], roll, 0.5, 25);
 					
 					log.info("A: " + res[0] + "\nP: " + res[1] + "\nR: " + res[2]);
 					break;
@@ -272,7 +272,7 @@ public class Pic extends Thread implements Observer
 		updateObservateur();
 		}
 	}
-	
+
 	/**
 	 * Ajoute un observateur à la liste
 	 */
