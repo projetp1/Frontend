@@ -806,6 +806,44 @@ public class Mathematics
 	}
 	
 	/**
+	 * Smooth the sensor value by applying a low-pass filter to it.
+	 * 
+	 * From http://stackoverflow.com/a/6462517/1045559
+	 *
+	 * @param _newValue The newest measure of the sensor
+	 * @param _oldValue The previous value returned by this method
+	 * @param _smoothFactor A value defining how smooth the movement should be. 1 is no smoothing and 0 is never updating.
+	 * @param _smoothThreshold The threshold in which the distance is big enough to turn immediately. 0 is jump always, 360 (for a compass) is never jumping.
+	 * @return The smoothed value. It has to be passed to the next call of this algorithm.
+	 */
+	public static double smooth(double _newValue, double _oldValue, double _smoothFactor, double _smoothThreshold)
+	{
+		if (Math.abs(_newValue - _oldValue) < 180) {
+		    if (Math.abs(_newValue - _oldValue) > _smoothFactor) {
+		        _oldValue = _newValue;
+		    }
+		    else {
+		        _oldValue = _oldValue + _smoothFactor * (_newValue - _oldValue);
+		    }
+		}
+		else {
+		    if (360.0 - Math.abs(_newValue - _oldValue) > _smoothFactor) {
+		        _oldValue = _newValue;
+		    }
+		    else {
+		        if (_oldValue > _newValue) {
+		            _oldValue = (_oldValue + _smoothFactor * ((360 + _newValue - _oldValue) % 360) + 360) % 360;
+		        } 
+		        else {
+		            _oldValue = (_oldValue - _smoothFactor * ((360 - _newValue + _oldValue) % 360) + 360) % 360;
+		        }
+		    }
+		}
+		
+		return _oldValue;
+	}
+	
+	/**
 	 * Calculate the 3 angles, which are azimuth, pitch and roll.
 	 *
 	 * @param res A 3 values array which will contains the results (heading, pitch, roll)
