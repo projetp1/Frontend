@@ -64,7 +64,7 @@ public class RS232 implements SerialPortEventListener
 	 */
 	public enum PicArrowDirection
 	{
-		NORTH(0), NORTHWEST(1), WEST(2), SOUTHWEST(3), SOUTH(4), SOUTHEAST(5), EAST(6), NORTHEAST(7);
+		NORTH(0), NORTHWEST(1), WEST(2), SOUTHWEST(3), SOUTH(4), SOUTHEAST(5), EAST(6), NORTHEAST(7), ONTARGET(8);
 		private int number;
 
 		private PicArrowDirection(int _number)
