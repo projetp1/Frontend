@@ -5,27 +5,29 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-public class Main {
-
+public class Main
+{
 	/**
-	 * @param args
+	 * The entry point of the program.
+	 * 
+	 * @param args The arguments. They are ignored.
 	 */
-	
-	public static void main(String[] args) 
+	public static void main(String[] args)
 	{
 		Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).setFilter(new Filter()
 		{
-			
+
+			@Override
 			public boolean isLoggable(LogRecord _arg0)
 			{
-				return !_arg0.getSourceClassName().equalsIgnoreCase("com.github.projetp1.rs232.RS232");
+				return true;
 			}
 		});
-		
+
 		Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 		log.setLevel(Level.FINEST);
-		
-		MainView mv = new MainView();
+
+		new MainView();
 	}
 
 }

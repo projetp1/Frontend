@@ -10,11 +10,12 @@ package com.github.projetp1;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-
 import jssc.SerialPortException;
 
-import com.github.projetp1.rs232.*;
+import com.github.projetp1.rs232.RS232;
 import com.github.projetp1.rs232.RS232.PicArrowDirection;
+import com.github.projetp1.rs232.RS232Command;
+import com.github.projetp1.rs232.RS232CommandType;
 
 public class Pic extends Thread implements Observer
 {
@@ -29,10 +30,10 @@ public class Pic extends Thread implements Observer
 	private double azimuth = 0.0;
 	private double pitch = 0.0;
 	private double roll = 0.0;
-	
+
 	private int[] acc = new int[3];
 	private int[] mag = new int[3];
-	
+
 	// Déclinaison magnétique pour l'endroit en cours
 	float magneticDeclination = 0.0f;
 	boolean magSet = false;
@@ -46,10 +47,10 @@ public class Pic extends Thread implements Observer
 	 */
 	public enum PicMode
 	{
-		
+
 		/** The default mode : point, click and see. */
 		POINTING,
-		
+
 		/** The searching star mode. */
 		GUIDING,
 		/**
@@ -65,12 +66,12 @@ public class Pic extends Thread implements Observer
 
 	/**
 	 * Instantiates a new PIC.
-	 *
-	 * @param _mainview the _mainview
+	 * 
+	 * @param _mainview
+	 *            The MainView class of the program
 	 */
 	public Pic(MainView _mainview)
 	{
-		// TODO Auto-generated constructor stub
 		this.mainview = _mainview;
 
 		try
@@ -79,12 +80,10 @@ public class Pic extends Thread implements Observer
 		}
 		catch (SerialPortException ex)
 		{
-			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		}
 		catch (Exception ex)
 		{
-			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		}
 
@@ -93,7 +92,7 @@ public class Pic extends Thread implements Observer
 
 	/**
 	 * Gets the longitude.
-	 *
+	 * 
 	 * @return the longitude
 	 */
 	public double getLongitude()
@@ -103,18 +102,19 @@ public class Pic extends Thread implements Observer
 
 	/**
 	 * Sets the longitude.
-	 *
-	 * @param _longitude the new longitude
+	 * 
+	 * @param _longitude
+	 *            the new longitude
 	 */
 	protected void setLongitude(double _longitude)
 	{
-		if(Math.abs(_longitude) <= 180)
+		if (Math.abs(_longitude) <= 180)
 			this.longitude = _longitude;
 	}
 
 	/**
 	 * Gets the latitude.
-	 *
+	 * 
 	 * @return the latitude
 	 */
 	public double getLatitude()
@@ -124,19 +124,21 @@ public class Pic extends Thread implements Observer
 
 	/**
 	 * Sets the latitude.
-	 *
-	 * @param _latitude the new latitude
+	 * 
+	 * @param _latitude
+	 *            the new latitude
 	 */
 	protected void setLatitude(double _latitude)
 	{
-		if(Math.abs(_latitude) <= 90)
+		if (Math.abs(_latitude) <= 90)
 			this.latitude = _latitude;
 	}
 
 	/**
 	 * Gets the angle.
-	 *
+	 * 
 	 * @return the angle
+	 * @deprecated
 	 */
 	@Deprecated
 	public double getAngle()
@@ -146,8 +148,9 @@ public class Pic extends Thread implements Observer
 
 	/**
 	 * Gets the compass.
-	 *
+	 * 
 	 * @return the compass
+	 * @deprecated
 	 */
 	@Deprecated
 	public double getCompass()
@@ -155,10 +158,9 @@ public class Pic extends Thread implements Observer
 		return azimuth;
 	}
 
-
 	/**
 	 * Gets the azimuth.
-	 *
+	 * 
 	 * @return the azimuth
 	 */
 	public double getAzimuth()
@@ -168,7 +170,7 @@ public class Pic extends Thread implements Observer
 
 	/**
 	 * Gets the pitch.
-	 *
+	 * 
 	 * @return the pitch
 	 */
 	public double getPitch()
@@ -178,7 +180,7 @@ public class Pic extends Thread implements Observer
 
 	/**
 	 * Gets the roll.
-	 *
+	 * 
 	 * @return the roll
 	 */
 	public double getRoll()
@@ -188,7 +190,7 @@ public class Pic extends Thread implements Observer
 
 	/**
 	 * Gets the mode.
-	 *
+	 * 
 	 * @return the mode
 	 */
 	public PicMode getMode()
@@ -198,27 +200,35 @@ public class Pic extends Thread implements Observer
 
 	/**
 	 * Sets the mode.
-	 *
-	 * @param mode the new mode
+	 * 
+	 * @param mode
+	 *            the new mode
 	 */
 	public void setMode(PicMode mode)
 	{
 		this.mode = mode;
 	}
 
+	/**
+	 * Sets the PIC arrow. It also make the PIC operate in GUIDING mode.
+	 * 
+	 * @param direction
+	 *            the new pic arrow
+	 */
 	public void setPicArrow(PicArrowDirection direction)
 	{
 		try
 		{
 			rs.sendArrowToPic(direction);
+			this.setMode(PicMode.GUIDING);
 		}
 		catch (SerialPortException ex)
 		{
-			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		}
 	}
-	
+
+	@Override
 	public void run()
 	{
 		RS232Command commande;
@@ -230,14 +240,18 @@ public class Pic extends Thread implements Observer
 			{
 				case LOCATION_UPDATE:
 					String[] locComponents = commande.getDatas().split(",", 4);
-					if(!locComponents[0].isEmpty() && !locComponents[1].isEmpty())
-						this.setLatitude(Mathematics.picLat2Lat(Double.parseDouble(locComponents[0]), locComponents[1].charAt(0)));
-					if(!locComponents[2].isEmpty() && !locComponents[3].isEmpty())
-						this.setLongitude(Mathematics.picLon2Lon(Double.parseDouble(locComponents[2]), locComponents[3].charAt(0)));
-					
-					if(!magSet)
+					if (!locComponents[0].isEmpty() && !locComponents[1].isEmpty())
+						this.setLatitude(Mathematics.picLat2Lat(
+								Double.parseDouble(locComponents[0]), locComponents[1].charAt(0)));
+					if (!locComponents[2].isEmpty() && !locComponents[3].isEmpty())
+						this.setLongitude(Mathematics.picLon2Lon(
+								Double.parseDouble(locComponents[2]), locComponents[3].charAt(0)));
+
+					if (!magSet)
 					{
-						magneticDeclination = (new GeomagneticField((float)latitude, (float)longitude, 200, System.currentTimeMillis()).getDeclination());
+						magneticDeclination = (new GeomagneticField((float) latitude,
+								(float) longitude, 200, System.currentTimeMillis())
+								.getDeclination());
 						magSet = true;
 					}
 					break;
@@ -252,13 +266,13 @@ public class Pic extends Thread implements Observer
 						acc = values.clone();
 					else if (commande.getCommandNumber() == RS232CommandType.MAGNETOMETER_UPDATE)
 						mag = values.clone();
-					
+
 					double[] res = new double[3];
 					Mathematics.calculateAngles(res, acc, mag);
 					azimuth = Mathematics.smooth(res[0] + magneticDeclination, azimuth, 0.5, 40);
 					pitch = Mathematics.smooth(res[1] * -1.0, pitch, 0.5, 25);
 					roll = Mathematics.smooth(res[2], roll, 0.5, 25);
-					
+
 					log.info("A: " + res[0] + "\nP: " + res[1] + "\nR: " + res[2]);
 					break;
 				case PIC_STATUS:
@@ -268,29 +282,37 @@ public class Pic extends Thread implements Observer
 					log.severe("Unknown command number received");
 					break;
 			}
-			
-		updateObservateur();
+
+			updateObservateur();
 		}
 	}
 
 	/**
 	 * Ajoute un observateur à la liste
 	 */
-	public void addObservateur(Observateur obs) {
+	@Override
+	public void addObservateur(Observateur obs)
+	{
 		this.listObservateur.add(obs);
 	}
+
 	/**
 	 * Retire tous les observateurs de la liste
 	 */
-	public void delObservateur() {
+	@Override
+	public void delObservateur()
+	{
 		this.listObservateur = new ArrayList<Observateur>();
 	}
+
 	/**
-	 * Avertit les observateurs que l'observable a changé 
-	 * et invoque la méthode update de chaque observateur !
+	 * Averti les observateurs que l'observable a changé et invoque la méthode update de chaque
+	 * observateur !
 	 */
-	public void updateObservateur() {
-		for(Observateur obs : this.listObservateur )
+	@Override
+	public void updateObservateur()
+	{
+		for (Observateur obs : this.listObservateur)
 			obs.update();
 	}
 }

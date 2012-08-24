@@ -7,7 +7,8 @@ package com.github.projetp1.rs232;
  * @author sebastie.vaucher
  * 
  */
-public enum RS232CommandType {
+public enum RS232CommandType
+{
 	/** Ping command */
 	EMPTY("00"),
 	/** Changes the PIC mode to pointing */
@@ -21,41 +22,57 @@ public enum RS232CommandType {
 	/** Contains the compass vectors */
 	MAGNETOMETER_UPDATE("05"),
 	/** Used by the PIC to communicates its status to the PC */
-	PIC_STATUS("99")
-	;
+	PIC_STATUS("99");
 
 	private final String code;
 
-	private RS232CommandType(String c) {
+	private RS232CommandType(String c)
+	{
 		code = c;
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return code;
 	}
-	
+
 	/**
 	 * Checks if it is a valid command number
-	 *
-	 * @param commandNumber The number of the command
+	 * 
+	 * @param commandNumber
+	 *            The number of the command
 	 * @return true, if it's valid. False otherwise
 	 */
-	public static boolean isCommandNumber(String commandNumber) {
-		for (RS232CommandType elem : RS232CommandType.values()) {
-			if(elem.toString().equalsIgnoreCase(commandNumber))
+	public static boolean isCommandNumber(String commandNumber)
+	{
+		for (RS232CommandType elem : RS232CommandType.values())
+		{
+			if (elem.toString().equalsIgnoreCase(commandNumber))
 				return true;
 		}
-		
+
 		return false;
 	}
-	
-	public static RS232CommandType valueOfByNum(String num) throws IllegalArgumentException {
-		for (RS232CommandType t : RS232CommandType.values()) {
-			if(t.toString().equalsIgnoreCase(num))
+
+	/**
+	 * Creates an RS232CommandType from its number.
+	 * 
+	 * @param num
+	 *            The command number
+	 * @return An RS232CommandType
+	 * @throws IllegalArgumentException
+	 *             Thrown when there is no such command number known
+	 */
+	public static RS232CommandType valueOfByNum(String num) throws IllegalArgumentException
+	{
+		for (RS232CommandType t : RS232CommandType.values())
+		{
+			if (t.toString().equalsIgnoreCase(num))
 				return t;
 		}
-		
-		throw new IllegalArgumentException("RS232CommandType : " + num + "is not a valid command type !");
+
+		throw new IllegalArgumentException("RS232CommandType : " + num
+				+ "is not a valid command type !");
 	}
 }

@@ -1,12 +1,19 @@
 package com.github.projetp1;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
-public class Serializer {
+public class Serializer
+{
 
-	public Serializer() {
+	public Serializer()
+	{
 	}
-	
+
 	public static void serialize(String _filename, Object _object)
 	{
 		FileOutputStream fos = null;
@@ -18,18 +25,18 @@ public class Serializer {
 			out.writeObject(_object);
 			out.close();
 		}
-		catch(IOException ex)
+		catch (IOException ex)
 		{
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public Object deserialize(String _filename)
 	{
 		File f = new File(_filename);
 		Object object = null;
-		if(f.exists()) 
-		{			
+		if (f.exists())
+		{
 			FileInputStream fis = null;
 			ObjectInputStream in = null;
 			try
@@ -39,15 +46,15 @@ public class Serializer {
 				object = in.readObject();
 				in.close();
 			}
-			catch(IOException ex)
+			catch (IOException ex)
 			{
 				ex.printStackTrace();
 			}
-			catch(ClassNotFoundException ex)
+			catch (ClassNotFoundException ex)
 			{
 				ex.printStackTrace();
 			}
-		} 
+		}
 		return object;
 	}
 
