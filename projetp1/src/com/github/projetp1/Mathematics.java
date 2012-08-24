@@ -271,7 +271,7 @@ public class Mathematics
 	public void calculateAll(double _dDec,double _dAsc)
 	{
 		this.dDeclination = _dDec*D2R;
-		this.dAscension = _dAsc;
+		this.dAscension = _dAsc*2*pi/24.0;
 
 		this.dHour_Angle_Star = this.dAngle - this.dAscension + this.dLongitude;
 
@@ -366,7 +366,7 @@ public class Mathematics
          else
              theta = Math.atan2(e_sun[2], rho);
          
-        this.dAscension = phi;
+        this.dAscension = phi*24.0/(2*pi);
         this.dDeclination = theta*R2D; 
         
         this.calculateAll(this.dDeclination, this.dAscension);
@@ -463,7 +463,7 @@ public class Mathematics
         else
             theta = Math.atan2(e_Moon[2], rho);
         
-        this.dAscension = phi;
+        this.dAscension = phi*24.0/(2*pi);
         this.dDeclination = theta*R2D;           
         
         this.calculateAll(this.dDeclination, this.dAscension);
