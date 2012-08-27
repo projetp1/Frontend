@@ -982,7 +982,7 @@ public class MainView extends JFrame implements KeyListener
              	int index = listNameOrID.getSelectedIndex();
         		CelestialObject celObjt = listModelObjects.get(index);
         		updateInfo(celObjt);
-        		skymap.setCelestialObjectPointed(celObjt);
+        		skymap.setCelestialObjectSearched(celObjt);
         		
         		double l_dDegreeCompassObjectSearched = celObjt.getAzimuth() * 180 / Math.PI;
         		double l_dAngleInclinometerObjectSearched = celObjt.getHeight() * 180 / Math.PI;
@@ -995,7 +995,7 @@ public class MainView extends JFrame implements KeyListener
         		l_sSavedSearch = searchBarTextField.getText();
         		searchBarTextField.setText(listNameOrID.getSelectedValue().toString());
         		skymap.transferFocusBackward();
-        		MainView.this.update();
+        		skymap.updateSkyMap();	
         		return;
         	}
     		
@@ -1125,7 +1125,8 @@ public class MainView extends JFrame implements KeyListener
 			}
 			
 			private void stopSearchActionPerformed(java.awt.event.MouseEvent evt) {
-	    		skymap.setCelestialObjectPointed(null);
+	    		skymap.setCelestialObjectSearched(null);
+	    		skymap.updateSkyMap();
 	    		repaint();
 	    	}
 			
