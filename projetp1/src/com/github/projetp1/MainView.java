@@ -1007,7 +1007,7 @@ public class MainView extends JFrame implements KeyListener
         		updateInfo(celObjt);
         		skymap.setCelestialObjectPointed(celObjt);
 
-        		degCompass = -celObjt.getAzimuth() * 180 / 3.14;
+        		degCompass = celObjt.getAzimuth() * 180 / 3.14;
         		angInclinometer = celObjt.getHeight() * 180 / 3.14;
     			
         		skymap.updateSkyMap();
