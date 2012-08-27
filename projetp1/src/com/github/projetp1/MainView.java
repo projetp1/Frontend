@@ -626,7 +626,7 @@ public class MainView extends JFrame implements KeyListener
 			}
     		
 
-    		titre = new JLabel("Settings", JLabel.CENTER);
+    		titre = new JLabel(Messages.getString("MainView.Settings"), JLabel.CENTER);
 			titre.setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
 			titre.setBounds(0, backgroundTop.getHeight(), (int)(scale*345), (int)(scale*34));
 			titre.setForeground(Color.WHITE);
@@ -770,13 +770,13 @@ public class MainView extends JFrame implements KeyListener
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-    			titre = new JLabel("Help", JLabel.CENTER);
+    			titre = new JLabel(Messages.getString("MainView.Help"), JLabel.CENTER);
     			titre.setFont(new Font("Calibri", Font.BOLD, 36));
     			titre.setBounds(0, backgroundTop.getHeight(), (int)(scale*345), (int)(scale*34));
     			titre.setForeground(Color.WHITE);
     			this.add(titre);
     			
-    			text = new JLabel("<html>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque imperdiet, nisi<br />ornare molestie tempor, tellus mi dictum erat, at sagittis nunc dolor pulvinar justo.<br />Vivamus ullamcorper, arcu non laoreet suscipit, risus ligula consequat sapien, in<br />tempus turpis<br />elit imperdiet dolor. Proin elit augue, facilisis eu luctus at, pellentesque id tortor.<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet imperdiet<br />libero. Etiam sagittis lorem non tellus mollis tristique. In euismod commodo nibh in<br />ultrices.<br /></html>");
+    			text = new JLabel(Messages.getString("MainView.HelpText"));
     			text.setFont(new Font("Calibri", Font.BOLD, (int)(scale*36)));
     			text.setBounds(0, internalTop.getHeight(), (int)(scale*345), (int)(scale*34*8));
     			text.setForeground(Color.BLACK);
