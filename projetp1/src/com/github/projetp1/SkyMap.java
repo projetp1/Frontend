@@ -201,22 +201,21 @@ public class SkyMap extends Container implements MouseListener
 		}
 
 		Image l_imgCenter = getToolkit().getImage("res/center.png");
-		_g.drawImage(l_imgCenter, (this.getWidth() / 2 - l_imgCenter.getWidth(null) / 2),
-				(this.getHeight() / 2 - l_imgCenter.getHeight(null) / 2), null);
+		_g.drawImage(l_imgCenter,
+				(this.getWidth() / 2 - l_imgCenter.getWidth(null) / 2),
+				(this.getHeight() / 2 - l_imgCenter.getHeight(null) / 2),
+				null);
 
 		if (celestialObjectPointed != null)
 		{
-			int l_xStarPointed = l_xCenter
-					+ (int) (celestialObjectPointed.getXReal() * zoom * l_scale);
-			int l_yStarPointed = l_yCenter
-					- (int) (celestialObjectPointed.getYReal() * zoom * l_scale);
+			int l_xStarPointed = l_xCenter + (int) (celestialObjectPointed.getXReal() * zoom * l_scale);
+			int l_yStarPointed = l_yCenter - (int) (celestialObjectPointed.getYReal() * zoom * l_scale);
 
 			Image l_imgStarHighlight = getToolkit().getImage("res/star_highlight.png");
-			_g.drawImage(l_imgStarHighlight, l_xCenter
-					+ (int) (celestialObjectPointed.getXReal() * zoom * l_scale)
-					- l_imgStarHighlight.getWidth(null) / 2, l_yCenter
-					- (int) (celestialObjectPointed.getYReal() * zoom * l_scale)
-					- l_imgStarHighlight.getHeight(null) / 2, null);
+			_g.drawImage(l_imgStarHighlight,
+					l_xCenter + (int) (celestialObjectPointed.getXReal() * zoom * l_scale) - l_imgStarHighlight.getWidth(null) / 2,
+					l_yCenter - (int) (celestialObjectPointed.getYReal() * zoom * l_scale) - l_imgStarHighlight.getHeight(null) / 2,
+					null);
 
 			if (!(l_xStarPointed > this.getWidth() * 0.1 && l_xStarPointed < this.getWidth() * 0.9
 					&& l_yStarPointed > this.getHeight() * 0.1 && l_yStarPointed < this.getHeight() * 0.9))
