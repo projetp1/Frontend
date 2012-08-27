@@ -513,13 +513,13 @@ public class MainView extends JFrame implements KeyListener
     	public SettingsConfig(double _scale)
     	{
     		scale = _scale;
-    		settingList.add(new JLabel("port"));
-    		settingList.add(new JLabel("speed"));
-    		settingList.add(new JLabel("databit"));
-    		settingList.add(new JLabel("stopbit"));
-    		settingList.add(new JLabel("parity"));
-    		settingList.add(new JLabel("flowControl"));
-    		settingList.add(new JLabel("simulation"));
+    		settingList.add(new JLabel(Messages.getString("MainView.Port")));
+    		settingList.add(new JLabel(Messages.getString("MainView.Speed")));
+    		settingList.add(new JLabel(Messages.getString("MainView.Databits")));
+    		settingList.add(new JLabel(Messages.getString("MainView.Stopbits")));
+    		settingList.add(new JLabel(Messages.getString("MainView.Parity")));
+    		settingList.add(new JLabel(Messages.getString("MainView.FlowControl")));
+    		settingList.add(new JLabel(Messages.getString("MainView.Simulation")));
     		number = settingList.size();
     		InternalMid = new BufferedImage[number];
     		
