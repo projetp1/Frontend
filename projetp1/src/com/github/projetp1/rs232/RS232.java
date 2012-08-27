@@ -122,8 +122,9 @@ public class RS232 implements SerialPortEventListener
 		try
 		{
 			this.sp.openPort();// Open serial port
-			this.sp.setParams(SerialPort.BAUDRATE_9600, SerialPort.DATABITS_8,
-					SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+			this.sp.setParams(settings.getSpeed(), settings.getDatabit(),
+					settings.getStopbit(), settings.getParity());
+			this.sp.setFlowControlMode(settings.getFlowControl());
 			this.sp.setEventsMask(SerialPort.MASK_RXCHAR);// Set mask
 			this.sp.addEventListener(this);// Add SerialPortEventListener
 		}
