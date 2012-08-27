@@ -20,7 +20,7 @@ public class Main
 			@Override
 			public boolean isLoggable(LogRecord _arg0)
 			{
-				return _arg0.getSourceClassName().equalsIgnoreCase("com.github.projetp1.MainView");
+				return _arg0.getSourceClassName().startsWith("com.github.projetp1.MainView");
 			}
 		});
 
