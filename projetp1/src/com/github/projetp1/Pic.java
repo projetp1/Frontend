@@ -333,6 +333,6 @@ public class Pic extends Thread implements Observer
 	public void updateObservateur()
 	{
 		for (Observateur obs : this.listObservateur)
-			obs.update();
+			obs.updatePIC();
 	}
 }
