@@ -7,21 +7,14 @@ import java.io.Serializable;
  */
 public class Settings implements Serializable
 {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6746857373082607851L;
+	private static final long serialVersionUID = -8939567320279249059L;
 
 	private String port;
 	private int speed;
 	private int databit;
 	private int stopbit;
-	private String parity;
-	private String flowControl;
-	private int samplingRate;
-	private String databaseName;
-	private String inputDelimiter;
+	private int parity;
+	private int flowControl;
 	private boolean simulation;
 
 	public Settings()
@@ -43,23 +36,17 @@ public class Settings implements Serializable
 			this.stopbit = deserialize.stopbit;
 			this.parity = deserialize.parity;
 			this.flowControl = deserialize.flowControl;
-			this.samplingRate = deserialize.samplingRate;
-			this.databaseName = deserialize.databaseName;
-			this.inputDelimiter = deserialize.inputDelimiter;
 			this.simulation = deserialize.simulation;
 		}
 		else
 		{
 			if (jssc.SerialPortList.getPortNames().length > 0)
 				this.port = jssc.SerialPortList.getPortNames()[0]; // 1er port RS232 de la machine
-			this.speed = 9600;
-			this.databit = 8;
-			this.stopbit = 1;
-			this.parity = "none";
-			this.flowControl = "none";
-			this.samplingRate = 25;
-			this.databaseName = "hyg.db";
-			this.inputDelimiter = ";";
+			this.speed = jssc.SerialPort.BAUDRATE_9600;
+			this.databit = jssc.SerialPort.DATABITS_8;
+			this.stopbit = jssc.SerialPort.STOPBITS_1;
+			this.parity = jssc.SerialPort.PARITY_NONE;
+			this.flowControl = jssc.SerialPort.FLOWCONTROL_NONE;
 			this.simulation = false;
 		}
 	}
@@ -68,60 +55,149 @@ public class Settings implements Serializable
 	{
 		return port;
 	}
+	
+	public static String[] getPortList()
+	{
+		return jssc.SerialPortList.getPortNames();
+	}
 
 	public void setPort(String _port)
 	{
-		this.port = _port;
+		for (String existingPort : jssc.SerialPortList.getPortNames())
+		{
+			if(existingPort.equals(_port))
+				this.port = _port;
+		}
 	}
 
 	public int getSpeed()
 	{
 		return speed;
 	}
+	
+	public static int[] getSpeedList()
+	{
+		return new int[] {
+			jssc.SerialPort.BAUDRATE_110,
+		    jssc.SerialPort.BAUDRATE_300,
+		    jssc.SerialPort.BAUDRATE_600,
+		    jssc.SerialPort.BAUDRATE_1200,
+		    jssc.SerialPort.BAUDRATE_4800,
+		    jssc.SerialPort.BAUDRATE_9600,
+		    jssc.SerialPort.BAUDRATE_14400,
+		    jssc.SerialPort.BAUDRATE_19200,
+		    jssc.SerialPort.BAUDRATE_38400,
+		    jssc.SerialPort.BAUDRATE_57600,
+		    jssc.SerialPort.BAUDRATE_115200,
+		    jssc.SerialPort.BAUDRATE_128000,
+		    jssc.SerialPort.BAUDRATE_256000
+		    };
+	}
 
 	public void setSpeed(int _speed)
 	{
-		this.speed = _speed;
+		for (int l_i : getSpeedList())
+		{
+			if(l_i == _speed)
+				this.speed = _speed;
+		}
 	}
 
 	public int getDatabit()
 	{
 		return databit;
 	}
+	
+	public static int[] getDatabitList()
+	{
+		return new int[] {
+				jssc.SerialPort.DATABITS_5,
+				jssc.SerialPort.DATABITS_6,
+				jssc.SerialPort.DATABITS_7,
+				jssc.SerialPort.DATABITS_8
+		};
+	}
 
 	public void setDatabit(int _databit)
 	{
-		this.databit = _databit;
+		for (int l_i : getDatabitList())
+		{
+			if(l_i == _databit)
+				this.databit = _databit;
+		}
 	}
 
 	public int getStopbit()
 	{
 		return stopbit;
 	}
+	
+	public static int[] getStopbitList()
+	{
+		return new int[] {
+				jssc.SerialPort.STOPBITS_1,
+				jssc.SerialPort.STOPBITS_1_5,
+				jssc.SerialPort.STOPBITS_2
+		};
+	}
 
 	public void setStopbit(int _stopbit)
 	{
-		this.stopbit = _stopbit;
+		for (int l_i : getStopbitList())
+		{
+			if(l_i == _stopbit)
+				this.stopbit = _stopbit;
+		}
 	}
 
-	public String getParity()
+	public int getParity()
 	{
 		return parity;
 	}
-
-	public void setParity(String _parity)
+	
+	public static int[] getParityList()
 	{
-		this.parity = _parity;
+		return new int[] {
+				jssc.SerialPort.PARITY_NONE,
+				jssc.SerialPort.PARITY_ODD,
+				jssc.SerialPort.PARITY_EVEN,
+				jssc.SerialPort.PARITY_MARK,
+				jssc.SerialPort.PARITY_SPACE
+		};
 	}
 
-	public String getFlowControl()
+	public void setParity(int _parity)
+	{
+		for(int l_i : getParityList())
+		{
+			if(l_i == _parity)
+				this.parity = _parity;
+		}
+	}
+
+	public int getFlowControl()
 	{
 		return flowControl;
 	}
-
-	public void setFlowControl(String _flowControl)
+	
+	public static int[] getFlowControlList()
 	{
-		this.flowControl = _flowControl;
+		return new int[] {
+				jssc.SerialPort.FLOWCONTROL_NONE,
+				jssc.SerialPort.FLOWCONTROL_RTSCTS_IN,
+				jssc.SerialPort.FLOWCONTROL_RTSCTS_OUT,
+				jssc.SerialPort.FLOWCONTROL_XONXOFF_IN,
+				jssc.SerialPort.FLOWCONTROL_XONXOFF_OUT
+		};
+	}
+
+	public void setFlowControl(int _flowControl)
+	{
+		for(int l_i : getFlowControlList())
+		{
+			if(l_i == _flowControl)
+				this.flowControl = _flowControl;
+		}
 	}
 
 	public Boolean getSimulation()
@@ -129,38 +205,8 @@ public class Settings implements Serializable
 		return simulation;
 	}
 
-	public void setSimulation(Boolean _simulation)
+	public void setSimulation(boolean _simulation)
 	{
 		this.simulation = _simulation;
-	}
-
-	public int getSamplingRate()
-	{
-		return samplingRate;
-	}
-
-	public void setSamplingRate(int _samplingRate)
-	{
-		this.samplingRate = _samplingRate;
-	}
-
-	public String getDatabaseName()
-	{
-		return databaseName;
-	}
-
-	public void setDatabaseName(String databaseName)
-	{
-		this.databaseName = databaseName;
-	}
-
-	public String getInputDelimiter()
-	{
-		return inputDelimiter;
-	}
-
-	public void setInputDelimiter(String inputDelimiter)
-	{
-		this.inputDelimiter = inputDelimiter;
 	}
 }
