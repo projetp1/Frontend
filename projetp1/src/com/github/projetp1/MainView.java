@@ -272,13 +272,13 @@ public class MainView extends JFrame implements KeyListener
 	public void updateInfo(CelestialObject _object) {
 		if(_object != null)
 		{
-			leftPanel.setText("<html>Nom de l'astre<br />" +
+			leftPanel.setText("<html>" + Messages.getString("MainView.StarName") + "<br />" +
 				_object.getProperName() +
-				"<br /><br />Magnitude<br />" +
+				"<br /><br />" + Messages.getString("MainView.Magnitude") + "<br />" +
 				_object.getMag() +
-				"<br /><br />Distance(Terre)<br />" +
+				"<br /><br />" + Messages.getString("MainView.DistanceToEarth") + "<br />" +
 				(int)(_object.getDistance()*3.2616) +
-				" a.l<br /><br />Couleur<br />" +
+				" a.l<br /><br />" + Messages.getString("MainView.Colour") + "<br />" +
 				_object.getColorIndex() +
 				"</html>");
 		}		
@@ -1061,7 +1061,7 @@ public class MainView extends JFrame implements KeyListener
 		     			}
 		     		}
 		     		else
-		     			listModelNameOrID.setElement("Aucun résultat n'a été trouvé dans la base de données");
+		     			listModelNameOrID.setElement(Messages.getString("MainView.NoResult"));
 
 	     			} catch(Exception ex)
 	     			{
