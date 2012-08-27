@@ -149,6 +149,7 @@ public class MainView extends JFrame implements KeyListener
             }
 		});
 		
+
 		pic.addObservateur(new Observateur(){
 			public void updatePIC() {
 				update();
@@ -923,6 +924,7 @@ public class MainView extends JFrame implements KeyListener
 					}
                 }
             });
+
     		
     		searchBarTextField.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -940,8 +942,8 @@ public class MainView extends JFrame implements KeyListener
     		listNameOrID = new JList<String>();
     		listNameOrID.setModel(listModelNameOrID);
     		listNameOrID.setBounds(0, 0, 300, 400);
-    		jScrollPane.setFocusable(false);
     		listNameOrID.setFocusable(false);
+    		jScrollPane.setFocusable(false);
     		jScrollPane.setViewportView(listNameOrID);
 
     		stopSearchButon = new StopButton(scale);
@@ -1011,14 +1013,16 @@ public class MainView extends JFrame implements KeyListener
     		if(evt.getKeyCode() ==40)
     		{
     			listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()+1);
+    			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
             }
     		else if (evt.getKeyCode()==38)
         	{
         		listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()-1);
+    			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
         	}
-        	else if(evt.getKeyCode() == 37 && evt.getKeyCode() == 39 && evt.getKeyCode() == 10)
+        	else if(evt.getKeyCode() == 37 || evt.getKeyCode() == 39 || evt.getKeyCode() == 10)
         	{
-        		//listNameOrIDMouseClicked(null);
+        		listNameOrIDMouseClicked(null);
         	}
         	else
         	{
@@ -1061,7 +1065,7 @@ public class MainView extends JFrame implements KeyListener
 		     			}
 		     		}
 		     		else
-		     			listModelNameOrID.setElement("Aucun résultat n'a été trouvé dans la base de données");
+		     			listModelNameOrID.setElement("Aucun résultat n'a été trouvé");
 
 	     			} catch(Exception ex)
 	     			{
@@ -1078,13 +1082,9 @@ public class MainView extends JFrame implements KeyListener
 	        } 
 	        else
 	        	jScrollPane.setVisible(false);
-	        
-
-        	System.out.println(evt.getKeyCode());
+	        	
     	}
-    	
-        	
-    	}
+		}
     	
         
     	/** 
