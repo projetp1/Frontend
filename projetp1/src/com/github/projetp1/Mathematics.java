@@ -596,10 +596,8 @@ public class Mathematics
 	{
 		double l_dX = 0.0,l_dY = 0.0;
 		
-		l_dX = sin(_dAzimuth);
-		l_dY = sin(_dPitch);
-		if(_dPitch < 0)
-			l_dY*=-1.0;
+		l_dX = sin(_dAzimuth*D2R);
+		l_dY = sin(_dPitch*D2R)*-1.0;
 		
 		return new double[] {
 				l_dX,
