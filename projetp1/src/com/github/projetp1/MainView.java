@@ -518,9 +518,6 @@ public class MainView extends JFrame implements KeyListener
     		settingList.add(new JLabel("stopbit"));
     		settingList.add(new JLabel("parity"));
     		settingList.add(new JLabel("flowControl"));
-    	//	settingList.add(new JLabel("samplingRate"));
-    	//	settingList.add(new JLabel("databaseName"));
-    	//	settingList.add(new JLabel("ImputDelimiter"));
     		settingList.add(new JLabel("simulation"));
     		number = settingList.size();
     		InternalMid = new BufferedImage[number];
@@ -540,33 +537,61 @@ public class MainView extends JFrame implements KeyListener
     		
     		String stopbit[] = {"1", "2", "1_5"};
     		comboBoxList.add(new JComboBox<String>(stopbit));
-    		comboBoxList.get(comboBoxList.size()-1).setSelectedItem(String.valueOf(settings.getStopbit()));
+    		if (settings.getStopbit()!=jssc.SerialPort.STOPBITS_1_5)
+    			comboBoxList.get(comboBoxList.size()-1).setSelectedItem(String.valueOf(settings.getStopbit()));
+    		else
+    			comboBoxList.get(comboBoxList.size()-1).setSelectedItem("1_5");
     		
-    		String parity[] = {"NONE", "ODD", "EVEN", "MARK", "SPACE"};
+    		String parity[] = { Messages.getString("MainView.None"), Messages.getString("MainView.Odd"), Messages.getString("MainView.Even"), Messages.getString("MainView.Mark"), Messages.getString("MainView.Space") };			
     		comboBoxList.add(new JComboBox<String>(parity));
-    		comboBoxList.get(comboBoxList.size()-1).setSelectedItem(settings.getParity());
+    		switch (settings.getParity())
+    		{
+    			case jssc.SerialPort.PARITY_EVEN:
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.Even"));
+    				break;
+    			case jssc.SerialPort.PARITY_MARK:
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.Mark"));
+    				break;
+    			case jssc.SerialPort.PARITY_NONE:
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.None"));
+    				break;
+    			case jssc.SerialPort.PARITY_ODD:
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.Odd"));
+    				break;
+    			case jssc.SerialPort.PARITY_SPACE:
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.Space"));
+    				break;
+    			default:
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.None"));
+    				break;
+    		}
     		
-    		String flowControl[] = {"NONE", "RTSCTS_IN", "RTSCTS_OUT", "XONXOFF_IN","XONXOFF_OUT"};
+    		String flowControl[] = { Messages.getString("MainView.None"), Messages.getString("MainView.RTSCTS_IN"), Messages.getString("MainView.RTSCTS_OUT"), Messages.getString("MainView.XONXOFF_IN"), Messages.getString("MainView.XONXOFF_OUT") }; 
     		comboBoxList.add(new JComboBox<String>(flowControl));
-    		comboBoxList.get(comboBoxList.size()-1).setSelectedItem(settings.getFlowControl());
-    		
-    		/*
-    		String samplingRate[] = {"25"};
-    		comboBoxList.add(new JComboBox<String>(samplingRate));
-    		comboBoxList.get(comboBoxList.size()-1).setSelectedItem(String.valueOf(settings.getSamplingRate()));
-    		
-    		String databaseName[] = {"hyz.db"};
-    		comboBoxList.add(new JComboBox<String>(databaseName));
-    		comboBoxList.get(comboBoxList.size()-1).setSelectedItem(settings.getDatabaseName());
-    		
-    		String imputDelimiter[] = {";", ":"};
-    		comboBoxList.add(new JComboBox<String>(imputDelimiter));
-    		comboBoxList.get(comboBoxList.size()-1).setSelectedItem(settings.getInputDelimiter());
-    		*/
-    		
-    		String simulation[] = {"ON", "OFF"};
+    		switch (settings.getFlowControl())
+    		{
+    			case jssc.SerialPort.FLOWCONTROL_NONE:
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.None"));
+    				break;
+    			case jssc.SerialPort.FLOWCONTROL_RTSCTS_IN:
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.RTSCTS_IN"));
+    				break;
+    			case jssc.SerialPort.FLOWCONTROL_RTSCTS_OUT:
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.RTSCTS_OUT"));
+    				break;
+    			case jssc.SerialPort.FLOWCONTROL_XONXOFF_IN:
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.XONXOFF_IN"));
+    				break;		
+    			case jssc.SerialPort.FLOWCONTROL_XONXOFF_OUT:	
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.XONXOFF_OUT"));	
+    				break;	
+    			default:
+    				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.None"));	
+    				break;		
+    		}
+    		String simulation[] = { Messages.getString("MainView.On"), Messages.getString("MainView.Off") };
     		comboBoxList.add(new JComboBox<String>(simulation));
-    		comboBoxList.get(comboBoxList.size()-1).setSelectedItem((settings.getSimulation())?"ON":"OFF");
+    		comboBoxList.get(comboBoxList.size()-1).setSelectedItem((settings.getSimulation()) ? Messages.getString("MainView.On") : Messages.getString("MainView.Off"));
     		
     		for(int i = 0; i < number; i++)  		
     		{
@@ -643,28 +668,38 @@ public class MainView extends JFrame implements KeyListener
     	private void	jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
 
     		int i = 0;
-    		settings.setPort((comboBoxList.get(i).getSelectedItem() != null)?comboBoxList.get(i).getSelectedItem().toString():"NONE");
-    		i++;
-    		settings.setSpeed(Integer.parseInt(comboBoxList.get(i).getSelectedItem().toString()));
-    		i++;
-    		settings.setDatabit(Integer.parseInt(comboBoxList.get(i).getSelectedItem().toString()));
-    		i++;
-    		settings.setStopbit(Integer.parseInt(comboBoxList.get(i).getSelectedItem().toString()));
-    		i++;
-    		settings.setParity(comboBoxList.get(i).getSelectedItem().toString());
-    		i++;
-    		settings.setFlowControl(comboBoxList.get(i).getSelectedItem().toString());
-    		/*
-    		i++;
-    		settings.setSamplingRate(Integer.parseInt(comboBoxList.get(i).getSelectedItem().toString()));
-    		i++;
-    		settings.setDatabaseName(comboBoxList.get(i).getSelectedItem().toString());
-    		i++;
-    		settings.setInputDelimiter(comboBoxList.get(i).getSelectedItem().toString());
-    		i++;
-    		*/
-    		settings.setSimulation((comboBoxList.get(i).getSelectedItem().toString().equals("ON"))?true:false);
-    		Serializer.serialize("settings.conf",settings);
+			settings.setPort((comboBoxList.get(i).getSelectedItem() != null) ? comboBoxList.get(i)
+					.getSelectedItem().toString() : Messages.getString("MainView.None")); //$NON-NLS-1$
+			
+			i++;
+			settings.setSpeed(Integer.parseInt(comboBoxList.get(i).getSelectedItem().toString()));
+			
+			i++;
+			settings.setDatabit(Integer.parseInt(comboBoxList.get(i).getSelectedItem().toString()));
+			
+			i++;
+			settings.setStopbit(
+					(comboBoxList.get(i).getSelectedItem().toString().equals("1"))?jssc.SerialPort.STOPBITS_1:
+						(comboBoxList.get(i).getSelectedItem().toString().equals("2"))?jssc.SerialPort.STOPBITS_2:jssc.SerialPort.STOPBITS_1_5);
+			
+			i++;
+			settings.setParity(
+					(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.Odd")))?jssc.SerialPort.PARITY_ODD:
+						(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.Even")))?jssc.SerialPort.PARITY_EVEN:
+							(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.Mark")))?jssc.SerialPort.PARITY_MARK:
+								(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.Space")))?jssc.SerialPort.PARITY_SPACE:jssc.SerialPort.PARITY_NONE);
+			
+			i++;
+			settings.setFlowControl(
+					(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.RTSCTS_IN")))?jssc.SerialPort.FLOWCONTROL_RTSCTS_IN:
+						(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.RTSCTS_OUT")))?jssc.SerialPort.FLOWCONTROL_RTSCTS_OUT:
+							(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.XONXOFF_IN")))?jssc.SerialPort.FLOWCONTROL_XONXOFF_IN:
+								(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.XONXOFF_OUT")))?jssc.SerialPort.FLOWCONTROL_XONXOFF_OUT:jssc.SerialPort.FLOWCONTROL_NONE);
+			
+			i++;
+			settings.setSimulation((comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.On"))) ? true : false);
+			
+			Serializer.serialize("settings.conf", settings);
     		
     	}
     	
