@@ -989,7 +989,8 @@ public class MainView extends JFrame implements KeyListener
         		compassPanel.setRedNeedle(l_dDegreeCompassObjectSearched);
         		inclinometerPanel.setRedNeedle(l_dAngleInclinometerObjectSearched);
     			
-        		pic.setMode(PicMode.GUIDING);
+        		if(pic.getMode() != PicMode.SIMULATION)
+        			pic.setMode(PicMode.GUIDING);
         		
         		l_sSavedSearch = searchBarTextField.getText();
         		searchBarTextField.setText(listNameOrID.getSelectedValue().toString());
