@@ -156,8 +156,9 @@ public class SkyMap extends Container implements MouseListener
 			int l_x, l_y;
 			int l_d = getSizeForMagnitude(celestialObject.getMag());
 			Color l_color = getColorForColorIndex(celestialObject.getColorIndex(), 255);
-			l_x = l_xCenter + (int) (celestialObject.getXReal() * zoom * l_scale);
-			l_y = l_yCenter - (int) (celestialObject.getYReal() * zoom * l_scale);
+			l_x = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObject.getXReal(), celestialObject.getYReal(), this.mainView.getPic().getRoll())[0] * zoom * l_scale);
+			l_y = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObject.getXReal(), celestialObject.getYReal(), this.mainView.getPic().getRoll())[1] * zoom * l_scale);
+			
 			_g.setColor(l_color);
 			String l_name = celestialObject.getProperName();
 
@@ -182,7 +183,7 @@ public class SkyMap extends Container implements MouseListener
 				else if (l_dMoon > -38 && l_dMoon < -12)
 					l_imgMoon = getToolkit().getImage("res/moon_3.png");
 				else if (l_dMoon > -13 && l_dMoon < 13)
-					l_imgMoon =  getToolkit().getImage("res/moon_7.png");
+					l_imgMoon = getToolkit().getImage("res/moon_7.png");
 				else if (l_dMoon > 14 && l_dMoon < 38)
 					l_imgMoon = getToolkit().getImage("res/moon_4.png");
 				else if (l_dMoon > 39 && l_dMoon < 63)
@@ -191,8 +192,10 @@ public class SkyMap extends Container implements MouseListener
 					l_imgMoon = getToolkit().getImage("res/moon_6.png");
 
 				if (l_imgMoon != null)
-					_g.drawImage(l_imgMoon, l_x - (l_imgMoon.getHeight(null) / 2),
-							l_y - (l_imgMoon.getHeight(null) / 2), null);
+					_g.drawImage(l_imgMoon, 
+							l_x - (l_imgMoon.getHeight(null) / 2),
+							l_y - (l_imgMoon.getHeight(null) / 2), 
+							null);
 			}
 			else
 			{
@@ -213,8 +216,8 @@ public class SkyMap extends Container implements MouseListener
 
 		if (celestialObjectSearched != null)
 		{
-			int l_xStarPointed = l_xCenter + (int) (celestialObjectSearched.getXReal() * zoom * l_scale);
-			int l_yStarPointed = l_yCenter - (int) (celestialObjectSearched.getYReal() * zoom * l_scale);
+			int l_xStarPointed = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), this.mainView.getPic().getRoll())[0] * zoom * l_scale);
+			int l_yStarPointed = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), this.mainView.getPic().getRoll())[0] * zoom * l_scale);
 			
 			if(!celestialObjectSearched.getProperName().equals("Moon") && !celestialObjectSearched.getProperName().equals("Sun"))
 			{
