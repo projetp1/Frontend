@@ -86,19 +86,6 @@ public class MainView extends JFrame implements KeyListener
 		this.setTitle("Projet P1");
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/moon_6.png"));
 
-		try
-		{
-			db = new DataBase("hyg.db",";");
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
-
-		settings = new Settings();
-		skymap = new SkyMap(this);
-		pic = new Pic(this);
-
 		leftPanel = new JLabel("");
 		leftPanel.setBounds(100, 100, 100, 200);
 		leftPanel.setForeground(new Color(250, 250, 250));
@@ -142,10 +129,29 @@ public class MainView extends JFrame implements KeyListener
 		getLayeredPane().add(inclinometerPanel);
 		getLayeredPane().add(skymap);
 
+		try
+		{
+			db = new DataBase("hyg.db",";");
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+
+		settings = new Settings();
+		skymap = new SkyMap(this);
+		pic = new Pic(this);
+
 		skymap.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 skymapMouseClicked(evt);
             }
+		});
+		
+		pic.addObservateur(new Observateur(){
+			public void updatePIC() {
+				update();
+			}
 		});
 
 		this.addComponentListener(new java.awt.event.ComponentAdapter(){
@@ -153,12 +159,6 @@ public class MainView extends JFrame implements KeyListener
                 formComponentResized(evt);
             }
         });
-		
-		pic.addObservateur(new Observateur(){
-			public void updatePIC() {
-				update();
-			}
-		});
 
 
 		Color l_BackgroundColor = new Color(5, 30, 50);
@@ -290,8 +290,10 @@ public class MainView extends JFrame implements KeyListener
 	{
 		double w =  width() * 0.15 / 345;
 		double h =  height() * 0.30 / 350;
-		if(w>h)w=h;
-		if(w<.1)w=.1;
+		if(w>h)
+			w=h;
+		if(w<.1)
+			w=.1;
 		return w;
 	}
 	

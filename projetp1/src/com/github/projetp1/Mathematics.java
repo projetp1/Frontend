@@ -594,11 +594,11 @@ public class Mathematics
 	 */
 	static public double[] getOrigin(double _dPitch,double _dAzimuth)
 	{
-		double l_dX = 0.0,l_dY = 0.0;
+		double l_dX = 0.0, l_dY = 0.0;
 		
-		l_dX = sin(_dAzimuth);
-		l_dY = sin(_dPitch);
-		if(_dPitch < 0)
+		l_dX = sin(Math.toRadians(_dAzimuth));
+		l_dY = sin(Math.toRadians(_dPitch));
+		if(_dPitch > 0)
 			l_dY*=-1.0;
 		
 		return new double[] {
