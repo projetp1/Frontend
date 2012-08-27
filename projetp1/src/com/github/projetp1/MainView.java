@@ -1027,7 +1027,21 @@ public class MainView extends JFrame implements KeyListener
     	 * @param evt
     	 */
     	private void searchBarKeyReleased(java.awt.event.KeyEvent evt) 
-    	{    		
+    	{    	
+    		if(evt.getKeyCode() ==40)
+    		{
+    			listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()+1);
+            }
+    		else if (evt.getKeyCode()==38)
+        	{
+        		listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()-1);
+        	}
+        	else if(evt.getKeyCode() == 37 && evt.getKeyCode() == 39 && evt.getKeyCode() == 10)
+        	{
+        		//listNameOrIDMouseClicked(null);
+        	}
+        	else
+        	{
     		//listCelestialObject.clear();
     		if (listModelNameOrID.getSize()>0)
     			listModelNameOrID.removeAll();
@@ -1085,6 +1099,11 @@ public class MainView extends JFrame implements KeyListener
 	        else
 	        	jScrollPane.setVisible(false);
 	        
+
+        	System.out.println(evt.getKeyCode());
+    	}
+    	
+        	
     	}
     	
         
