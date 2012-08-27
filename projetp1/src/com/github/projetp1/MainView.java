@@ -278,7 +278,7 @@ public class MainView extends JFrame implements KeyListener
 				_object.getMag() +
 				"<br /><br />" + Messages.getString("MainView.DistanceToEarth") + "<br />" +
 				(int)(_object.getDistance()*3.2616) +
-				" a.l<br /><br />" + Messages.getString("MainView.Colour") + "<br />" +
+				" " + Messages.getString("MainView.LY") + "<br /><br />" + Messages.getString("MainView.Colour") + "<br />" +
 				_object.getColorIndex() +
 				"</html>");
 		}		
