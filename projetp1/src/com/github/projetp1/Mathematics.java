@@ -203,8 +203,6 @@ public class Mathematics
 	}
 
 	static private final double pi = Math.PI;
-	static private final double D2R = pi / 180.0;
-	static private final double R2D = 180.0 / pi;
 
 	// Constants for Julian Date
 	static private final double kNumberOfDayInOneYear = 365.25;
@@ -258,8 +256,8 @@ public class Mathematics
 	{
 		calculateDateTime(_date);
 
-		this.dLatitude = _dLat * D2R;
-		this.dLongitude = _dLon * D2R;
+		this.dLatitude = Math.toRadians(_dLat);
+		this.dLongitude = Math.toRadians(_dLon);
 
 		this.dDate_JulianCalendar = calculate_JulianDate(this.dDay, this.dMonth, this.dYear,
 				this.dHour, this.dMinute, this.dSecond);
@@ -281,7 +279,7 @@ public class Mathematics
 	 */
 	public void calculateAll(double _dDec, double _dAsc)
 	{
-		this.dDeclination = _dDec * D2R;
+		this.dDeclination = Math.toRadians(_dDec);
 		this.dAscension = _dAsc * 2 * pi / 24.0;
 
 		this.dHour_Angle_Star = this.dAngle - this.dAscension + this.dLongitude;
@@ -314,7 +312,7 @@ public class Mathematics
 		// "Astronomy on the Personal Computer"
 
 		double T = (this.dDate_JulianCalendar - 2451545.0) / 36525.0;
-		double eps = 23.43929111 * D2R;
+		double eps = Math.toRadians(23.43929111);
 		double L, M;
 		double pi2 = 2.0 * pi;
 		M = pi2 * Frac(0.993133 + 99.997361 * T);
@@ -381,7 +379,7 @@ public class Mathematics
 			theta = Math.atan2(e_sun[2], rho);
 
 		this.dAscension = phi * 24.0 / (2 * pi);
-		this.dDeclination = theta * R2D;
+		this.dDeclination = Math.toDegrees(theta);
 
 		this.calculateAll(this.dDeclination, this.dAscension);
 	}
@@ -395,8 +393,8 @@ public class Mathematics
 		// "Astronomy on the Personal Computer"
 
 		double T = (this.dDate_JulianCalendar - 2451545.0) / 36525.0;
-		double eps = 23.43929111 * D2R;
-		double Arcs = 3600.0 * R2D;
+		double eps = Math.toRadians(23.43929111);
+		double Arcs = Math.toDegrees(3600.0);
 
 		double pi2 = 2.0 * pi;
 		double L_0, l, ls, F, D, dL, S, h, N, l_Moon, b_Moon;
@@ -478,7 +476,7 @@ public class Mathematics
 			theta = Math.atan2(e_Moon[2], rho);
 
 		this.dAscension = phi * 24.0 / (2 * pi);
-		this.dDeclination = theta * R2D;
+		this.dDeclination = Math.toDegrees(theta);
 
 		this.calculateAll(this.dDeclination, this.dAscension);
 	}
@@ -582,6 +580,47 @@ public class Mathematics
 		this.dYear = Mathematics.kAdditionnalYearOfGregorianCalendar + _date.get(Calendar.YEAR);
 	}
 
+	/**
+	 * Give the new coordinate of a star with a rotation
+	 * @param _dX
+	 * 			X coordinate
+	 * @param _dY
+	 * 			Y coordinate
+	 * @param _dAngle
+	 * 			Angle for the rotation
+	 * @return
+	 */
+	static public double[] getNewXYRotation(double _dX,double _dY,double _dAngle)
+	{		
+		return new double[] {
+				cos(Math.toRadians(_dAngle)) * _dX - sin(Math.toRadians(_dAngle)) * _dY ,
+				sin(Math.toRadians(_dAngle)) * _dX + cos(Math.toRadians(_dAngle)) * _dY
+		};
+	}
+	
+	/**
+	 * Give the origin's coordinates
+	 * 
+	 * @Param _dPitch
+	 * 			Pic's pitch (degree, [-90;90] -90=top)
+	 * @Param _dAzimuth
+	 * 			Pic's Azimuth (degree, [-180;180] 0=North)
+	 * 
+	 * @return Double[] first case contains the X and the second one the y
+	 */
+	static public double[] getOrigin(double _dPitch,double _dAzimuth)
+	{
+		double l_dX = 0.0,l_dY = 0.0;
+		
+		l_dX = sin(Math.toRadians(_dAzimuth));
+		l_dY = sin(Math.toRadians(_dPitch))*-1.0;
+		
+		return new double[] {
+				l_dX,
+				l_dY
+				};
+	}
+	
 	/**
 	 * Say if the year is leap or not
 	 * 
