@@ -42,6 +42,8 @@ public class SkyMap extends Container implements MouseListener
 	private CelestialObject celestialObjectPointed = null;
 	MainView mainView = null;
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	
+	private PicArrowDirection lastArrowSent = null;
 
 	/**
 	 * SkyMap Constructor
@@ -255,7 +257,7 @@ public class SkyMap extends Container implements MouseListener
 
 		// log.info("angle : " + Math.toDegrees(l_dangle) + "\r\n");
 
-		if (mainView.getPic() != null && mainView.getPic().getMode() == Pic.PicMode.GUIDING)
+		if(mainView.getPic() != null && mainView.getPic().getMode() == Pic.PicMode.GUIDING)
 		{
 			PicArrowDirection dir = null;
 
@@ -288,8 +290,11 @@ public class SkyMap extends Container implements MouseListener
 				default:
 					break;
 			}
-			if (dir != null)
+			if (dir != null && (lastArrowSent == null || lastArrowSent != dir))
+			{
 				mainView.getPic().setPicArrow(dir);
+				lastArrowSent = dir;
+			}
 		}
 
 		return l_dAngle;
