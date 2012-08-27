@@ -225,8 +225,8 @@ public class MainView extends JFrame implements KeyListener
 		this.getContentPane().setBackground(l_BackgroundColor);
 
 		//TODO : à régler ou remplacer <= Ce timer prend 250 Mo sur les 350 du processus.
-		Timer timer = createTimer();
-		timer.start();
+	//	Timer timer = createTimer();
+	//	timer.start();
 
 		this.addComponentListener(new java.awt.event.ComponentAdapter(){
             public void componentResized(java.awt.event.ComponentEvent evt){
@@ -947,6 +947,7 @@ public class MainView extends JFrame implements KeyListener
 					}
                 }
             });
+
     		
     		searchBarTextField.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -1031,14 +1032,16 @@ public class MainView extends JFrame implements KeyListener
     		if(evt.getKeyCode() ==40)
     		{
     			listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()+1);
+    			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
             }
     		else if (evt.getKeyCode()==38)
         	{
         		listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()-1);
+    			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
         	}
-        	else if(evt.getKeyCode() == 37 && evt.getKeyCode() == 39 && evt.getKeyCode() == 10)
+        	else if(evt.getKeyCode() == 37 || evt.getKeyCode() == 39 || evt.getKeyCode() == 10)
         	{
-        		//TODO : selection
+        		listNameOrIDMouseClicked(null);
         	}
         	else
         	{
@@ -1081,7 +1084,7 @@ public class MainView extends JFrame implements KeyListener
 		     			}
 		     		}
 		     		else
-		     			listModelNameOrID.setElement("Aucun résultat n'a été trouvé dans la base de données");
+		     			listModelNameOrID.setElement("Aucun résultat n'a été trouvé");
 
 	     			} catch(Exception ex)
 	     			{
@@ -1098,13 +1101,9 @@ public class MainView extends JFrame implements KeyListener
 	        } 
 	        else
 	        	jScrollPane.setVisible(false);
-	        
-
-        	System.out.println(evt.getKeyCode());
+	        	
     	}
-    	
-        	
-    	}
+		}
     	
         
     	/** 
