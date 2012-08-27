@@ -596,8 +596,8 @@ public class Mathematics
 	{
 		double l_dX = 0.0, l_dY = 0.0;
 		
-		l_dX = sin(Math.toRadians(_dAzimuth));
-		l_dY = sin(Math.toRadians(_dPitch));
+		l_dX = sin(_dAzimuth*D2R);
+		l_dY = sin(_dPitch*D2R)*-1.0;
 		if(_dPitch > 0)
 			l_dY*=-1.0;
 		
