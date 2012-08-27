@@ -591,12 +591,10 @@ public class Mathematics
 	 * @return
 	 */
 	static public double[] getNewXYRotation(double _dX,double _dY,double _dAngle)
-	{
-		double l_dNewAngle = arctan(_dY/_dX) + Math.toRadians(_dAngle);
-		
+	{		
 		return new double[] {
-				cos(l_dNewAngle*_dX),
-				sin(l_dNewAngle*_dY)
+				cos(Math.toRadians(_dAngle)) * _dX - sin(Math.toRadians(_dAngle)) * _dY ,
+				sin(Math.toRadians(_dAngle)) * _dX + cos(Math.toRadians(_dAngle)) * _dY
 		};
 	}
 	
