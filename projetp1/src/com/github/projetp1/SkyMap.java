@@ -171,7 +171,7 @@ public class SkyMap extends Container implements MouseListener
 				else if (l_dMoon > -38 && l_dMoon < -12)
 					l_imgMoon = getToolkit().getImage("res/moon_3.png");
 				else if (l_dMoon > -13 && l_dMoon < 13)
-					l_imgMoon = null;// getToolkit().getImage("res/moon_0.png");
+					l_imgMoon =  getToolkit().getImage("res/moon_7.png");
 				else if (l_dMoon > 14 && l_dMoon < 38)
 					l_imgMoon = getToolkit().getImage("res/moon_4.png");
 				else if (l_dMoon > 39 && l_dMoon < 63)
