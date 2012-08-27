@@ -32,7 +32,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import com.github.projetp1.Pic.PicMode;
-import com.github.projetp1.rs232.RS232.PicArrowDirection;
 
 
 /**
@@ -983,7 +982,7 @@ public class MainView extends JFrame implements KeyListener
         		updateInfo(celObjt);
         		skymap.setCelestialObjectPointed(celObjt);
         		
-        		double l_dDegreeCompassObjectSearched = -celObjt.getAzimuth() * 180 / Math.PI;
+        		double l_dDegreeCompassObjectSearched = celObjt.getAzimuth() * 180 / Math.PI;
         		double l_dAngleInclinometerObjectSearched = celObjt.getHeight() * 180 / Math.PI;
         		compassPanel.setRedNeedle(l_dDegreeCompassObjectSearched);
         		inclinometerPanel.setRedNeedle(l_dAngleInclinometerObjectSearched);

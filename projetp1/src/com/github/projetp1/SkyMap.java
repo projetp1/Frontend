@@ -76,14 +76,15 @@ public class SkyMap extends Container implements MouseListener
 			return;
 		}
 
+		
 		int l_scale = (this.getHeight() / 2);
 		int l_xCenter = this.getWidth() / 2 - (int) (dXOrigin * l_scale * zoom);
 		int l_yCenter = this.getHeight() / 2 + (int) (dYOrigin * l_scale * zoom);
 		double l_dLastDelta = 10; // big value for be sure that will be changed
-		double l_dXPressed = (double) (_e.getX() - l_xCenter) / zoom / l_scale;
-		double l_dYPressed = (double) ((_e.getY() - l_yCenter) / zoom / l_scale) * -1;
+		double l_dXPressed = (double) (Mathematics.getNewXYRotation(_e.getX(), _e.getY(), -this.mainView.getPic().getRoll())[0] - l_xCenter) / zoom / l_scale;
+		double l_dYPressed = (double) ((Mathematics.getNewXYRotation(_e.getX(), _e.getY(), -this.mainView.getPic().getRoll())[1] - l_yCenter) / zoom / l_scale) * -1;
 		CelestialObject l_nearestCelestialObject = null;
-
+		
 		for (CelestialObject celestialObject : celestialObjects)
 		{
 			double l_dDelta = Math.sqrt(Math.pow(
@@ -96,6 +97,7 @@ public class SkyMap extends Container implements MouseListener
 				l_nearestCelestialObject = celestialObject;
 			}
 		}
+		
 		mainView.updateInfo(l_nearestCelestialObject);
 	}
 
@@ -245,6 +247,8 @@ public class SkyMap extends Container implements MouseListener
 				(this.getWidth() / 2 - l_imgCenter.getWidth(null) / 2),
 				(this.getHeight() / 2 - l_imgCenter.getHeight(null) / 2),
 				null);
+		
+		_g.fillOval(200, 200, 3, 3);
 	}
 
 	/**
