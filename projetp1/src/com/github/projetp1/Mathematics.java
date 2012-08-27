@@ -581,6 +581,26 @@ public class Mathematics
 	}
 
 	/**
+	 * Give the new coordinate of a star with a rotation
+	 * @param _dX
+	 * 			X coordinate
+	 * @param _dY
+	 * 			Y coordinate
+	 * @param _dAngle
+	 * 			Angle for the rotation
+	 * @return
+	 */
+	static public double[] getNewXYRotation(double _dX,double _dY,double _dAngle)
+	{
+		double l_dNewAngle = arctan(_dY/_dX) + Math.toRadians(_dAngle);
+		
+		return new double[] {
+				cos(l_dNewAngle*_dX),
+				sin(l_dNewAngle*_dY)
+		};
+	}
+	
+	/**
 	 * Give the origin's coordinates
 	 * 
 	 * @Param _dPitch
