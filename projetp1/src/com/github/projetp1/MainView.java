@@ -32,6 +32,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import com.github.projetp1.Pic.PicMode;
+import com.github.projetp1.rs232.RS232.PicArrowDirection;
 
 
 /**
@@ -86,6 +87,19 @@ public class MainView extends JFrame implements KeyListener
 		this.setTitle("Projet P1");
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/moon_6.png"));
 
+		try
+		{
+			db = new DataBase("hyg.db",";");
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+
+		settings = new Settings();
+		skymap = new SkyMap(this);
+		pic = new Pic(this);
+		
 		leftPanel = new JLabel("");
 		leftPanel.setBounds(100, 100, 100, 200);
 		leftPanel.setForeground(new Color(250, 250, 250));
@@ -128,19 +142,6 @@ public class MainView extends JFrame implements KeyListener
 		getLayeredPane().add(compassPanel);
 		getLayeredPane().add(inclinometerPanel);
 		getLayeredPane().add(skymap);
-
-		try
-		{
-			db = new DataBase("hyg.db",";");
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
-
-		settings = new Settings();
-		skymap = new SkyMap(this);
-		pic = new Pic(this);
 
 		skymap.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -1163,9 +1164,51 @@ public class MainView extends JFrame implements KeyListener
             greenNeedle.scale(scale);
             greenNeedle.rotate(greenAngle);
 			greenNeedle.setBounds(0, 0, (int)(scale*345), (int)(scale*304));
+
+
+			if(greenAngle < 0)
+				greenAngle += 360;
+			double l_dAngle = greenAngle - 22.5;
+			if(l_dAngle < 0)
+				l_dAngle += 360;
+			int l_iAngle = (int) (l_dAngle / 45);
+			String l_sDirection = "";
+			
+			switch (l_iAngle)
+			{
+				case 0:
+					l_sDirection = "NE";
+					break;
+				case 1:
+					l_sDirection = "E";
+					break;
+				case 2:
+					l_sDirection = "SE";
+					break;
+				case 3:
+					l_sDirection = "S";
+					break;
+				case 4:
+					l_sDirection = "SO";
+					break;
+				case 5:
+					l_sDirection = "O";
+					break;
+				case 6:
+					l_sDirection = "NO";
+					break;
+				case 7:
+					l_sDirection = "N";
+					break;
+				default:
+					l_sDirection = "N";
+					break;
+			}
+
+
 			try
 			{
-				coordinateCompass.setText(String.valueOf(greenAngle%360));
+				coordinateCompass.setText(String.valueOf((int)(greenAngle)) + "° " + l_sDirection);
 			}
 			catch(Exception e)
 			{
@@ -1339,7 +1382,7 @@ public class MainView extends JFrame implements KeyListener
 			greenNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
 			try
 			{
-				coordinateInclinometer.setText(String.valueOf(greenAngle%360));
+				coordinateInclinometer.setText(String.valueOf((int)(greenAngle%360)) + "°");
 			}
 			catch(Exception e)
 			{
