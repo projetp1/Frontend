@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
+import com.github.projetp1.Pic.PicMode;
 import com.github.projetp1.rs232.RS232.PicArrowDirection;
 
 @SuppressWarnings("serial")
@@ -103,10 +104,14 @@ public class SkyMap extends Container implements MouseListener
 	 */
 	public void updateSkyMap()
 	{
-		if (this.mainView.getPic() != null)
+		
+		if (this.mainView.getPic() != null && this.mainView.getPic().getMode() != PicMode.SIMULATION)
 		{
 			dLatitude = this.mainView.getPic().getLatitude();
 			dLongitude = this.mainView.getPic().getLongitude();
+			double[] l_dOrigin = Mathematics.getOrigin(this.mainView.getPic().getPitch(), this.mainView.getPic().getAzimuth());
+			dXOrigin = l_dOrigin[0];
+			dYOrigin = l_dOrigin[1];
 		}
 
 		if (mainView.getDataBase() != null)
