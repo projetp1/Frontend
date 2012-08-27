@@ -147,7 +147,7 @@ public class MainView extends JFrame implements KeyListener
 	public MainView()
 	{
 		// TODO: Externalize this string
-		this.setTitle("Projet P1");
+		this.setTitle(Messages.getString("MainView.Title"));
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/moon_6.png"));
 
 		try
