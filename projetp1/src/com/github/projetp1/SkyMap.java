@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
+import com.github.projetp1.Pic.PicMode;
 import com.github.projetp1.rs232.RS232.PicArrowDirection;
 
 @SuppressWarnings("serial")
@@ -42,6 +43,8 @@ public class SkyMap extends Container implements MouseListener
 	private CelestialObject celestialObjectSearched = null;
 	MainView mainView = null;
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	
+	private PicArrowDirection lastArrowSent = null;
 
 	/**
 	 * SkyMap Constructor
@@ -101,10 +104,14 @@ public class SkyMap extends Container implements MouseListener
 	 */
 	public void updateSkyMap()
 	{
-		if (this.mainView.getPic() != null)
+		
+		if (this.mainView.getPic() != null && this.mainView.getPic().getMode() != PicMode.SIMULATION)
 		{
 			dLatitude = this.mainView.getPic().getLatitude();
 			dLongitude = this.mainView.getPic().getLongitude();
+			double[] l_dOrigin = Mathematics.getOrigin(this.mainView.getPic().getPitch(), this.mainView.getPic().getAzimuth());
+			dXOrigin = l_dOrigin[0];
+			dYOrigin = l_dOrigin[1];
 		}
 
 		if (mainView.getDataBase() != null)
@@ -261,7 +268,7 @@ public class SkyMap extends Container implements MouseListener
 
 		// log.info("angle : " + Math.toDegrees(l_dangle) + "\r\n");
 
-		if (mainView.getPic() != null && mainView.getPic().getMode() == Pic.PicMode.GUIDING)
+		if(mainView.getPic() != null && mainView.getPic().getMode() == Pic.PicMode.GUIDING)
 		{
 			PicArrowDirection dir = null;
 
@@ -294,8 +301,11 @@ public class SkyMap extends Container implements MouseListener
 				default:
 					break;
 			}
-			if (dir != null)
+			if (dir != null && (lastArrowSent == null || lastArrowSent != dir))
+			{
 				mainView.getPic().setPicArrow(dir);
+				lastArrowSent = dir;
+			}
 		}
 
 		return l_dAngle;

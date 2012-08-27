@@ -583,6 +583,31 @@ public class Mathematics
 	}
 
 	/**
+	 * Give the origin's coordinates
+	 * 
+	 * @Param _dPitch
+	 * 			Pic's pitch (degree, [-90;90] -90=top)
+	 * @Param _dAzimuth
+	 * 			Pic's Azimuth (degree, [-180;180] 0=North)
+	 * 
+	 * @return Double[] first case contains the X and the second one the y
+	 */
+	static public double[] getOrigin(double _dPitch,double _dAzimuth)
+	{
+		double l_dX = 0.0,l_dY = 0.0;
+		
+		l_dX = sin(_dAzimuth);
+		l_dY = sin(_dPitch);
+		if(_dPitch < 0)
+			l_dY*=-1.0;
+		
+		return new double[] {
+				l_dX,
+				l_dY
+				};
+	}
+	
+	/**
 	 * Say if the year is leap or not
 	 * 
 	 * @param _year

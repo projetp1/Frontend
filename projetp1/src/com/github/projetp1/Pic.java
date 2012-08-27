@@ -21,15 +21,17 @@ public class Pic extends Thread implements Observer
 {
 
 	private ArrayList<Observateur> listObservateur = new ArrayList<Observateur>();
-	/**
-	 * @uml.property name="longitude"
-	 */
+
 	private double longitude = 0.0;
 	private double latitude = 0.0;
 
 	private double azimuth = 0.0;
 	private double pitch = 0.0;
 	private double roll = 0.0;
+	
+	private long lastSmooth = 0;
+	// Âge max d'un smooth en ms
+	private final int SMOOTH_AGE = 600;
 
 	private int[] acc = new int[3];
 	private int[] mag = new int[3];
@@ -269,9 +271,27 @@ public class Pic extends Thread implements Observer
 
 					double[] res = new double[3];
 					Mathematics.calculateAngles(res, acc, mag);
-					azimuth = Mathematics.smooth(res[0] + magneticDeclination, azimuth, 0.5, 40);
-					pitch = Mathematics.smooth(res[1] * -1.0, pitch, 0.5, 25);
-					roll = Mathematics.smooth(res[2], roll, 0.5, 25);
+					
+					long currentTime = System.currentTimeMillis();
+					
+					double l_azimuth = res[0] + magneticDeclination;
+					double l_pitch = res[1] * -1.0;
+					double l_roll = res[2];
+					
+					// Si le dernier smooth est récent, on continue
+					if((currentTime - lastSmooth) <= SMOOTH_AGE)
+					{
+						azimuth = Mathematics.smooth(l_azimuth, azimuth, 0.5, 40);
+						pitch = Mathematics.smooth(l_pitch, pitch, 0.5, 25);
+						roll = Mathematics.smooth(l_roll, roll, 0.5, 25);
+						lastSmooth = currentTime;
+					}
+					else
+					{
+						azimuth = l_azimuth;
+						pitch = l_pitch;
+						roll = l_roll;
+					}
 
 					log.info("A: " + res[0] + "\nP: " + res[1] + "\nR: " + res[2]);
 					break;
