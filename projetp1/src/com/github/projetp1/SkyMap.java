@@ -219,7 +219,7 @@ public class SkyMap extends Container implements MouseListener
 		if (celestialObjectSearched != null)
 		{
 			int l_xStarPointed = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), this.mainView.getPic().getRoll())[0] * zoom * l_scale);
-			int l_yStarPointed = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), this.mainView.getPic().getRoll())[0] * zoom * l_scale);
+			int l_yStarPointed = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), this.mainView.getPic().getRoll())[1] * zoom * l_scale);
 			
 			if(!celestialObjectSearched.getProperName().equals("Moon") && !celestialObjectSearched.getProperName().equals("Sun"))
 			{
