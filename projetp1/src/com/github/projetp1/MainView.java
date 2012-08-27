@@ -964,8 +964,8 @@ public class MainView extends JFrame implements KeyListener
     		listNameOrID = new JList<String>();
     		listNameOrID.setModel(listModelNameOrID);
     		listNameOrID.setBounds(0, 0, 300, 400);
-    		jScrollPane.setFocusable(false);
     		listNameOrID.setFocusable(false);
+    		jScrollPane.setFocusable(false);
     		jScrollPane.setViewportView(listNameOrID);
 
     		stopSearchButon = new StopButton(scale);
@@ -1038,7 +1038,7 @@ public class MainView extends JFrame implements KeyListener
         	}
         	else if(evt.getKeyCode() == 37 && evt.getKeyCode() == 39 && evt.getKeyCode() == 10)
         	{
-        		//listNameOrIDMouseClicked(null);
+        		//TODO : selection
         	}
         	else
         	{
