@@ -1155,7 +1155,8 @@ public class MainView extends JFrame implements KeyListener
 			public StopButton(double _scale){
 				try
 				{
-					cross = resizeImage2(ImageIO.read(new File("res/Cross.png")),hig/2, hig/2);
+					cross = ImageIO.read(new File("res/Cross.png"));
+					//cross = resizeImage2(ImageIO.read(new File("res/Cross.png")),hig/2, hig/2);
 				}
 				catch (IOException ex)
 				{
@@ -1181,7 +1182,7 @@ public class MainView extends JFrame implements KeyListener
 	        { 
 	            super.paintComponent(g); 
 	            Graphics2D g2 = (Graphics2D) g; 
-	            g2.drawImage(cross, 0, 0, null); 
+	            g2.drawImage(cross, -1, -3, null); 
 	        }
 			
 		}
