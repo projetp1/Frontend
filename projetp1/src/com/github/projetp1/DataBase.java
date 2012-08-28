@@ -37,6 +37,7 @@ public class DataBase
 	private Connection connection;
 	private Statement statement;
 	private ArrayList<CelestialObject> allStars = new ArrayList<CelestialObject>();
+	private ArrayList<CelestialObject> allConstellations = new ArrayList<CelestialObject>();
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	private int argumentCount;
@@ -90,6 +91,7 @@ public class DataBase
 		}
 
 		// Generate the ArrayList with all the stars
+		int l_Bayer = 0;
 		int l_id;
 		int l_HIP;
 		int l_HD;
@@ -123,10 +125,47 @@ public class DataBase
 			l_dColorIndex = result.getDouble("ColorIndex");
 
 			CelestialObject l_star = new CelestialObject(l_id, l_HIP, l_HD, l_HR, l_ProperName,
-					l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex);
+					l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
 			this.allStars.add(l_star);
 		}
 		result.close();
+		
+		//Now the same for the constellations
+		l_HIP = 0;
+		l_HD = 0;
+		l_HR = 0;
+		l_dRA = 0;
+		l_Dec = 0;
+		l_ProperName = "";
+		l_id = 0;
+		l_dDistance = 0.0;
+		l_dMag = 0;
+		l_dColorIndex = 0;
+		
+		String[] field2 = { "*" };
+		String[] table2 = {"constellations"};
+		String[][] where2 = {};
+		String[] orderby2 = { "ProperName", "Bayer" };
+		int[] limit2 = {};
+		secured = true;
+		
+		ResultSet result2 = selectQuery(field2, table2, where2, orderby2, limit2, secured);
+
+		while (result2.next())
+		{
+			l_HIP = result2.getInt("HIP");
+			l_HD = result2.getInt("HD");
+			l_HR = result2.getInt("HR");
+			l_ProperName = result2.getString("ProperName");
+			l_dRA = result2.getDouble("RA");
+			l_Dec = result2.getDouble("Dec");
+			l_Bayer = result2.getInt("Bayer");
+
+			CelestialObject l_star = new CelestialObject(l_id, l_HIP, l_HD, l_HR, l_ProperName,
+					l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
+			this.allConstellations.add(l_star);
+		}
+		result2.close();
 	}
 
 	/**
@@ -425,6 +464,65 @@ public class DataBase
 		return hs_Out;
 	}
 
+	public ArrayList<CelestialObject> getConstellations(Calendar _date,double _dLat,double _dLon)
+	{
+		ArrayList<CelestialObject> al_const = new ArrayList<CelestialObject>();
+
+		int l_Bayer = 0;
+		int l_id=0;
+		int l_HIP;
+		int l_HD;
+		int l_HR;
+		String l_ProperName;
+		double l_dRA;
+		double l_Dec;
+		double l_dDistance=0.0;
+		double l_dMag=0.0;
+		double l_dColorIndex=0.0;
+
+		try
+		{
+			if (!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
+				throw new IllegalArgumentException(
+						"Error : Illegal latitude/longitude. Please check the coordinates !");
+		}
+		catch (IllegalArgumentException e)
+		{
+			log.warning(e.getMessage());
+			_dLat = _dLon = 0;
+		}
+
+		Mathematics l_calc = new Mathematics(_date, _dLat, _dLon);
+		
+		for (CelestialObject l_const : this.allConstellations)
+		{
+			l_Bayer = l_const.getBayer();
+			l_HIP = l_const.getHIP();
+			l_HD = l_const.getHD();
+			l_HR = l_const.getHR();
+			l_ProperName = l_const.getProperName();
+			l_dRA = l_const.getRA();
+			l_Dec = l_const.getDec();
+			
+			CelestialObject l_star = new CelestialObject(l_id, l_HIP, l_HD, l_HR, l_ProperName,
+					l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
+
+			l_calc.calculateAll(l_star.getDec(), l_star.getRA());
+
+			if (l_calc.getHeight() >= 0)
+			{
+				l_star.setXReal(l_calc.getX());
+				l_star.setYReal(l_calc.getY());
+				l_star.SetAzimuth(l_calc.getAzimuth());
+				l_star.SetHeight(l_calc.getHeight());
+				al_const.add(l_star);
+			}
+
+			l_star = null;
+		}
+		return this.allConstellations;
+	}
+	
 	/**
 	 * Search all the stars that could be in the hemisphere
 	 * 
@@ -442,6 +540,7 @@ public class DataBase
 	{
 		ArrayList<CelestialObject> al_stars = new ArrayList<CelestialObject>();
 
+		int l_Bayer = 0;
 		int l_id;
 		int l_HIP;
 		int l_HD;
@@ -481,7 +580,7 @@ public class DataBase
 			l_dColorIndex = star.getColorIndex();
 
 			CelestialObject l_star = new CelestialObject(l_id, l_HIP, l_HD, l_HR, l_ProperName,
-					l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex);
+					l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
 
 			if (l_id == 1)// Sun
 			{
@@ -592,6 +691,7 @@ public class DataBase
 		{
 			while (result.next())
 			{
+				int l_Bayer = 0;
 				l_id = result.getInt("id");
 				l_HIP = result.getInt("HIP");
 				l_HD = result.getInt("HD");
@@ -604,7 +704,7 @@ public class DataBase
 				l_dColorIndex = result.getDouble("ColorIndex");
 
 				CelestialObject l_star = new CelestialObject(l_id, l_HIP, l_HD, l_HR, l_ProperName,
-						l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex);
+						l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
 
 				if (l_id == 1)
 				{
