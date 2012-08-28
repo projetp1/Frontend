@@ -22,7 +22,7 @@ public class Serializer
 		try
 		{
 			BufferedWriter bw = new BufferedWriter(new FileWriter(_filename, false));
-			bw.write(jss.serialize(_object));
+			jss.serialize(_object, bw);
 			bw.close();
 		}
 		catch (IOException ex)
@@ -37,7 +37,7 @@ public class Serializer
 		{
 			BufferedReader br = new BufferedReader(new FileReader(_filename));
 			JSONDeserializer<Settings> jsd = new JSONDeserializer<Settings>();
-			Settings o = jsd.deserialize(br.readLine());
+			Settings o = jsd.deserialize(br);
 			br.close();
 			return o;
 		}
