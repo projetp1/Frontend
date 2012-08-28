@@ -20,15 +20,20 @@ public class Constellation
 	private double dLines[][];
 	private int i = 0;
 
-	public Constellation(String l_sProperName)
+	public Constellation()
 	{
-		this.sProperName = l_sProperName;
-	}
 
+	}
+	
 	public void addLine(double l_X,double l_Y,double l_Xp,double l_Yp)
 	{
 		double[] l_dTemp = {l_X,l_Y,l_Xp,l_Yp};
 		this.dLines[i++] = l_dTemp;
+	}
+	
+	public void setProperName(String _x)
+	{
+		this.sProperName = _x;
 	}
 	
 	public String getProperName()
