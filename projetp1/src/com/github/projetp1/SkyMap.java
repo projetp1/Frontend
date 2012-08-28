@@ -36,12 +36,12 @@ public class SkyMap extends Container implements MouseListener
 	private double dYOrigin = 0;
 	private double dLongitude = 6.937892;
 	private double dLatitude = 46.997415;
-	private ArrayList<CelestialObject> celestialObjects;
+	private ArrayList<CelestialObject> celestialObjects = null;
+	private ArrayList<Constellation> constellations = null;
 	private CelestialObject celestialObjectSearched = null;
-	MainView mainView = null;
-	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	
+	private MainView mainView = null;
 	private PicArrowDirection lastArrowSent = null;
+	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	/**
 	 * SkyMap Constructor
@@ -123,6 +123,7 @@ public class SkyMap extends Container implements MouseListener
 			{
 				celestialObjects = mainView.getDataBase().starsForCoordinates(
 						Calendar.getInstance(), dLatitude, dLongitude);
+				constellations = mainView.getDataBase().getConstellations(Calendar.getInstance(), dLatitude, dLongitude);
 			}
 			catch (Exception ex)
 			{
@@ -148,13 +149,13 @@ public class SkyMap extends Container implements MouseListener
 			return;
 		}
 
+		int l_scale = (this.getHeight() / 2);
+		int l_xCenter = this.getWidth() / 2 - (int) (dXOrigin * l_scale * zoom);
+		int l_yCenter = this.getHeight() / 2 + (int) (dYOrigin * l_scale * zoom);
 		double l_dRoll = 0.0;
 		if(this.mainView.getPic() != null)
 			l_dRoll = this.mainView.getPic().getRoll();
 		
-		int l_scale = (this.getHeight() / 2);
-		int l_xCenter = this.getWidth() / 2 - (int) (dXOrigin * l_scale * zoom);
-		int l_yCenter = this.getHeight() / 2 + (int) (dYOrigin * l_scale * zoom);
 		for (CelestialObject celestialObject : celestialObjects)
 		{
 			if(celestialObjectSearched != null && celestialObject.getId() == celestialObjectSearched.getId())
@@ -179,24 +180,87 @@ public class SkyMap extends Container implements MouseListener
 			}
 			else if (l_name != null && l_name.equals("Moon"))
 			{
-				double l_dMoon = celestialObject.getMag();
+				double l_dMoon = celestialObject.getMag() + 99; //La propriété magnitude contient l'etat lunaire (pleine lune..) (+99 pour avoir de 0 à 199)
+
+				l_dMoon -= 200/23/2;
+				int l_moon = (int) (l_dMoon / (200/23));
 				Image l_imgMoon = null;
-				if (l_dMoon > 87 || l_dMoon < -87)
-					l_imgMoon = getToolkit().getImage("res/moon_0.png");
-				else if (l_dMoon > -88 && l_dMoon < -62)
-					l_imgMoon = getToolkit().getImage("res/moon_1.png");
-				else if (l_dMoon > -63 && l_dMoon < -37)
-					l_imgMoon = getToolkit().getImage("res/moon_2.png");
-				else if (l_dMoon > -38 && l_dMoon < -12)
-					l_imgMoon = getToolkit().getImage("res/moon_3.png");
-				else if (l_dMoon > -13 && l_dMoon < 13)
-					l_imgMoon = getToolkit().getImage("res/moon_7.png");
-				else if (l_dMoon > 14 && l_dMoon < 38)
-					l_imgMoon = getToolkit().getImage("res/moon_4.png");
-				else if (l_dMoon > 39 && l_dMoon < 63)
-					l_imgMoon = getToolkit().getImage("res/moon_5.png");
-				else if (l_dMoon > 64 && l_dMoon < 88)
-					l_imgMoon = getToolkit().getImage("res/moon_6.png");
+				
+				switch (l_moon)
+				{
+					case 0:
+						l_imgMoon = getToolkit().getImage("res/moon-13.png");						
+						break;
+					case 1:
+						l_imgMoon = getToolkit().getImage("res/moon-14.png");						
+						break;
+					case 2:
+						l_imgMoon = getToolkit().getImage("res/moon-15.png");						
+						break;
+					case 3:
+						l_imgMoon = getToolkit().getImage("res/moon-16.png");						
+						break;
+					case 4:
+						l_imgMoon = getToolkit().getImage("res/moon-17.png");						
+						break;
+					case 5:
+						l_imgMoon = getToolkit().getImage("res/moon-18.png");						
+						break;
+					case 6:
+						l_imgMoon = getToolkit().getImage("res/moon-19.png");						
+						break;
+					case 7:
+						l_imgMoon = getToolkit().getImage("res/moon-20.png");						
+						break;
+					case 8:
+						l_imgMoon = getToolkit().getImage("res/moon-21.png");						
+						break;
+					case 9:
+						l_imgMoon = getToolkit().getImage("res/moon-22.png");						
+						break;
+					case 10:
+						l_imgMoon = getToolkit().getImage("res/moon-23.png");						
+						break;
+					case 11:
+						l_imgMoon = getToolkit().getImage("res/moon-1.png");						
+						break;
+					case 12:
+						l_imgMoon = getToolkit().getImage("res/moon-2.png");						
+						break;
+					case 13:
+						l_imgMoon = getToolkit().getImage("res/moon-3.png");						
+						break;
+					case 14:
+						l_imgMoon = getToolkit().getImage("res/moon-4.png");						
+						break;
+					case 15:
+						l_imgMoon = getToolkit().getImage("res/moon-5.png");						
+						break;
+					case 16:
+						l_imgMoon = getToolkit().getImage("res/moon-6.png");						
+						break;
+					case 17:
+						l_imgMoon = getToolkit().getImage("res/moon-7.png");						
+						break;
+					case 18:
+						l_imgMoon = getToolkit().getImage("res/moon-8.png");						
+						break;
+					case 19:
+						l_imgMoon = getToolkit().getImage("res/moon-9.png");						
+						break;
+					case 20:
+						l_imgMoon = getToolkit().getImage("res/moon-10.png");						
+						break;
+					case 21:
+						l_imgMoon = getToolkit().getImage("res/moon-11.png");						
+						break;
+					case 22:
+						l_imgMoon = getToolkit().getImage("res/moon-12.png");						
+						break;
+					default:
+						l_imgMoon = getToolkit().getImage("res/moon-13.png");		
+						break;
+				}
 
 				if (l_imgMoon != null)
 					_g.drawImage(l_imgMoon, 
@@ -250,6 +314,24 @@ public class SkyMap extends Container implements MouseListener
 				g2.rotate(l_dAngle, this.getWidth() / 2, this.getHeight() / 2);
 				g2.drawImage(l_imgArrow, (this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2),
 						(this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), null);
+			}
+		}
+		if(constellations == null)
+		{
+			log.severe("No constellations to display");
+			return;
+		}
+			
+		for (Constellation constellation : constellations)
+		{
+			for (double[] line : constellation.getLines())
+			{
+				_g.setColor(Color.WHITE);
+				_g.drawLine(
+						l_xCenter + (int) (Mathematics.getNewXYRotation(line[0], line[1], l_dRoll)[0] * zoom * l_scale),
+						l_yCenter + (int) (Mathematics.getNewXYRotation(line[0], line[1], l_dRoll)[1] * zoom * l_scale),
+						l_xCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[0] * zoom * l_scale),
+						l_yCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[1] * zoom * l_scale));
 			}
 		}
 	}
