@@ -475,22 +475,21 @@ public class DataBase
 	 * @throws SQLException
 	 * @return Return an arraylist that contains all the constellations could be possible to see
 	 */
-	public ArrayList<CelestialObject> getConstellations(Calendar _date,double _dLat,double _dLon)
+	public ArrayList<Constellation> getConstellations(Calendar _date,double _dLat,double _dLon)
 	{
-		ArrayList<CelestialObject> al_const = new ArrayList<CelestialObject>();
-
+		ArrayList<Constellation> al_const = new ArrayList<Constellation>();
+		
 		int l_Bayer = 0;
-		int l_id=0;
-		int l_HIP;
-		int l_HD;
-		int l_HR;
 		String l_ProperName;
 		double l_dRA;
 		double l_Dec;
-		double l_dDistance=0.0;
-		double l_dMag=0.0;
-		double l_dColorIndex=0.0;
 
+		double l_oldBayer = 1;
+		double l_X = 0.0;
+		double l_Y = 0.0;
+		double l_Xp = 0.0;
+		double l_Yp = 0.0;
+		int i = 0;
 		try
 		{
 			if (!isDouble(Double.toString(_dLon)) || !isDouble(Double.toString(_dLat)))
@@ -504,32 +503,47 @@ public class DataBase
 		}
 
 		Mathematics l_calc = new Mathematics(_date, _dLat, _dLon);
+		Constellation l_consts = new Constellation();
 		
 		for (CelestialObject l_const : this.allConstellations)
 		{
 			l_Bayer = l_const.getBayer();
-			l_HIP = l_const.getHIP();
-			l_HD = l_const.getHD();
-			l_HR = l_const.getHR();
 			l_ProperName = Messages.getString("MainView.Const_" + l_const.getProperName());
 			l_dRA = l_const.getRA();
 			l_Dec = l_const.getDec();
 			
-			CelestialObject l_star = new CelestialObject(l_id, l_HIP, l_HD, l_HR, l_ProperName,
-					l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
-
-			l_calc.calculateAll(l_star.getDec(), Math.toRadians(l_star.getRA()) / 2 / Math.PI * 24.0);
+			if(l_Bayer == 1 && l_oldBayer != 1 || l_Bayer == 0)
+			{
+				al_const.add(l_consts);
+				i=0;
+			}
+			
+			if(i++==0)
+				l_consts.setProperName(l_ProperName);
+			
+			l_calc.calculateAll(l_Dec, Math.toRadians(l_dRA) / 2 / Math.PI * 24.0);
 
 			if (l_calc.getHeight() >= 0)
 			{
-				l_star.setXReal(l_calc.getX());
-				l_star.setYReal(l_calc.getY());
-				l_star.SetAzimuth(l_calc.getAzimuth());
-				l_star.SetHeight(l_calc.getHeight());
-				al_const.add(l_star);
-			}
+				l_X = l_calc.getX();
+				l_Y = l_calc.getY();
+				
+				if(l_oldBayer == l_Bayer && i!=1)
+					l_consts.addLine(l_Xp, l_Yp, l_X, l_Y);
+				else
+					l_oldBayer = l_Bayer;
 
-			l_star = null;
+				l_Xp = l_X;
+				l_Yp = l_Y;
+			}
+			/*else
+			{
+				i=0;
+				l_consts = null;
+				l_consts = new Constellation();
+				break;
+			}*/
+			
 		}
 		return al_const;
 	}
