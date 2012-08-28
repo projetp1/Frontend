@@ -999,9 +999,12 @@ public class MainView extends JFrame implements KeyListener
         		return;
         	}
     		
-        	String regex = searchBarText[searchBarText.length - 1] + "$";
-        	searchBarTextField.setText(searchBarTextField.getText().replaceFirst(regex, listNameOrID.getSelectedValue().toString()));
-    		
+        	if(listNameOrID.getSelectedValue() != null)
+        		{
+        			String regex = searchBarText[searchBarText.length - 1] + "$";
+        			searchBarTextField.setText(searchBarTextField.getText().replaceFirst(regex, listNameOrID.getSelectedValue().toString()));
+            	}
+        		
     	}
     	
     	/**
