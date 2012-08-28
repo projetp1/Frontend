@@ -16,7 +16,6 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -291,17 +290,19 @@ public class MainView extends JFrame implements KeyListener
 	public void updateInfo(CelestialObject _object) {
 		if(_object != null)
 		{
-			leftPanel.setText("<html>" + Messages.getString("MainView.StarName") + "<br />" +
-				((_object.getProperName()!=null)?_object.getProperName():
-				(("HIP: " + _object.getHIP()!=null)?("HIP: " + _object.getHIP()):
-				(("HD: " + _object.getHD()!=null)?("HD: " + _object.getHD()):
-				(("HR: " + _object.getHR()!=null))))) +
+			leftPanel.setText("<html>" + ((_object.getProperName() != null)?
+					Messages.getString("MainView.StarName"):Messages.getString("MainView.CatalogNumber")) + "<br />" +
+				((_object.getProperName() != null)?_object.getProperName():
+				((_object.getHIP() != 0)?("HIP: " + _object.getHIP()):
+				((_object.getHD() != 0)?("HD: " + _object.getHD()):
+				((_object.getHR() != 0)?("HR: " + _object.getHR()):
+				("Id: " + _object.getId()))))) +
 				"<br /><br />" + Messages.getString("MainView.Magnitude") + "<br />" +
 				_object.getMag() +
 				"<br /><br />" + Messages.getString("MainView.DistanceToEarth") + "<br />" +
 				(int)(_object.getDistance()*3.2616) +
-				" " + Messages.getString("MainView.LY") + "<br /><br />" + Messages.getString("MainView.Colour") + "<br />" +
-				_object.getColorIndex() +
+				" " + Messages.getString("MainView.LY") + "<br /><br />" + Messages.getString("MainView.Color") + 
+				"<br />" + _object.getColorIndex() +
 				"</html>");
 		}		
 	}
@@ -918,7 +919,7 @@ public class MainView extends JFrame implements KeyListener
     	JList<String> listNameOrID;
     	ListModel<String> listModelNameOrID;
     	ArrayList<CelestialObject> listModelObjects;
-    	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex "};
+    	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex ", "!HIP", "!HD", "!HR"};
     	JScrollPane jScrollPane = new JScrollPane();
     	ArrayList<CelestialObject> listCelestialObject = new ArrayList<CelestialObject>();
 
@@ -1011,6 +1012,8 @@ public class MainView extends JFrame implements KeyListener
         		double l_dAngleInclinometerObjectSearched = celObjt.getHeight() * 180 / Math.PI;
         		compassPanel.setRedNeedle(l_dDegreeCompassObjectSearched);
         		inclinometerPanel.setRedNeedle(l_dAngleInclinometerObjectSearched);
+        		compassPanel.setSearchMode(true);
+        		inclinometerPanel.setSearchMode(true);
     			
         		if(pic != null && pic.getMode() != PicMode.SIMULATION)
         			pic.setMode(PicMode.GUIDING);
@@ -1103,8 +1106,14 @@ public class MainView extends JFrame implements KeyListener
 		     			{
 		     				if(celestialObject.getProperName() != null)
 		     					listModelNameOrID.setElement(celestialObject.getProperName());
+		     				else if (celestialObject.getHIP() != 0)
+		     					listModelNameOrID.setElement("HIP: " + String.valueOf(celestialObject.getHIP()));
+		     				else if (celestialObject.getHD() != 0)
+		     					listModelNameOrID.setElement("HD: " + String.valueOf(celestialObject.getHD()));
+		     				else if (celestialObject.getHR() != 0)
+		     					listModelNameOrID.setElement("HR: " + String.valueOf(celestialObject.getHR()));
 		     				else
-		     					listModelNameOrID.setElement(String.valueOf(celestialObject.getId()));
+		     					listModelNameOrID.setElement("Id: " + String.valueOf(celestialObject.getId()));
 		     				listModelObjects.add(celestialObject);
 		     			}
 		     		}
@@ -1138,7 +1147,7 @@ public class MainView extends JFrame implements KeyListener
 		public void update(double _scale)
 		{
 			scale = _scale;
-			hig = 20;
+			hig = 22;
     		
 			searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
     		int min = (listModelNameOrID.getSize() < 5)?listModelNameOrID.getSize()*21:(int)(200*scale);
@@ -1155,7 +1164,6 @@ public class MainView extends JFrame implements KeyListener
 				try
 				{
 					cross = ImageIO.read(new File("res/Cross.png"));
-					//cross = resizeImage2(ImageIO.read(new File("res/Cross.png")),hig/2, hig/2);
 				}
 				catch (IOException ex)
 				{
@@ -1174,6 +1182,8 @@ public class MainView extends JFrame implements KeyListener
 	    		skymap.updateSkyMap();
 	    		searchBarTextField.setText(null);
 	    		l_sSavedSearch = null;
+        		compassPanel.setSearchMode(false);
+        		inclinometerPanel.setSearchMode(false);
 	    	}
 			
 			@Override 
@@ -1181,7 +1191,7 @@ public class MainView extends JFrame implements KeyListener
 	        { 
 	            super.paintComponent(g); 
 	            Graphics2D g2 = (Graphics2D) g; 
-	            g2.drawImage(cross, -1, -3, null); 
+	            g2.drawImage(cross, -1, -1, null); 
 	        }
 			
 		}
@@ -1232,6 +1242,8 @@ public class MainView extends JFrame implements KeyListener
 			coordinateCompass.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*34));
 			coordinateCompass.setForeground(Color.WHITE);
 			this.add(coordinateCompass, new Integer(3));
+			
+			setSearchMode(false);
 		}
 		
 		@Override 
@@ -1320,6 +1332,11 @@ public class MainView extends JFrame implements KeyListener
 			this.setSize((int)(scale*345), (int)(scale*350));
 		}
 
+		public void setSearchMode(boolean _searchMode)
+		{
+			redNeedle.setVisible(_searchMode);
+		}
+		
 		/** 
 		 *  Used for update the red needle angle.
 		 *  @param _redAngle : It's the new angle for the red needle
@@ -1446,6 +1463,8 @@ public class MainView extends JFrame implements KeyListener
 
 			this.setSize((int)(scale*186), (int)(scale*324));;
 			this.add(coordinateInclinometer, new Integer(3));
+			
+			setSearchMode(false);
 		}
 				
 		@Override 
@@ -1461,6 +1480,11 @@ public class MainView extends JFrame implements KeyListener
             g2.drawImage(background, 0, 0, null); 
         }
 		
+        public void setSearchMode(boolean _searchMode)
+		{
+			redNeedle.setVisible(_searchMode);
+		}
+        
 		/** 
 		 *  update the scale variable and resize the components
 		 * @param _scale : the scalar
