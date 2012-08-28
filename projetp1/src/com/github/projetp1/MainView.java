@@ -999,7 +999,7 @@ public class MainView extends JFrame implements KeyListener
         		return;
         	}
     		
-        	if(listNameOrID.getSelectedValue() != null)
+        	if(listNameOrID.getSelectedValue() != null && searchBarText.length > 0)
         		{
         			String regex = searchBarText[searchBarText.length - 1] + "$";
         			searchBarTextField.setText(searchBarTextField.getText().replaceFirst(regex, listNameOrID.getSelectedValue().toString()));
@@ -1013,19 +1013,37 @@ public class MainView extends JFrame implements KeyListener
     	 */
     	private void searchBarKeyReleased(java.awt.event.KeyEvent evt) 
     	{    	
-    		if(evt.getKeyCode() ==40)
+    		//System.out.println(evt.getKeyCode());
+    		if(evt.getKeyCode() ==40) // down
     		{
     			listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()+1);
     			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
             }
-    		else if (evt.getKeyCode()==38)
+    		else if (evt.getKeyCode()==38) // up
         	{
-        		listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()-1);
+    			if (listNameOrID.getSelectedIndex()>-1)
+    				listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()-1);
     			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
         	}
-        	else if(evt.getKeyCode() == 37 || evt.getKeyCode() == 39 || evt.getKeyCode() == 10)
+        	else if(evt.getKeyCode() == 37 || evt.getKeyCode() == 39 || evt.getKeyCode() == 10) //left, right, enter
         	{
+        		if(listModelNameOrID.getSize() > 0 && listNameOrID.getSelectedIndex() < 0)
+        		{
+        			listNameOrID.setSelectedIndex(0);
+        		}
         		listNameOrIDMouseClicked(null);
+        		listNameOrID.setSelectedIndex(-1);
+    			jScrollPane.getVerticalScrollBar().setValue(0);
+        	}
+        	else if(evt.getKeyCode() == 32) // space
+        	{
+        		if(listNameOrID.getSelectedIndex() > -1)
+        		{
+        			searchBarTextField.setText(searchBarTextField.getText().substring(0, searchBarTextField.getText().length()-1));
+        			listNameOrIDMouseClicked(null);
+        		}
+        		listNameOrID.setSelectedIndex(-1);
+    			jScrollPane.getVerticalScrollBar().setValue(0);
         	}
         	else
         	{
@@ -1130,7 +1148,8 @@ public class MainView extends JFrame implements KeyListener
 			private void stopSearchActionPerformed(java.awt.event.MouseEvent evt) {
 	    		skymap.setCelestialObjectSearched(null);
 	    		skymap.updateSkyMap();
-	    		repaint();
+	    		searchBarTextField.setText(null);
+	    		l_sSavedSearch = null;
 	    	}
 			
 			@Override 
