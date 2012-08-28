@@ -25,7 +25,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
-
 import com.github.projetp1.Pic.PicMode;
 import com.github.projetp1.rs232.RS232.PicArrowDirection;
 
@@ -82,7 +81,7 @@ public class SkyMap extends Container implements MouseListener
 		int l_scale = (this.getHeight() / 2);
 		int l_xCenter = this.getWidth() / 2 - (int) (dXOrigin * l_scale * zoom);
 		int l_yCenter = this.getHeight() / 2 + (int) (dYOrigin * l_scale * zoom);
-		double l_dLastDelta = 10; // big value for be sure that will be changed
+		double l_dLastDelta = 10; //big value for be sure that will be changed
 		double l_dXPressed = (double) (Mathematics.getNewXYRotation(_e.getX(), _e.getY(), -l_dRoll)[0] - l_xCenter) / zoom / l_scale;
 		double l_dYPressed = (double) ((Mathematics.getNewXYRotation(_e.getX(), _e.getY(), -l_dRoll)[1] - l_yCenter) / zoom / l_scale) * -1;
 		CelestialObject l_nearestCelestialObject = null;
