@@ -292,7 +292,10 @@ public class MainView extends JFrame implements KeyListener
 		if(_object != null)
 		{
 			leftPanel.setText("<html>" + Messages.getString("MainView.StarName") + "<br />" +
-				((_object.getProperName()!=null)?_object.getProperName():("Id: " + _object.getId())) +
+				((_object.getProperName()!=null)?_object.getProperName():
+				(("HIP: " + _object.getHIP()!=null)?("HIP: " + _object.getHIP()):
+				(("HD: " + _object.getHD()!=null)?("HD: " + _object.getHD()):
+				(("HR: " + _object.getHR()!=null))))) +
 				"<br /><br />" + Messages.getString("MainView.Magnitude") + "<br />" +
 				_object.getMag() +
 				"<br /><br />" + Messages.getString("MainView.DistanceToEarth") + "<br />" +
