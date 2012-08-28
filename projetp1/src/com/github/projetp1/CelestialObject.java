@@ -21,6 +21,7 @@ public class CelestialObject
 	private int HIP;
 	private int HD;
 	private int HR;
+	private int Bayer;
 	private String sProperName;
 	private double dRA;
 	private double dDec;
@@ -63,9 +64,11 @@ public class CelestialObject
 	 *            The star's apparent visual magnitude.
 	 * @param _dColorIndex
 	 *            The star's color index (blue magnitude - visual magnitude), where known.
+	 * @param _Bayer
+	 * 			  The point's number for the draw (constellation)           
 	 */
 	public CelestialObject(int _id, int _HIP, int _HD, int _HR, String _sProperName, double _dRA,
-			double _dDec, double _dDistance, double _dMag, double _dColorIndex)
+			double _dDec, double _dDistance, double _dMag, double _dColorIndex,int _Bayer)
 	{
 
 		this.id = _id;
@@ -77,6 +80,7 @@ public class CelestialObject
 		this.dDistance = _dDistance;
 		this.dMag = _dMag;
 		this.dColorIndex = _dColorIndex;
+		this.Bayer = _Bayer;
 	}
 
 	/**
@@ -218,6 +222,16 @@ public class CelestialObject
 	{
 		return this.dYReal;
 	}
+	
+	/**
+	 * getter of the private value
+	 * 
+	 * @return the private variable
+	 */
+	public int getBayer()
+	{
+		return this.Bayer;
+	}
 
 	/**
 	 * setter of the private value
@@ -273,5 +287,13 @@ public class CelestialObject
 	public void SetAzimuth(double _x)
 	{
 		this.dAzimuth = _x;
+	}
+	
+	/**
+	 * setter of the private value
+	 */
+	public void SetBayer(int _x)
+	{
+		this.Bayer = _x;
 	}
 }
