@@ -106,7 +106,7 @@ public class DataBase
 		String[] field = { "*" };
 		String[] table = { this.sTable };
 		String[][] where = {};
-		String[] orderby = { "id", "ASC" };
+		String[] orderby = {"id"};
 		int[] limit = {};
 		boolean secured = true;
 		ResultSet result = selectQuery(field, table, where, orderby, limit, secured);
@@ -489,6 +489,8 @@ public class DataBase
 		double l_Y = 0.0;
 		double l_Xp = 0.0;
 		double l_Yp = 0.0;
+		boolean l_bStop = false;
+		
 		int i = 0;
 		try
 		{
@@ -512,38 +514,47 @@ public class DataBase
 			l_dRA = l_const.getRA();
 			l_Dec = l_const.getDec();
 			
-			if(l_Bayer == 1 && l_oldBayer != 1 || l_Bayer == 0)
-			{
-				al_const.add(l_consts);
-				i=0;
-			}
+			if(l_Bayer == 1 && l_oldBayer != 1)
+				l_bStop = false;
 			
-			if(i++==0)
-				l_consts.setProperName(l_ProperName);
-			
-			l_calc.calculateAll(l_Dec, Math.toRadians(l_dRA) / 2 / Math.PI * 24.0);
-
-			if (l_calc.getHeight() >= 0)
+			if(!l_bStop)
 			{
-				l_X = l_calc.getX();
-				l_Y = l_calc.getY();
+				if(l_Bayer == 1 && l_oldBayer != 1 || l_Bayer == 0)
+				{
+					al_const.add(l_consts);
+					l_consts = null;
+					l_consts = new Constellation();
+					i=0;
+				}
 				
-				if(l_oldBayer == l_Bayer && i!=1)
-					l_consts.addLine(l_Xp, l_Yp, l_X, l_Y);
+				if(i++==0)
+					l_consts.setProperName(l_ProperName);
+				
+				l_calc.calculateAll(l_Dec, Math.toRadians(l_dRA) / 2 / Math.PI * 24.0);
+	
+				if (l_calc.getHeight() >= 0)
+				{
+					l_X = l_calc.getX();
+					l_Y = l_calc.getY();
+					
+					if(l_oldBayer == l_Bayer && i!=1)
+						l_consts.addLine(l_Xp, l_Yp, l_X, l_Y);
+	
+					l_Xp = l_X;
+					l_Yp = l_Y;
+				}
 				else
-					l_oldBayer = l_Bayer;
-
-				l_Xp = l_X;
-				l_Yp = l_Y;
+					l_bStop = true;
+				
+				l_oldBayer = l_Bayer;
+				
+				if(l_bStop)
+				{
+					l_consts = null;
+					l_consts = new Constellation();
+					i=0;
+				}
 			}
-			/*else
-			{
-				i=0;
-				l_consts = null;
-				l_consts = new Constellation();
-				break;
-			}*/
-			
 		}
 		return al_const;
 	}
