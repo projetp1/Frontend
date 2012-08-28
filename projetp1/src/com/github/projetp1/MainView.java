@@ -291,17 +291,19 @@ public class MainView extends JFrame implements KeyListener
 	public void updateInfo(CelestialObject _object) {
 		if(_object != null)
 		{
-			leftPanel.setText("<html>" + Messages.getString("MainView.StarName") + "<br />" +
-				((_object.getProperName()!=null)?_object.getProperName():
-				(("HIP: " + _object.getHIP()!=null)?("HIP: " + _object.getHIP()):
-				(("HD: " + _object.getHD()!=null)?("HD: " + _object.getHD()):
-				(("HR: " + _object.getHR()!=null))))) +
+			leftPanel.setText("<html>" + ((_object.getProperName() != null)?
+					Messages.getString("MainView.StarName"):Messages.getString("MainView.CatalogNumber")) + "<br />" +
+				((_object.getProperName() != null)?_object.getProperName():
+				((_object.getHIP() != 0)?("HIP: " + _object.getHIP()):
+				((_object.getHD() != 0)?("HD: " + _object.getHD()):
+				((_object.getHR() != 0)?("HR: " + _object.getHR()):
+				("Id: " + _object.getId()))))) +
 				"<br /><br />" + Messages.getString("MainView.Magnitude") + "<br />" +
 				_object.getMag() +
 				"<br /><br />" + Messages.getString("MainView.DistanceToEarth") + "<br />" +
 				(int)(_object.getDistance()*3.2616) +
-				" " + Messages.getString("MainView.LY") + "<br /><br />" + Messages.getString("MainView.Colour") + "<br />" +
-				_object.getColorIndex() +
+				" " + Messages.getString("MainView.LY") + "<br /><br />" + Messages.getString("MainView.Colour") + 
+				"<br />" + _object.getColorIndex() +
 				"</html>");
 		}		
 	}
@@ -919,7 +921,7 @@ public class MainView extends JFrame implements KeyListener
     	JList<String> listNameOrID;
     	ListModel<String> listModelNameOrID;
     	ArrayList<CelestialObject> listModelObjects;
-    	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex "};
+    	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex ", "!HIP", "!HD", "!HR"};
     	JScrollPane jScrollPane = new JScrollPane();
     	ArrayList<CelestialObject> listCelestialObject = new ArrayList<CelestialObject>();
 
@@ -1104,8 +1106,14 @@ public class MainView extends JFrame implements KeyListener
 		     			{
 		     				if(celestialObject.getProperName() != null)
 		     					listModelNameOrID.setElement(celestialObject.getProperName());
+		     				else if (celestialObject.getHIP() != 0)
+		     					listModelNameOrID.setElement("HIP: " + String.valueOf(celestialObject.getHIP()));
+		     				else if (celestialObject.getHD() != 0)
+		     					listModelNameOrID.setElement("HD: " + String.valueOf(celestialObject.getHD()));
+		     				else if (celestialObject.getHR() != 0)
+		     					listModelNameOrID.setElement("HR: " + String.valueOf(celestialObject.getHR()));
 		     				else
-		     					listModelNameOrID.setElement(String.valueOf(celestialObject.getId()));
+		     					listModelNameOrID.setElement("Id: " + String.valueOf(celestialObject.getId()));
 		     				listModelObjects.add(celestialObject);
 		     			}
 		     		}
