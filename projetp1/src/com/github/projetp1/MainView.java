@@ -6,14 +6,13 @@ package com.github.projetp1;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -22,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageIO;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -33,22 +31,23 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.Timer;
+import com.github.projetp1.Pic.PicMode;
 
 
 /**
  * @author alexandr.perez and issa.barbier
  * 
  */
+
 @SuppressWarnings("serial")
 public class MainView extends JFrame implements KeyListener
 {
-	private Settings settings;
+	private Settings settings = null;
 	public Settings getSettings()
 	{
 		return settings;
 	}
-	private Pic pic;
+	private Pic pic = null;
 	public Pic getPic()
 	{
 		return pic;
@@ -58,10 +57,11 @@ public class MainView extends JFrame implements KeyListener
 	{
 		return db;
 	}
-	SkyMap skymap;
+	
 
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+	private SkyMap skymap = null;
 	private Compass compassPanel;
 	private Inclinometer inclinometerPanel;
 	private Buttons buttonsPanel;
@@ -72,74 +72,10 @@ public class MainView extends JFrame implements KeyListener
 	private JLabel coordinate;
 	private JLabel leftPanel;
 	private int zoom = 2;
-	private double angInclinometer;
-	private double degCompass;
 	private double xOrigin = 0;
 	private double yOrigin = 0;
-	private double scalar = 0.1;
-	private double scalar_old = scalar;
-
-	/**
-	 * return the width of the main window.
-	 */
-	private double width()
-	{
-		return this.getWidth();
-	}
-
-	/**
-	 * return the height of the main window.
-	 */
-	private double height()
-	{
-		return this.getHeight();
-	}
-
-	/**
-	 * This is the timer for update the values form the pic.
-	 */
-	private Timer createTimer()
-	{
-		// Création d'une instance de listener
-		// associée au timer
-
-		ActionListener action = new ActionListener(){
-		    // Méthode appelée à chaque tic du timer
-			public void actionPerformed(ActionEvent event)
-			{
-				double degree = 0.0;
-				if (pic != null)
-					degree = pic.getAzimuth();
-
-				compassPanel.setGreenNeedle(degree);
-
-				compassPanel.setRedNeedle(degCompass);
-				inclinometerPanel.setRedNeedle(angInclinometer);
-
-				compassPanel.update(scalar);
-				inclinometerPanel.update(scalar);
-
-				if (pic != null)
-				{
-					inclinometerPanel.setGreenNeedle(pic.getPitch());
-
-					char hemNS = 'N', hemWE = 'E';
-					double lat = pic.getLatitude(), lon = pic.getLongitude();
-
-					if (lat < 0.0)
-						hemNS = 'S';
-					if (lon < 0.0)
-						hemWE = 'W';
-					coordinate.setText(Math.abs(lat) + "° " + hemNS + ", " + Math.abs(lon) + "° " + hemWE);
-				}
-
-				compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
-				inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(scalar*70)), (100+inclinometerPanel.getHeight()));
-
-		    }
-		};
-		return new Timer(50, action);
-  }
+	private double scale = 0.1;
+	private double scale_old = scale;
 	
 	/**
 	 * Constructor
@@ -158,75 +94,66 @@ public class MainView extends JFrame implements KeyListener
 		{
 			ex.printStackTrace();
 		}
-		this.addKeyListener(this);
+
+		settings = new Settings();
+		skymap = new SkyMap(this);
+		pic = new Pic(this);
+		
 		leftPanel = new JLabel("");
 		leftPanel.setBounds(100, 100, 100, 200);
 		leftPanel.setForeground(new Color(250, 250, 250));
-		getLayeredPane().add(leftPanel);
-
-		settings = new Settings();
-
+		
 		coordinate = new JLabel(0 + "° N, " + 0 + "° S", JLabel.RIGHT);
-		coordinate.setBounds((int)(20 * scalar), this.getHeight() - (int)(20 * scalar), 200, 20);
+		coordinate.setBounds((int)(20 * scale), this.getHeight() - (int)(20 * scale), 200, 20);
 		coordinate.setForeground(Color.WHITE);
-
-		getLayeredPane().add(coordinate);
-        buttonsPanel = new Buttons(scalar);
+		
+        buttonsPanel = new Buttons(scale);
 		buttonsPanel.setLocation((int)(width() / 2 - buttonsPanel.getWidth() / 2), 5);
 
-		helpPanel = new Help(scalar);
-		helpPanel.setLocation((int)(width() / 2 - buttonsPanel.getWidth() / 2 - 10 * scalar),
+		helpPanel = new Help(scale);
+		helpPanel.setLocation((int)(width() / 2 - buttonsPanel.getWidth() / 2 - 10 * scale),
 				buttonsPanel.getHeight());
 
-		settingsPanel = new SettingsConfig(scalar);
+		settingsPanel = new SettingsConfig(scale);
 		settingsPanel.setLocation((int)(width() / 2 - 2 * buttonsPanel.getWidth()),
 				buttonsPanel.getHeight());
 
-		searchBarPanel = new SearchBar(scalar);
+		searchBarPanel = new SearchBar(scale);
 		searchBarPanel.setLocation(0, 5);
 
-		zoomBarPanel = new ZoomBar(scalar);
+		zoomBarPanel = new ZoomBar(scale);
 		zoomBarPanel.setLocation(5, 5);
 
-		compassPanel = new Compass(scalar);
+		compassPanel = new Compass(scale);
 		compassPanel.setLocation((int)(width() - 10 - compassPanel.getWidth()), 50);
 
-		inclinometerPanel = new Inclinometer(scalar);
+		inclinometerPanel = new Inclinometer(scale);
 		inclinometerPanel.setLocation((int)(width() - 10 - inclinometerPanel.getWidth()),
 				(100+inclinometerPanel.getHeight()));
 
-		skymap = new SkyMap(this);
+		getLayeredPane().add(leftPanel);
+		getLayeredPane().add(coordinate);
+		getLayeredPane().add(buttonsPanel);
+		getLayeredPane().add(helpPanel);
+		getLayeredPane().add(settingsPanel);
+		getLayeredPane().add(searchBarPanel);
+		getLayeredPane().add(zoomBarPanel);
+		getLayeredPane().add(compassPanel);
+		getLayeredPane().add(inclinometerPanel);
+		getLayeredPane().add(skymap);
 
-		this.setFocusable(true);
-
-		skymap.setSize(this.getWidth() - 200, this.getHeight() - 20);
-		skymap.setLocation(200, 20);
-		skymap.updateSkyMap();
 		skymap.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 skymapMouseClicked(evt);
             }
 		});
 		
-		getLayeredPane().add(buttonsPanel);
-		getLayeredPane().add(searchBarPanel);
-		getLayeredPane().add(helpPanel);
-		getLayeredPane().add(settingsPanel);
-		getLayeredPane().add(zoomBarPanel);
-		getLayeredPane().add(compassPanel);
-		getLayeredPane().add(inclinometerPanel);
-		getLayeredPane().add(skymap);
 
-        this.setMinimumSize(new java.awt.Dimension(800, 600));
-
-		this.setExtendedState(this.MAXIMIZED_BOTH);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Color l_BackgroundColor = new Color(5, 30, 50);
-		this.getContentPane().setBackground(l_BackgroundColor);
-
-		//TODO : à régler ou remplacer <= Ce timer prend 250 Mo sur les 350 du processus.
-		Timer timer = createTimer();
-		timer.start();
+		pic.addObservateur(new Observateur(){
+			public void updatePIC() {
+				update();
+			}
+		});
 
 		this.addComponentListener(new java.awt.event.ComponentAdapter(){
             public void componentResized(java.awt.event.ComponentEvent evt){
@@ -234,14 +161,42 @@ public class MainView extends JFrame implements KeyListener
             }
         });
 
+
+		Color l_BackgroundColor = new Color(5, 30, 50);
+		this.getContentPane().setBackground(l_BackgroundColor);
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/moon_6.png"));
+		this.addKeyListener(this);
+        this.setMinimumSize(new java.awt.Dimension(800, 600));
+		this.setExtendedState(Frame.MAXIMIZED_BOTH);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
-		
-		pic = new Pic(this);
-		pic.addObservateur(new Observateur(){
-			public void update() {
-				skymap.updateSkyMap();
-			}
-		});
+		this.setFocusable(true);
+		this.update();
+	}
+
+
+	/**
+	 * This methode update the values form the pic.
+	 */
+	
+	private void update() {
+		if (pic != null)
+		{
+			compassPanel.setGreenNeedle(pic.getAzimuth());
+			inclinometerPanel.setGreenNeedle(pic.getPitch());
+	
+			char hemNS = 'N', hemWE = 'E';
+			double lat = pic.getLatitude(), lon = pic.getLongitude();
+	
+			if (lat < 0.0)
+				hemNS = 'S';
+			if (lon < 0.0)
+				hemWE = 'W';
+			
+			coordinate.setText(Math.abs(lat) + "° " + hemNS + ", " + Math.abs(lon) + "° " + hemWE);
+		}
+
+		skymap.updateSkyMap();		
 	}
 	
 	/**
@@ -269,43 +224,46 @@ public class MainView extends JFrame implements KeyListener
 	 * navigation on the skymap.
 	 */  
 	public void keyPressed(KeyEvent evt) {
-		float l_fDelta = (float) (0.05 / zoom);
-        if(evt.getKeyCode() == 37) //Left
-        {
-        	if(xOrigin > -1)
-        		xOrigin -= l_fDelta;
-        }
-        else if(evt.getKeyCode() == 39) //Right
-        {
-        	if(xOrigin < 1)
-        		xOrigin += l_fDelta;
-        }
-        else if(evt.getKeyCode() == 38) // Up
-        {
-        	if(yOrigin < 1)
-        		yOrigin += l_fDelta;
-        }
-        else if(evt.getKeyCode() == 40) // Down
-        {
-        	if(yOrigin > -1)
-        		yOrigin -= l_fDelta;
-        }
-        else if(evt.getKeyCode() == (int)'.') //zoom +
-        {
-        	zoom++;
-        }
-        else if(evt.getKeyCode() == (int)'-') //zoom -
-        {
-        	if(zoom>1)
-        		zoom--;
-        }
+		if(pic.getMode() == PicMode.SIMULATION)
+		{
+			float l_fDelta = (float) (0.05 / zoom);
+	        if(evt.getKeyCode() == 37) //Left
+	        {
+	        	if(xOrigin > -1)
+	        		xOrigin -= l_fDelta;
+	        }
+	        else if(evt.getKeyCode() == 39) //Right
+	        {
+	        	if(xOrigin < 1)
+	        		xOrigin += l_fDelta;
+	        }
+	        else if(evt.getKeyCode() == 38) // Up
+	        {
+	        	if(yOrigin < 1)
+	        		yOrigin += l_fDelta;
+	        }
+	        else if(evt.getKeyCode() == 40) // Down
+	        {
+	        	if(yOrigin > -1)
+	        		yOrigin -= l_fDelta;
+	        }
+	        else if(evt.getKeyCode() == (int)'.') //zoom +
+	        {
+	        	zoom++;
+	        }
+	        else if(evt.getKeyCode() == (int)'-') //zoom -
+	        {
+	        	if(zoom>1)
+	        		zoom--;
+	        }
 
-        zoomBarPanel.zoomSlider.setValue(zoom);
-        
-        skymap.setZoom(zoom);
-        skymap.setXOrigin(xOrigin);
-        skymap.setYOrigin(yOrigin);
-        skymap.updateSkyMap();
+	        zoomBarPanel.zoomSlider.setValue(zoom);
+	        
+	        skymap.setZoom(zoom);
+	        skymap.setXOrigin(xOrigin);
+	        skymap.setYOrigin(yOrigin);
+	        skymap.updateSkyMap();
+		}		
     }
 	
 	/**
@@ -314,13 +272,13 @@ public class MainView extends JFrame implements KeyListener
 	public void updateInfo(CelestialObject _object) {
 		if(_object != null)
 		{
-			leftPanel.setText("<html>Nom de l'astre<br />" +
+			leftPanel.setText("<html>" + Messages.getString("MainView.StarName") + "<br />" +
 				_object.getProperName() +
-				"<br /><br />Magnitude<br />" +
+				"<br /><br />" + Messages.getString("MainView.Magnitude") + "<br />" +
 				_object.getMag() +
-				"<br /><br />Distance(Terre)<br />" +
+				"<br /><br />" + Messages.getString("MainView.DistanceToEarth") + "<br />" +
 				(int)(_object.getDistance()*3.2616) +
-				" a.l<br /><br />Couleur<br />" +
+				" " + Messages.getString("MainView.LY") + "<br /><br />" + Messages.getString("MainView.Colour") + "<br />" +
 				_object.getColorIndex() +
 				"</html>");
 		}		
@@ -333,8 +291,10 @@ public class MainView extends JFrame implements KeyListener
 	{
 		double w =  width() * 0.15 / 345;
 		double h =  height() * 0.30 / 350;
-		if(w>h)w=h;
-		if(w<.1)w=.1;
+		if(w>h)
+			w=h;
+		if(w<.1)
+			w=.1;
 		return w;
 	}
 	
@@ -343,36 +303,36 @@ public class MainView extends JFrame implements KeyListener
 	 */  
 	private void formComponentResized(java.awt.event.ComponentEvent evt) {
 		
-	    scalar = calculateScale();
+	    scale = calculateScale();
 	    
-	    if (scalar - scalar_old > 0.001 || scalar- scalar_old < -0.001)
+	    if (scale - scale_old > 0.001 || scale- scale_old < -0.001)
 	    {
-	    	scalar_old = scalar;
+	    	scale_old = scale;
 	    	
-			buttonsPanel.update(scalar/3);
-			compassPanel.update(scalar);
-			inclinometerPanel.update(scalar);
-			searchBarPanel.update(scalar);
-			zoomBarPanel.update(scalar);
-			helpPanel.update(scalar);
-			settingsPanel.update(scalar);
+			buttonsPanel.update(scale/3);
+			compassPanel.update(scale);
+			inclinometerPanel.update(scale);
+			searchBarPanel.update(scale);
+			zoomBarPanel.update(scale);
+			helpPanel.update(scale);
+			settingsPanel.update(scale);
 			
-			buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(scalar*70)), 5);
-			helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(scalar*70)-10*scalar), buttonsPanel.getHeight()+(int)(20*scalar));
-			settingsPanel.setLocation((int)(width()/2-settingsPanel.getWidth()+80*scalar), buttonsPanel.getHeight()+(int)(20*scalar));
-			searchBarPanel.setLocation((int)(width()/2+buttonsPanel.getWidth()-(scalar*70)), (int)(buttonsPanel.getHeight()/2-10)+5);
+			buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(scale*70)), 5);
+			helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(scale*70)-10*scale), buttonsPanel.getHeight()+(int)(20*scale));
+			settingsPanel.setLocation((int)(width()/2-settingsPanel.getWidth()+80*scale), buttonsPanel.getHeight()+(int)(20*scale));
+			searchBarPanel.setLocation((int)(width()/2+buttonsPanel.getWidth()-(scale*70)), (int)(buttonsPanel.getHeight()/2-10)+5);
 			zoomBarPanel.setLocation(5, (int)(buttonsPanel.getHeight()/2-zoomBarPanel.getHeight()/2)+5);
 			
 			skymap.setBounds(0, 0, this.getWidth(), this.getHeight());
 			skymap.setZoom(zoom);
 			
-			leftPanel.setBounds((int)(10*scalar), (int)(10*scalar), 150, this.getHeight());
+			leftPanel.setBounds((int)(10*scale), (int)(10*scale), 150, this.getHeight());
 			
 			compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
-			inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(scalar*70)), (100+inclinometerPanel.getHeight()));
+			inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(scale*70)), (100+inclinometerPanel.getHeight()));
 			//coordinate.setBounds(this.getWidth()-100, this.getHeight()-70, 100, 20);
-			coordinate.setFont(new Font("Calibri", Font.BOLD, (int)(36*scalar)));
-			coordinate.setBounds((int)(80*scalar), (int)(height()-100*(height() * 0.30 / 350)), (int)(width()-160*scalar), (int)(35*scalar));
+			coordinate.setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
+			coordinate.setBounds((int)(80*scale), (int)(height()-100*(height() * 0.30 / 350)), (int)(width()-160*scale), (int)(35*scale));
 
 	    }
 	}
@@ -410,7 +370,23 @@ public class MainView extends JFrame implements KeyListener
 
         return bImageNew;
     }
-    
+
+	/**
+	 * return the width of the main window.
+	 */
+	private double width()
+	{
+		return this.getWidth();
+	}
+
+	/**
+	 * return the height of the main window.
+	 */
+	private double height()
+	{
+		return this.getHeight();
+	}
+	
     /**
 	 * The Buttons class
 	 */  
@@ -434,7 +410,7 @@ public class MainView extends JFrame implements KeyListener
                     MouseClicked(evt);
                 }
     		});
-    		this.setBounds(0, 0, (int)(imgSettings.getWidth()*2), (int)(imgHelp.getHeight()));
+    		this.setSize((int)(imgSettings.getWidth()*2), (int)(imgHelp.getHeight()));
     	}
     	@Override 
         protected void paintComponent(Graphics g)
@@ -483,7 +459,7 @@ public class MainView extends JFrame implements KeyListener
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			this.setBounds(0, 0, (int)(imgSettings.getWidth()*2), (int)(imgHelp.getHeight()));
+			this.setSize((int)(imgSettings.getWidth()*2), (int)(imgHelp.getHeight()));
 		}
     }
     
@@ -947,6 +923,7 @@ public class MainView extends JFrame implements KeyListener
 					}
                 }
             });
+
     		
     		searchBarTextField.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -964,8 +941,8 @@ public class MainView extends JFrame implements KeyListener
     		listNameOrID = new JList<String>();
     		listNameOrID.setModel(listModelNameOrID);
     		listNameOrID.setBounds(0, 0, 300, 400);
-    		jScrollPane.setFocusable(false);
     		listNameOrID.setFocusable(false);
+    		jScrollPane.setFocusable(false);
     		jScrollPane.setViewportView(listNameOrID);
 
     		stopSearchButon = new StopButton(scale);
@@ -1003,23 +980,31 @@ public class MainView extends JFrame implements KeyListener
         	if(searchFeature.split(" ").length > 1)
         	{
              	int index = listNameOrID.getSelectedIndex();
-        		CelestialObject celObjt = (CelestialObject)listModelObjects.get(index);
+        		CelestialObject celObjt = listModelObjects.get(index);
         		updateInfo(celObjt);
-        		skymap.setCelestialObjectPointed(celObjt);
-
-        		degCompass = celObjt.getAzimuth() * 180 / 3.14;
-        		angInclinometer = celObjt.getHeight() * 180 / 3.14;
+        		skymap.setCelestialObjectSearched(celObjt);
+        		
+        		double l_dDegreeCompassObjectSearched = celObjt.getAzimuth() * 180 / Math.PI;
+        		double l_dAngleInclinometerObjectSearched = celObjt.getHeight() * 180 / Math.PI;
+        		compassPanel.setRedNeedle(l_dDegreeCompassObjectSearched);
+        		inclinometerPanel.setRedNeedle(l_dAngleInclinometerObjectSearched);
     			
-        		skymap.updateSkyMap();
+        		if(pic.getMode() != PicMode.SIMULATION)
+        			pic.setMode(PicMode.GUIDING);
+        		
         		l_sSavedSearch = searchBarTextField.getText();
         		searchBarTextField.setText(listNameOrID.getSelectedValue().toString());
         		skymap.transferFocusBackward();
+        		skymap.updateSkyMap();	
         		return;
         	}
     		
-        	String regex = searchBarText[searchBarText.length - 1] + "$";
-        	searchBarTextField.setText(searchBarTextField.getText().replaceFirst(regex, listNameOrID.getSelectedValue().toString()));
-    		
+        	if(listNameOrID.getSelectedValue() != null && searchBarText.length > 0)
+        		{
+        			String regex = searchBarText[searchBarText.length - 1] + "$";
+        			searchBarTextField.setText(searchBarTextField.getText().replaceFirst(regex, listNameOrID.getSelectedValue().toString()));
+            	}
+        		
     	}
     	
     	/**
@@ -1028,17 +1013,37 @@ public class MainView extends JFrame implements KeyListener
     	 */
     	private void searchBarKeyReleased(java.awt.event.KeyEvent evt) 
     	{    	
-    		if(evt.getKeyCode() ==40)
+    		//System.out.println(evt.getKeyCode());
+    		if(evt.getKeyCode() ==40) // down
     		{
     			listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()+1);
+    			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
             }
-    		else if (evt.getKeyCode()==38)
+    		else if (evt.getKeyCode()==38) // up
         	{
-        		listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()-1);
+    			if (listNameOrID.getSelectedIndex()>-1)
+    				listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()-1);
+    			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
         	}
-        	else if(evt.getKeyCode() == 37 && evt.getKeyCode() == 39 && evt.getKeyCode() == 10)
+        	else if(evt.getKeyCode() == 37 || evt.getKeyCode() == 39 || evt.getKeyCode() == 10) //left, right, enter
         	{
-        		//listNameOrIDMouseClicked(null);
+        		if(listModelNameOrID.getSize() > 0 && listNameOrID.getSelectedIndex() < 0)
+        		{
+        			listNameOrID.setSelectedIndex(0);
+        		}
+        		listNameOrIDMouseClicked(null);
+        		listNameOrID.setSelectedIndex(-1);
+    			jScrollPane.getVerticalScrollBar().setValue(0);
+        	}
+        	else if(evt.getKeyCode() == 32) // space
+        	{
+        		if(listNameOrID.getSelectedIndex() > -1)
+        		{
+        			searchBarTextField.setText(searchBarTextField.getText().substring(0, searchBarTextField.getText().length()-1));
+        			listNameOrIDMouseClicked(null);
+        		}
+        		listNameOrID.setSelectedIndex(-1);
+    			jScrollPane.getVerticalScrollBar().setValue(0);
         	}
         	else
         	{
@@ -1081,7 +1086,7 @@ public class MainView extends JFrame implements KeyListener
 		     			}
 		     		}
 		     		else
-		     			listModelNameOrID.setElement("Aucun résultat n'a été trouvé dans la base de données");
+		     			listModelNameOrID.setElement(Messages.getString("MainView.NoResult"));
 
 	     			} catch(Exception ex)
 	     			{
@@ -1098,13 +1103,9 @@ public class MainView extends JFrame implements KeyListener
 	        } 
 	        else
 	        	jScrollPane.setVisible(false);
-	        
-
-        	System.out.println(evt.getKeyCode());
+	        	
     	}
-    	
-        	
-    	}
+		}
     	
         
     	/** 
@@ -1145,8 +1146,10 @@ public class MainView extends JFrame implements KeyListener
 			}
 			
 			private void stopSearchActionPerformed(java.awt.event.MouseEvent evt) {
-	    		skymap.setCelestialObjectPointed(null);
-	    		repaint();
+	    		skymap.setCelestialObjectSearched(null);
+	    		skymap.updateSkyMap();
+	    		searchBarTextField.setText(null);
+	    		l_sSavedSearch = null;
 	    	}
 			
 			@Override 
@@ -1169,7 +1172,7 @@ public class MainView extends JFrame implements KeyListener
 		double redAngle = 0;
 		double greenAngle = 0;
 		BufferedImage background;
-		JLabel coordinate;
+		JLabel coordinateCompass;
 		Needle redNeedle;
 		Needle greenNeedle;
 		
@@ -1200,11 +1203,11 @@ public class MainView extends JFrame implements KeyListener
 			this.add(greenNeedle, new Integer(2));
 			
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
-			coordinate = new JLabel("-10:2'13'' N", JLabel.CENTER);
-			coordinate.setFont(new Font("Calibri", Font.BOLD, 36));
-			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*34));
-			coordinate.setForeground(Color.WHITE);
-			this.add(coordinate, new Integer(3));
+			coordinateCompass = new JLabel("-10:2'13'' N", JLabel.CENTER);
+			coordinateCompass.setFont(new Font("Calibri", Font.BOLD, 36));
+			coordinateCompass.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*34));
+			coordinateCompass.setForeground(Color.WHITE);
+			this.add(coordinateCompass, new Integer(3));
 		}
 		
 		@Override 
@@ -1238,17 +1241,59 @@ public class MainView extends JFrame implements KeyListener
             greenNeedle.scale(scale);
             greenNeedle.rotate(greenAngle);
 			greenNeedle.setBounds(0, 0, (int)(scale*345), (int)(scale*304));
+
+
+			if(greenAngle < 0)
+				greenAngle += 360;
+			double l_dAngle = greenAngle - 22.5;
+			if(l_dAngle < 0)
+				l_dAngle += 360;
+			int l_iAngle = (int) (l_dAngle / 45);
+			String l_sDirection = "";
+			
+			switch (l_iAngle)
+			{
+				case 0:
+					l_sDirection = "NE";
+					break;
+				case 1:
+					l_sDirection = "E";
+					break;
+				case 2:
+					l_sDirection = "SE";
+					break;
+				case 3:
+					l_sDirection = "S";
+					break;
+				case 4:
+					l_sDirection = "SO";
+					break;
+				case 5:
+					l_sDirection = "O";
+					break;
+				case 6:
+					l_sDirection = "NO";
+					break;
+				case 7:
+					l_sDirection = "N";
+					break;
+				default:
+					l_sDirection = "N";
+					break;
+			}
+
+
 			try
 			{
-				coordinate.setText(String.valueOf(greenAngle%360));
+				coordinateCompass.setText(String.valueOf((int)(greenAngle)) + "° " + l_sDirection);
 			}
 			catch(Exception e)
 			{
 				log.warning(e.toString());
 			}
-			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
-			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
-			coordinate.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*35));
+			coordinateCompass.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
+			coordinateCompass.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*35));
+			this.setSize((int)(scale*345), (int)(scale*350));
 		}
 
 		/** 
@@ -1257,8 +1302,8 @@ public class MainView extends JFrame implements KeyListener
 		 */
 		public void setRedNeedle (double _angle) 
 		{
-            _angle = Math.toRadians(_angle);
             redAngle = _angle;
+            this.update(scale);
 		}
 		
 		/** 
@@ -1267,8 +1312,8 @@ public class MainView extends JFrame implements KeyListener
 		 */
 		public void setGreenNeedle (double _angle) 
 		{
-            _angle = Math.toRadians(_angle);
             greenAngle =_angle;
+            this.update(scale);
 		}
 
 		private class Needle extends JPanel
@@ -1307,7 +1352,7 @@ public class MainView extends JFrame implements KeyListener
 			
 			public void rotate(double _angle)
 			{
-				angle = _angle;
+				angle = Math.toRadians(_angle);
 				repaint();
 			}
 			
@@ -1336,7 +1381,7 @@ public class MainView extends JFrame implements KeyListener
 		double redAngle = 0;
 		double greenAngle = 0;
 		BufferedImage background;
-		JLabel coordinate;
+		JLabel coordinateInclinometer;
 		Needle redNeedle;
 		Needle greenNeedle;
 		
@@ -1370,13 +1415,13 @@ public class MainView extends JFrame implements KeyListener
 			greenNeedle.setOpaque(false);
 			this.add(greenNeedle, new Integer(2));
 
-			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));;
-			coordinate = new JLabel("-10:2'13'' N", JLabel.CENTER);
-			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
-			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
-			coordinate.setForeground(Color.WHITE);
-			
-			this.add(coordinate, new Integer(3));
+			coordinateInclinometer = new JLabel("-10:2'13'' N", JLabel.CENTER);
+			coordinateInclinometer.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
+			coordinateInclinometer.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
+			coordinateInclinometer.setForeground(Color.WHITE);
+
+			this.setSize((int)(scale*186), (int)(scale*324));;
+			this.add(coordinateInclinometer, new Integer(3));
 		}
 				
 		@Override 
@@ -1414,15 +1459,15 @@ public class MainView extends JFrame implements KeyListener
 			greenNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
 			try
 			{
-				coordinate.setText(String.valueOf(greenAngle%360));
+				coordinateInclinometer.setText(String.valueOf((int)(greenAngle%360)) + "°");
 			}
 			catch(Exception e)
 			{
 				log.warning(e.toString());
 			}
-			this.setBounds(0, 0, (int)(scale*186), (int)(scale*324));
-			coordinate.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
-			coordinate.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
+			this.setSize((int)(scale*186), (int)(scale*324));
+			coordinateInclinometer.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
+			coordinateInclinometer.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
 		}
         
 		/** 
@@ -1431,7 +1476,8 @@ public class MainView extends JFrame implements KeyListener
 		 */
 		public void setRedNeedle (double _redAngle) 
 		{
-			redAngle = _redAngle;		
+			redAngle = _redAngle;
+            this.update(scale);		
 		}
 		
 		/** 
@@ -1441,6 +1487,7 @@ public class MainView extends JFrame implements KeyListener
 		public void setGreenNeedle (double _greenAngle) 
 		{
 			greenAngle = _greenAngle;
+            this.update(scale);
 		}
 
 		/** 
