@@ -6,7 +6,7 @@ import java.util.Set;
 
 import javax.swing.AbstractListModel;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "rawtypes" })
 public class ListModel<F> extends AbstractListModel
 {
 
@@ -54,6 +54,7 @@ public class ListModel<F> extends AbstractListModel
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setNewList(Set<String> keySet)
 	{
 		list.clear();

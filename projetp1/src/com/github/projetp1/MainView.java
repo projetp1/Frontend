@@ -76,13 +76,12 @@ public class MainView extends JFrame implements KeyListener
 	private double yOrigin = 0;
 	private double scale = 0.1;
 	private double scale_old = scale;
-	
+		
 	/**
 	 * Constructor
 	 */
 	public MainView()
 	{
-		// TODO: Externalize this string
 		this.setTitle(Messages.getString("MainView.Title"));
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/moon_6.png"));
 
@@ -94,11 +93,7 @@ public class MainView extends JFrame implements KeyListener
 		{
 			ex.printStackTrace();
 		}
-
-		settings = new Settings();
-		skymap = new SkyMap(this);
-		pic = new Pic(this);
-		
+		  
 		leftPanel = new JLabel("");
 		leftPanel.setBounds(100, 100, 100, 200);
 		leftPanel.setForeground(new Color(250, 250, 250));
@@ -114,6 +109,7 @@ public class MainView extends JFrame implements KeyListener
 		helpPanel.setLocation((int)(width() / 2 - buttonsPanel.getWidth() / 2 - 10 * scale),
 				buttonsPanel.getHeight());
 
+		settings = new Settings();
 		settingsPanel = new SettingsConfig(scale);
 		settingsPanel.setLocation((int)(width() / 2 - 2 * buttonsPanel.getWidth()),
 				buttonsPanel.getHeight());
@@ -131,6 +127,8 @@ public class MainView extends JFrame implements KeyListener
 		inclinometerPanel.setLocation((int)(width() - 10 - inclinometerPanel.getWidth()),
 				(100+inclinometerPanel.getHeight()));
 
+		skymap = new SkyMap(this);
+		
 		getLayeredPane().add(leftPanel);
 		getLayeredPane().add(coordinate);
 		getLayeredPane().add(buttonsPanel);
@@ -147,20 +145,12 @@ public class MainView extends JFrame implements KeyListener
                 skymapMouseClicked(evt);
             }
 		});
-		
-
-		pic.addObservateur(new Observateur(){
-			public void updatePIC() {
-				update();
-			}
-		});
 
 		this.addComponentListener(new java.awt.event.ComponentAdapter(){
             public void componentResized(java.awt.event.ComponentEvent evt){
                 formComponentResized(evt);
             }
         });
-
 
 		Color l_BackgroundColor = new Color(5, 30, 50);
 		this.getContentPane().setBackground(l_BackgroundColor);
@@ -172,6 +162,12 @@ public class MainView extends JFrame implements KeyListener
 		this.setVisible(true);
 		this.setFocusable(true);
 		this.update();
+		pic = new Pic(this);
+		pic.addObservateur(new Observateur(){
+			public void updatePIC() {
+				update();
+			}
+		});
 	}
 
 
@@ -224,7 +220,7 @@ public class MainView extends JFrame implements KeyListener
 	 * navigation on the skymap.
 	 */  
 	public void keyPressed(KeyEvent evt) {
-		if(pic.getMode() == PicMode.SIMULATION)
+		if(pic == null || pic.getMode() == PicMode.SIMULATION)
 		{
 			float l_fDelta = (float) (0.05 / zoom);
 	        if(evt.getKeyCode() == 37) //Left
@@ -478,7 +474,8 @@ public class MainView extends JFrame implements KeyListener
 
     	JLabel titre;
     	ArrayList<JLabel> settingList = new ArrayList<JLabel>();
-    	ArrayList<JComboBox> comboBoxList = new ArrayList<JComboBox>();
+    	@SuppressWarnings("rawtypes")
+		ArrayList<JComboBox> comboBoxList = new ArrayList<JComboBox>();
     			
     	BufferedImage InternalBot;
     	
@@ -904,7 +901,8 @@ public class MainView extends JFrame implements KeyListener
     	 * Constructor
     	 * @param _scale
     	 */
-    	public SearchBar(double _scale)
+    	@SuppressWarnings("unchecked")
+		public SearchBar(double _scale)
     	{     		
     		scale = _scale;
     		hig = (int)(300*scale);
@@ -989,7 +987,7 @@ public class MainView extends JFrame implements KeyListener
         		compassPanel.setRedNeedle(l_dDegreeCompassObjectSearched);
         		inclinometerPanel.setRedNeedle(l_dAngleInclinometerObjectSearched);
     			
-        		if(pic.getMode() != PicMode.SIMULATION)
+        		if(pic != null && pic.getMode() != PicMode.SIMULATION)
         			pic.setMode(PicMode.GUIDING);
         		
         		l_sSavedSearch = searchBarTextField.getText();
@@ -1070,7 +1068,7 @@ public class MainView extends JFrame implements KeyListener
 	     	{
 	     		try{
 	     			if(pic == null)
-	     				listCelestialObject = db.starsForText(searchBarTextField.getText(), Calendar.getInstance(), 47.039448, 6.799734);
+	     				listCelestialObject = db.starsForText(searchBarTextField.getText(), Calendar.getInstance(), skymap.getdLatitude(), skymap.getdLongitude());
 	     			else
 	     				listCelestialObject = db.starsForText(searchBarTextField.getText(), Calendar.getInstance(), pic.getLatitude(), pic.getLongitude());
 	     			
