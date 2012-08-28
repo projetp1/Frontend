@@ -219,9 +219,9 @@ public class SkyMap extends Container implements MouseListener
 		if (celestialObjectSearched != null)
 		{
 			int l_xStarPointed = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), this.mainView.getPic().getRoll())[0] * zoom * l_scale);
-			int l_yStarPointed = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), this.mainView.getPic().getRoll())[0] * zoom * l_scale);
+			int l_yStarPointed = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), this.mainView.getPic().getRoll())[1] * zoom * l_scale);
 			
-			if(!celestialObjectSearched.getProperName().equals("Moon") && !celestialObjectSearched.getProperName().equals("Sun"))
+			if(celestialObjectSearched.getProperName() == null || !celestialObjectSearched.getProperName().equals("Moon") && !celestialObjectSearched.getProperName().equals("Sun"))
 			{
 				Image l_imgStarHighlight = getToolkit().getImage("res/star_highlight.png");
 				_g.drawImage(l_imgStarHighlight,
@@ -247,8 +247,6 @@ public class SkyMap extends Container implements MouseListener
 				(this.getWidth() / 2 - l_imgCenter.getWidth(null) / 2),
 				(this.getHeight() / 2 - l_imgCenter.getHeight(null) / 2),
 				null);
-		
-		_g.fillOval(200, 200, 3, 3);
 	}
 
 	/**
@@ -391,9 +389,9 @@ public class SkyMap extends Container implements MouseListener
 		this.dYOrigin = _yOrigin;
 	}
 
-	public void setCelestialObjectPointed(CelestialObject _celestialObjectPointed)
+	public void setCelestialObjectSearched(CelestialObject _celestialObjectSearched)
 	{
-		celestialObjectSearched = _celestialObjectPointed;
+		celestialObjectSearched = _celestialObjectSearched;
 	}
 
 	@Override
