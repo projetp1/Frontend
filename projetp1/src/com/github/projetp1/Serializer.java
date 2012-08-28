@@ -15,6 +15,7 @@ import flexjson.JSONSerializer;
 public class Serializer
 {
 	private static JSONSerializer jss = new JSONSerializer();
+	private static Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	public static void serialize(String _filename, Object _object)
 	{
@@ -26,8 +27,7 @@ public class Serializer
 		}
 		catch (IOException ex)
 		{
-			Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).severe(
-					"Impossible d'écrire dans le fichier : " + ex.getLocalizedMessage());
+			log.severe("Impossible d'écrire dans le fichier : " + ex.getLocalizedMessage());
 		}
 	}
 
@@ -43,20 +43,17 @@ public class Serializer
 		}
 		catch (FileNotFoundException ex)
 		{
-			Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).severe(
-					"Le fichier n'existe pas : " + ex.getLocalizedMessage());
+			log.severe("Le fichier n'existe pas : " + ex.getLocalizedMessage());
 			return null;
 		}
 		catch (IOException ex)
 		{
-			Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).severe(
-					"Impossible de lire le fichier : " + ex.getLocalizedMessage());
+			log.severe("Impossible de lire le fichier : " + ex.getLocalizedMessage());
 			return null;
 		}
 		catch (Exception ex)
 		{
-			Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).severe(
-					"Erreur lors de la désérialisation : " + ex.getLocalizedMessage());
+			log.severe("Erreur lors de la désérialisation : " + ex.getLocalizedMessage());
 			new File(_filename).delete();
 			return null;
 		}

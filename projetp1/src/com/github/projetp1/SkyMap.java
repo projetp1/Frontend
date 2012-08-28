@@ -35,11 +35,9 @@ public class SkyMap extends Container implements MouseListener
 	private int zoom = 1;
 	private double dXOrigin = 0;
 	private double dYOrigin = 0;
-	private double dLongitude = 6.799734;
-	private double dLatitude = 47.039448;
-
+	private double dLongitude = 6.937892;
+	private double dLatitude = 46.997415;
 	private ArrayList<CelestialObject> celestialObjects;
-	// TODO: Changer le nom en celestialObjectSearched
 	private CelestialObject celestialObjectSearched = null;
 	MainView mainView = null;
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -76,13 +74,17 @@ public class SkyMap extends Container implements MouseListener
 			return;
 		}
 
+
+		double l_dRoll = 0.0;
+		if(this.mainView.getPic() != null)
+			l_dRoll = this.mainView.getPic().getRoll();
 		
 		int l_scale = (this.getHeight() / 2);
 		int l_xCenter = this.getWidth() / 2 - (int) (dXOrigin * l_scale * zoom);
 		int l_yCenter = this.getHeight() / 2 + (int) (dYOrigin * l_scale * zoom);
 		double l_dLastDelta = 10; // big value for be sure that will be changed
-		double l_dXPressed = (double) (Mathematics.getNewXYRotation(_e.getX(), _e.getY(), -this.mainView.getPic().getRoll())[0] - l_xCenter) / zoom / l_scale;
-		double l_dYPressed = (double) ((Mathematics.getNewXYRotation(_e.getX(), _e.getY(), -this.mainView.getPic().getRoll())[1] - l_yCenter) / zoom / l_scale) * -1;
+		double l_dXPressed = (double) (Mathematics.getNewXYRotation(_e.getX(), _e.getY(), -l_dRoll)[0] - l_xCenter) / zoom / l_scale;
+		double l_dYPressed = (double) ((Mathematics.getNewXYRotation(_e.getX(), _e.getY(), -l_dRoll)[1] - l_yCenter) / zoom / l_scale) * -1;
 		CelestialObject l_nearestCelestialObject = null;
 		
 		for (CelestialObject celestialObject : celestialObjects)
@@ -147,6 +149,10 @@ public class SkyMap extends Container implements MouseListener
 			return;
 		}
 
+		double l_dRoll = 0.0;
+		if(this.mainView.getPic() != null)
+			l_dRoll = this.mainView.getPic().getRoll();
+		
 		int l_scale = (this.getHeight() / 2);
 		int l_xCenter = this.getWidth() / 2 - (int) (dXOrigin * l_scale * zoom);
 		int l_yCenter = this.getHeight() / 2 + (int) (dYOrigin * l_scale * zoom);
@@ -158,8 +164,8 @@ public class SkyMap extends Container implements MouseListener
 			int l_x, l_y;
 			int l_d = getSizeForMagnitude(celestialObject.getMag());
 			Color l_color = getColorForColorIndex(celestialObject.getColorIndex(), 255);
-			l_x = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObject.getXReal(), celestialObject.getYReal(), this.mainView.getPic().getRoll())[0] * zoom * l_scale);
-			l_y = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObject.getXReal(), celestialObject.getYReal(), this.mainView.getPic().getRoll())[1] * zoom * l_scale);
+			l_x = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObject.getXReal(), celestialObject.getYReal(), l_dRoll)[0] * zoom * l_scale);
+			l_y = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObject.getXReal(), celestialObject.getYReal(), l_dRoll)[1] * zoom * l_scale);
 			
 			_g.setColor(l_color);
 			String l_name = celestialObject.getProperName();
@@ -216,10 +222,16 @@ public class SkyMap extends Container implements MouseListener
 				_g.drawString(l_name, l_x, l_y - 10);
 		}
 
+		Image l_imgCenter = getToolkit().getImage("res/center.png");
+		_g.drawImage(l_imgCenter,
+				(this.getWidth() / 2 - l_imgCenter.getWidth(null) / 2),
+				(this.getHeight() / 2 - l_imgCenter.getHeight(null) / 2),
+				null);
+		
 		if (celestialObjectSearched != null)
 		{
-			int l_xStarPointed = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), this.mainView.getPic().getRoll())[0] * zoom * l_scale);
-			int l_yStarPointed = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), this.mainView.getPic().getRoll())[1] * zoom * l_scale);
+			int l_xStarPointed = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), l_dRoll)[0] * zoom * l_scale);
+			int l_yStarPointed = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), l_dRoll)[1] * zoom * l_scale);
 			
 			if(celestialObjectSearched.getProperName() == null || !celestialObjectSearched.getProperName().equals("Moon") && !celestialObjectSearched.getProperName().equals("Sun"))
 			{
@@ -241,12 +253,6 @@ public class SkyMap extends Container implements MouseListener
 						(this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), null);
 			}
 		}
-		
-		Image l_imgCenter = getToolkit().getImage("res/center.png");
-		_g.drawImage(l_imgCenter,
-				(this.getWidth() / 2 - l_imgCenter.getWidth(null) / 2),
-				(this.getHeight() / 2 - l_imgCenter.getHeight(null) / 2),
-				null);
 	}
 
 	/**
@@ -374,6 +380,16 @@ public class SkyMap extends Container implements MouseListener
 		return c;
 	}
 
+	public double getdLongitude()
+	{
+		return dLongitude;
+	}
+
+	public double getdLatitude()
+	{
+		return dLatitude;
+	}
+	
 	public void setZoom(int _zoom)
 	{
 		this.zoom = _zoom;
