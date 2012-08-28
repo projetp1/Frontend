@@ -17,7 +17,7 @@ public class Serializer
 	private static JSONSerializer jss = new JSONSerializer();
 	private static Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-	public static void serialize(String _filename, Object _object)
+	public static void serialize(String _filename, Settings _object)
 	{
 		try
 		{
@@ -31,13 +31,13 @@ public class Serializer
 		}
 	}
 
-	public static Object deserialize(String _filename)
+	public static Settings deserialize(String _filename)
 	{
 		try
 		{
 			BufferedReader br = new BufferedReader(new FileReader(_filename));
-			JSONDeserializer<Object> jsd = new JSONDeserializer<Object>();
-			Object o = jsd.deserialize(br.readLine());
+			JSONDeserializer<Settings> jsd = new JSONDeserializer<Settings>();
+			Settings o = jsd.deserialize(br.readLine());
 			br.close();
 			return o;
 		}
