@@ -515,6 +515,8 @@ public class DataBase
 			if(l_Bayer == 1 && l_oldBayer != 1 || l_Bayer == 0)
 			{
 				al_const.add(l_consts);
+				l_consts = null;
+				l_consts = new Constellation();
 				i=0;
 			}
 			
@@ -536,14 +538,6 @@ public class DataBase
 				l_Xp = l_X;
 				l_Yp = l_Y;
 			}
-			/*else
-			{
-				i=0;
-				l_consts = null;
-				l_consts = new Constellation();
-				break;
-			}*/
-			
 		}
 		return al_const;
 	}
