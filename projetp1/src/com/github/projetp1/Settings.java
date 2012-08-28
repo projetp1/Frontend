@@ -48,6 +48,8 @@ public class Settings implements Serializable
 			this.parity = jssc.SerialPort.PARITY_NONE;
 			this.flowControl = jssc.SerialPort.FLOWCONTROL_NONE;
 			this.simulation = false;
+
+			Serializer.serialize("settings.conf", this);
 		}
 	}
 
