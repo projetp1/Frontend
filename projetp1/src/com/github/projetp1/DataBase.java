@@ -106,7 +106,7 @@ public class DataBase
 		String[] field = { "*" };
 		String[] table = { this.sTable };
 		String[][] where = {};
-		String[] orderby = { "id", "ASC" };
+		String[] orderby = {"id"};
 		int[] limit = {};
 		boolean secured = true;
 		ResultSet result = selectQuery(field, table, where, orderby, limit, secured);
