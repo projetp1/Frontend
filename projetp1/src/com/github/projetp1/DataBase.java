@@ -128,7 +128,6 @@ public class DataBase
 					l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
 			this.allStars.add(l_star);
 		}
-		result.close();
 		
 		//Now the same for the constellations
 		l_HIP = 0;
@@ -147,25 +146,25 @@ public class DataBase
 		String[][] where2 = {};
 		String[] orderby2 = { "ProperName", "Bayer" };
 		int[] limit2 = {};
-		secured = true;
+		secured = true;//No entries from the user ...
 		
-		ResultSet result2 = selectQuery(field2, table2, where2, orderby2, limit2, secured);
+		result = selectQuery(field2, table2, where2, orderby2, limit2, secured);
 
-		while (result2.next())
+		while (result.next())
 		{
-			l_HIP = result2.getInt("HIP");
-			l_HD = result2.getInt("HD");
-			l_HR = result2.getInt("HR");
-			l_ProperName = result2.getString("ProperName");
-			l_dRA = result2.getDouble("RA");
-			l_Dec = result2.getDouble("Dec");
-			l_Bayer = result2.getInt("Bayer");
+			l_HIP = result.getInt("HIP");
+			l_HD = result.getInt("HD");
+			l_HR = result.getInt("HR");
+			l_ProperName = result.getString("ProperName");
+			l_dRA = result.getDouble("RA");
+			l_Dec = result.getDouble("Dec");
+			l_Bayer = result.getInt("Bayer");
 
 			CelestialObject l_star = new CelestialObject(l_id, l_HIP, l_HD, l_HR, l_ProperName,
 					l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
 			this.allConstellations.add(l_star);
 		}
-		result2.close();
+		result.close();
 	}
 
 	/**
@@ -331,7 +330,7 @@ public class DataBase
 		for (int i = 0; i < _sOrderBy.length; i++)
 		{
 			l_sOut += " " + _sOrderBy[i];
-			if (i < _sOrderBy.length - 2)
+			if (i < _sOrderBy.length - 1)
 				l_sOut += ",";
 		}
 		return l_sOut;
@@ -464,6 +463,18 @@ public class DataBase
 		return hs_Out;
 	}
 
+	/**
+	 * Search all the constellations that could be in the hemisphere
+	 * 
+	 * @param _date
+	 *            It's the date that will be use to search the stars
+	 * @param _dLat
+	 *            It's the latitude of the star's pointer
+	 * @param _dLon
+	 *            It's the longitude of the star's pointer
+	 * @throws SQLException
+	 * @return Return an arraylist that contains all the constellations could be possible to see
+	 */
 	public ArrayList<CelestialObject> getConstellations(Calendar _date,double _dLat,double _dLon)
 	{
 		ArrayList<CelestialObject> al_const = new ArrayList<CelestialObject>();
@@ -500,14 +511,14 @@ public class DataBase
 			l_HIP = l_const.getHIP();
 			l_HD = l_const.getHD();
 			l_HR = l_const.getHR();
-			l_ProperName = l_const.getProperName();
+			l_ProperName = Messages.getString("MainView.Const_" + l_const.getProperName());
 			l_dRA = l_const.getRA();
 			l_Dec = l_const.getDec();
 			
 			CelestialObject l_star = new CelestialObject(l_id, l_HIP, l_HD, l_HR, l_ProperName,
 					l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
 
-			l_calc.calculateAll(l_star.getDec(), l_star.getRA());
+			l_calc.calculateAll(l_star.getDec(), Math.toRadians(l_star.getRA()) / 2 / Math.PI * 24.0);
 
 			if (l_calc.getHeight() >= 0)
 			{
@@ -520,7 +531,7 @@ public class DataBase
 
 			l_star = null;
 		}
-		return this.allConstellations;
+		return al_const;
 	}
 	
 	/**
