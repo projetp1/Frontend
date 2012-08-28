@@ -111,7 +111,7 @@ public class MainView extends JFrame implements KeyListener
 		helpPanel.setLocation((int)(width() / 2 - buttonsPanel.getWidth() / 2 - 10 * scale),
 				buttonsPanel.getHeight());
 
-		settings = new Settings();
+		settings = new Settings(null);
 		settingsPanel = new SettingsConfig(scale);
 		settingsPanel.setLocation((int)(width() / 2 - 2 * buttonsPanel.getWidth()),
 				buttonsPanel.getHeight());
@@ -699,8 +699,7 @@ public class MainView extends JFrame implements KeyListener
 			i++;
 			settings.setSimulation((comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.On"))) ? true : false);
 			
-			Serializer.serialize("settings.conf", settings);
-    		
+			settings.saveToFile();
     	}
     	
 		/** 
