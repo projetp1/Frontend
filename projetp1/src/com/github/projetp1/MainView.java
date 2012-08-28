@@ -15,6 +15,8 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -160,6 +162,14 @@ public class MainView extends JFrame implements KeyListener
                 formComponentResized(evt);
             }
         });
+		
+		this.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+		      public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+
+            	mouseWheel(evt);
+            }
+        });
+
 
 
 		Color l_BackgroundColor = new Color(5, 30, 50);
@@ -219,6 +229,22 @@ public class MainView extends JFrame implements KeyListener
 	 * 
 	 */  
 	public void keyReleased(KeyEvent evt){} 
+
+	/**
+	 * 
+	 */  
+	public void mouseWheel(MouseWheelEvent evt)
+	{
+		System.out.println(evt.getWheelRotation());
+		
+		if(zoom>1 || evt.getWheelRotation() < 0)
+        	zoom-=evt.getWheelRotation();
+        
+        zoomBarPanel.zoomSlider.setValue(zoom);
+        skymap.setZoom(zoom);
+        skymap.updateSkyMap();
+        
+	} 
 	
 	/**
 	 * navigation on the skymap.
@@ -273,7 +299,7 @@ public class MainView extends JFrame implements KeyListener
 		if(_object != null)
 		{
 			leftPanel.setText("<html>" + Messages.getString("MainView.StarName") + "<br />" +
-				_object.getProperName() +
+				((_object.getProperName()!=null)?_object.getProperName():("Id: " + _object.getId())) +
 				"<br /><br />" + Messages.getString("MainView.Magnitude") + "<br />" +
 				_object.getMag() +
 				"<br /><br />" + Messages.getString("MainView.DistanceToEarth") + "<br />" +
