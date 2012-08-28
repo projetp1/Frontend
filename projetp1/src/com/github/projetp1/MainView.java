@@ -235,8 +235,6 @@ public class MainView extends JFrame implements KeyListener
 	 */  
 	public void mouseWheel(MouseWheelEvent evt)
 	{
-		System.out.println(evt.getWheelRotation());
-		
 		if(zoom>1 || evt.getWheelRotation() < 0)
         	zoom-=evt.getWheelRotation();
         
