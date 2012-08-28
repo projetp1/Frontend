@@ -1,14 +1,10 @@
 package com.github.projetp1;
 
-import java.io.Serializable;
-
 /**
  * @author alexandr.perez
  */
-public class Settings implements Serializable
+public class Settings
 {
-	private static final long serialVersionUID = -8939567320279249059L;
-
 	private String port;
 	private int speed;
 	private int databit;
@@ -25,7 +21,7 @@ public class Settings implements Serializable
 	private void loadFromFile()
 	{
 		String filename = "settings.conf";
-		Settings deserialize = (Settings) Serializer.deserialize(filename);
+		Settings deserialize = Serializer.deserialize(filename);
 		if (deserialize != null)
 		{
 

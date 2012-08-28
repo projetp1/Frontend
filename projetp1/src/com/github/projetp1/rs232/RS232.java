@@ -346,6 +346,8 @@ public class RS232 implements SerialPortEventListener
 
 		if (newComs)
 		{
+			if (pic.getMode() == PicMode.SIMULATION)
+				pic.setMode(PicMode.POINTING);
 			pic.run();
 		}
 
