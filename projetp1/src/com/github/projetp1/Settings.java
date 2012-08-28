@@ -25,8 +25,7 @@ public class Settings implements Serializable
 	private void loadFromFile()
 	{
 		String filename = "settings.conf";
-		Serializer serializer = new Serializer();
-		Settings deserialize = (Settings) serializer.deserialize(filename);
+		Settings deserialize = (Settings) Serializer.deserialize(filename);
 		if (deserialize != null)
 		{
 

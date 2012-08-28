@@ -1,61 +1,62 @@
 package com.github.projetp1;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.util.logging.Logger;
+
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 
 public class Serializer
 {
-
-	public Serializer()
-	{
-	}
+	private static JSONSerializer jss = new JSONSerializer();
+	private static Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	public static void serialize(String _filename, Object _object)
 	{
-		FileOutputStream fos = null;
-		ObjectOutputStream out = null;
 		try
 		{
-			fos = new FileOutputStream(_filename);
-			out = new ObjectOutputStream(fos);
-			out.writeObject(_object);
-			out.close();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(_filename, false));
+			bw.write(jss.serialize(_object));
+			bw.close();
 		}
 		catch (IOException ex)
 		{
-			ex.printStackTrace();
+			log.severe("Impossible d'écrire dans le fichier : " + ex.getLocalizedMessage());
 		}
 	}
 
-	public Object deserialize(String _filename)
+	public static Object deserialize(String _filename)
 	{
-		File f = new File(_filename);
-		Object object = null;
-		if (f.exists())
+		try
 		{
-			FileInputStream fis = null;
-			ObjectInputStream in = null;
-			try
-			{
-				fis = new FileInputStream(_filename);
-				in = new ObjectInputStream(fis);
-				object = in.readObject();
-				in.close();
-			}
-			catch (IOException ex)
-			{
-				ex.printStackTrace();
-			}
-			catch (ClassNotFoundException ex)
-			{
-				ex.printStackTrace();
-			}
+			BufferedReader br = new BufferedReader(new FileReader(_filename));
+			JSONDeserializer<Object> jsd = new JSONDeserializer<Object>();
+			Object o = jsd.deserialize(br.readLine());
+			br.close();
+			return o;
 		}
-		return object;
+		catch (FileNotFoundException ex)
+		{
+			log.severe("Le fichier n'existe pas : " + ex.getLocalizedMessage());
+			return null;
+		}
+		catch (IOException ex)
+		{
+			log.severe("Impossible de lire le fichier : " + ex.getLocalizedMessage());
+			return null;
+		}
+		catch (Exception ex)
+		{
+			log.severe("Erreur lors de la désérialisation : " + ex.getLocalizedMessage());
+			new File(_filename).delete();
+			return null;
+		}
 	}
 
 }
