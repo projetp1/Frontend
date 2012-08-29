@@ -591,10 +591,12 @@ public class Mathematics
 	 * @return
 	 */
 	static public double[] getNewXYRotation(double _dX,double _dY,double _dAngle)
-	{		
+	{
+		double l_dSinAngle = sin(Math.toRadians(_dAngle));
+		double l_dCosAngle = cos(Math.toRadians(_dAngle));
 		return new double[] {
-				cos(Math.toRadians(_dAngle)) * _dX - sin(Math.toRadians(_dAngle)) * _dY ,
-				sin(Math.toRadians(_dAngle)) * _dX + cos(Math.toRadians(_dAngle)) * _dY
+				l_dCosAngle * _dX - l_dSinAngle * _dY ,
+				l_dSinAngle * _dX + l_dCosAngle * _dY
 		};
 	}
 	
@@ -611,12 +613,9 @@ public class Mathematics
 	static public double[] getOrigin(double _dPitch,double _dAzimuth)
 	{
 		double l_dX = 0.0, l_dY = 0.0;
-		
-		if(_dPitch > 0)
-			l_dY*=-1.0;
-		
-		l_dX = sin(Math.toRadians(_dAzimuth));
-		l_dY = sin(Math.toRadians(_dPitch))*-1.0;
+
+		l_dX = sin(Math.toRadians(_dAzimuth))*cos(Math.toRadians(_dPitch)) * -1.0;
+		l_dY = cos(Math.toRadians(_dAzimuth))*cos(Math.toRadians(_dPitch));
 		
 		return new double[] {
 				l_dX,

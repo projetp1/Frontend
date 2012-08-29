@@ -403,7 +403,7 @@ public class DataBase
 		}
 		catch (SQLException e)
 		{
-			log.warning("Error in the query !");
+			log.warning("Error in the query ! : " + e.getLocalizedMessage());
 			this.statement.close();
 
 			l_sQuery = "SELECT * from " + this.sTable + " WHERE id=0"; // Return an empty Result
