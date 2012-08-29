@@ -16,13 +16,13 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+
 import com.github.projetp1.Pic.PicMode;
 
 
@@ -85,7 +86,7 @@ public class MainView extends JFrame implements KeyListener
 	public MainView()
 	{
 		this.setTitle(Messages.getString("MainView.Title"));
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/sun.png"));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/logo48.png"));
 
 		try
 		{
@@ -163,7 +164,6 @@ public class MainView extends JFrame implements KeyListener
 
 		Color l_BackgroundColor = new Color(5, 30, 50);
 		this.getContentPane().setBackground(l_BackgroundColor);
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/moon_6.png"));
 		this.addKeyListener(this);
         this.setMinimumSize(new java.awt.Dimension(800, 600));
 		this.setExtendedState(Frame.MAXIMIZED_BOTH);

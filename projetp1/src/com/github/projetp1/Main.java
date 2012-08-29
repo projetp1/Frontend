@@ -20,7 +20,7 @@ public class Main
 			@Override
 			public boolean isLoggable(LogRecord _arg0)
 			{
-				return true;//_arg0.getSourceClassName().startsWith("com.github.projetp1.SkyMap");
+				return true;
 			}
 		});
 
