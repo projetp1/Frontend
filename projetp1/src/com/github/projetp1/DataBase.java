@@ -403,7 +403,7 @@ public class DataBase
 		}
 		catch (SQLException e)
 		{
-			log.warning("Error in the query !");
+			log.warning("Error in the query ! : " + e.getLocalizedMessage());
 			this.statement.close();
 
 			l_sQuery = "SELECT * from " + this.sTable + " WHERE id=0"; // Return an empty Result
@@ -692,7 +692,7 @@ public class DataBase
 		String[] table = { this.sTable };
 		String[] field = { "*" };
 		String[][] where = new String[hm_sWhere.size()][3];
-		String[] orderby = { "id", "ASC" };
+		String[] orderby = { "id"};
 		int[] limit = {};
 		secured = true;
 
