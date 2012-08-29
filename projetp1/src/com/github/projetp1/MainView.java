@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -85,7 +86,7 @@ public class MainView extends JFrame implements KeyListener
 	public MainView()
 	{
 		this.setTitle(Messages.getString("MainView.Title"));
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/moon_6.png"));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/logo256.png"));
 
 		try
 		{
