@@ -85,7 +85,7 @@ public class MainView extends JFrame implements KeyListener
 	public MainView()
 	{
 		this.setTitle(Messages.getString("MainView.Title"));
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/moon_6.png"));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/moon_0.png"));
 
 		try
 		{
