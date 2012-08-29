@@ -530,7 +530,7 @@ public class DataBase
 				if(i++==0)
 					l_consts.setProperName(l_ProperName);
 				
-				l_calc.calculateAll(l_Dec, Math.toRadians(l_dRA) / 2 / Math.PI * 24.0);
+				l_calc.calculateAll(l_Dec,l_dRA);
 	
 				if (l_calc.getHeight() >= 0)
 				{
