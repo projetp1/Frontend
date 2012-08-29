@@ -133,37 +133,37 @@ public class DataBase
 		l_HIP = 0;
 		l_HD = 0;
 		l_HR = 0;
-		l_dRA = 0;
-		l_Dec = 0;
+		double l_dRA1 = 0;
+		double l_Dec1 = 0;
+		double l_dRA2 = 0;
+		double l_Dec2 = 0;
 		l_ProperName = "";
 		l_id = 0;
 		l_dDistance = 0.0;
 		l_dMag = 0;
 		l_dColorIndex = 0;
+				
+		String l_sQuery = "SELECT name,constellations.id,star1.RA AS \"RA1\",star1.Dec AS \"Dec1\",star2.RA AS \"RA2\",star2.Dec AS \"Dec2\"  FROM constellations INNER JOIN constellations_name ON constellations.id_Const = constellations_name.id LEFT JOIN stars AS star1 ON constellations.id_Star1 = star1.id LEFT JOIN stars AS star2 ON constellations.id_Star2 = star2.id ORDER BY constellations_name.name ASC,constellations.id DESC";
+		result = this.statement.executeQuery(l_sQuery);
 		
-		String[] field2 = { "*" };
-		String[] table2 = {"constellations"};
-		String[][] where2 = {};
-		String[] orderby2 = { "ProperName", "Bayer" };
-		int[] limit2 = {};
-		secured = true;//No entries from the user ...
-		
-		result = selectQuery(field2, table2, where2, orderby2, limit2, secured);
-
 		while (result.next())
 		{
-			l_HIP = result.getInt("HIP");
-			l_HD = result.getInt("HD");
-			l_HR = result.getInt("HR");
-			l_ProperName = result.getString("ProperName");
-			l_dRA = result.getDouble("RA");
-			l_Dec = result.getDouble("Dec");
-			l_Bayer = result.getInt("Bayer");
+			l_id = result.getInt("id");
+			l_ProperName = result.getString("name");
+			l_dRA1 = result.getDouble("RA1");
+			l_Dec1 = result.getDouble("Dec1");
+			l_dRA2 = result.getDouble("RA2");
+			l_Dec2 = result.getDouble("Dec2");
 
 			CelestialObject l_star = new CelestialObject(l_id, l_HIP, l_HD, l_HR, l_ProperName,
-					l_dRA, l_Dec, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
+					l_dRA1, l_Dec1, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
 			this.allConstellations.add(l_star);
+			CelestialObject l_star2 = new CelestialObject(l_id, l_HIP, l_HD, l_HR, l_ProperName,
+					l_dRA2, l_Dec2, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
+			this.allConstellations.add(l_star2);
 		}
+		CelestialObject l_star = new CelestialObject(0, 0, 0, 0, "",0, 0, 0, 0, 0,0);
+		this.allConstellations.add(l_star);
 		result.close();
 	}
 
@@ -479,12 +479,13 @@ public class DataBase
 	{
 		ArrayList<Constellation> al_const = new ArrayList<Constellation>();
 		
-		int l_Bayer = 0;
 		String l_ProperName;
+		String l_oldProperName="";
 		double l_dRA;
 		double l_Dec;
 
-		double l_oldBayer = 1;
+		int l_Id;
+		
 		double l_X = 0.0;
 		double l_Y = 0.0;
 		double l_Xp = 0.0;
@@ -509,17 +510,17 @@ public class DataBase
 		
 		for (CelestialObject l_const : this.allConstellations)
 		{
-			l_Bayer = l_const.getBayer();
 			l_ProperName = Messages.getString("MainView.Const_" + l_const.getProperName());
 			l_dRA = l_const.getRA();
 			l_Dec = l_const.getDec();
+			l_Id = l_const.getId();
 			
-			if(l_Bayer == 1 && l_oldBayer != 1)
+			if(!l_ProperName.equals(l_oldProperName))
 				l_bStop = false;
 			
 			if(!l_bStop)
 			{
-				if(l_Bayer == 1 && l_oldBayer != 1 || l_Bayer == 0)
+				if(!l_ProperName.equals(l_oldProperName) || l_Id == 0)
 				{
 					al_const.add(l_consts);
 					l_consts = null;
@@ -530,14 +531,14 @@ public class DataBase
 				if(i++==0)
 					l_consts.setProperName(l_ProperName);
 				
-				l_calc.calculateAll(l_Dec, Math.toRadians(l_dRA) / 2 / Math.PI * 24.0);
+				l_calc.calculateAll(l_Dec,l_dRA);
 	
 				if (l_calc.getHeight() >= 0)
 				{
 					l_X = l_calc.getX();
 					l_Y = l_calc.getY();
 					
-					if(l_oldBayer == l_Bayer && i!=1)
+					if(l_ProperName.equals(l_oldProperName) && i%2==0)
 						l_consts.addLine(l_Xp, l_Yp, l_X, l_Y);
 	
 					l_Xp = l_X;
@@ -546,7 +547,7 @@ public class DataBase
 				else
 					l_bStop = true;
 				
-				l_oldBayer = l_Bayer;
+				l_oldProperName = l_ProperName;
 				
 				if(l_bStop)
 				{
