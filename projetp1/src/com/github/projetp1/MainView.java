@@ -1143,6 +1143,7 @@ public class MainView extends JFrame implements KeyListener
 				listModelObjects.clear();
 
 				boolean canQueryDB = true;
+				
 				String[] searchFeatures = searchBarTextField.getText().split(";");
 				for (String searchFeature : searchFeatures)
 				{
@@ -1168,17 +1169,46 @@ public class MainView extends JFrame implements KeyListener
 						{
 							for (CelestialObject celestialObject : listCelestialObject)
 							{
+								String nameOrId;
 								if (celestialObject.getProperName() != null)
-									listModelNameOrID.setElement(celestialObject.getProperName());
+									nameOrId = celestialObject.getProperName();
 								else
-									listModelNameOrID.setElement(String.valueOf(celestialObject
-											.getId()));
+									nameOrId = String.valueOf(celestialObject.getId());
+
+								if (!searchFeatures[0].startsWith("!ProperName"))
+									nameOrId += " : ";
+
+								switch (searchFeatures[0].split(" ")[0])
+								{
+									case "!id":
+										nameOrId += celestialObject.getId();
+										break;
+									case "!ProperName":
+										// Do nothing
+										break;
+									case "!RA":
+										nameOrId += celestialObject.getRA();
+										break;
+									case "!Dec":
+										nameOrId += celestialObject.getDec();
+										break;
+									case "!Distance":
+										nameOrId += celestialObject.getDistance();
+										break;
+									case "!Mag":
+										nameOrId += celestialObject.getMag();
+										break;
+									case "!ColorIndex":
+										nameOrId += celestialObject.getColorIndex();
+										break;
+								}
+
+								listModelNameOrID.setElement(nameOrId);
 								listModelObjects.add(celestialObject);
 							}
 						}
 						else
 							listModelNameOrID.setElement(Messages.getString("MainView.NoResult"));
-
 					}
 					catch (Exception ex)
 					{
