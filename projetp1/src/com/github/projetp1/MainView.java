@@ -1034,102 +1034,106 @@ public class MainView extends JFrame implements KeyListener
     	 * search in the database the stars corresponding with the textField.
     	 * @param evt
     	 */
-    	private void searchBarKeyReleased(java.awt.event.KeyEvent evt) 
-    	{    	
-    		//System.out.println(evt.getKeyCode());
-    		if(evt.getKeyCode() ==40) // down
-    		{
-    			listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()+1);
-    			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
-            }
-    		else if (evt.getKeyCode()==38) // up
-        	{
-    			if (listNameOrID.getSelectedIndex()>-1)
-    				listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()-1);
-    			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
-        	}
-        	else if(evt.getKeyCode() == 37 || evt.getKeyCode() == 39 || evt.getKeyCode() == 10) //left, right, enter
-        	{
-        		if(listModelNameOrID.getSize() > 0 && listNameOrID.getSelectedIndex() < 0)
-        		{
-        			listNameOrID.setSelectedIndex(0);
-        		}
-        		listNameOrIDMouseClicked(null);
-        		listNameOrID.setSelectedIndex(-1);
-    			jScrollPane.getVerticalScrollBar().setValue(0);
-        	}
-        	else if(evt.getKeyCode() == 32) // space
-        	{
-        		if(listNameOrID.getSelectedIndex() > -1)
-        		{
-        			searchBarTextField.setText(searchBarTextField.getText().substring(0, searchBarTextField.getText().length()-1));
-        			listNameOrIDMouseClicked(null);
-        		}
-        		listNameOrID.setSelectedIndex(-1);
-    			jScrollPane.getVerticalScrollBar().setValue(0);
-        	}
-        	else
-        	{
-    		//listCelestialObject.clear();
-    		if (listModelNameOrID.getSize()>0)
-    			listModelNameOrID.removeAll();
-    		listModelObjects.clear();
-    		
-    		boolean canQueryDB = true;
-    		String[] searchFeatures = searchBarTextField.getText().split(";");
-    		for (String searchFeature : searchFeatures)
+		private void searchBarKeyReleased(java.awt.event.KeyEvent evt)
+		{
+			// System.out.println(evt.getKeyCode());
+			if (evt.getKeyCode() == 40) // down
 			{
-	    		for (String key : keys)
-				{
-					if(key.toLowerCase().startsWith(searchFeature.toLowerCase()))
-	     			{
-						listModelNameOrID.setElement(key);
-	     			}
-		     	}
-	    		if(searchFeature.split(" ").length <= 1)
-	    			canQueryDB = false;
+				listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex() + 1);
+				jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex() * 18);
 			}
-	     	if(canQueryDB)
-	     	{
-	     		try{
-	     			if(pic == null)
-	     				listCelestialObject = db.starsForText(searchBarTextField.getText(), Calendar.getInstance(), skymap.getdLatitude(), skymap.getdLongitude());
-	     			else
-	     				listCelestialObject = db.starsForText(searchBarTextField.getText(), Calendar.getInstance(), pic.getLatitude(), pic.getLongitude());
-	     			
-		     		if(listCelestialObject.size() != 0)
-		     		{	
-		     			for (CelestialObject celestialObject : listCelestialObject)
-		     			{
-		     				if(celestialObject.getProperName() != null)
-		     					listModelNameOrID.setElement(celestialObject.getProperName());
-		     				else
-		     					listModelNameOrID.setElement(String.valueOf(celestialObject.getId()));
-		     				listModelObjects.add(celestialObject);
-		     			}
-		     		}
-		     		else
-		     			listModelNameOrID.setElement(Messages.getString("MainView.NoResult"));
+			else if (evt.getKeyCode() == 38) // up
+			{
+				if (listNameOrID.getSelectedIndex() > -1)
+					listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex() - 1);
+				jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex() * 18);
+			}
+			else if (evt.getKeyCode() == 37 || evt.getKeyCode() == 39 || evt.getKeyCode() == 10) // left,
+																									// right,
+																									// enter
+			{
+				if (listModelNameOrID.getSize() > 0 && listNameOrID.getSelectedIndex() < 0)
+				{
+					listNameOrID.setSelectedIndex(0);
+				}
+				listNameOrIDMouseClicked(null);
+				listNameOrID.setSelectedIndex(-1);
+				jScrollPane.getVerticalScrollBar().setValue(0);
+			}
+			else if (evt.getKeyCode() == 32) // space
+			{
+				if (listNameOrID.getSelectedIndex() > -1)
+				{
+					searchBarTextField.setText(searchBarTextField.getText().substring(0,
+							searchBarTextField.getText().length() - 1));
+					listNameOrIDMouseClicked(null);
+				}
+				listNameOrID.setSelectedIndex(-1);
+				jScrollPane.getVerticalScrollBar().setValue(0);
+			}
+			else
+			{
+				// listCelestialObject.clear();
+				if (listModelNameOrID.getSize() > 0)
+					listModelNameOrID.removeAll();
+				listModelObjects.clear();
 
-	     			} catch(Exception ex)
-	     			{
-	     				ex.printStackTrace();
-	     			}
-     		}
-	     	
-	        if (listModelNameOrID.getSize() > 0)
-	        {
-	        	int min = (listModelNameOrID.getSize() < 5)?listModelNameOrID.getSize()*21:(int)(200*scale);
-	        	jScrollPane.setBounds(0, 20, searchBarTextField.getWidth(), min);
-	           	jScrollPane.setVisible(true);
-	           	
-	        } 
-	        else
-	        	jScrollPane.setVisible(false);
-	        	
-    	}
+				boolean canQueryDB = true;
+				String[] searchFeatures = searchBarTextField.getText().split(";");
+				for (String searchFeature : searchFeatures)
+				{
+					for (String key : keys)
+					{
+						if (key.toLowerCase().startsWith(searchFeature.toLowerCase()))
+						{
+							listModelNameOrID.setElement(key);
+						}
+					}
+					if (searchFeature.split(" ").length <= 1)
+						canQueryDB = false;
+				}
+				if (canQueryDB)
+				{
+					try
+					{
+						listCelestialObject = db.starsForText(searchBarTextField.getText(),
+								Calendar.getInstance(), skymap.getdLatitude(),
+								skymap.getdLongitude());
+
+						if (listCelestialObject.size() != 0)
+						{
+							for (CelestialObject celestialObject : listCelestialObject)
+							{
+								if (celestialObject.getProperName() != null)
+									listModelNameOrID.setElement(celestialObject.getProperName());
+								else
+									listModelNameOrID.setElement(String.valueOf(celestialObject
+											.getId()));
+								listModelObjects.add(celestialObject);
+							}
+						}
+						else
+							listModelNameOrID.setElement(Messages.getString("MainView.NoResult"));
+
+					}
+					catch (Exception ex)
+					{
+						ex.printStackTrace();
+					}
+				}
+
+				if (listModelNameOrID.getSize() > 0)
+				{
+					int min = (listModelNameOrID.getSize() < 5) ? listModelNameOrID.getSize() * 21
+							: (int) (200 * scale);
+					jScrollPane.setBounds(0, 20, searchBarTextField.getWidth(), min);
+					jScrollPane.setVisible(true);
+
+				}
+				else
+					jScrollPane.setVisible(false);
+			}
 		}
-    	
         
     	/** 
 		 * update the scale variable and resize the components
