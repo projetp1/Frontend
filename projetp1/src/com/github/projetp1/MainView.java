@@ -1215,6 +1215,15 @@ public class MainView extends JFrame implements KeyListener
 									case "!ColorIndex":
 										nameOrId += celestialObject.getColorIndex();
 										break;
+									case "!HIP":
+										nameOrId += celestialObject.getHIP();
+										break;
+									case "!HD":
+										nameOrId += celestialObject.getHD();
+										break;
+									case "!HR":
+										nameOrId += celestialObject.getHR();
+										break;
 								}
 
 								listModelNameOrID.setElement(nameOrId);
