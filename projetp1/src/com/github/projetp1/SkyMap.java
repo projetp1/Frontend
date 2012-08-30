@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -144,6 +145,9 @@ public class SkyMap extends Container implements MouseListener
 	@Override
 	public void paint(Graphics _g)
 	{
+		Graphics2D g2 = (Graphics2D)_g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		if (celestialObjects == null)
 		{
 			log.severe("No celestial objects to display");
@@ -309,17 +313,7 @@ public class SkyMap extends Container implements MouseListener
 							null);
 			}
 			else
-			{
 				_g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
-				l_color = getColorForColorIndex(celestialObject.getColorIndex(), 200);
-				_g.setColor(l_color);
-				l_d += 1;
-				_g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
-				l_color = getColorForColorIndex(celestialObject.getColorIndex(), 100);
-				_g.setColor(l_color);
-				l_d += 1;
-				_g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
-			}
 
 			if (l_name != null)
 				_g.drawString(l_name, l_x, l_y + 15);
@@ -348,7 +342,6 @@ public class SkyMap extends Container implements MouseListener
 					&& l_yStarPointed > this.getHeight() * 0.1 && l_yStarPointed < this.getHeight() * 0.9))
 			{
 				double l_dAngle = -getArrowAngle(celestialObjectSearched);
-				Graphics2D g2 = (Graphics2D) _g;
 				g2.rotate(l_dAngle, this.getWidth() / 2, this.getHeight() / 2);
 				g2.drawImage(l_imgArrow, (this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2), (this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), null);
 				log.info("Arrow painted");
