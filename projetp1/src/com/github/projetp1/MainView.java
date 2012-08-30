@@ -1198,7 +1198,7 @@ public class MainView extends JFrame implements KeyListener
         		l_sSavedSearch = searchBarTextField.getText();
         		searchBarTextField.setText(listNameOrID.getSelectedValue().toString());
         		skymap.transferFocusBackward();
-        		skymap.updateSkyMap();	
+        		MainView.this.update();
         		return;
         	}
     		
