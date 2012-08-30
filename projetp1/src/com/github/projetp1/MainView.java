@@ -1279,7 +1279,7 @@ public class MainView extends JFrame implements KeyListener
 	        { 
 	            super.paintComponent(g); 
 	            Graphics2D g2 = (Graphics2D) g; 
-	            g2.drawImage(cross, -1, -3, null); 
+	            g2.drawImage(cross, 0, 0, null); 
 	        }
 			
 		}
