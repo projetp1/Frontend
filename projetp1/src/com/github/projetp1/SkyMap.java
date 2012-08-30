@@ -185,10 +185,10 @@ public class SkyMap extends Container implements MouseListener
 							l_yCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[1] * zoom * l_scale)
 							);
 				}
-				if(constellation.getProperName().equals("And"))
-					l_font = new Font("Calibri" , Font.BOLD, 16);
-				else
+				if(constellation.getProperName().equals("Androbide"))
 					l_font = new Font("Calibri" , Font.BOLD, 34);
+				else
+					l_font = new Font("Calibri" , Font.BOLD, 16);
 				
 				_g.setFont(l_font);
 				
