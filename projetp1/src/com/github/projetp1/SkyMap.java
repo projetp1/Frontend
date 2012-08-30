@@ -146,8 +146,7 @@ public class SkyMap extends Container implements MouseListener
 	public void paint(Graphics _g)
 	{
 		Graphics2D g2 = (Graphics2D)_g;
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-		                        RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		if (celestialObjects == null)
 		{
@@ -307,17 +306,7 @@ public class SkyMap extends Container implements MouseListener
 							null);
 			}
 			else
-			{
 				_g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
-				l_color = getColorForColorIndex(celestialObject.getColorIndex(), 200);
-				_g.setColor(l_color);
-				l_d += 1;
-				_g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
-				l_color = getColorForColorIndex(celestialObject.getColorIndex(), 100);
-				_g.setColor(l_color);
-				l_d += 1;
-				_g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
-			}
 
 			if (l_name != null)
 				_g.drawString(l_name, l_x, l_y - 10);
