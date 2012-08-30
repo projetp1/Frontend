@@ -16,6 +16,7 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -180,27 +181,91 @@ public class MainView extends JFrame implements KeyListener
 
 
 	/**
-	 * This methode update the values form the pic.
+	 * This method updates the values form the PIC and sets the needles accordingly.
 	 */
-	
 	private void update() {
-		if (pic != null)
+		if(pic != null)
 		{
 			compassPanel.setGreenNeedle(pic.getAzimuth());
 			inclinometerPanel.setGreenNeedle(pic.getPitch());
-	
-			char hemNS = 'N', hemWE = 'E';
-			double lat = pic.getLatitude(), lon = pic.getLongitude();
-	
-			if (lat < 0.0)
-				hemNS = 'S';
-			if (lon < 0.0)
-				hemWE = 'W';
-			
-			coordinate.setText(Math.abs(lat) + "° " + hemNS + ", " + Math.abs(lon) + "° " + hemWE);
 		}
 
-		skymap.updateSkyMap();		
+		char hemNS = 'N', hemWE = 'E';
+		double lat = skymap.getdLatitude(), lon = skymap.getdLongitude();
+
+		if (lat < 0.0)
+			hemNS = 'S';
+		if (lon < 0.0)
+			hemWE = 'W';
+		
+		coordinate.setText(decimalToDMS(Math.abs(lat)) + " " + hemNS + ", " + decimalToDMS(Math.abs(lon)) + " " + hemWE);
+
+		skymap.updateSkyMap();	
+	}
+	
+	
+	/**
+	 * Convert decimal coordinates to DMS
+	 * 
+	 * From: https://en.wikipedia.org/wiki/Geographic_coordinate_conversion#Java_Implementation
+	 *
+	 * @param coord The decimal coordinate
+	 * @return A string in DMS form
+	 */
+	public static String decimalToDMS(double coord)
+	{
+		String output, degrees, minutes, seconds;
+
+		// gets the modulus the coordinate divided by one (MOD1).
+		// in other words gets all the numbers after the decimal point.
+		// e.g. mod = 87.728056 % 1 == 0.728056
+		//
+		// next get the integer part of the coord. On other words the whole number part.
+		// e.g. intPart = 87
+
+		double mod = coord % 1;
+		int intPart = (int) coord;
+
+		// set degrees to the value of intPart
+		// e.g. degrees = "87"
+
+		degrees = String.valueOf(intPart);
+
+		// next times the MOD1 of degrees by 60 so we can find the integer part for minutes.
+		// get the MOD1 of the new coord to find the numbers after the decimal point.
+		// e.g. coord = 0.728056 * 60 == 43.68336
+		// mod = 43.68336 % 1 == 0.68336
+		//
+		// next get the value of the integer part of the coord.
+		// e.g. intPart = 43
+
+		coord = mod * 60;
+		mod = coord % 1;
+		intPart = (int) coord;
+
+		// set minutes to the value of intPart.
+		// e.g. minutes = "43"
+		minutes = String.valueOf(intPart);
+
+		// do the same again for minutes
+		// e.g. coord = 0.68336 * 60 == 41.0016
+		// e.g. intPart = 41
+		coord = mod * 60;
+		intPart = (int) coord;
+
+		// set seconds to the value of intPart.
+		// e.g. seconds = "41"
+		seconds = String.valueOf(intPart);
+
+		// I used this format for android but you can change it
+		// to return in whatever format you like
+		// e.g. output = "87/1,43/1,41/1"
+		output = degrees + "° " + minutes + "' " + seconds + "''";
+
+		// Standard output of D°M′S″
+		// output = degrees + "°" + minutes + "'" + seconds + "\"";
+
+		return output;
 	}
 	
 	/**
@@ -919,7 +984,7 @@ public class MainView extends JFrame implements KeyListener
     	JList<String> listNameOrID;
     	ListModel<String> listModelNameOrID;
     	ArrayList<CelestialObject> listModelObjects;
-    	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex ", "!HIP", "!HD", "!HR"};
+    	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex "};
     	JScrollPane jScrollPane = new JScrollPane();
     	ArrayList<CelestialObject> listCelestialObject = new ArrayList<CelestialObject>();
 
@@ -1037,108 +1102,136 @@ public class MainView extends JFrame implements KeyListener
     	 * search in the database the stars corresponding with the textField.
     	 * @param evt
     	 */
-    	private void searchBarKeyReleased(java.awt.event.KeyEvent evt) 
-    	{    	
-    		//System.out.println(evt.getKeyCode());
-    		if(evt.getKeyCode() ==40) // down
-    		{
-    			listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()+1);
-    			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
-            }
-    		else if (evt.getKeyCode()==38) // up
-        	{
-    			if (listNameOrID.getSelectedIndex()>-1)
-    				listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex()-1);
-    			jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex()*18);
-        	}
-        	else if(evt.getKeyCode() == 37 || evt.getKeyCode() == 39 || evt.getKeyCode() == 10) //left, right, enter
-        	{
-        		if(listModelNameOrID.getSize() > 0 && listNameOrID.getSelectedIndex() < 0)
-        		{
-        			listNameOrID.setSelectedIndex(0);
-        		}
-        		listNameOrIDMouseClicked(null);
-        		listNameOrID.setSelectedIndex(-1);
-    			jScrollPane.getVerticalScrollBar().setValue(0);
-        	}
-        	else if(evt.getKeyCode() == 32) // space
-        	{
-        		if(listNameOrID.getSelectedIndex() > -1)
-        		{
-        			searchBarTextField.setText(searchBarTextField.getText().substring(0, searchBarTextField.getText().length()-1));
-        			listNameOrIDMouseClicked(null);
-        		}
-        		listNameOrID.setSelectedIndex(-1);
-    			jScrollPane.getVerticalScrollBar().setValue(0);
-        	}
-        	else
-        	{
-    		//listCelestialObject.clear();
-    		if (listModelNameOrID.getSize()>0)
-    			listModelNameOrID.removeAll();
-    		listModelObjects.clear();
-    		
-    		boolean canQueryDB = true;
-    		String[] searchFeatures = searchBarTextField.getText().split(";");
-    		for (String searchFeature : searchFeatures)
+		private void searchBarKeyReleased(java.awt.event.KeyEvent evt)
+		{
+			// System.out.println(evt.getKeyCode());
+			if (evt.getKeyCode() == 40) // down
 			{
-	    		for (String key : keys)
-				{
-					if(key.toLowerCase().startsWith(searchFeature.toLowerCase()))
-	     			{
-						listModelNameOrID.setElement(key);
-	     			}
-		     	}
-	    		if(searchFeature.split(" ").length <= 1)
-	    			canQueryDB = false;
+				listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex() + 1);
+				jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex() * 18);
 			}
-	     	if(canQueryDB)
-	     	{
-	     		try{
-	     			if(pic == null)
-	     				listCelestialObject = db.starsForText(searchBarTextField.getText(), Calendar.getInstance(), skymap.getdLatitude(), skymap.getdLongitude());
-	     			else
-	     				listCelestialObject = db.starsForText(searchBarTextField.getText(), Calendar.getInstance(), pic.getLatitude(), pic.getLongitude());
-	     			
-		     		if(listCelestialObject.size() != 0)
-		     		{	
-		     			for (CelestialObject celestialObject : listCelestialObject)
-		     			{
-		     				if(celestialObject.getProperName() != null)
-		     					listModelNameOrID.setElement(celestialObject.getProperName());
-		     				else if (celestialObject.getHIP() != 0)
-		     					listModelNameOrID.setElement("HIP: " + String.valueOf(celestialObject.getHIP()));
-		     				else if (celestialObject.getHD() != 0)
-		     					listModelNameOrID.setElement("HD: " + String.valueOf(celestialObject.getHD()));
-		     				else if (celestialObject.getHR() != 0)
-		     					listModelNameOrID.setElement("HR: " + String.valueOf(celestialObject.getHR()));
-		     				else
-		     					listModelNameOrID.setElement("Id: " + String.valueOf(celestialObject.getId()));
-		     				listModelObjects.add(celestialObject);
-		     			}
-		     		}
-		     		else
-		     			listModelNameOrID.setElement(Messages.getString("MainView.NoResult"));
+			else if (evt.getKeyCode() == 38) // up
+			{
+				if (listNameOrID.getSelectedIndex() > -1)
+					listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex() - 1);
+				jScrollPane.getVerticalScrollBar().setValue(listNameOrID.getSelectedIndex() * 18);
+			}
+			else if (evt.getKeyCode() == 37 || evt.getKeyCode() == 39 || evt.getKeyCode() == 10) // left,
+																									// right,
+																									// enter
+			{
+				if (listModelNameOrID.getSize() > 0 && listNameOrID.getSelectedIndex() < 0)
+				{
+					listNameOrID.setSelectedIndex(0);
+				}
+				listNameOrIDMouseClicked(null);
+				listNameOrID.setSelectedIndex(-1);
+				jScrollPane.getVerticalScrollBar().setValue(0);
+			}
+			else if (evt.getKeyCode() == 32) // space
+			{
+				if (listNameOrID.getSelectedIndex() > -1)
+				{
+					searchBarTextField.setText(searchBarTextField.getText().substring(0,
+							searchBarTextField.getText().length() - 1));
+					listNameOrIDMouseClicked(null);
+				}
+				listNameOrID.setSelectedIndex(-1);
+				jScrollPane.getVerticalScrollBar().setValue(0);
+			}
+			else
+			{
+				// listCelestialObject.clear();
+				if (listModelNameOrID.getSize() > 0)
+					listModelNameOrID.removeAll();
+				listModelObjects.clear();
 
-	     			} catch(Exception ex)
-	     			{
-	     				ex.printStackTrace();
-	     			}
-     		}
-	     	
-	        if (listModelNameOrID.getSize() > 0)
-	        {
-	        	int min = (listModelNameOrID.getSize() < 5)?listModelNameOrID.getSize()*21:(int)(200*scale);
-	        	jScrollPane.setBounds(0, 20, searchBarTextField.getWidth(), min);
-	           	jScrollPane.setVisible(true);
-	           	
-	        } 
-	        else
-	        	jScrollPane.setVisible(false);
-	        	
-    	}
+				boolean canQueryDB = true;
+				
+				String[] searchFeatures = searchBarTextField.getText().split(";");
+				for (String searchFeature : searchFeatures)
+				{
+					for (String key : keys)
+					{
+						if (key.toLowerCase().startsWith(searchFeature.toLowerCase()))
+						{
+							listModelNameOrID.setElement(key);
+						}
+					}
+					if (searchFeature.split(" ").length <= 1)
+						canQueryDB = false;
+				}
+				if (canQueryDB)
+				{
+					try
+					{
+						listCelestialObject = db.starsForText(searchBarTextField.getText(),
+								Calendar.getInstance(), skymap.getdLatitude(),
+								skymap.getdLongitude());
+
+						if (listCelestialObject.size() != 0)
+						{
+							for (CelestialObject celestialObject : listCelestialObject)
+							{
+								String nameOrId;
+								if (celestialObject.getProperName() != null)
+									nameOrId = celestialObject.getProperName();
+								else
+									nameOrId = String.valueOf(celestialObject.getId());
+
+								if (!searchFeatures[0].startsWith("!ProperName"))
+									nameOrId += " : ";
+
+								switch (searchFeatures[0].split(" ")[0])
+								{
+									case "!id":
+										nameOrId += celestialObject.getId();
+										break;
+									case "!ProperName":
+										// Do nothing
+										break;
+									case "!RA":
+										nameOrId += celestialObject.getRA();
+										break;
+									case "!Dec":
+										nameOrId += celestialObject.getDec();
+										break;
+									case "!Distance":
+										nameOrId += celestialObject.getDistance();
+										break;
+									case "!Mag":
+										nameOrId += celestialObject.getMag();
+										break;
+									case "!ColorIndex":
+										nameOrId += celestialObject.getColorIndex();
+										break;
+								}
+
+								listModelNameOrID.setElement(nameOrId);
+								listModelObjects.add(celestialObject);
+							}
+						}
+						else
+							listModelNameOrID.setElement(Messages.getString("MainView.NoResult"));
+					}
+					catch (Exception ex)
+					{
+						ex.printStackTrace();
+					}
+				}
+
+				if (listModelNameOrID.getSize() > 0)
+				{
+					int min = (listModelNameOrID.getSize() < 5) ? listModelNameOrID.getSize() * 21
+							: (int) (200 * scale);
+					jScrollPane.setBounds(0, 20, searchBarTextField.getWidth(), min);
+					jScrollPane.setVisible(true);
+
+				}
+				else
+					jScrollPane.setVisible(false);
+			}
 		}
-    	
         
     	/** 
 		 * update the scale variable and resize the components
@@ -1147,7 +1240,7 @@ public class MainView extends JFrame implements KeyListener
 		public void update(double _scale)
 		{
 			scale = _scale;
-			hig = 22;
+			hig = 20;
     		
 			searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
     		int min = (listModelNameOrID.getSize() < 5)?listModelNameOrID.getSize()*21:(int)(200*scale);
@@ -1164,6 +1257,7 @@ public class MainView extends JFrame implements KeyListener
 				try
 				{
 					cross = ImageIO.read(new File("res/Cross.png"));
+					//cross = resizeImage2(ImageIO.read(new File("res/Cross.png")),hig/2, hig/2);
 				}
 				catch (IOException ex)
 				{
@@ -1191,7 +1285,7 @@ public class MainView extends JFrame implements KeyListener
 	        { 
 	            super.paintComponent(g); 
 	            Graphics2D g2 = (Graphics2D) g; 
-	            g2.drawImage(cross, -1, -1, null); 
+	            g2.drawImage(cross, -1, -3, null); 
 	        }
 			
 		}
@@ -1242,7 +1336,7 @@ public class MainView extends JFrame implements KeyListener
 			coordinateCompass.setBounds(0, (int)(scale*310), (int)(scale*345), (int)(scale*34));
 			coordinateCompass.setForeground(Color.WHITE);
 			this.add(coordinateCompass, new Integer(3));
-			
+
 			setSearchMode(false);
 		}
 		
@@ -1463,8 +1557,8 @@ public class MainView extends JFrame implements KeyListener
 
 			this.setSize((int)(scale*186), (int)(scale*324));;
 			this.add(coordinateInclinometer, new Integer(3));
-			
 			setSearchMode(false);
+
 		}
 				
 		@Override 
@@ -1480,11 +1574,6 @@ public class MainView extends JFrame implements KeyListener
             g2.drawImage(background, 0, 0, null); 
         }
 		
-        public void setSearchMode(boolean _searchMode)
-		{
-			redNeedle.setVisible(_searchMode);
-		}
-        
 		/** 
 		 *  update the scale variable and resize the components
 		 * @param _scale : the scalar
@@ -1518,6 +1607,10 @@ public class MainView extends JFrame implements KeyListener
 			coordinateInclinometer.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
 		}
         
+		public void setSearchMode(boolean _searchMode)
+		{
+			redNeedle.setVisible(_searchMode);
+		}
 		/** 
 		 *  Used for update the red needle angle.
 		 *  @param _redAngle : It's the new angle for the red needle
