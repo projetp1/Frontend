@@ -344,24 +344,6 @@ public class SkyMap extends Container implements MouseListener
 						(this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), null);
 			}
 		}
-		if(constellations == null)
-		{
-			log.severe("No constellations to display");
-			return;
-		}
-			
-		for (Constellation constellation : constellations)
-		{
-			for (double[] line : constellation.getLines())
-			{
-				_g.setColor(Color.WHITE);
-				_g.drawLine(
-						l_xCenter + (int) (Mathematics.getNewXYRotation(line[0], line[1], l_dRoll)[0] * zoom * l_scale),
-						l_yCenter + (int) (Mathematics.getNewXYRotation(line[0], line[1], l_dRoll)[1] * zoom * l_scale),
-						l_xCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[0] * zoom * l_scale),
-						l_yCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[1] * zoom * l_scale));
-			}
-		}
 	}
 
 	/**
