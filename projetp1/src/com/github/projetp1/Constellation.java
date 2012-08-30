@@ -16,17 +16,16 @@ package com.github.projetp1;
 
 import java.util.ArrayList;
 
-// TODO: Auto-generated Javadoc
 /**
- * This class represents a constellation of stars
+ * This class represents a constellation of stars.
  */
 public class Constellation
 {
 	
-	/** The human readable name of the constellation */
+	/** The human readable name of the constellation. */
 	private String sProperName;
 	
-	/** The lines that make the constellation */
+	/** The lines that make the constellation. */
 	private ArrayList<double[]> dLines = new ArrayList<double[]>();
 
 	/**
@@ -38,7 +37,7 @@ public class Constellation
 	}
 	
 	/**
-	 * Adds a new line to the constellation
+	 * Adds a new line to the constellation.
 	 *
 	 * @param l_X The X coordinate of the first point
 	 * @param l_Y The Y coordinate of the first point
@@ -52,7 +51,7 @@ public class Constellation
 	}
 	
 	/**
-	 * Sets the proper name of the constellation
+	 * Sets the proper name of the constellation.
 	 *
 	 * @param _x the new proper name
 	 */
@@ -62,7 +61,7 @@ public class Constellation
 	}
 	
 	/**
-	 * Gets the proper name of the constellation
+	 * Gets the proper name of the constellation.
 	 *
 	 * @return the proper name
 	 */
@@ -72,7 +71,7 @@ public class Constellation
 	}
 	
 	/**
-	 * Gets the lines of the constellation used to draw it
+	 * Gets the lines of the constellation used to draw it.
 	 *
 	 * @return the lines
 	 */
