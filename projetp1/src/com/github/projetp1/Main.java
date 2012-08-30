@@ -5,6 +5,10 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+/**
+ * The Main class of the project
+ * It only contains the entry point of the program
+ */
 public class Main
 {
 	/**

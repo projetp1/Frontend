@@ -122,7 +122,8 @@ public class SkyMap extends Container implements MouseListener
 		{
 			try
 			{
-				celestialObjects = mainView.getDataBase().starsForCoordinates(Calendar.getInstance(), dLatitude, dLongitude);
+				celestialObjects = mainView.getDataBase().starsForCoordinates(
+						Calendar.getInstance(), dLatitude, dLongitude);
 				constellations = mainView.getDataBase().getConstellations(Calendar.getInstance(), dLatitude, dLongitude);
 			}
 			catch (Exception ex)
