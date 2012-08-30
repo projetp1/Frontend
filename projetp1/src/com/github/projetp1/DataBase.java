@@ -539,7 +539,7 @@ public class DataBase
 					l_Y = l_calc.getY();
 					
 					if(l_ProperName.equals(l_oldProperName) && i%2==0)
-						l_consts.addLine(l_Xp, l_Yp, l_X, l_Y);
+						l_consts.addLine(l_Xp, -l_Yp, l_X, -l_Y);
 	
 					l_Xp = l_X;
 					l_Yp = l_Y;
