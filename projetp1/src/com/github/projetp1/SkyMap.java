@@ -149,7 +149,7 @@ public class SkyMap extends Container implements MouseListener
 			log.severe("No celestial objects to display");
 			return;
 		}
-
+		
 		int l_scale = (this.getHeight() / 2);
 		int l_xCenter = this.getWidth() / 2 - (int) (dXOrigin * l_scale * zoom);
 		int l_yCenter = this.getHeight() / 2 + (int) (dYOrigin * l_scale * zoom);
