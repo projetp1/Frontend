@@ -671,8 +671,8 @@ public class MainView extends JFrame implements KeyListener
     		comboBoxList.add(new JComboBox<String>(magnitude));
     		comboBoxList.get(comboBoxList.size()-1).setSelectedItem(String.valueOf(settings.getMagnitude()));
     		
-    		String constelation[]  = { Messages.getString("MainView.On"), Messages.getString("MainView.Off") };
-    		comboBoxList.add(new JComboBox<String>(constelation));
+    		String constellation[]  = { Messages.getString("MainView.On"), Messages.getString("MainView.Off") };
+    		comboBoxList.add(new JComboBox<String>(constellation));
     		comboBoxList.get(comboBoxList.size()-1).setSelectedItem((settings.getConstellation()) ? Messages.getString("MainView.On") : Messages.getString("MainView.Off"));
 
     		String simulation[] = { Messages.getString("MainView.On"), Messages.getString("MainView.Off") };
