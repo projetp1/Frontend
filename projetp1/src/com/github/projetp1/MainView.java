@@ -85,6 +85,7 @@ public class MainView extends JFrame implements KeyListener
 	 */
 	public MainView()
 	{
+
 		this.setTitle(Messages.getString("MainView.Title"));
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/logo48.png"));
 
@@ -237,6 +238,7 @@ public class MainView extends JFrame implements KeyListener
 		// mod = 43.68336 % 1 == 0.68336
 		//
 		// next get the value of the integer part of the coord.
+
 		// e.g. intPart = 43
 
 		coord = mod * 60;
@@ -1145,7 +1147,6 @@ public class MainView extends JFrame implements KeyListener
 				if (listModelNameOrID.getSize() > 0)
 					listModelNameOrID.removeAll();
 				listModelObjects.clear();
-	     	
 
 				boolean canQueryDB = true;
 				

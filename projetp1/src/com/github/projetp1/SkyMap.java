@@ -17,6 +17,7 @@ package com.github.projetp1;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -155,6 +156,33 @@ public class SkyMap extends Container implements MouseListener
 		double l_dRoll = 0.0;
 		if(this.mainView.getPic() != null)
 			l_dRoll = this.mainView.getPic().getRoll();
+
+		Font l_font = new Font("Comic Sans MS" , Font.BOLD, 16);
+		_g.setFont(l_font);
+		
+		if(constellations == null)
+		{
+			log.severe("No constellations to display");
+		}
+		else
+		{
+			for (Constellation constellation : constellations)
+			{
+				int l_xName = 0, l_yName = 0;
+				for (double[] line : constellation.getLines())
+				{
+					_g.setColor(new Color(130, 200, 255));
+					_g.drawLine(
+							l_xName = l_xCenter + (int) (Mathematics.getNewXYRotation(line[0], line[1], l_dRoll)[0] * zoom * l_scale),
+							l_yName = l_yCenter + (int) (Mathematics.getNewXYRotation(line[0], line[1], l_dRoll)[1] * zoom * l_scale),
+							l_xCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[0] * zoom * l_scale),
+							l_yCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[1] * zoom * l_scale)
+							);
+				}
+				//TODO: Si on a le temps faire un algorithme pour centrer le nom de la constellation
+				_g.drawString(((constellation.getProperName() != null) ? constellation.getProperName() : ""), l_xName, l_yName);
+			}
+		}
 		
 		for (CelestialObject celestialObject : celestialObjects)
 		{

@@ -514,15 +514,16 @@ public class DataBase
 			l_dRA = l_const.getRA();
 			l_Dec = l_const.getDec();
 			l_Id = l_const.getId();
-			
+
 			if(!l_ProperName.equals(l_oldProperName))
 				l_bStop = false;
 			
 			if(!l_bStop)
 			{
-				if(!l_ProperName.equals(l_oldProperName))
+				if(!l_ProperName.equals(l_oldProperName) && !l_oldProperName.equals(""))
 				{
-					al_const.add(l_consts);
+					if(i != 0)
+						al_const.add(l_consts);
 					l_consts = null;
 					if(l_Id == 0)
 						break;
