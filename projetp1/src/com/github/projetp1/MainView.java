@@ -984,7 +984,7 @@ public class MainView extends JFrame implements KeyListener
     	JList<String> listNameOrID;
     	ListModel<String> listModelNameOrID;
     	ArrayList<CelestialObject> listModelObjects;
-    	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex "};
+    	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex ", "!HIP", "!HD", "!HR"};
     	JScrollPane jScrollPane = new JScrollPane();
     	ArrayList<CelestialObject> listCelestialObject = new ArrayList<CelestialObject>();
 
@@ -1145,6 +1145,7 @@ public class MainView extends JFrame implements KeyListener
 				if (listModelNameOrID.getSize() > 0)
 					listModelNameOrID.removeAll();
 				listModelObjects.clear();
+	     	
 
 				boolean canQueryDB = true;
 				
@@ -1240,7 +1241,7 @@ public class MainView extends JFrame implements KeyListener
 		public void update(double _scale)
 		{
 			scale = _scale;
-			hig = 20;
+			hig = 22;
     		
 			searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
     		int min = (listModelNameOrID.getSize() < 5)?listModelNameOrID.getSize()*21:(int)(200*scale);
@@ -1257,7 +1258,6 @@ public class MainView extends JFrame implements KeyListener
 				try
 				{
 					cross = ImageIO.read(new File("res/Cross.png"));
-					//cross = resizeImage2(ImageIO.read(new File("res/Cross.png")),hig/2, hig/2);
 				}
 				catch (IOException ex)
 				{
@@ -1285,7 +1285,7 @@ public class MainView extends JFrame implements KeyListener
 	        { 
 	            super.paintComponent(g); 
 	            Graphics2D g2 = (Graphics2D) g; 
-	            g2.drawImage(cross, -1, -3, null); 
+	            g2.drawImage(cross, -1, -1, null); 
 	        }
 			
 		}
@@ -1557,8 +1557,8 @@ public class MainView extends JFrame implements KeyListener
 
 			this.setSize((int)(scale*186), (int)(scale*324));;
 			this.add(coordinateInclinometer, new Integer(3));
-			setSearchMode(false);
 
+			setSearchMode(false);
 		}
 				
 		@Override 
@@ -1574,6 +1574,11 @@ public class MainView extends JFrame implements KeyListener
             g2.drawImage(background, 0, 0, null); 
         }
 		
+        public void setSearchMode(boolean _searchMode)
+		{
+			redNeedle.setVisible(_searchMode);
+		}
+        
 		/** 
 		 *  update the scale variable and resize the components
 		 * @param _scale : the scalar
@@ -1607,10 +1612,6 @@ public class MainView extends JFrame implements KeyListener
 			coordinateInclinometer.setBounds(0, (int)(scale*258), (int)(scale*186), (int)(scale*35));
 		}
         
-		public void setSearchMode(boolean _searchMode)
-		{
-			redNeedle.setVisible(_searchMode);
-		}
 		/** 
 		 *  Used for update the red needle angle.
 		 *  @param _redAngle : It's the new angle for the red needle
