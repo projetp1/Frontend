@@ -181,8 +181,15 @@ public class SkyMap extends Container implements MouseListener
 							l_yCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[1] * zoom * l_scale)
 							);
 				}
+				if(constellation.getProperName().equals("And"))
+					l_font = new Font("Calibri" , Font.BOLD, 16);
+				else
+					l_font = new Font("Calibri" , Font.BOLD, 34);
+				
+				_g.setFont(l_font);
+				
 				//TODO: Si on a le temps faire un algorithme pour centrer le nom de la constellation
-				_g.drawString(((constellation.getProperName() != null) ? constellation.getProperName() : ""), l_xName, l_yName);
+				_g.drawString(((constellation.getProperName() != null) ? constellation.getProperName() : ""), l_xName, l_yName - 10);
 			}
 		}
 		
@@ -315,7 +322,7 @@ public class SkyMap extends Container implements MouseListener
 			}
 
 			if (l_name != null)
-				_g.drawString(l_name, l_x, l_y - 10);
+				_g.drawString(l_name, l_x, l_y + 15);
 		}
 
 		Image l_imgCenter = getToolkit().getImage("res/center.png");
