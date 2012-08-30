@@ -37,7 +37,7 @@ public class Settings
 	private static final String KEY_PARITY = "parity";
 	private static final String KEY_FLOWCONTROL = "flowctrl";
 	private static final String KEY_MAGNITUDE = "magnitude";
-	private static final String KEY_CONSTELATION = "constelation";
+	private static final String KEY_CONSTELLATION = "constellation";
 	private static final String KEY_SIMULATION = "simulation";
 	
 	private String filename = "settings.conf";
@@ -95,7 +95,7 @@ public class Settings
 			parity = jRoot.getInt(KEY_PARITY);
 			flowControl = jRoot.getInt(KEY_FLOWCONTROL);
 			magnitude = jRoot.getInt(KEY_MAGNITUDE);
-			constellation = jRoot.getBoolean(KEY_CONSTELATION);
+			constellation = jRoot.getBoolean(KEY_CONSTELLATION);
 			simulation = jRoot.getBoolean(KEY_SIMULATION);
 		}
 		catch (IOException ex)
@@ -131,7 +131,7 @@ public class Settings
 			jRoot.put(KEY_PARITY, parity);
 			jRoot.put(KEY_FLOWCONTROL, flowControl);
 			jRoot.put(KEY_MAGNITUDE, magnitude);
-			jRoot.put(KEY_CONSTELATION, constellation);
+			jRoot.put(KEY_CONSTELLATION, constellation);
 			jRoot.put(KEY_SIMULATION, simulation);
 		}
 		catch (JSONException ex)
