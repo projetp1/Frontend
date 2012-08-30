@@ -122,7 +122,8 @@ public class SkyMap extends Container implements MouseListener
 		{
 			try
 			{
-				celestialObjects = mainView.getDataBase().starsForCoordinates(Calendar.getInstance(), dLatitude, dLongitude);
+				celestialObjects = mainView.getDataBase().starsForCoordinates(
+						Calendar.getInstance(), dLatitude, dLongitude);
 				constellations = mainView.getDataBase().getConstellations(Calendar.getInstance(), dLatitude, dLongitude);
 			}
 			catch (Exception ex)
@@ -184,7 +185,7 @@ public class SkyMap extends Container implements MouseListener
 				_g.drawString(((constellation.getProperName() != null) ? constellation.getProperName() : ""), l_xName, l_yName);
 			}
 		}
-
+		
 		l_font = new Font("Calibri" , Font.PLAIN, 16);
 		_g.setFont(l_font);
 		

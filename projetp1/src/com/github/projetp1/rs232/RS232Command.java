@@ -2,33 +2,47 @@ package com.github.projetp1.rs232;
 
 import java.util.logging.Logger;
 
+/**
+ * The Class respresents a command that can be sent or received to/from the PIC
+ * It also features methods to process it
+ */
 public class RS232Command
 {
+	
+	/** The command number. */
 	private RS232CommandType commandNumber;
 
+	/**
+	 * Gets the command number.
+	 *
+	 * @return the command number
+	 */
 	public RS232CommandType getCommandNumber()
 	{
 		return commandNumber;
 	}
 
+	/** The datas contained within the frame */
 	private String datas;
 
+	/**
+	 * Gets the datas.
+	 *
+	 * @return the datas
+	 */
 	public String getDatas()
 	{
 		return datas;
 	}
 
 	/**
-	 * Create a new RS232Command object (with CRC check)
-	 * 
-	 * @param commandNumber
-	 *            The number of the command (an RS232CommandType)
-	 * @param datas
-	 *            The datas. Can be empty in some cases
-	 * @param crc
-	 *            The CRC as described in the docs (NMEA-0183)
-	 * @throws CrcException
-	 * @throws Exception
+	 * Create a new RS232Command object (with CRC check).
+	 *
+	 * @param commandNumber The number of the command (an RS232CommandType)
+	 * @param datas The datas. Can be empty in some cases
+	 * @param crc The CRC as described in the docs (NMEA-0183)
+	 * @throws CrcException A CRC Exception if it is faulty
+	 * @throws IllegalArgumentException Thorwn when the command number doesn't exist
 	 */
 	public RS232Command(String commandNumber, String datas, byte crc) throws CrcException,
 			IllegalArgumentException
@@ -80,10 +94,9 @@ public class RS232Command
 	}
 
 	/**
-	 * Send a message to the PIC telling that a command was faulty
-	 * 
-	 * @param rs
-	 *            The RS-232 object sending the request.
+	 * Send a message to the PIC telling that a command was faulty.
+	 *
+	 * @param rs The RS-232 object sending the request.
 	 */
 	public void sendNck(RS232 rs)
 	{
