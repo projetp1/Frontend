@@ -372,11 +372,11 @@ public class SkyMap extends Container implements MouseListener
 		int iAngle = (int) Math.round(dblAngle);
 
 		// log.info("angle : " + Math.toDegrees(l_dangle) + "\r\n");
-
+		/*
 		if(mainView.getPic() != null && mainView.getPic().getMode() == Pic.PicMode.GUIDING)
 		{
 			PicArrowDirection dir = null;
-
+	
 			switch (iAngle)
 			{
 				case 0:
@@ -411,7 +411,10 @@ public class SkyMap extends Container implements MouseListener
 				mainView.getPic().setPicArrow(dir);
 				lastArrowSent = dir;
 			}
-		}
+			
+		
+			
+		}*/
 
 		return l_dAngle;
 	}
