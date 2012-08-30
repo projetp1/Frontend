@@ -706,6 +706,8 @@ public class MainView extends JFrame implements KeyListener
     		settingList.add(new JLabel(Messages.getString("MainView.Stopbits")));
     		settingList.add(new JLabel(Messages.getString("MainView.Parity")));
     		settingList.add(new JLabel(Messages.getString("MainView.FlowControl")));
+    		settingList.add(new JLabel(Messages.getString("MainView.Magnitude")));
+    		settingList.add(new JLabel(Messages.getString("MainView.Constellation")));
     		settingList.add(new JLabel(Messages.getString("MainView.Simulation")));
     		number = settingList.size();
     		InternalMid = new BufferedImage[number];
@@ -777,6 +779,14 @@ public class MainView extends JFrame implements KeyListener
     				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.None"));	
     				break;		
     		}
+    		String magnitude[] = {"-2", "6", "15", "22"};
+    		comboBoxList.add(new JComboBox<String>(magnitude));
+    		comboBoxList.get(comboBoxList.size()-1).setSelectedItem(String.valueOf(settings.getMagnitude()));
+    		
+    		String constellation[]  = { Messages.getString("MainView.On"), Messages.getString("MainView.Off") };
+    		comboBoxList.add(new JComboBox<String>(constellation));
+    		comboBoxList.get(comboBoxList.size()-1).setSelectedItem((settings.getConstellation()) ? Messages.getString("MainView.On") : Messages.getString("MainView.Off"));
+
     		String simulation[] = { Messages.getString("MainView.On"), Messages.getString("MainView.Off") };
     		comboBoxList.add(new JComboBox<String>(simulation));
     		comboBoxList.get(comboBoxList.size()-1).setSelectedItem((settings.getSimulation()) ? Messages.getString("MainView.On") : Messages.getString("MainView.Off"));
@@ -836,13 +846,13 @@ public class MainView extends JFrame implements KeyListener
             g2.drawImage(backgroundMid, 0, backgroundTop.getHeight(), null);
             g2.drawImage(backgroundBot, 0, backgroundTop.getHeight()+backgroundMid.getHeight(), null);
             g2.drawImage(InternalTop, (int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2),  backgroundTop.getHeight()+titre.getHeight(), null);
-            for(int i = 0; i < number; i++)
+            for(int i = 0; i < number-2; i++)
             {
             	g2.drawImage(InternalMid[i], (int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight(), null);
             	
             	
             }
-            	g2.drawImage(InternalBot, (int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2), backgroundTop.getHeight()+InternalTop.getHeight()+number*InternalMid[0].getHeight()+titre.getHeight(), null);
+            	g2.drawImage(InternalBot, (int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2), backgroundTop.getHeight()+InternalTop.getHeight()+(number-2)*InternalMid[0].getHeight()+titre.getHeight(), null);
 		}
     	
     	/**
@@ -885,7 +895,19 @@ public class MainView extends JFrame implements KeyListener
 								(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.XONXOFF_OUT")))?jssc.SerialPort.FLOWCONTROL_XONXOFF_OUT:jssc.SerialPort.FLOWCONTROL_NONE);
 			
 			i++;
+			settings.setMagnitude(
+					(comboBoxList.get(i).getSelectedItem().equals("-2"))?-2:
+						(comboBoxList.get(i).getSelectedItem().equals("6"))?6:
+							(comboBoxList.get(i).getSelectedItem().equals("15"))?15:22);
+			//skymap.setMagnitude(settings.getMagnitude());
+			
+			i++;
+			settings.setConstellation((comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.On"))) ? true : false);
+			//skymap.setConstellation(settings.getConstellation());
+			
+			i++;
 			settings.setSimulation((comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.On"))) ? true : false);
+			//pic.setSimulation(settings.getSimulation());
 			
 			settings.saveToFile();
     	}
@@ -909,12 +931,12 @@ public class MainView extends JFrame implements KeyListener
 				for(int i = 0; i < number; i++)
 				{
 					InternalMid[i] = resizeImage(ImageIO.read(new File("res/settings-mid-internal.png")), scale/2);
-				  	settingList.get(i).setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2+30*scale), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight()+(int)(10*scale), (int)(500*scale), (int)(30*scale));
+				  	settingList.get(i).setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2+30*scale), backgroundTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight()+(int)(13*scale), (int)(500*scale), (int)(30*scale));
 				  	settingList.get(i).setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
-				  	comboBoxList.get(i).setBounds((int)(backgroundTop.getWidth()-300*scale), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight()+(int)(4*scale), (int)(250*scale), (int)(40*scale));
+				  	comboBoxList.get(i).setBounds((int)(backgroundTop.getWidth()-300*scale), backgroundTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight()+(int)(8*scale), (int)(250*scale), (int)(40*scale));
 				  	comboBoxList.get(i).setFont(new Font("Calibri", Font.BOLD, (int)(25*scale)));
 				}
-				backgroundMid = resizeImage2(ImageIO.read(new File("res/settings-mid-background.png")), backgroundTop.getWidth(), (number+2)*InternalMid[0].getHeight()+titre.getHeight()+ (int)(15*scale));
+				backgroundMid = resizeImage2(ImageIO.read(new File("res/settings-mid-background.png")), backgroundTop.getWidth(), (number)*InternalMid[0].getHeight()+titre.getHeight()+ (int)(15*scale));
 				InternalBot = resizeImage(ImageIO.read(new File("res/settings-bot-internal.png")), scale/2);
     		} catch (IOException e) {
 				e.printStackTrace();
@@ -1371,7 +1393,7 @@ public class MainView extends JFrame implements KeyListener
 		public void update(double _scale)
 		{
 			scale = _scale;
-			hig = 22;
+			hig = 20;
     		
 			searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
     		int min = (listModelNameOrID.getSize() < 5)?listModelNameOrID.getSize()*21:(int)(200*scale);
