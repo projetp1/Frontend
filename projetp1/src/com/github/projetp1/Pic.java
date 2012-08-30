@@ -17,35 +17,57 @@ import com.github.projetp1.rs232.RS232.PicArrowDirection;
 import com.github.projetp1.rs232.RS232Command;
 import com.github.projetp1.rs232.RS232CommandType;
 
+/**
+ * The Class Pic.
+ */
 public class Pic extends Thread implements Observer
 {
 
+	/** The list of observateur. */
 	private ArrayList<Observateur> listObservateur = new ArrayList<Observateur>();
 
+	/** The longitude received from the GPS. */
 	private double longitude = 0.0;
+	
+	/** The latitude received from the GPS. */
 	private double latitude = 0.0;
 
+	/** The azimuth angle. */
 	private double azimuth = 0.0;
+	
+	/** The pitch angle. */
 	private double pitch = 0.0;
+	
+	/** The roll angle. */
 	private double roll = 0.0;
 	
+	/** The time (in ms) when the latest smooth was performed. */
 	private long lastSmooth = 0;
-	// Âge max d'un smooth en ms
+	
+	/** The time in ms after which it isn't relevant to smooth the values anymore. */
 	private final int SMOOTH_AGE = 600;
 
+	/** The 3 vectors of the accelerometer. */
 	private int[] acc = new int[3];
+	
+	/** The 3 vectors of the magnetometer. */
 	private int[] mag = new int[3];
 
 	// Déclinaison magnétique pour l'endroit en cours
+	/** The magnetic declination at the current location. */
 	float magneticDeclination = 0.0f;
+	
+	/** True when the magnetic declination has been computed. */
 	boolean magSet = false;
 
+	/** The mode in which the PIC is currently operating. */
 	private PicMode mode = PicMode.SIMULATION;
 
+	/** The log. */
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	/**
-	 * The different modes in which the PIC may operate
+	 * The different modes in which the PIC may operate.
 	 */
 	public enum PicMode
 	{
@@ -64,6 +86,7 @@ public class Pic extends Thread implements Observer
 	/** The MainView object. */
 	protected MainView mainview;
 
+	/** The RS232 object. */
 	private RS232 rs;
 
 	/**
@@ -230,6 +253,9 @@ public class Pic extends Thread implements Observer
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run()
 	{
@@ -308,7 +334,9 @@ public class Pic extends Thread implements Observer
 	}
 
 	/**
-	 * Ajoute un observateur à la liste
+	 * Ajoute un observateur à la liste.
+	 *
+	 * @param obs the obs
 	 */
 	@Override
 	public void addObservateur(Observateur obs)
@@ -317,7 +345,7 @@ public class Pic extends Thread implements Observer
 	}
 
 	/**
-	 * Retire tous les observateurs de la liste
+	 * Retire tous les observateurs de la liste.
 	 */
 	@Override
 	public void delObservateur()
@@ -327,7 +355,7 @@ public class Pic extends Thread implements Observer
 
 	/**
 	 * Averti les observateurs que l'observable a changé et invoque la méthode update de chaque
-	 * observateur !
+	 * observateur !.
 	 */
 	@Override
 	public void updateObservateur()

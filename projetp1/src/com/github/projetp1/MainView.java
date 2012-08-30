@@ -436,8 +436,12 @@ public class MainView extends JFrame implements KeyListener
         GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bImageNew = configuration.createCompatibleImage(destWidth, destHeight, 2);
         Graphics2D graphics = bImageNew.createGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        //graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        //graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        
+
+        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        
         graphics.drawImage(bImage, 0, 0, destWidth, destHeight, 0, 0, bImage.getWidth(), bImage.getHeight(), null);
         graphics.dispose();
 
@@ -453,8 +457,12 @@ public class MainView extends JFrame implements KeyListener
         GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bImageNew = configuration.createCompatibleImage(destWidth, destHeight, 2);
         Graphics2D graphics = bImageNew.createGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        //graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        //graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        
+        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        
+        
         graphics.drawImage(bImage, 0, 0, destWidth, destHeight, 0, 0, bImage.getWidth(), bImage.getHeight(), null);
         graphics.dispose();
 
@@ -1228,6 +1236,15 @@ public class MainView extends JFrame implements KeyListener
 										break;
 									case "!ColorIndex":
 										nameOrId += celestialObject.getColorIndex();
+										break;
+									case "!HIP":
+										nameOrId += celestialObject.getHIP();
+										break;
+									case "!HD":
+										nameOrId += celestialObject.getHD();
+										break;
+									case "!HR":
+										nameOrId += celestialObject.getHR();
 										break;
 								}
 
