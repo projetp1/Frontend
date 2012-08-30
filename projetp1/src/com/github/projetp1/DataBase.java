@@ -162,7 +162,7 @@ public class DataBase
 					l_dRA2, l_Dec2, l_dDistance, l_dMag, l_dColorIndex,l_Bayer);
 			this.allConstellations.add(l_star2);
 		}
-		CelestialObject l_star = new CelestialObject(0, 0, 0, 0, "",0, 0, 0, 0, 0,0);
+		CelestialObject l_star = new CelestialObject(0, 0, 0, 0, "Test",0, 0, 0, 0, 0,0);
 		this.allConstellations.add(l_star);
 		result.close();
 	}
@@ -520,10 +520,12 @@ public class DataBase
 			
 			if(!l_bStop)
 			{
-				if(!l_ProperName.equals(l_oldProperName) || l_Id == 0)
+				if(!l_ProperName.equals(l_oldProperName))
 				{
 					al_const.add(l_consts);
 					l_consts = null;
+					if(l_Id == 0)
+						break;
 					l_consts = new Constellation();
 					i=0;
 				}
