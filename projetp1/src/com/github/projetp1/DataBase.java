@@ -196,7 +196,7 @@ public class DataBase
 	 */
 	private Connection createConnection() throws SQLException
 	{
-		return DriverManager.getConnection("jdbc:sqlite:res/" + this.sDataBase);
+		return DriverManager.getConnection("jdbc:sqlite::resource:" + this.sDataBase);
 	}
 
 	/**

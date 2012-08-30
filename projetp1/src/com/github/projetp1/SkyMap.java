@@ -167,8 +167,8 @@ public class SkyMap extends Container implements MouseListener
 		double l_dRoll = 0.0;
 		if(this.mainView.getPic() != null)
 			l_dRoll = this.mainView.getPic().getRoll();
-		Image l_imgArrow = getToolkit().getImage("res/arrow.png");
-		Image l_imgStarHighlight = getToolkit().getImage("res/star_highlight.png");
+		Image l_imgArrow = getToolkit().getImage(getClass().getResource("/arrow.png"));
+		Image l_imgStarHighlight = getToolkit().getImage(getClass().getResource("/star_highlight.png"));
 
 		Font l_font = new Font("Calibri" , Font.BOLD, 16);
 		_g.setFont(l_font);
@@ -216,7 +216,7 @@ public class SkyMap extends Container implements MouseListener
 
 			if (l_name != null && l_name.equals("Sun"))
 			{
-				Image l_imgSun = getToolkit().getImage("res/sun.png");
+				Image l_imgSun = getToolkit().getImage(getClass().getResource("/sun.png"));
 				_g.drawImage(l_imgSun,
 						l_x - (l_imgSun.getHeight(null) / 2),
 						l_y - (l_imgSun.getHeight(null) / 2),
@@ -233,76 +233,76 @@ public class SkyMap extends Container implements MouseListener
 				switch (l_moon)
 				{
 					case 0:
-						l_imgMoon = getToolkit().getImage("res/moon-13.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-13.png"));
 						break;
 					case 1:
-						l_imgMoon = getToolkit().getImage("res/moon-14.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-14.png"));
 						break;
 					case 2:
-						l_imgMoon = getToolkit().getImage("res/moon-15.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-15.png"));
 						break;
 					case 3:
-						l_imgMoon = getToolkit().getImage("res/moon-16.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-16.png"));
 						break;
 					case 4:
-						l_imgMoon = getToolkit().getImage("res/moon-17.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-17.png"));
 						break;
 					case 5:
-						l_imgMoon = getToolkit().getImage("res/moon-18.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-18.png"));
 						break;
 					case 6:
-						l_imgMoon = getToolkit().getImage("res/moon-19.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-19.png"));
 						break;
 					case 7:
-						l_imgMoon = getToolkit().getImage("res/moon-20.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-20.png"));
 						break;
 					case 8:
-						l_imgMoon = getToolkit().getImage("res/moon-21.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-21.png"));
 						break;
 					case 9:
-						l_imgMoon = getToolkit().getImage("res/moon-22.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-22.png"));
 						break;
 					case 10:
-						l_imgMoon = getToolkit().getImage("res/moon-23.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-23.png"));
 						break;
 					case 11:
-						l_imgMoon = getToolkit().getImage("res/moon-1.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-1.png"));
 						break;
 					case 12:
-						l_imgMoon = getToolkit().getImage("res/moon-2.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-2.png"));
 						break;
 					case 13:
-						l_imgMoon = getToolkit().getImage("res/moon-3.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-3.png"));
 						break;
 					case 14:
-						l_imgMoon = getToolkit().getImage("res/moon-4.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-4.png"));
 						break;
 					case 15:
-						l_imgMoon = getToolkit().getImage("res/moon-5.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-5.png"));
 						break;
 					case 16:
-						l_imgMoon = getToolkit().getImage("res/moon-6.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-6.png"));
 						break;
 					case 17:
-						l_imgMoon = getToolkit().getImage("res/moon-7.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-7.png"));
 						break;
 					case 18:
-						l_imgMoon = getToolkit().getImage("res/moon-8.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-8.png"));
 						break;
 					case 19:
-						l_imgMoon = getToolkit().getImage("res/moon-9.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-9.png"));
 						break;
 					case 20:
-						l_imgMoon = getToolkit().getImage("res/moon-10.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-10.png"));
 						break;
 					case 21:
-						l_imgMoon = getToolkit().getImage("res/moon-11.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-11.png"));
 						break;
 					case 22:
-						l_imgMoon = getToolkit().getImage("res/moon-12.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-12.png"));
 						break;
 					default:
-						l_imgMoon = getToolkit().getImage("res/moon-13.png");
+						l_imgMoon = getToolkit().getImage(getClass().getResource("/moon-13.png"));
 						break;
 				}
 
@@ -319,7 +319,7 @@ public class SkyMap extends Container implements MouseListener
 				_g.drawString(l_name, l_x, l_y + 15);
 		}
 
-		Image l_imgCenter = getToolkit().getImage("res/center.png");
+		Image l_imgCenter = getToolkit().getImage(getClass().getResource("/center.png"));
 		_g.drawImage(l_imgCenter,
 				(this.getWidth() / 2 - l_imgCenter.getWidth(null) / 2),
 				(this.getHeight() / 2 - l_imgCenter.getHeight(null) / 2),

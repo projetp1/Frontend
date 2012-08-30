@@ -93,12 +93,12 @@ public class MainView extends JFrame implements KeyListener
 		this.setTitle(Messages.getString("MainView.Title"));
 		
 		ArrayList<Image> icons = new ArrayList<>();
-		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo16.png"));
-		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo32.png"));
-		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo48.png"));
-		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo128.png"));
-		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo256.png"));
-		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo512.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/logo16.png")));
+		icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/logo32.png")));
+		icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/logo48.png")));
+		icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/logo128.png")));
+		icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/logo256.png")));
+		icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/logo512.png")));
 		this.setIconImages(icons);
 		icons = null;
 
@@ -609,8 +609,8 @@ public class MainView extends JFrame implements KeyListener
     	{
     		scale = _scale;
     		try {
-    			imgSettings = resizeImage(ImageIO.read(new File("res/SettingsIcon.png")), scale);
-    			imgHelp = resizeImage(ImageIO.read(new File("res/HelpIcon.png")), scale);
+    			imgSettings = resizeImage(ImageIO.read(getClass().getResource("/SettingsIcon.png")), scale);
+    			imgHelp = resizeImage(ImageIO.read(getClass().getResource("/HelpIcon.png")), scale);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -664,8 +664,8 @@ public class MainView extends JFrame implements KeyListener
 		{
 			scale = _scale;
 			try {
-				imgSettings = resizeImage(ImageIO.read(new File("res/SettingsIcon.png")), scale);
-    			imgHelp = resizeImage(ImageIO.read(new File("res/HelpIcon.png")), scale);
+				imgSettings = resizeImage(ImageIO.read(getClass().getResource("/SettingsIcon.png")), scale);
+    			imgHelp = resizeImage(ImageIO.read(getClass().getResource("/HelpIcon.png")), scale);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -801,13 +801,13 @@ public class MainView extends JFrame implements KeyListener
     		}
     		
     		try {
-    			backgroundTop = resizeImage(ImageIO.read(new File("res/settings-top-background.png")), scale/2);
-    			backgroundMid = resizeImage(ImageIO.read(new File("res/settings-mid-background.png")), scale/2);
-    			backgroundBot = resizeImage(ImageIO.read(new File("res/settings-bot-background.png")), scale/2);
-    			InternalTop = resizeImage(ImageIO.read(new File("res/settings-top-internal.png")), scale/2);
+    			backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/settings-top-background.png")), scale/2);
+    			backgroundMid = resizeImage(ImageIO.read(getClass().getResource("/settings-mid-background.png")), scale/2);
+    			backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/settings-bot-background.png")), scale/2);
+    			InternalTop = resizeImage(ImageIO.read(getClass().getResource("/settings-top-internal.png")), scale/2);
     			for(int i = 0; i< number; i++)
     			{
-    				InternalMid[i] = resizeImage(ImageIO.read(new File("res/settings-mid-internal.png")), scale/2);
+    				InternalMid[i] = resizeImage(ImageIO.read(getClass().getResource("/settings-mid-internal.png")), scale/2);
     				
     				settingList.get(i).setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+25, (int)(500*scale), 30);
                 	settingList.get(i).setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
@@ -817,7 +817,7 @@ public class MainView extends JFrame implements KeyListener
             		this.add(comboBoxList.get(i));
                 	
                 }
-    			InternalBot = resizeImage(ImageIO.read(new File("res/settings-bot-internal.png")), scale/2);
+    			InternalBot = resizeImage(ImageIO.read(getClass().getResource("/settings-bot-internal.png")), scale/2);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -921,23 +921,23 @@ public class MainView extends JFrame implements KeyListener
 			scale = _scale;
 
 			try {
-				backgroundTop = resizeImage(ImageIO.read(new File("res/settings-top-background.png")), scale/2);
+				backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/settings-top-background.png")), scale/2);
 
 				titre.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 				titre.setBounds(0, backgroundTop.getHeight(), backgroundTop.getWidth(), (int)(scale*35));
 				
-				backgroundBot = resizeImage(ImageIO.read(new File("res/settings-bot-background.png")), scale/2);
-				InternalTop = resizeImage(ImageIO.read(new File("res/settings-top-internal.png")), scale/2);
+				backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/settings-bot-background.png")), scale/2);
+				InternalTop = resizeImage(ImageIO.read(getClass().getResource("/settings-top-internal.png")), scale/2);
 				for(int i = 0; i < number; i++)
 				{
-					InternalMid[i] = resizeImage(ImageIO.read(new File("res/settings-mid-internal.png")), scale/2);
+					InternalMid[i] = resizeImage(ImageIO.read(getClass().getResource("/settings-mid-internal.png")), scale/2);
 				  	settingList.get(i).setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2+30*scale), backgroundTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight()+(int)(13*scale), (int)(500*scale), (int)(30*scale));
 				  	settingList.get(i).setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
 				  	comboBoxList.get(i).setBounds((int)(backgroundTop.getWidth()-300*scale), backgroundTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight()+(int)(8*scale), (int)(250*scale), (int)(40*scale));
 				  	comboBoxList.get(i).setFont(new Font("Calibri", Font.BOLD, (int)(25*scale)));
 				}
-				backgroundMid = resizeImage2(ImageIO.read(new File("res/settings-mid-background.png")), backgroundTop.getWidth(), (number)*InternalMid[0].getHeight()+titre.getHeight()+ (int)(15*scale));
-				InternalBot = resizeImage(ImageIO.read(new File("res/settings-bot-internal.png")), scale/2);
+				backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/settings-mid-background.png")), backgroundTop.getWidth(), (number)*InternalMid[0].getHeight()+titre.getHeight()+ (int)(15*scale));
+				InternalBot = resizeImage(ImageIO.read(getClass().getResource("/settings-bot-internal.png")), scale/2);
     		} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -969,12 +969,12 @@ public class MainView extends JFrame implements KeyListener
     	{
     		scale = _scale;
     		try {
-    			backgroundTop = resizeImage(ImageIO.read(new File("res/haut-fond.png")), scale/2);
-    			backgroundMid = resizeImage2(ImageIO.read(new File("res/mid-fond.png")), 1, 200*scale/2);
-    			backgroundBot = resizeImage(ImageIO.read(new File("res/bas-fond.png")), scale/2);
-    			internalTop = resizeImage(ImageIO.read(new File("res/haut-interieur.png")), scale/2);
-    			internalMid = resizeImage2(ImageIO.read(new File("res/mid-interne.png")), 1, 50*scale/2);
-    			internalBot = resizeImage(ImageIO.read(new File("res/bas-interieur.png")), scale/2);
+    			backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/haut-fond.png")), scale/2);
+    			backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-fond.png")), 1, 200*scale/2);
+    			backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/bas-fond.png")), scale/2);
+    			internalTop = resizeImage(ImageIO.read(getClass().getResource("/haut-interieur.png")), scale/2);
+    			internalMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-interne.png")), 1, 50*scale/2);
+    			internalBot = resizeImage(ImageIO.read(getClass().getResource("/bas-interieur.png")), scale/2);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -1035,9 +1035,9 @@ public class MainView extends JFrame implements KeyListener
 			scale = _scale;
 			
 			try {
-    			backgroundTop = resizeImage(ImageIO.read(new File("res/haut-fond.png")), scale/2);
-    			backgroundBot = resizeImage(ImageIO.read(new File("res/bas-fond.png")), scale/2);
-    			internalTop = resizeImage(ImageIO.read(new File("res/haut-interieur.png")), scale/2);
+    			backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/haut-fond.png")), scale/2);
+    			backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/bas-fond.png")), scale/2);
+    			internalTop = resizeImage(ImageIO.read(getClass().getResource("/haut-interieur.png")), scale/2);
     			
     			titre.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
     			titre.setBounds(0, backgroundTop.getHeight(), backgroundTop.getWidth(), (int)(scale*35));
@@ -1046,9 +1046,9 @@ public class MainView extends JFrame implements KeyListener
     			text.setBounds((int)(40*scale), backgroundTop.getHeight()+internalTop.getHeight(), (int)(internalTop.getWidth()), (int)(scale*26*9));
     			
     			
-    			internalMid = resizeImage2(ImageIO.read(new File("res/mid-interne.png")), text.getWidth(), text.getHeight()-52*scale);
-    			backgroundMid = resizeImage2(ImageIO.read(new File("res/mid-fond.png")), backgroundTop.getWidth(), text.getHeight()+titre.getHeight()*2.7);
-    			internalBot = resizeImage(ImageIO.read(new File("res/bas-interieur.png")), scale/2);
+    			internalMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-interne.png")), text.getWidth(), text.getHeight()-52*scale);
+    			backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-fond.png")), backgroundTop.getWidth(), text.getHeight()+titre.getHeight()*2.7);
+    			internalBot = resizeImage(ImageIO.read(getClass().getResource("/bas-interieur.png")), scale/2);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -1409,7 +1409,7 @@ public class MainView extends JFrame implements KeyListener
 			public StopButton(double _scale){
 				try
 				{
-					cross = ImageIO.read(new File("res/Cross.png"));
+					cross = ImageIO.read(getClass().getResource("/Cross.png"));
 				}
 				catch (IOException ex)
 				{
@@ -1464,13 +1464,13 @@ public class MainView extends JFrame implements KeyListener
 		{
 			scale = _scale;
 			try {
-				background = resizeImage(ImageIO.read(new File("res/backgroundCompass.png")),scale);
+				background = resizeImage(ImageIO.read(getClass().getResource("/backgroundCompass.png")),scale);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
-			redNeedle = new Needle("res/aiguille_rouge.png", scale);
-			greenNeedle = new Needle("res/aiguille_vert.png", scale);
+			redNeedle = new Needle("/aiguille_rouge.png", scale);
+			greenNeedle = new Needle("/aiguille_vert.png", scale);
 			
 			redNeedle.setBackground(this.getBackground());
 			redNeedle.setBounds(0, 0, (int)(scale*345), (int)(scale*304));
@@ -1513,7 +1513,7 @@ public class MainView extends JFrame implements KeyListener
 		{
 			scale = _scale;
 			try {
-				background = resizeImage(ImageIO.read(new File("res/backgroundCompass.png")),scale);
+				background = resizeImage(ImageIO.read(getClass().getResource("/backgroundCompass.png")),scale);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -1616,7 +1616,7 @@ public class MainView extends JFrame implements KeyListener
 				adresseImage = _adresseImage;
 				try
 				{
-					needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+					needleImage = resizeImage(ImageIO.read(getClass().getResource(adresseImage)),scale);
 				}
 				catch (IOException e)
 				{
@@ -1630,7 +1630,7 @@ public class MainView extends JFrame implements KeyListener
 				{
 					scale = _scale;
 					try {
-						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+						needleImage = resizeImage(ImageIO.read(getClass().getResource(adresseImage)),scale);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -1681,14 +1681,14 @@ public class MainView extends JFrame implements KeyListener
 		{
 			scale = _scale;
 			try {
-				background = resizeImage(ImageIO.read(new File("res/backgroundInclinometer.png")),scale);
+				background = resizeImage(ImageIO.read(getClass().getResource("/backgroundInclinometer.png")),scale);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
 			
-			redNeedle = new Needle("res/aiguille_rouge_inclinometer.png", scale);
-			greenNeedle = new Needle("res/aiguille_vert_inclinometer.png", scale);
+			redNeedle = new Needle("/aiguille_rouge_inclinometer.png", scale);
+			greenNeedle = new Needle("/aiguille_vert_inclinometer.png", scale);
 			
 			
 			redNeedle.setBackground(this.getBackground());
@@ -1739,7 +1739,7 @@ public class MainView extends JFrame implements KeyListener
 		{
 			scale = _scale;
 			try {
-				background = resizeImage(ImageIO.read(new File("res/backgroundInclinometer.png")),scale);
+				background = resizeImage(ImageIO.read(getClass().getResource("/backgroundInclinometer.png")),scale);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -1805,7 +1805,7 @@ public class MainView extends JFrame implements KeyListener
 				adresseImage = _adresseImage;
 				try
 				{
-					needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+					needleImage = resizeImage(ImageIO.read(getClass().getResource(adresseImage)),scale);
 				}
 				catch (IOException e)
 				{
@@ -1823,7 +1823,7 @@ public class MainView extends JFrame implements KeyListener
 				{
 					scale = _scale;
 					try {
-						needleImage = resizeImage(ImageIO.read(new File(adresseImage)),scale);
+						needleImage = resizeImage(ImageIO.read(getClass().getResource(adresseImage)),scale);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
