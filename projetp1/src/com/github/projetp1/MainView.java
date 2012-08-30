@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -35,6 +36,7 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 
 import com.github.projetp1.Pic.PicMode;
+import com.github.projetp1.rs232.RS232.PicArrowDirection;
 
 
 /**
@@ -79,6 +81,8 @@ public class MainView extends JFrame implements KeyListener
 	private double yOrigin = 0;
 	private double scale = 0.1;
 	private double scale_old = scale;
+	private double redArrowAzimuth;
+	private double redArrowPitch;
 		
 	/**
 	 * Constructor
@@ -87,7 +91,16 @@ public class MainView extends JFrame implements KeyListener
 	{
 
 		this.setTitle(Messages.getString("MainView.Title"));
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/logo48.png"));
+		
+		ArrayList<Image> icons = new ArrayList<>();
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo16.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo32.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo48.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo128.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo256.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo512.png"));
+		this.setIconImages(icons);
+		icons = null;
 
 		try
 		{
@@ -202,8 +215,107 @@ public class MainView extends JFrame implements KeyListener
 		coordinate.setText(decimalToDMS(Math.abs(lat)) + " " + hemNS + ", " + decimalToDMS(Math.abs(lon)) + " " + hemWE);
 
 		skymap.updateSkyMap();	
+		PicArrowDirection dir = null;
+		if(pic != null)
+		{
+			double greenAzimuth = pic.getAzimuth();
+			double greenPitch = pic.getPitch();
+			double resAzimuth = 0;
+			double resPitch = greenPitch - redArrowPitch;
+			
+			if(greenAzimuth < 0)
+				greenAzimuth += 360;
+			if(redArrowAzimuth < 0)
+				 resAzimuth = greenAzimuth - (redArrowAzimuth+360);
+			else
+				resAzimuth = greenAzimuth - redArrowAzimuth;
+			
+			if(resAzimuth < -10)
+			{
+				if(resPitch < -10)
+				{
+					dir = PicArrowDirection.NORTHEAST;
+				}
+				else if(resPitch > 10)
+				{
+					dir =PicArrowDirection.SOUTHEAST;
+				}
+				else
+				{
+					dir =PicArrowDirection.EAST;
+				}
+				
+			}
+			else if(resAzimuth > 10)
+			{
+				if(resPitch < -10)
+				{
+					dir =PicArrowDirection.NORTHWEST;
+				}
+				else if(resPitch > 10)
+				{
+					dir =PicArrowDirection.SOUTHWEST;
+				}
+				else
+				{
+					dir =PicArrowDirection.WEST;
+				}
+			}
+			else
+			{
+				if(resPitch < -10)
+				{
+					dir =PicArrowDirection.NORTH;
+				}
+				else if(resPitch > 10)
+				{
+					dir =PicArrowDirection.SOUTH;
+				}
+				else
+				{
+					dir =PicArrowDirection.ONTARGET;
+				}
+			}
+			double roll = pic.getRoll();
+			if(roll < 0)
+				roll += 360;
+			roll /= 45;
+			int num = (int) Math.round(roll);
+			for(int i = 0; i < num; i++)
+			{
+				dir = addOneToDir(dir);
+			}
+			
+			pic.setPicArrow(dir);
+			
+		}
+				
 	}
 	
+	private PicArrowDirection addOneToDir(PicArrowDirection dir)
+	{
+		switch(dir)
+		{
+			case NORTH:
+				return PicArrowDirection.NORTHWEST;
+			case NORTHEAST:
+				return PicArrowDirection.NORTH;
+			case EAST:
+				return PicArrowDirection.NORTHEAST;
+			case SOUTHEAST:
+				return PicArrowDirection.EAST;
+			case SOUTH:
+				return PicArrowDirection.SOUTHEAST;
+			case SOUTHWEST:
+				return PicArrowDirection.SOUTH;
+			case WEST:
+				return PicArrowDirection.SOUTHWEST;
+			case NORTHWEST:
+				return PicArrowDirection.WEST;
+			default:
+				return PicArrowDirection.ONTARGET;
+		}
+	}
 	
 	/**
 	 * Convert decimal coordinates to DMS
@@ -1083,10 +1195,10 @@ public class MainView extends JFrame implements KeyListener
         		updateInfo(celObjt);
         		skymap.setCelestialObjectSearched(celObjt);
         		
-        		double l_dDegreeCompassObjectSearched = celObjt.getAzimuth() * 180 / Math.PI;
-        		double l_dAngleInclinometerObjectSearched = celObjt.getHeight() * 180 / Math.PI;
-        		compassPanel.setRedNeedle(l_dDegreeCompassObjectSearched);
-        		inclinometerPanel.setRedNeedle(l_dAngleInclinometerObjectSearched);
+        		redArrowAzimuth = celObjt.getAzimuth() * 180 / Math.PI;
+        		redArrowPitch = celObjt.getHeight() * 180 / Math.PI;
+        		compassPanel.setRedNeedle(redArrowAzimuth);
+        		inclinometerPanel.setRedNeedle(redArrowPitch);
         		compassPanel.setSearchMode(true);
         		inclinometerPanel.setSearchMode(true);
     			
@@ -1096,7 +1208,7 @@ public class MainView extends JFrame implements KeyListener
         		l_sSavedSearch = searchBarTextField.getText();
         		searchBarTextField.setText(listNameOrID.getSelectedValue().toString());
         		skymap.transferFocusBackward();
-        		skymap.updateSkyMap();	
+        		MainView.this.update();
         		return;
         	}
     		
