@@ -26,6 +26,8 @@ public class Settings
 	private int stopbit;
 	private int parity;
 	private int flowControl;
+	private int magnitude;
+	private boolean constellation;
 	private boolean simulation;
 	
 	private static final String KEY_PORT = "port";
@@ -34,6 +36,8 @@ public class Settings
 	private static final String KEY_STOPBIT = "stopbit";
 	private static final String KEY_PARITY = "parity";
 	private static final String KEY_FLOWCONTROL = "flowctrl";
+	private static final String KEY_MAGNITUDE = "magnitude";
+	private static final String KEY_CONSTELATION = "constelation";
 	private static final String KEY_SIMULATION = "simulation";
 	
 	private String filename = "settings.conf";
@@ -62,6 +66,8 @@ public class Settings
 			this.stopbit = jssc.SerialPort.STOPBITS_1;
 			this.parity = jssc.SerialPort.PARITY_NONE;
 			this.flowControl = jssc.SerialPort.FLOWCONTROL_NONE;
+			this.magnitude =  6;
+			this.constellation = false;
 			this.simulation = false;
 			
 			saveToFile();
@@ -88,6 +94,8 @@ public class Settings
 			stopbit = jRoot.getInt(KEY_STOPBIT);
 			parity = jRoot.getInt(KEY_PARITY);
 			flowControl = jRoot.getInt(KEY_FLOWCONTROL);
+			magnitude = jRoot.getInt(KEY_MAGNITUDE);
+			constellation = jRoot.getBoolean(KEY_CONSTELATION);
 			simulation = jRoot.getBoolean(KEY_SIMULATION);
 		}
 		catch (IOException ex)
@@ -122,6 +130,8 @@ public class Settings
 			jRoot.put(KEY_STOPBIT, stopbit);
 			jRoot.put(KEY_PARITY, parity);
 			jRoot.put(KEY_FLOWCONTROL, flowControl);
+			jRoot.put(KEY_MAGNITUDE, magnitude);
+			jRoot.put(KEY_CONSTELATION, constellation);
 			jRoot.put(KEY_SIMULATION, simulation);
 		}
 		catch (JSONException ex)
@@ -413,7 +423,65 @@ public class Settings
 				this.flowControl = _flowControl;
 		}
 	}
+	
+	/**
+	 * Gets the magnitude.
+	 *
+	 * @return the magnitude
+	 */
+	public int getMagnitude()
+	{
+		return magnitude;
+	}
+	/**
+	 * Gets the magnitude list.
+	 *
+	 * @return the magnitude list
+	 */
+	public static int[] getMagnitudeList()
+	{
+		return new int[] {
+				-2,
+				6,
+				15,
+				22
+		};
+	}
 
+	/**
+	 * Sets the flow control.
+	 *
+	 * @param _flowControl the new flow control
+	 */
+	public void setMagnitude(int _magnitude)
+	{
+		for(int l_i : getFlowControlList())
+		{
+			if(l_i == _magnitude)
+				this.magnitude = _magnitude;
+		}
+	}
+
+	/**
+	 * Gets the constellation.
+	 *
+	 * @return the constellation
+	 */
+	public Boolean getConstellation()
+	{
+		return constellation;
+	}
+
+	/**
+	 * Sets the constellation.
+	 *
+	 * @param _constellation the new constellation
+	 */
+	public void setConstellation(boolean _constellation)
+	{
+		this.constellation = _constellation;
+	}
+	
 	/**
 	 * Gets the simulation.
 	 *
