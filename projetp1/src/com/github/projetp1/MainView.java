@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -90,7 +91,16 @@ public class MainView extends JFrame implements KeyListener
 	{
 
 		this.setTitle(Messages.getString("MainView.Title"));
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage("res/logo48.png"));
+		
+		ArrayList<Image> icons = new ArrayList<>();
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo16.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo32.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo48.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo128.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo256.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("res/logo512.png"));
+		this.setIconImages(icons);
+		icons = null;
 
 		try
 		{
