@@ -455,17 +455,23 @@ public class SkyMap extends Container implements MouseListener
 	{
 		Color c;
 		if (_colorIndex >= 1.41)
-			c = new Color(255, 200, 200, _alpha);
+			//pink 255 200 200
+			c = new Color(255, 215, 215, _alpha);
 		else if (_colorIndex >= 0.82)
-			c = new Color(255, 225, 150, _alpha);
+			//orange 255 225 150
+			c = new Color(255, 230, 170, _alpha);
 		else if (_colorIndex >= 0.59)
-			c = new Color(255, 255, 130, _alpha);
+			//yellow 255 255 130
+			c = new Color(255, 255, 160, _alpha);
 		else if (_colorIndex >= 0.31)
-			c = new Color(255, 255, 200, _alpha);
+			//beige 255 255 200
+			c = new Color(255, 255, 220, _alpha);
 		else if (_colorIndex >= 0.0)
+			//white 255 255 255
 			c = new Color(255, 255, 255, _alpha);
 		else
-			c = new Color(215, 215, 255, _alpha);
+			//blue 215 215 255
+			c = new Color(240, 240, 255, _alpha);
 
 		return c;
 	}
