@@ -21,11 +21,19 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
+
+import sun.java2d.pipe.DrawImage;
+
 import com.github.projetp1.Pic.PicMode;
 import com.github.projetp1.rs232.RS232.PicArrowDirection;
 
@@ -144,6 +152,9 @@ public class SkyMap extends Container implements MouseListener
 	@Override
 	public void paint(Graphics _g)
 	{
+		Graphics2D g2 = (Graphics2D)_g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		if (celestialObjects == null)
 		{
 			log.severe("No celestial objects to display");
@@ -180,9 +191,9 @@ public class SkyMap extends Container implements MouseListener
 							l_xCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[0] * zoom * l_scale),
 							l_yCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[1] * zoom * l_scale)
 							);
-				}
+				}				
 				//TODO: Si on a le temps faire un algorithme pour centrer le nom de la constellation
-				_g.drawString(((constellation.getProperName() != null) ? constellation.getProperName() : ""), l_xName, l_yName);
+				_g.drawString(((constellation.getProperName() != null) ? constellation.getProperName() : ""), l_xName, l_yName - 10);
 			}
 		}
 		
@@ -302,20 +313,10 @@ public class SkyMap extends Container implements MouseListener
 							null);
 			}
 			else
-			{
 				_g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
-				l_color = getColorForColorIndex(celestialObject.getColorIndex(), 200);
-				_g.setColor(l_color);
-				l_d += 1;
-				_g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
-				l_color = getColorForColorIndex(celestialObject.getColorIndex(), 100);
-				_g.setColor(l_color);
-				l_d += 1;
-				_g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
-			}
 
 			if (l_name != null)
-				_g.drawString(l_name, l_x, l_y - 10);
+				_g.drawString(l_name, l_x, l_y + 15);
 		}
 
 		Image l_imgCenter = getToolkit().getImage("res/center.png");
@@ -340,11 +341,10 @@ public class SkyMap extends Container implements MouseListener
 			if (!(l_xStarPointed > this.getWidth() * 0.1 && l_xStarPointed < this.getWidth() * 0.9  //Marge de 10%
 					&& l_yStarPointed > this.getHeight() * 0.1 && l_yStarPointed < this.getHeight() * 0.9))
 			{
-				double l_dAngle = -getArrowAngle(celestialObjectSearched);
-				Graphics2D g2 = (Graphics2D) _g;
+				double l_dAngle = -getArrowAngle(celestialObjectSearched, l_dRoll);
 				g2.rotate(l_dAngle, this.getWidth() / 2, this.getHeight() / 2);
 				g2.drawImage(l_imgArrow, (this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2), (this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), null);
-				log.info("Arrow painted");
+				log.info("Arrow painted" + l_imgArrow.toString());
 			}
 		}
 	}
@@ -358,60 +358,26 @@ public class SkyMap extends Container implements MouseListener
 	 *            The star object
 	 * @return The angle
 	 */
-	private double getArrowAngle(CelestialObject _object)
+	private double getArrowAngle(CelestialObject _object, double _dRoll)
 	{
-		double l_dAngle = Math.atan((_object.getYReal() - dYOrigin)
-				/ (_object.getXReal() - dXOrigin));
+		_dRoll = Math.toRadians(_dRoll);
+		
+		//double[] l_dObjectPosition = Mathematics.getNewXYRotation(_object.getXReal(), _object.getYReal(), _dRoll);
+		//double l_dAngle = Math.atan((l_dObjectPosition[1] - dYOrigin) / (l_dObjectPosition[0] - dXOrigin));
+		
+		
+		
+		double l_dAngle = Math.atan((_object.getYReal() - dYOrigin) / (_object.getXReal() - dXOrigin));
 
+		
+		
+		if(_dRoll < 0)
+			_dRoll += 2 * Math.PI;
+		
 		if (dXOrigin > _object.getXReal())
 			l_dAngle += Math.PI;
 
-		double dblAngle = Math.toDegrees(l_dAngle);
-		dblAngle += 90;
-		dblAngle /= 45;
-		int iAngle = (int) Math.round(dblAngle);
-
-		// log.info("angle : " + Math.toDegrees(l_dangle) + "\r\n");
-
-		if(mainView.getPic() != null && mainView.getPic().getMode() == Pic.PicMode.GUIDING)
-		{
-			PicArrowDirection dir = null;
-
-			switch (iAngle)
-			{
-				case 0:
-					dir = PicArrowDirection.SOUTH;
-					break;
-				case 1:
-					dir = PicArrowDirection.SOUTHEAST;
-					break;
-				case 2:
-					dir = PicArrowDirection.EAST;
-					break;
-				case 3:
-					dir = PicArrowDirection.NORTHEAST;
-					break;
-				case 4:
-					dir = PicArrowDirection.NORTH;
-					break;
-				case 5:
-					dir = PicArrowDirection.NORTHWEST;
-					break;
-				case 6:
-					dir = PicArrowDirection.WEST;
-					break;
-				case 7:
-					dir = PicArrowDirection.SOUTHWEST;
-					break;
-				default:
-					break;
-			}
-			if (dir != null && (lastArrowSent == null || lastArrowSent != dir))
-			{
-				mainView.getPic().setPicArrow(dir);
-				lastArrowSent = dir;
-			}
-		}
+		l_dAngle += _dRoll;
 
 		return l_dAngle;
 	}
