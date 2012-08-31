@@ -36,7 +36,7 @@ public class Pic extends Thread implements Observer
 	private double azimuth = 0.0;
 	
 	/** The pitch angle. */
-	private double pitch = 0.0;
+	private double pitch = 90.0;
 	
 	/** The roll angle. */
 	private double roll = 0.0;
