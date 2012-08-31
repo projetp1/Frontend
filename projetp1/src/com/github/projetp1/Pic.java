@@ -111,8 +111,6 @@ public class Pic extends Thread implements Observer
 		{
 			ex.printStackTrace();
 		}
-
-		this.start();
 	}
 
 	/**
