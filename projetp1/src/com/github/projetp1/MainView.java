@@ -217,7 +217,7 @@ public class MainView extends JFrame implements KeyListener
 
 		skymap.updateSkyMap();	
 		PicArrowDirection dir = null;
-		if(pic != null)
+		if(pic != null && pic.getMode() == PicMode.GUIDING)
 		{
 			double greenAzimuth = pic.getAzimuth();
 			double greenPitch = pic.getPitch();
@@ -1303,7 +1303,7 @@ public class MainView extends JFrame implements KeyListener
         		inclinometerPanel.setSearchMode(true);
     			
         		if(pic != null && pic.getMode() != PicMode.SIMULATION)
-        			pic.setMode(PicMode.GUIDING);
+        			pic.changeMode(PicMode.GUIDING);
         		
         		l_sSavedSearch = searchBarTextField.getText();
         		searchBarTextField.setText(listNameOrID.getSelectedValue().toString());
@@ -1506,6 +1506,8 @@ public class MainView extends JFrame implements KeyListener
 	    		skymap.updateSkyMap();
 	    		searchBarTextField.setText(null);
 	    		l_sSavedSearch = null;
+	    		if(pic.getMode() == PicMode.GUIDING)
+	    			pic.changeMode(PicMode.POINTING);
         		compassPanel.setSearchMode(false);
         		inclinometerPanel.setSearchMode(false);
         		jScrollPane.setVisible(false);

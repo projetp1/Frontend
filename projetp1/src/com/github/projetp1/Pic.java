@@ -222,7 +222,7 @@ public class Pic extends Thread implements Observer
 	}
 
 	/**
-	 * Sets the mode.
+	 * Sets the mode (attribute change only)
 	 * 
 	 * @param mode
 	 *            the new mode
@@ -230,6 +230,26 @@ public class Pic extends Thread implements Observer
 	public void setMode(PicMode mode)
 	{
 		this.mode = mode;
+	}
+	
+	/**
+	 * Change the mode, and notify the PIC.
+	 *
+	 * @param mode the new mode
+	 * @return true, if successful
+	 */
+	public boolean changeMode(PicMode mode)
+	{
+		try
+		{
+			rs.modeHasChanged(mode);
+			return true;
+		}
+		catch (SerialPortException ex)
+		{
+			log.warning("Impossible to change the mode of the PIC");
+			return false;
+		}
 	}
 
 	/**
