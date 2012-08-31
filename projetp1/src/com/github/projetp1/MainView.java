@@ -416,7 +416,32 @@ public class MainView extends JFrame implements KeyListener
 	{
 		if(zoom>1 || evt.getWheelRotation() < 0)
         	zoom-=evt.getWheelRotation();
-        
+		double diffX = evt.getX() - (skymap.getWidth()/2);
+		double diffY = evt.getY() - (skymap.getHeight()/2);
+		
+		double scaleX = diffX / skymap.getWidth();
+		double scaleY = diffY / skymap.getHeight();
+
+		scaleX /= zoom;
+		scaleY /= zoom;
+		
+		
+		xOrigin += scaleX;
+		yOrigin -= scaleY;
+		
+		if(xOrigin > 1)
+			xOrigin = 1;
+		else if(xOrigin < -1)
+			xOrigin =-1;
+		
+		if(yOrigin > 1)
+			yOrigin = 1;
+		else if(yOrigin < -1)
+			yOrigin =-1;
+
+        skymap.setXOrigin(xOrigin);
+        skymap.setYOrigin(yOrigin);
+		
         zoomBarPanel.zoomSlider.setValue(zoom);
         skymap.setZoom(zoom);
         skymap.updateSkyMap();
