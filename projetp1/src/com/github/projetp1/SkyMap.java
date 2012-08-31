@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
+import javax.swing.JPanel;
+
 import com.github.projetp1.Pic.PicMode;
 
 @SuppressWarnings("serial")
@@ -45,6 +47,7 @@ public class SkyMap extends Container implements MouseListener
 	private CelestialObject celestialObjectSearched = null;
 	private MainView mainView = null;
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	private Animation highlight = null;
 
 	/**
 	 * SkyMap Constructor
@@ -60,13 +63,12 @@ public class SkyMap extends Container implements MouseListener
 
 		mainView = _mainView;
 		
-		bShowConstellations = mainView.getSettings().getSimulation();
+		bShowConstellations = true;//mainView.getSettings().getSimulation();
 		dMagnitudeMax = mainView.getSettings().getMagnitude();
 		
-		Animate _test = new Animate();
-		_test.init();
-		_test.start();
-		this.add(_test);
+		highlight = new Animation(500);
+		highlight.start();
+		this.add(highlight);
 	}
 
 	/**
@@ -226,7 +228,7 @@ public class SkyMap extends Container implements MouseListener
 				_g.drawImage(l_imgSun,
 						l_x - (l_imgSun.getHeight(null) / 2),
 						l_y - (l_imgSun.getHeight(null) / 2),
-						null);
+						this);
 				_g.drawString(l_name, l_x - (l_imgSun.getHeight(null) / 2) + 20, l_y - (l_imgSun.getHeight(null) / 2) + 5);
 			}
 			else if (l_name != null && l_name.equals("Moon"))
@@ -318,7 +320,7 @@ public class SkyMap extends Container implements MouseListener
 					_g.drawImage(l_imgMoon, 
 							l_x - (l_imgMoon.getHeight(null) / 2),
 							l_y - (l_imgMoon.getHeight(null) / 2), 
-							null);
+							this);
 					_g.drawString(l_name, l_x - (l_imgMoon.getHeight(null) / 2) + 5, l_y - (l_imgMoon.getHeight(null) / 2) - 5);
 				}
 			}
@@ -336,7 +338,7 @@ public class SkyMap extends Container implements MouseListener
 		_g.drawImage(l_imgCenter,
 				(this.getWidth() / 2 - l_imgCenter.getWidth(null) / 2),
 				(this.getHeight() / 2 - l_imgCenter.getHeight(null) / 2),
-				null);
+				this);
 		
 		if (celestialObjectSearched != null)
 		{
@@ -348,7 +350,7 @@ public class SkyMap extends Container implements MouseListener
 				_g.drawImage(l_imgStarHighlight,
 						l_xStarPointed - l_imgStarHighlight.getWidth(null) / 2,
 						l_yStarPointed - l_imgStarHighlight.getHeight(null) / 2,
-						null);
+						this);
 			}
 
 			if (!(l_xStarPointed > this.getWidth() * 0.1 && l_xStarPointed < this.getWidth() * 0.9  //Marge de 10%
@@ -356,7 +358,7 @@ public class SkyMap extends Container implements MouseListener
 			{
 				double l_dAngle = -getArrowAngle(celestialObjectSearched, l_dRoll);
 				g2.rotate(l_dAngle, this.getWidth() / 2, this.getHeight() / 2);
-				g2.drawImage(l_imgArrow, (this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2), (this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), null);
+				g2.drawImage(l_imgArrow, (this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2), (this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), this);
 			}
 		}
 	}
@@ -519,44 +521,37 @@ public class SkyMap extends Container implements MouseListener
 	public void mouseReleased(MouseEvent _arg0)
 	{
 	}
-	
-	public class Animate extends javax.swing.JApplet implements Runnable
+	/*
+	public class Animation extends JPanel implements Runnable
 	{
 
-		Image[] picture = new Image[10];
-		int totalPictures = 0;
+		Image[] images = new Image[10];
 		int current = 0;
 		Thread runner;
 		int pause = 500;
 
+		public Animation (int _intervale)
+		{
+			pause = _intervale;
+			init();
+		}
+		
 		public void init()
 		{
 			for (int i = 0; i < 10; i++)
 			{
-				String imageText = null;
-				imageText ="pointeur" + i+1 + ".png";
-				if (imageText != null)
-				{
-					totalPictures++;
-					picture[i] = getToolkit().getImage(getClass().getResource(imageText));
-				}
-				else
-					break;
-			}
-			String pauseText = null;
-			pauseText = "pause";
-			if (pauseText != null)
-			{
-				pause = 500;
+				String imageText = "pointeur" + (i+1) + ".png";
+				images[i] = getToolkit().getImage(getClass().getResource(imageText));
 			}
 		}
 
-		public void paint(Graphics screen)
+		@Override
+		public void paint(Graphics _g)
 		{
-			super.paint(screen);
-			Graphics2D screen2D = (Graphics2D) screen;
-			if (picture[current] != null)
-				screen2D.drawImage(picture[current], 0, 0, this);
+			log.info("paint");
+			Graphics2D g2 = (Graphics2D) _g;
+			if (images[current] != null)
+				g2.drawImage(images[current], 0, 0, this);
 		}
 
 		public void start()
@@ -573,9 +568,12 @@ public class SkyMap extends Container implements MouseListener
 			Thread thisThread = Thread.currentThread();
 			while (runner == thisThread)
 			{
-				repaint();
+				this.repaint();
+				this.validate();
+				
+				log.info("run");
 				current++;
-				if (current >= totalPictures)
+				if (current >= images.length)
 					current = 0;
 				try
 				{
@@ -594,5 +592,5 @@ public class SkyMap extends Container implements MouseListener
 				runner = null;
 			}
 		}
-	}
+	}*/
 }
