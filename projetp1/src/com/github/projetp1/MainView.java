@@ -18,7 +18,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -62,7 +61,7 @@ public class MainView extends JFrame implements KeyListener
 	{
 		return db;
 	}
-
+	
 
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -83,7 +82,9 @@ public class MainView extends JFrame implements KeyListener
 	private double scale_old = scale;
 	private double redArrowAzimuth;
 	private double redArrowPitch;
-
+	
+	private PicArrowDirection lastArrowSent = null;
+		
 	/**
 	 * Constructor
 	 */
@@ -91,7 +92,7 @@ public class MainView extends JFrame implements KeyListener
 	{
 
 		this.setTitle(Messages.getString("MainView.Title"));
-
+		
 		ArrayList<Image> icons = new ArrayList<>();
 		icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/logo16.png")));
 		icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/logo32.png")));
@@ -110,15 +111,15 @@ public class MainView extends JFrame implements KeyListener
 		{
 			ex.printStackTrace();
 		}
-
+		  
 		leftPanel = new JLabel("");
 		leftPanel.setBounds(100, 100, 100, 200);
 		leftPanel.setForeground(new Color(250, 250, 250));
-
+		
 		coordinate = new JLabel(0 + "° N, " + 0 + "° S", JLabel.RIGHT);
 		coordinate.setBounds((int)(20 * scale), this.getHeight() - (int)(20 * scale), 200, 20);
 		coordinate.setForeground(Color.WHITE);
-
+		
         buttonsPanel = new Buttons(scale);
 		buttonsPanel.setLocation((int)(width() / 2 - buttonsPanel.getWidth() / 2), 5);
 
@@ -145,7 +146,7 @@ public class MainView extends JFrame implements KeyListener
 				(100+inclinometerPanel.getHeight()));
 
 		skymap = new SkyMap(this);
-
+		
 		getLayeredPane().add(leftPanel);
 		getLayeredPane().add(coordinate);
 		getLayeredPane().add(buttonsPanel);
@@ -168,7 +169,7 @@ public class MainView extends JFrame implements KeyListener
                 formComponentResized(evt);
             }
         });
-
+		
 		this.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
 		      public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
@@ -211,7 +212,7 @@ public class MainView extends JFrame implements KeyListener
 			hemNS = 'S';
 		if (lon < 0.0)
 			hemWE = 'W';
-
+		
 		coordinate.setText(decimalToDMS(Math.abs(lat)) + " " + hemNS + ", " + decimalToDMS(Math.abs(lon)) + " " + hemWE);
 
 		skymap.updateSkyMap();	
@@ -222,14 +223,14 @@ public class MainView extends JFrame implements KeyListener
 			double greenPitch = pic.getPitch();
 			double resAzimuth = 0;
 			double resPitch = greenPitch - redArrowPitch;
-
+			
 			if(greenAzimuth < 0)
 				greenAzimuth += 360;
 			if(redArrowAzimuth < 0)
 				 resAzimuth = greenAzimuth - (redArrowAzimuth+360);
 			else
 				resAzimuth = greenAzimuth - redArrowAzimuth;
-
+			
 			if(resAzimuth < -10)
 			{
 				if(resPitch < -10)
@@ -244,7 +245,7 @@ public class MainView extends JFrame implements KeyListener
 				{
 					dir =PicArrowDirection.EAST;
 				}
-
+				
 			}
 			else if(resAzimuth > 10)
 			{
@@ -285,13 +286,18 @@ public class MainView extends JFrame implements KeyListener
 			{
 				dir = addOneToDir(dir);
 			}
-
-			pic.setPicArrow(dir);
-
+			
+			if(lastArrowSent == null)
+				lastArrowSent = dir;
+			else if(dir != lastArrowSent)
+			{
+				pic.setPicArrow(dir);
+				lastArrowSent = dir;
+			}
 		}
-
+				
 	}
-
+	
 	private PicArrowDirection addOneToDir(PicArrowDirection dir)
 	{
 		switch(dir)
@@ -316,7 +322,7 @@ public class MainView extends JFrame implements KeyListener
 				return PicArrowDirection.ONTARGET;
 		}
 	}
-
+	
 	/**
 	 * Convert decimal coordinates to DMS
 	 * 
@@ -381,7 +387,7 @@ public class MainView extends JFrame implements KeyListener
 
 		return output;
 	}
-
+	
 	/**
 	 * When the user click on the skymap, the other window hide and the skymap will be selected.
 	 */  
@@ -392,12 +398,12 @@ public class MainView extends JFrame implements KeyListener
 		if(!this.hasFocus())
 			skymap.transferFocusBackward();
 	}
-
+	
 	/**
 	 * 
 	 */  
 	public void keyTyped(KeyEvent evt){}
-
+	
 	/**
 	 * 
 	 */  
@@ -416,7 +422,7 @@ public class MainView extends JFrame implements KeyListener
         skymap.updateSkyMap();
         
 	} 
-
+	
 	/**
 	 * navigation on the skymap.
 	 */  
@@ -455,14 +461,14 @@ public class MainView extends JFrame implements KeyListener
 	        }
 
 	        zoomBarPanel.zoomSlider.setValue(zoom);
-
+	        
 	        skymap.setZoom(zoom);
 	        skymap.setXOrigin(xOrigin);
 	        skymap.setYOrigin(yOrigin);
 	        skymap.updateSkyMap();
 		}		
     }
-
+	
 	/**
 	 * Update the information of the star in the leftPanel.
 	 */  
@@ -485,7 +491,7 @@ public class MainView extends JFrame implements KeyListener
 				"</html>");
 		}		
 	}
-
+	
 	/**
 	 * calcul the beast scalar for resize the component
 	 */  
@@ -499,18 +505,18 @@ public class MainView extends JFrame implements KeyListener
 			w=.1;
 		return w;
 	}
-
+	
 	/**
 	 * resize all the component
 	 */  
 	private void formComponentResized(java.awt.event.ComponentEvent evt) {
-
+		
 	    scale = calculateScale();
-
+	    
 	    if (scale - scale_old > 0.001 || scale- scale_old < -0.001)
 	    {
 	    	scale_old = scale;
-
+	    	
 			buttonsPanel.update(scale/3);
 			compassPanel.update(scale);
 			inclinometerPanel.update(scale);
@@ -518,18 +524,18 @@ public class MainView extends JFrame implements KeyListener
 			zoomBarPanel.update(scale);
 			helpPanel.update(scale);
 			settingsPanel.update(scale);
-
+			
 			buttonsPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(scale*70)), 5);
 			helpPanel.setLocation((int)(width()/2-buttonsPanel.getWidth()+(scale*70)-10*scale), buttonsPanel.getHeight()+(int)(20*scale));
 			settingsPanel.setLocation((int)(width()/2-settingsPanel.getWidth()+80*scale), buttonsPanel.getHeight()+(int)(20*scale));
 			searchBarPanel.setLocation((int)(width()/2+buttonsPanel.getWidth()-(scale*70)), (int)(buttonsPanel.getHeight()/2-10)+5);
 			zoomBarPanel.setLocation(5, (int)(buttonsPanel.getHeight()/2-zoomBarPanel.getHeight()/2)+5);
-
+			
 			skymap.setBounds(0, 0, this.getWidth(), this.getHeight());
 			skymap.setZoom(zoom);
-
+			
 			leftPanel.setBounds((int)(10*scale), (int)(10*scale), 150, this.getHeight());
-
+			
 			compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
 			inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(scale*70)), (100+inclinometerPanel.getHeight()));
 			//coordinate.setBounds(this.getWidth()-100, this.getHeight()-70, 100, 20);
@@ -538,7 +544,7 @@ public class MainView extends JFrame implements KeyListener
 
 	    }
 	}
-
+	
 	/**
 	 * resize an image by a scalar
 	 */  
@@ -596,7 +602,7 @@ public class MainView extends JFrame implements KeyListener
 	{
 		return this.getHeight();
 	}
-
+	
     /**
 	 * The Buttons class
 	 */  
@@ -868,47 +874,47 @@ public class MainView extends JFrame implements KeyListener
     		int i = 0;
 			settings.setPort((comboBoxList.get(i).getSelectedItem() != null) ? comboBoxList.get(i)
 					.getSelectedItem().toString() : Messages.getString("MainView.None")); //$NON-NLS-1$
-
+			
 			i++;
 			settings.setSpeed(Integer.parseInt(comboBoxList.get(i).getSelectedItem().toString()));
-
+			
 			i++;
 			settings.setDatabit(Integer.parseInt(comboBoxList.get(i).getSelectedItem().toString()));
-
+			
 			i++;
 			settings.setStopbit(
 					(comboBoxList.get(i).getSelectedItem().toString().equals("1"))?jssc.SerialPort.STOPBITS_1:
 						(comboBoxList.get(i).getSelectedItem().toString().equals("2"))?jssc.SerialPort.STOPBITS_2:jssc.SerialPort.STOPBITS_1_5);
-
+			
 			i++;
 			settings.setParity(
 					(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.Odd")))?jssc.SerialPort.PARITY_ODD:
 						(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.Even")))?jssc.SerialPort.PARITY_EVEN:
 							(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.Mark")))?jssc.SerialPort.PARITY_MARK:
 								(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.Space")))?jssc.SerialPort.PARITY_SPACE:jssc.SerialPort.PARITY_NONE);
-
+			
 			i++;
 			settings.setFlowControl(
 					(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.RTSCTS_IN")))?jssc.SerialPort.FLOWCONTROL_RTSCTS_IN:
 						(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.RTSCTS_OUT")))?jssc.SerialPort.FLOWCONTROL_RTSCTS_OUT:
 							(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.XONXOFF_IN")))?jssc.SerialPort.FLOWCONTROL_XONXOFF_IN:
 								(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.XONXOFF_OUT")))?jssc.SerialPort.FLOWCONTROL_XONXOFF_OUT:jssc.SerialPort.FLOWCONTROL_NONE);
-
+			
 			i++;
 			settings.setMagnitude(
 					(comboBoxList.get(i).getSelectedItem().equals("-2"))?-2:
 						(comboBoxList.get(i).getSelectedItem().equals("6"))?6:
 							(comboBoxList.get(i).getSelectedItem().equals("15"))?15:22);
 			//skymap.setMagnitude(settings.getMagnitude());
-
+			
 			i++;
 			settings.setConstellation((comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.On"))) ? true : false);
 			//skymap.setConstellation(settings.getConstellation());
-
+			
 			i++;
 			settings.setSimulation((comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.On"))) ? true : false);
 			//pic.setSimulation(settings.getSimulation());
-
+			
 			settings.saveToFile();
     	}
     	
@@ -925,7 +931,7 @@ public class MainView extends JFrame implements KeyListener
 
 				titre.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
 				titre.setBounds(0, backgroundTop.getHeight(), backgroundTop.getWidth(), (int)(scale*35));
-
+				
 				backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/settings-bot-background.png")), scale/2);
 				InternalTop = resizeImage(ImageIO.read(getClass().getResource("/settings-top-internal.png")), scale/2);
 				for(int i = 0; i < number; i++)
@@ -1033,7 +1039,7 @@ public class MainView extends JFrame implements KeyListener
 		public void update(double _scale)
 		{
 			scale = _scale;
-
+			
 			try {
     			backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/haut-fond.png")), scale/2);
     			backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/bas-fond.png")), scale/2);
@@ -1109,7 +1115,7 @@ public class MainView extends JFrame implements KeyListener
 		{
 			scale = _scale;
 			hig = 30;
-
+			
 			this.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale), hig);
 			zoomSlider.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale), hig);
 		}
@@ -1291,7 +1297,7 @@ public class MainView extends JFrame implements KeyListener
 				listModelObjects.clear();
 
 				boolean canQueryDB = true;
-
+				
 				String[] searchFeatures = searchBarTextField.getText().split(";");
 				for (String searchFeature : searchFeatures)
 				{
@@ -1400,9 +1406,9 @@ public class MainView extends JFrame implements KeyListener
         	jScrollPane.setBounds(0, hig, searchBarTextField.getWidth(), min);
         	stopSearchButon.setBounds(searchBarTextField.getWidth()-hig,searchBarTextField.getHeight()/2-hig/2+(2), hig, hig);
         	this.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()+stopSearchButon.getWidth()), hig+(int)(400*scale));
-
+			    		
 		}	
-
+		
 		private class StopButton extends JPanel
 		{
 	    	BufferedImage cross;
@@ -1422,7 +1428,7 @@ public class MainView extends JFrame implements KeyListener
 		        });
 				this.setOpaque(false);
 			}
-
+			
 			private void stopSearchActionPerformed(java.awt.event.MouseEvent evt) {
 	    		skymap.setCelestialObjectSearched(null);
 	    		skymap.updateSkyMap();
@@ -1431,7 +1437,7 @@ public class MainView extends JFrame implements KeyListener
         		compassPanel.setSearchMode(false);
         		inclinometerPanel.setSearchMode(false);
 	    	}
-
+			
 			@Override 
 	        protected void paintComponent(Graphics g)
 	        { 
@@ -1439,7 +1445,7 @@ public class MainView extends JFrame implements KeyListener
 	            Graphics2D g2 = (Graphics2D) g; 
 	            g2.drawImage(cross, 0, 0, null); 
 	        }
-
+			
 		}
     }
 
@@ -1455,7 +1461,7 @@ public class MainView extends JFrame implements KeyListener
 		JLabel coordinateCompass;
 		Needle redNeedle;
 		Needle greenNeedle;
-
+		
 		/**
 		 * Constructor
 		 * @param _scale : the scalar for resize the components.
@@ -1468,20 +1474,20 @@ public class MainView extends JFrame implements KeyListener
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
+			
 			redNeedle = new Needle("/aiguille_rouge.png", scale);
 			greenNeedle = new Needle("/aiguille_vert.png", scale);
-
+			
 			redNeedle.setBackground(this.getBackground());
 			redNeedle.setBounds(0, 0, (int)(scale*345), (int)(scale*304));
 			redNeedle.setOpaque(false);
 			this.add(redNeedle, new Integer(1));
-
+			
 			greenNeedle.setBackground(this.getBackground());
 			greenNeedle.setBounds(0, 0, (int)(scale*345), (int)(scale*304));
 			greenNeedle.setOpaque(false);
 			this.add(greenNeedle, new Integer(2));
-
+			
 			this.setBounds(0, 0, (int)(scale*345), (int)(scale*350));
 			coordinateCompass = new JLabel("-10:2'13'' N", JLabel.CENTER);
 			coordinateCompass.setFont(new Font("Calibri", Font.BOLD, 36));
@@ -1491,7 +1497,7 @@ public class MainView extends JFrame implements KeyListener
 
 			setSearchMode(false);
 		}
-
+		
 		@Override 
         public Dimension getPreferredSize()
 		{ 
@@ -1504,7 +1510,7 @@ public class MainView extends JFrame implements KeyListener
             Graphics2D g2 = (Graphics2D) g; 
             g2.drawImage(background, 0, 0, null); 
         }
-
+		
 		/** 
 		 * update the scale variable and resize the components
 		 * @param _scale : the scalar
@@ -1532,7 +1538,7 @@ public class MainView extends JFrame implements KeyListener
 				l_dAngle += 360;
 			int l_iAngle = (int) (l_dAngle / 45);
 			String l_sDirection = "";
-
+			
 			switch (l_iAngle)
 			{
 				case 0:
@@ -1582,7 +1588,7 @@ public class MainView extends JFrame implements KeyListener
 		{
 			redNeedle.setVisible(_searchMode);
 		}
-
+		
 		/** 
 		 *  Used for update the red needle angle.
 		 *  @param _redAngle : It's the new angle for the red needle
@@ -1592,7 +1598,7 @@ public class MainView extends JFrame implements KeyListener
             redAngle = _angle;
             this.update(scale);
 		}
-
+		
 		/** 
 		 *  Used for update the green needle angle.
 		 *  @param _redAngle : It's the new angle for the green needle
@@ -1609,7 +1615,7 @@ public class MainView extends JFrame implements KeyListener
 		    double angle = 0;
 		    double scale = 1;
 		    String adresseImage;
-
+		    
 			public Needle(String _adresseImage, double _scale)
 			{
 				scale = _scale;
@@ -1623,7 +1629,7 @@ public class MainView extends JFrame implements KeyListener
 					e.printStackTrace();
 				}
 			}
-
+			
 			public void scale(double _scale)
 			{
 				if(scale != _scale)
@@ -1636,13 +1642,13 @@ public class MainView extends JFrame implements KeyListener
 					}
 				}
 			}
-
+			
 			public void rotate(double _angle)
 			{
 				angle = Math.toRadians(_angle);
 				repaint();
 			}
-
+			
 			@Override 
             public Dimension getPreferredSize()
 			{ 
@@ -1671,7 +1677,7 @@ public class MainView extends JFrame implements KeyListener
 		JLabel coordinateInclinometer;
 		Needle redNeedle;
 		Needle greenNeedle;
-
+		
 		/** 
 		 * Inclinometer
 		 * Constructor
@@ -1685,17 +1691,17 @@ public class MainView extends JFrame implements KeyListener
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-
+			
+			
 			redNeedle = new Needle("/aiguille_rouge_inclinometer.png", scale);
 			greenNeedle = new Needle("/aiguille_vert_inclinometer.png", scale);
-
-
+			
+			
 			redNeedle.setBackground(this.getBackground());
 			redNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
 			redNeedle.setOpaque(false);
 			this.add(redNeedle, new Integer(1));
-
+			
 
 			greenNeedle.setBackground(this.getBackground());
 			greenNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
@@ -1712,7 +1718,7 @@ public class MainView extends JFrame implements KeyListener
 
 			setSearchMode(false);
 		}
-
+				
 		@Override 
         public Dimension getPreferredSize()
 		{ 
@@ -1725,7 +1731,7 @@ public class MainView extends JFrame implements KeyListener
             Graphics2D g2 = (Graphics2D) g; 
             g2.drawImage(background, 0, 0, null); 
         }
-
+		
         public void setSearchMode(boolean _searchMode)
 		{
 			redNeedle.setVisible(_searchMode);
@@ -1743,11 +1749,11 @@ public class MainView extends JFrame implements KeyListener
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
+			
 			redNeedle.scale(scale);
 			redNeedle.rotate(redAngle);
 			redNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
-
+			
             greenNeedle.scale(scale);
             greenNeedle.rotate(greenAngle);
 			greenNeedle.setBounds(0, 0, (int)(scale*186), (int)(scale*258));
@@ -1773,7 +1779,7 @@ public class MainView extends JFrame implements KeyListener
 			redAngle = _redAngle;
             this.update(scale);		
 		}
-
+		
 		/** 
 		 *  Used for update the green needle angle.
 		 *  @param _redAngle : It's the new angle for the green needle
@@ -1793,7 +1799,7 @@ public class MainView extends JFrame implements KeyListener
 			double angle = 0;
 			double scale = 1;
 			String adresseImage;
-
+			    
 			/** 
 			 *  private class Needle
 			 *  @param _adressImage : the path of the image
@@ -1812,7 +1818,7 @@ public class MainView extends JFrame implements KeyListener
 					e.printStackTrace();
 				}
 			}
-
+				
 			/**
 			 * used of resize the components
 			 * @param _scale : the scalar with the components are resized
@@ -1829,7 +1835,7 @@ public class MainView extends JFrame implements KeyListener
 					}
 				}
 			}
-
+			
 			/**
 			 * used for rotate the needles
 			 * @param _angle : the new angle of the needle.
@@ -1837,15 +1843,15 @@ public class MainView extends JFrame implements KeyListener
 			public void rotate(double _angle)
 			{
 				angle = Math.toRadians(_angle);				
-
+				
 				if(Math.sin(angle) < 0 && Math.cos(angle) < 0)
 					angle = angle + 2 * (3*Math.PI/2 - angle);
 				if(Math.sin(angle) > 0 && Math.cos(angle) < 0)
 					angle = angle - 2 * (angle - Math.PI/2);
-
+					
 				repaint();
 			}
-
+				
 			@Override 
 			public Dimension getPreferredSize()
 			{ 
@@ -1862,5 +1868,6 @@ public class MainView extends JFrame implements KeyListener
 		}
 	}
 }
+
 
 

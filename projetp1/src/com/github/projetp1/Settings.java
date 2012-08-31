@@ -88,7 +88,16 @@ public class Settings
 			
 			JSONObject jRoot = new JSONObject(fileContent);
 			
-			port = jRoot.getString(KEY_PORT);
+			try
+			{
+				port = jRoot.getString(KEY_PORT);
+			}
+			catch(JSONException ex)
+			{
+				log.info("No port defined in the settings, trying to identify the default one");
+				if(jssc.SerialPortList.getPortNames().length > 0)
+					port = jssc.SerialPortList.getPortNames()[0];
+			}
 			speed = jRoot.getInt(KEY_SPEED);
 			databit = jRoot.getInt(KEY_DATABIT);
 			stopbit = jRoot.getInt(KEY_STOPBIT);
