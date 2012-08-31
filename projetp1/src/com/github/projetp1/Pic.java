@@ -10,6 +10,8 @@ package com.github.projetp1;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
 import jssc.SerialPortException;
 
 import com.github.projetp1.rs232.RS232;
@@ -105,7 +107,10 @@ public class Pic extends Thread implements Observer
 		}
 		catch (SerialPortException ex)
 		{
-			ex.printStackTrace();
+			if(ex.getExceptionType().equals(SerialPortException.TYPE_PORT_NOT_FOUND))
+				JOptionPane.showMessageDialog(mainview, Messages.getString("Pic.NoPortMessage"), Messages.getString("Pic.NoPort"), JOptionPane.WARNING_MESSAGE);
+			else
+				JOptionPane.showMessageDialog(mainview, Messages.getString("Pic.ErrorMessage") + "\n" + ex.getLocalizedMessage(), Messages.getString("Pic.Error"), JOptionPane.WARNING_MESSAGE);
 		}
 		catch (Exception ex)
 		{

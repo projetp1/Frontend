@@ -111,7 +111,7 @@ public class RS232 implements SerialPortEventListener
 			}
 			catch (Exception e)
 			{
-				log.severe("No SerialPort has been found !");
+				log.warning("No SerialPort has been found !");
 				throw new SerialPortException("NoPort", "RS232.RS232(MainView)",
 						"No RS-232 port found on the computer !");
 			}
