@@ -482,11 +482,18 @@ public class SkyMap extends Container implements MouseListener
 		celestialObjectSearched = _celestialObjectSearched;
 	}	
 
-	public void setbShowConstellations(boolean _bShowConstellations)
+	public void setShowConstellations(boolean _bShowConstellations)
 	{
 		bShowConstellations = _bShowConstellations;
 		this.updateSkyMap();
 	}
+	
+	public void setMagnitudeMax(double _dMagnitudeMax)
+	{
+		dMagnitudeMax = _dMagnitudeMax;
+		this.updateSkyMap();
+	}
+
 
 	@Override
 	public void mouseClicked(MouseEvent _arg0)

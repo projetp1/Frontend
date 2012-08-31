@@ -26,7 +26,7 @@ public class Settings
 	private int stopbit;
 	private int parity;
 	private int flowControl;
-	private int magnitude;
+	private double magnitude;
 	private boolean constellation;
 	private boolean simulation;
 	
@@ -438,7 +438,7 @@ public class Settings
 	 *
 	 * @return the magnitude
 	 */
-	public int getMagnitude()
+	public double getMagnitude()
 	{
 		return magnitude;
 	}
@@ -447,28 +447,26 @@ public class Settings
 	 *
 	 * @return the magnitude list
 	 */
-	public static int[] getMagnitudeList()
+	public static double[] getMagnitudeList()
 	{
-		return new int[] {
+		return new double[] {
 				-2,
-				6,
+				6.5,
 				15,
 				22
 		};
 	}
 
 	/**
-	 * Sets the flow control.
+	 * Sets the magnitude.
 	 *
-	 * @param _flowControl the new flow control
+	 * @param _magnitude the new magnitude
 	 */
-	public void setMagnitude(int _magnitude)
+	public void setMagnitude(double _magnitude)
 	{
-		for(int l_i : getFlowControlList())
-		{
-			if(l_i == _magnitude)
-				this.magnitude = _magnitude;
-		}
+	
+		this.magnitude = _magnitude;
+		
 	}
 
 	/**

@@ -785,7 +785,7 @@ public class MainView extends JFrame implements KeyListener
     				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.None"));	
     				break;		
     		}
-    		String magnitude[] = {"-2", "6", "15", "22"};
+    		String magnitude[] = {"-2", "6.5", "15", "22"};
     		comboBoxList.add(new JComboBox<String>(magnitude));
     		comboBoxList.get(comboBoxList.size()-1).setSelectedItem(String.valueOf(settings.getMagnitude()));
     		
@@ -903,17 +903,17 @@ public class MainView extends JFrame implements KeyListener
 			i++;
 			settings.setMagnitude(
 					(comboBoxList.get(i).getSelectedItem().equals("-2"))?-2:
-						(comboBoxList.get(i).getSelectedItem().equals("6"))?6:
+						(comboBoxList.get(i).getSelectedItem().equals("6.5"))?6.5:
 							(comboBoxList.get(i).getSelectedItem().equals("15"))?15:22);
-			//skymap.setMagnitude(settings.getMagnitude());
+			skymap.setMagnitudeMax(settings.getMagnitude());
 			
 			i++;
 			settings.setConstellation((comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.On"))) ? true : false);
-			//skymap.setConstellation(settings.getConstellation());
+			skymap.setShowConstellations(settings.getConstellation());
 			
 			i++;
 			settings.setSimulation((comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.On"))) ? true : false);
-			//pic.setSimulation(settings.getSimulation());
+			//skymap.set(settings.getSimulation());
 			
 			settings.saveToFile();
     	}
