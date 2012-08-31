@@ -1128,7 +1128,7 @@ public class MainView extends JFrame implements KeyListener
     	JList<String> listNameOrID;
     	ListModel<String> listModelNameOrID;
     	ArrayList<CelestialObject> listModelObjects;
-    	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex ", "!HIP", "!HD", "!HR"};
+    	String[] keys = {"!id ", "!ProperName ", "!RA ", "!Dec ", "!Distance ", "!Mag ", "!ColorIndex ", "!HIP ", "!HD ", "!HR "};
     	JScrollPane jScrollPane = new JScrollPane();
     	ArrayList<CelestialObject> listCelestialObject = new ArrayList<CelestialObject>();
 
