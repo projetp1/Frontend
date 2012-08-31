@@ -698,6 +698,7 @@ public class MainView extends JFrame implements KeyListener
 		ArrayList<JComboBox> comboBoxList = new ArrayList<JComboBox>();
     	
     	JSlider sliderMagnitude;
+    	JLabel sliderValue;
     			
     	BufferedImage InternalBot;
     	
@@ -793,7 +794,10 @@ public class MainView extends JFrame implements KeyListener
     		sliderMagnitude = new JSlider();
     		sliderMagnitude.setMinimum(-144);
     		sliderMagnitude.setMaximum(2100);
+    		sliderMagnitude.setValue((int)(settings.getMagnitude()*100));
     		sliderMagnitude.setOpaque(false);
+    		sliderValue = new JLabel();
+    		sliderValue.setText(String.valueOf(settings.getMagnitude()));
     		
     		String constellation[]  = { Messages.getString("MainView.On"), Messages.getString("MainView.Off") };
     		comboBoxList.add(new JComboBox<String>(constellation));
@@ -836,9 +840,11 @@ public class MainView extends JFrame implements KeyListener
             	settingList.get(number-3).setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
     			settingList.get(number-3).setForeground(Color.BLACK);
             	this.add(settingList.get(number-3));
-        		sliderMagnitude.setBounds((int)(backgroundTop.getWidth()/2-100*scale), backgroundTop.getHeight()+InternalTop.getHeight()+(number-3)*InternalMid[0].getHeight()+25, (int)(100*scale), 30);
+        		sliderMagnitude.setBounds((int)(backgroundTop.getWidth()/2-100*scale), backgroundTop.getHeight()+InternalTop.getHeight()+(number-3)*InternalMid[0].getHeight()+25, (int)(70*scale), 30);
         		this.add(sliderMagnitude);
-    			for(int i = number-2; i < number ; i++)
+        		sliderValue.setBounds((int)(backgroundTop.getWidth()/2-30*scale), backgroundTop.getHeight()+InternalTop.getHeight()+(number-3)*InternalMid[0].getHeight()+25, (int)(30*scale), 30);
+        		this.add(sliderValue);
+        		for(int i = number-2; i < number ; i++)
     			{
     				InternalMid[i] = resizeImage(ImageIO.read(getClass().getResource("/settings-mid-internal.png")), scale/2);
     				
@@ -928,6 +934,7 @@ public class MainView extends JFrame implements KeyListener
 			
 			settings.setMagnitude((double)sliderMagnitude.getValue()/100);
 			skymap.setMagnitudeMax(settings.getMagnitude());
+			sliderValue.setText(String.valueOf((double)sliderMagnitude.getValue()/100));
 			
 			i++;
 			settings.setConstellation((comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.On"))) ? true : false);
@@ -967,9 +974,10 @@ public class MainView extends JFrame implements KeyListener
 				InternalMid[number-3] = resizeImage(ImageIO.read(getClass().getResource("/settings-mid-internal.png")), scale/2);
 			  	settingList.get(number-3).setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2+30*scale), backgroundTop.getHeight()+(number-3)*InternalMid[0].getHeight()+titre.getHeight()+(int)(13*scale), (int)(500*scale), (int)(30*scale));
 			  	settingList.get(number-3).setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
-			  	sliderMagnitude.setBounds((int)(backgroundTop.getWidth()-300*scale), backgroundTop.getHeight()+(number-3)*InternalMid[0].getHeight()+titre.getHeight()+(int)(8*scale), (int)(250*scale), (int)(40*scale));
-			  	sliderMagnitude.setFont(new Font("Calibri", Font.BOLD, (int)(25*scale)));
-			
+			  	sliderMagnitude.setBounds((int)(backgroundTop.getWidth()-300*scale), backgroundTop.getHeight()+(number-3)*InternalMid[0].getHeight()+titre.getHeight()+(int)(8*scale), (int)(180*scale), (int)(40*scale));
+			  	sliderValue.setFont(new Font("Calibri", Font.BOLD, (int)(25*scale)));
+			  	sliderValue.setBounds((int)(backgroundTop.getWidth()-120*scale), backgroundTop.getHeight()+(number-3)*InternalMid[0].getHeight()+titre.getHeight()+(int)(8*scale), (int)(70*scale), (int)(40*scale));
+        		
 				
 				for(int i = number-2; i < number; i++)
 				{
@@ -1207,6 +1215,8 @@ public class MainView extends JFrame implements KeyListener
         			{
         				searchBarTextField.setText(l_sSavedSearch);
         				l_sSavedSearch = null;
+        				jScrollPane.setVisible(true);
+        				
         			}		
                 }
     		});
