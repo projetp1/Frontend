@@ -62,6 +62,11 @@ public class SkyMap extends Container implements MouseListener
 		
 		bShowConstellations = mainView.getSettings().getSimulation();
 		dMagnitudeMax = mainView.getSettings().getMagnitude();
+		
+		Animate _test = new Animate();
+		_test.init();
+		_test.start();
+		this.add(_test);
 	}
 
 	/**
@@ -513,5 +518,81 @@ public class SkyMap extends Container implements MouseListener
 	@Override
 	public void mouseReleased(MouseEvent _arg0)
 	{
+	}
+	
+	public class Animate extends javax.swing.JApplet implements Runnable
+	{
+
+		Image[] picture = new Image[10];
+		int totalPictures = 0;
+		int current = 0;
+		Thread runner;
+		int pause = 500;
+
+		public void init()
+		{
+			for (int i = 0; i < 10; i++)
+			{
+				String imageText = null;
+				imageText ="pointeur" + i+1 + ".png";
+				if (imageText != null)
+				{
+					totalPictures++;
+					picture[i] = getToolkit().getImage(getClass().getResource(imageText));
+				}
+				else
+					break;
+			}
+			String pauseText = null;
+			pauseText = "pause";
+			if (pauseText != null)
+			{
+				pause = 500;
+			}
+		}
+
+		public void paint(Graphics screen)
+		{
+			super.paint(screen);
+			Graphics2D screen2D = (Graphics2D) screen;
+			if (picture[current] != null)
+				screen2D.drawImage(picture[current], 0, 0, this);
+		}
+
+		public void start()
+		{
+			if (runner == null)
+			{
+				runner = new Thread(this);
+				runner.start();
+			}
+		}
+
+		public void run()
+		{
+			Thread thisThread = Thread.currentThread();
+			while (runner == thisThread)
+			{
+				repaint();
+				current++;
+				if (current >= totalPictures)
+					current = 0;
+				try
+				{
+					Thread.sleep(pause);
+				}
+				catch (InterruptedException e)
+				{
+				}
+			}
+		}
+
+		public void stop()
+		{
+			if (runner != null)
+			{
+				runner = null;
+			}
+		}
 	}
 }
