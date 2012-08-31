@@ -696,6 +696,8 @@ public class MainView extends JFrame implements KeyListener
     	ArrayList<JLabel> settingList = new ArrayList<JLabel>();
     	@SuppressWarnings("rawtypes")
 		ArrayList<JComboBox> comboBoxList = new ArrayList<JComboBox>();
+    	
+    	JSlider sliderMagnitude;
     			
     	BufferedImage InternalBot;
     	
@@ -785,9 +787,13 @@ public class MainView extends JFrame implements KeyListener
     				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.None"));	
     				break;		
     		}
-    		String magnitude[] = {"-2", "6.5", "15", "22"};
-    		comboBoxList.add(new JComboBox<String>(magnitude));
-    		comboBoxList.get(comboBoxList.size()-1).setSelectedItem(String.valueOf(settings.getMagnitude()));
+    		//String magnitude[] = {"-2", "6.5", "15", "22"};
+    		//comboBoxList.add(new JComboBox<String>(magnitude));
+    		//comboBoxList.get(comboBoxList.size()-1).setSelectedItem(String.valueOf(settings.getMagnitude()));
+    		sliderMagnitude = new JSlider();
+    		sliderMagnitude.setMinimum(-144);
+    		sliderMagnitude.setMaximum(2100);
+    		sliderMagnitude.setOpaque(false);
     		
     		String constellation[]  = { Messages.getString("MainView.On"), Messages.getString("MainView.Off") };
     		comboBoxList.add(new JComboBox<String>(constellation));
@@ -797,7 +803,7 @@ public class MainView extends JFrame implements KeyListener
     		comboBoxList.add(new JComboBox<String>(simulation));
     		comboBoxList.get(comboBoxList.size()-1).setSelectedItem((settings.getSimulation()) ? Messages.getString("MainView.On") : Messages.getString("MainView.Off"));
     		
-    		for(int i = 0; i < number; i++)  		
+    		for(int i = 0; i < number-1; i++)  		
     		{
     			comboBoxList.get(i).addActionListener(new java.awt.event.ActionListener() {
     	            public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -805,13 +811,17 @@ public class MainView extends JFrame implements KeyListener
     	            }
     	        });
     		}
-    		
+    		sliderMagnitude.addChangeListener(new javax.swing.event.ChangeListener() {
+	            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+	            	jComboBox1ActionPerformed(null);
+	            }
+	        });
     		try {
     			backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/settings-top-background.png")), scale/2);
     			backgroundMid = resizeImage(ImageIO.read(getClass().getResource("/settings-mid-background.png")), scale/2);
     			backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/settings-bot-background.png")), scale/2);
     			InternalTop = resizeImage(ImageIO.read(getClass().getResource("/settings-top-internal.png")), scale/2);
-    			for(int i = 0; i< number; i++)
+    			for(int i = 0; i< number-3; i++)
     			{
     				InternalMid[i] = resizeImage(ImageIO.read(getClass().getResource("/settings-mid-internal.png")), scale/2);
     				
@@ -821,7 +831,23 @@ public class MainView extends JFrame implements KeyListener
                 	this.add(settingList.get(i));
             		comboBoxList.get(i).setBounds((int)(backgroundTop.getWidth()/2-100*scale), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+25, (int)(100*scale), 30);
             		this.add(comboBoxList.get(i));
-                	
+                }
+    			settingList.get(number-3).setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2), backgroundTop.getHeight()+InternalTop.getHeight()+(number-3)*InternalMid[0].getHeight()+25, (int)(500*scale), 30);
+            	settingList.get(number-3).setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
+    			settingList.get(number-3).setForeground(Color.BLACK);
+            	this.add(settingList.get(number-3));
+        		sliderMagnitude.setBounds((int)(backgroundTop.getWidth()/2-100*scale), backgroundTop.getHeight()+InternalTop.getHeight()+(number-3)*InternalMid[0].getHeight()+25, (int)(100*scale), 30);
+        		this.add(sliderMagnitude);
+    			for(int i = number-2; i < number ; i++)
+    			{
+    				InternalMid[i] = resizeImage(ImageIO.read(getClass().getResource("/settings-mid-internal.png")), scale/2);
+    				
+    				settingList.get(i).setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+25, (int)(500*scale), 30);
+                	settingList.get(i).setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
+        			settingList.get(i).setForeground(Color.BLACK);
+                	this.add(settingList.get(i));
+            		comboBoxList.get(i-1).setBounds((int)(backgroundTop.getWidth()/2-100*scale), backgroundTop.getHeight()+InternalTop.getHeight()+i*InternalMid[0].getHeight()+25, (int)(100*scale), 30);
+            		this.add(comboBoxList.get(i-1));
                 }
     			InternalBot = resizeImage(ImageIO.read(getClass().getResource("/settings-bot-internal.png")), scale/2);
 			} catch (IOException e) {
@@ -900,11 +926,7 @@ public class MainView extends JFrame implements KeyListener
 							(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.XONXOFF_IN")))?jssc.SerialPort.FLOWCONTROL_XONXOFF_IN:
 								(comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.XONXOFF_OUT")))?jssc.SerialPort.FLOWCONTROL_XONXOFF_OUT:jssc.SerialPort.FLOWCONTROL_NONE);
 			
-			i++;
-			settings.setMagnitude(
-					(comboBoxList.get(i).getSelectedItem().equals("-2"))?-2:
-						(comboBoxList.get(i).getSelectedItem().equals("6.5"))?6.5:
-							(comboBoxList.get(i).getSelectedItem().equals("15"))?15:22);
+			settings.setMagnitude((double)sliderMagnitude.getValue()/100);
 			skymap.setMagnitudeMax(settings.getMagnitude());
 			
 			i++;
@@ -913,7 +935,7 @@ public class MainView extends JFrame implements KeyListener
 			
 			i++;
 			settings.setSimulation((comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.On"))) ? true : false);
-			//skymap.set(settings.getSimulation());
+			//TODO : pic.set(settings.getSimulation());
 			
 			settings.saveToFile();
     	}
@@ -934,13 +956,28 @@ public class MainView extends JFrame implements KeyListener
 				
 				backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/settings-bot-background.png")), scale/2);
 				InternalTop = resizeImage(ImageIO.read(getClass().getResource("/settings-top-internal.png")), scale/2);
-				for(int i = 0; i < number; i++)
+				for(int i = 0; i < number-3; i++)
 				{
 					InternalMid[i] = resizeImage(ImageIO.read(getClass().getResource("/settings-mid-internal.png")), scale/2);
 				  	settingList.get(i).setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2+30*scale), backgroundTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight()+(int)(13*scale), (int)(500*scale), (int)(30*scale));
 				  	settingList.get(i).setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
 				  	comboBoxList.get(i).setBounds((int)(backgroundTop.getWidth()-300*scale), backgroundTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight()+(int)(8*scale), (int)(250*scale), (int)(40*scale));
 				  	comboBoxList.get(i).setFont(new Font("Calibri", Font.BOLD, (int)(25*scale)));
+				}
+				InternalMid[number-3] = resizeImage(ImageIO.read(getClass().getResource("/settings-mid-internal.png")), scale/2);
+			  	settingList.get(number-3).setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2+30*scale), backgroundTop.getHeight()+(number-3)*InternalMid[0].getHeight()+titre.getHeight()+(int)(13*scale), (int)(500*scale), (int)(30*scale));
+			  	settingList.get(number-3).setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
+			  	sliderMagnitude.setBounds((int)(backgroundTop.getWidth()-300*scale), backgroundTop.getHeight()+(number-3)*InternalMid[0].getHeight()+titre.getHeight()+(int)(8*scale), (int)(250*scale), (int)(40*scale));
+			  	sliderMagnitude.setFont(new Font("Calibri", Font.BOLD, (int)(25*scale)));
+			
+				
+				for(int i = number-2; i < number; i++)
+				{
+					InternalMid[i] = resizeImage(ImageIO.read(getClass().getResource("/settings-mid-internal.png")), scale/2);
+				  	settingList.get(i).setBounds((int)(backgroundTop.getWidth()/2-InternalTop.getWidth()/2+30*scale), backgroundTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight()+(int)(13*scale), (int)(500*scale), (int)(30*scale));
+				  	settingList.get(i).setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
+				  	comboBoxList.get(i-1).setBounds((int)(backgroundTop.getWidth()-300*scale), backgroundTop.getHeight()+i*InternalMid[0].getHeight()+titre.getHeight()+(int)(8*scale), (int)(250*scale), (int)(40*scale));
+				  	comboBoxList.get(i-1).setFont(new Font("Calibri", Font.BOLD, (int)(25*scale)));
 				}
 				backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/settings-mid-background.png")), backgroundTop.getWidth(), (number)*InternalMid[0].getHeight()+titre.getHeight()+ (int)(15*scale));
 				InternalBot = resizeImage(ImageIO.read(getClass().getResource("/settings-bot-internal.png")), scale/2);
@@ -1436,6 +1473,7 @@ public class MainView extends JFrame implements KeyListener
 	    		l_sSavedSearch = null;
         		compassPanel.setSearchMode(false);
         		inclinometerPanel.setSearchMode(false);
+        		jScrollPane.setVisible(false);
 	    	}
 			
 			@Override 

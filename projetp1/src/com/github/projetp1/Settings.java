@@ -66,7 +66,7 @@ public class Settings
 			this.stopbit = jssc.SerialPort.STOPBITS_1;
 			this.parity = jssc.SerialPort.PARITY_NONE;
 			this.flowControl = jssc.SerialPort.FLOWCONTROL_NONE;
-			this.magnitude =  6;
+			this.magnitude =  6.5;
 			this.constellation = false;
 			this.simulation = false;
 			
@@ -441,20 +441,6 @@ public class Settings
 	public double getMagnitude()
 	{
 		return magnitude;
-	}
-	/**
-	 * Gets the magnitude list.
-	 *
-	 * @return the magnitude list
-	 */
-	public static double[] getMagnitudeList()
-	{
-		return new double[] {
-				-2,
-				6.5,
-				15,
-				22
-		};
 	}
 
 	/**
