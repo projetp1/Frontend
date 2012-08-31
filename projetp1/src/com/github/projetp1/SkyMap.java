@@ -24,18 +24,11 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
-
-import sun.java2d.pipe.DrawImage;
-
 import com.github.projetp1.Pic.PicMode;
-import com.github.projetp1.rs232.RS232.PicArrowDirection;
 
 @SuppressWarnings("serial")
 public class SkyMap extends Container implements MouseListener
@@ -49,7 +42,6 @@ public class SkyMap extends Container implements MouseListener
 	private ArrayList<Constellation> constellations = null;
 	private CelestialObject celestialObjectSearched = null;
 	private MainView mainView = null;
-	private PicArrowDirection lastArrowSent = null;
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	/**

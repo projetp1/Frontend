@@ -18,7 +18,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -83,6 +82,8 @@ public class MainView extends JFrame implements KeyListener
 	private double scale_old = scale;
 	private double redArrowAzimuth;
 	private double redArrowPitch;
+	
+	private PicArrowDirection lastArrowSent = null;
 		
 	/**
 	 * Constructor
@@ -286,8 +287,13 @@ public class MainView extends JFrame implements KeyListener
 				dir = addOneToDir(dir);
 			}
 			
-			pic.setPicArrow(dir);
-			
+			if(lastArrowSent == null)
+				lastArrowSent = dir;
+			else if(dir != lastArrowSent)
+			{
+				pic.setPicArrow(dir);
+				lastArrowSent = dir;
+			}
 		}
 				
 	}
