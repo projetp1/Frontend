@@ -153,7 +153,7 @@ public class SkyMap extends Container implements MouseListener, Runnable
 			}
 		}
 
-		this.repaint();
+		//this.repaint();
 	}
 
 	/**
@@ -351,6 +351,9 @@ public class SkyMap extends Container implements MouseListener, Runnable
 		{
 			int l_xStarPointed = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), l_dRoll)[0] * zoom * l_scale);
 			int l_yStarPointed = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), l_dRoll)[1] * zoom * l_scale);
+
+			if (++starHighlightCurrentImage >= starHighlight.length)
+				starHighlightCurrentImage = 0;
 			
 			if(starHighlight[starHighlightCurrentImage] != null && celestialObjectSearched.getProperName() == null || !celestialObjectSearched.getProperName().equals("Moon") && !celestialObjectSearched.getProperName().equals("Sun"))
 			{
@@ -472,8 +475,6 @@ public class SkyMap extends Container implements MouseListener, Runnable
 		while (runner == thisThread)
 		{
 			this.repaint();
-			if (++starHighlightCurrentImage >= starHighlight.length)
-				starHighlightCurrentImage = 0;
 			try
 			{
 				Thread.sleep(intervalle);
