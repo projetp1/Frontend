@@ -24,7 +24,7 @@ public class Main
 			@Override
 			public boolean isLoggable(LogRecord _arg0)
 			{
-				return _arg0.getSourceClassName().contains("RS232");
+				return true;// _arg0.getSourceClassName().contains("RS232");
 			}
 		});
 
