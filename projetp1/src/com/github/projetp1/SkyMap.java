@@ -3,8 +3,8 @@
 |    SkyMap
 |
 | Description of the class SkyMap :
-|	  This class is used to display the stars, and the arrow direction.
-|	  It considers the zoom and screen size for the scale.
+|	  This class is used to display the stars, the constellations and the arrow direction.
+|	  It considers the zoom and screen size for display a part of the sky.
 |
 | <p>Copyright : EIAJ, all rights reserved</p>
 | @autor : Alexandre Perez
@@ -34,10 +34,12 @@ import com.github.projetp1.Pic.PicMode;
 public class SkyMap extends Container implements MouseListener
 {
 	private int zoom = 1;
-	private double dXOrigin = 0;
-	private double dYOrigin = 0;
+	private double dXOrigin = 0.0;
+	private double dYOrigin = 0.0;
 	private double dLongitude = 6.937892;
 	private double dLatitude = 46.997415;
+	private double dMagnitudeMax = 6.5;
+	private boolean bShowConstellations = false;
 	private ArrayList<CelestialObject> celestialObjects = null;
 	private ArrayList<Constellation> constellations = null;
 	private CelestialObject celestialObjectSearched = null;
@@ -57,6 +59,9 @@ public class SkyMap extends Container implements MouseListener
 		this.setBackground(l_BackgroundColor);
 
 		mainView = _mainView;
+		
+		bShowConstellations = mainView.getSettings().getSimulation();
+		dMagnitudeMax = mainView.getSettings().getMagnitude();
 	}
 
 	/**
@@ -73,7 +78,6 @@ public class SkyMap extends Container implements MouseListener
 			log.severe("No celestial object in celestialObjects");
 			return;
 		}
-
 
 		double l_dRoll = 0.0;
 		if(this.mainView.getPic() != null)
@@ -108,7 +112,6 @@ public class SkyMap extends Container implements MouseListener
 	 */
 	public void updateSkyMap()
 	{
-		
 		if (this.mainView.getPic() != null && this.mainView.getPic().getMode() != PicMode.SIMULATION)
 		{
 			dLatitude = this.mainView.getPic().getLatitude();
@@ -122,9 +125,12 @@ public class SkyMap extends Container implements MouseListener
 		{
 			try
 			{
-				celestialObjects = mainView.getDataBase().starsForCoordinates(
-						Calendar.getInstance(), dLatitude, dLongitude);
-				constellations = mainView.getDataBase().getConstellations(Calendar.getInstance(), dLatitude, dLongitude);
+				celestialObjects = mainView.getDataBase().starsForCoordinates(Calendar.getInstance(), dLatitude, dLongitude);
+				
+				if(bShowConstellations)
+					constellations = mainView.getDataBase().getConstellations(Calendar.getInstance(), dLatitude, dLongitude);
+				else
+					constellations = null;
 			}
 			catch (Exception ex)
 			{
@@ -136,7 +142,7 @@ public class SkyMap extends Container implements MouseListener
 	}
 
 	/**
-	 * Paint the stars, the sun, the moon and the arrow that point the searched star.
+	 * Paint the stars, the sun, the moon, the constellations and the arrow that point the searched star.
 	 * 
 	 * @param _g
 	 *            The Graphics object for paint the window
@@ -153,12 +159,14 @@ public class SkyMap extends Container implements MouseListener
 			return;
 		}
 		
-		int l_scale = (this.getHeight() / 2);
-		int l_xCenter = this.getWidth() / 2 - (int) (dXOrigin * l_scale * zoom);
-		int l_yCenter = this.getHeight() / 2 + (int) (dYOrigin * l_scale * zoom);
+		int l_scale = (int)(this.getHeight() / 2);
+		int l_xCenter = (int)(this.getWidth() / 2) - (int) (dXOrigin * l_scale * zoom);
+		int l_yCenter = (int)(this.getHeight() / 2) + (int) (dYOrigin * l_scale * zoom);
 		double l_dRoll = 0.0;
+		
 		if(this.mainView.getPic() != null)
 			l_dRoll = this.mainView.getPic().getRoll();
+		
 		Image l_imgArrow = getToolkit().getImage(getClass().getResource("/arrow.png"));
 		Image l_imgStarHighlight = getToolkit().getImage(getClass().getResource("/star_highlight.png"));
 
@@ -196,14 +204,15 @@ public class SkyMap extends Container implements MouseListener
 		{
 			if(celestialObjectSearched != null && celestialObject.getId() == celestialObjectSearched.getId())
 				celestialObjectSearched = celestialObject;
-			
-			int l_x, l_y;
-			int l_d = getSizeForMagnitude(celestialObject.getMag());
-			Color l_color = getColorForColorIndex(celestialObject.getColorIndex(), 255);
+
+			int l_x, l_y, l_d;
 			l_x = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObject.getXReal(), celestialObject.getYReal(), l_dRoll)[0] * zoom * l_scale);
 			l_y = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObject.getXReal(), celestialObject.getYReal(), l_dRoll)[1] * zoom * l_scale);
+			l_d = getSizeForMagnitude(celestialObject.getMag());
 			
+			Color l_color = getColorForColorIndex(celestialObject.getColorIndex(), 255);
 			_g.setColor(l_color);
+			
 			String l_name = celestialObject.getProperName();
 
 			if (l_name != null && l_name.equals("Sun"))
@@ -213,6 +222,7 @@ public class SkyMap extends Container implements MouseListener
 						l_x - (l_imgSun.getHeight(null) / 2),
 						l_y - (l_imgSun.getHeight(null) / 2),
 						null);
+				_g.drawString(l_name, l_x - (l_imgSun.getHeight(null) / 2) + 20, l_y - (l_imgSun.getHeight(null) / 2) + 5);
 			}
 			else if (l_name != null && l_name.equals("Moon"))
 			{
@@ -299,16 +309,22 @@ public class SkyMap extends Container implements MouseListener
 				}
 
 				if (l_imgMoon != null)
+				{
 					_g.drawImage(l_imgMoon, 
 							l_x - (l_imgMoon.getHeight(null) / 2),
 							l_y - (l_imgMoon.getHeight(null) / 2), 
 							null);
+					_g.drawString(l_name, l_x - (l_imgMoon.getHeight(null) / 2) + 5, l_y - (l_imgMoon.getHeight(null) / 2) - 5);
+				}
 			}
 			else
+			{
 				_g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
+				if (l_name != null)
+					_g.drawString(l_name, l_x, l_y + 15);
+			}
 
-			if (l_name != null)
-				_g.drawString(l_name, l_x, l_y + 15);
+			
 		}
 
 		Image l_imgCenter = getToolkit().getImage(getClass().getResource("/center.png"));
@@ -336,7 +352,6 @@ public class SkyMap extends Container implements MouseListener
 				double l_dAngle = -getArrowAngle(celestialObjectSearched, l_dRoll);
 				g2.rotate(l_dAngle, this.getWidth() / 2, this.getHeight() / 2);
 				g2.drawImage(l_imgArrow, (this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2), (this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), null);
-				log.info("Arrow painted" + l_imgArrow.toString());
 			}
 		}
 	}
@@ -357,12 +372,8 @@ public class SkyMap extends Container implements MouseListener
 		//double[] l_dObjectPosition = Mathematics.getNewXYRotation(_object.getXReal(), _object.getYReal(), _dRoll);
 		//double l_dAngle = Math.atan((l_dObjectPosition[1] - dYOrigin) / (l_dObjectPosition[0] - dXOrigin));
 		
-		
-		
 		double l_dAngle = Math.atan((_object.getYReal() - dYOrigin) / (_object.getXReal() - dXOrigin));
 
-		
-		
 		if(_dRoll < 0)
 			_dRoll += 2 * Math.PI;
 		
@@ -386,22 +397,25 @@ public class SkyMap extends Container implements MouseListener
 	{
 		int l_size = 0;
 		if (_mag >= 6.0)
-			l_size = 0;
-		else if (_mag >= 5.3)
 			l_size = 1;
-		else if (_mag >= 4.0)
+		else if (_mag >= 5.3)
 			l_size = 2;
-		else if (_mag >= 2.7)
+		else if (_mag >= 4.0)
 			l_size = 3;
-		else if (_mag >= 1.4)
+		else if (_mag >= 2.7)
 			l_size = 4;
-		else if (_mag >= 0.1)
+		else if (_mag >= 1.4)
 			l_size = 5;
-		else if (_mag >= -1.2)
+		else if (_mag >= 0.1)
 			l_size = 6;
-		else
+		else if (_mag >= -1.2)
 			l_size = 7;
+		else
+			l_size = 8;
 
+		if(_mag > dMagnitudeMax)
+			l_size = 0;
+		
 		return l_size;
 	}
 
@@ -466,7 +480,20 @@ public class SkyMap extends Container implements MouseListener
 	public void setCelestialObjectSearched(CelestialObject _celestialObjectSearched)
 	{
 		celestialObjectSearched = _celestialObjectSearched;
+	}	
+
+	public void setShowConstellations(boolean _bShowConstellations)
+	{
+		bShowConstellations = _bShowConstellations;
+		this.updateSkyMap();
 	}
+	
+	public void setMagnitudeMax(double _dMagnitudeMax)
+	{
+		dMagnitudeMax = _dMagnitudeMax;
+		this.updateSkyMap();
+	}
+
 
 	@Override
 	public void mouseClicked(MouseEvent _arg0)
