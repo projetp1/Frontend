@@ -320,7 +320,7 @@ public class SkyMap extends Container implements MouseListener
 			else
 			{
 				_g.fillOval(l_x - l_d / 2, l_y - l_d / 2, l_d, l_d);
-				if (l_name != null)
+				if (l_name != null && l_d > 0)
 					_g.drawString(l_name, l_x, l_y + 15);
 			}
 

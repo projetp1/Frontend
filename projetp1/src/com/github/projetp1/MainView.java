@@ -29,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -217,7 +218,7 @@ public class MainView extends JFrame implements KeyListener
 
 		skymap.updateSkyMap();	
 		PicArrowDirection dir = null;
-		if(pic != null)
+		if(pic != null && pic.getMode() == PicMode.GUIDING)
 		{
 			double greenAzimuth = pic.getAzimuth();
 			double greenPitch = pic.getPitch();
@@ -928,6 +929,7 @@ public class MainView extends JFrame implements KeyListener
     		
     	private void	jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
 
+    		String l_oldPort = settings.getPort();
     		int i = 0;
 			settings.setPort((comboBoxList.get(i).getSelectedItem() != null) ? comboBoxList.get(i)
 					.getSelectedItem().toString() : Messages.getString("MainView.None")); //$NON-NLS-1$
@@ -970,6 +972,9 @@ public class MainView extends JFrame implements KeyListener
 			//TODO : pic.set(settings.getSimulation());
 			
 			settings.saveToFile();
+			
+			if(!l_oldPort.equals(settings.getPort()))
+				JOptionPane.showMessageDialog(this, Messages.getString("MainView.ChangePortImpossible"), Messages.getString("MainView.PortChange"), JOptionPane.INFORMATION_MESSAGE);
     	}
     	
 		/** 
@@ -1303,7 +1308,7 @@ public class MainView extends JFrame implements KeyListener
         		inclinometerPanel.setSearchMode(true);
     			
         		if(pic != null && pic.getMode() != PicMode.SIMULATION)
-        			pic.setMode(PicMode.GUIDING);
+        			pic.changeMode(PicMode.GUIDING);
         		
         		l_sSavedSearch = searchBarTextField.getText();
         		searchBarTextField.setText(listNameOrID.getSelectedValue().toString());
@@ -1506,6 +1511,8 @@ public class MainView extends JFrame implements KeyListener
 	    		skymap.updateSkyMap();
 	    		searchBarTextField.setText(null);
 	    		l_sSavedSearch = null;
+	    		if(pic.getMode() == PicMode.GUIDING)
+	    			pic.changeMode(PicMode.POINTING);
         		compassPanel.setSearchMode(false);
         		inclinometerPanel.setSearchMode(false);
         		jScrollPane.setVisible(false);

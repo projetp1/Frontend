@@ -111,7 +111,7 @@ public class RS232 implements SerialPortEventListener
 			}
 			catch (Exception e)
 			{
-				log.severe("No SerialPort has been found !");
+				log.warning("No SerialPort has been found !");
 				throw new SerialPortException("NoPort", "RS232.RS232(MainView)",
 						"No RS-232 port found on the computer !");
 			}
@@ -207,6 +207,8 @@ public class RS232 implements SerialPortEventListener
 	 */
 	public void modeHasChanged(PicMode _mode) throws SerialPortException
 	{
+		pic.setMode(_mode);
+		
 		switch (_mode)
 		{
 			case SIMULATION:
@@ -214,7 +216,7 @@ public class RS232 implements SerialPortEventListener
 				break;
 			case GUIDING:
 				connect();
-				sendArrowToPic(PicArrowDirection.NORTH);
+				sendArrowToPic(PicArrowDirection.ONTARGET);
 				break;
 			case POINTING:
 				connect();
@@ -279,7 +281,7 @@ public class RS232 implements SerialPortEventListener
 		String trame = cNum.toString() + "," + datas;
 		trame = "$" + trame + "*" + hexToAscii(RS232.computeCrc(trame)) + "\r\n";
 		sp.writeString(trame);
-		log.fine("Frame sent : " + trame);
+		log.info("Frame sent : " + trame);
 	}
 
 	/**
