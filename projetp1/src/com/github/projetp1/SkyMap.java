@@ -46,7 +46,7 @@ public class SkyMap extends Container implements MouseListener, Runnable
 	private MainView mainView = null;	
 	private Image[] starHighlight = null;
 	private int starHighlightCurrentImage = 0;
-	private int intervalle = 40;
+	private int intervalle = 50;
 	private Thread runner = null;
 	
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -77,6 +77,8 @@ public class SkyMap extends Container implements MouseListener, Runnable
 		}
 		
 		this.start();
+		
+		//TODO: change refresh time
 	}
 
 	/**
@@ -120,6 +122,7 @@ public class SkyMap extends Container implements MouseListener, Runnable
 		}
 		
 		mainView.updateInfo(l_nearestCelestialObject);
+		celestialObjectSearched = l_nearestCelestialObject;
 	}
 
 	/**
@@ -153,7 +156,7 @@ public class SkyMap extends Container implements MouseListener, Runnable
 			}
 		}
 
-		//this.repaint();
+		this.repaint();
 	}
 
 	/**
@@ -474,7 +477,10 @@ public class SkyMap extends Container implements MouseListener, Runnable
 		Thread thisThread = Thread.currentThread();
 		while (runner == thisThread)
 		{
-			this.repaint();
+			//this.repaint();
+			
+			this.updateSkyMap();
+			
 			try
 			{
 				Thread.sleep(intervalle);
