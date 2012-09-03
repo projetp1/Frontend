@@ -420,22 +420,24 @@ public class MainView extends JFrame implements KeyListener
 	 */  
 	public void mouseWheel(MouseWheelEvent evt)
 	{
-		if(zoom>1 || evt.getWheelRotation() < 0)
+		if(zoom > 1 || evt.getWheelRotation() < 0)
         	zoom-=evt.getWheelRotation();
-		if(zoom > kZoomMax)
-			zoom = kZoomMax;
-		double diffX = evt.getX() - (skymap.getWidth()/2);
-		double diffY = evt.getY() - (skymap.getHeight()/2);
-		
-		double scaleX = diffX / skymap.getWidth();
-		double scaleY = diffY / skymap.getHeight();
 
-		scaleX /= zoom;
-		scaleY /= zoom;
-		
-		
-		xOrigin += scaleX;
-		yOrigin -= scaleY;
+		if(zoom > kZoomMax)
+				zoom = kZoomMax;
+		else
+		{
+			double diffX = evt.getX() - (skymap.getWidth() / 2);
+			double diffY = evt.getY() - (skymap.getHeight() / 2);
+
+			double scaleX = diffX / (skymap.getWidth() / 2) * 0.05 / zoom;
+			double scaleY = diffY / (skymap.getWidth() / 2) * 0.05 / zoom;
+
+			xOrigin += scaleX;
+			yOrigin -= scaleY;
+			xOrigin += 0;
+			yOrigin -= 0;
+		}
 		
 		if(xOrigin > 1)
 			xOrigin = 1;
@@ -968,7 +970,6 @@ public class MainView extends JFrame implements KeyListener
 			
 			i++;
 			settings.setSimulation((comboBoxList.get(i).getSelectedItem().toString().equals(Messages.getString("MainView.On"))) ? true : false);
-			//TODO : pic.set(settings.getSimulation());
 			
 			settings.saveToFile();
 			
