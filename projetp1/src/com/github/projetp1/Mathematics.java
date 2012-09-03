@@ -15,6 +15,7 @@
 
 package com.github.projetp1;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.logging.Logger;
@@ -581,6 +582,28 @@ public class Mathematics
 	}
 
 	/**
+	 * Return the barycenter of a point cloud
+	 * @param _XY
+	 * 			Arraylist that contains all the lines of a constellation (see class Constellations for more informations)
+	 * @return double[] Return an array with the first case that's the X and the second the Y
+	 */
+	static public double[] getBarycenter(ArrayList<double[]> _XY)
+	{
+		double l_dXSum = 0.0;
+		double l_dYSum = 0.0;
+		double i = 0;
+		
+		for (double[] l_dT : _XY)
+		{
+			l_dXSum += l_dT[0] + l_dT[2];
+			l_dYSum += l_dT[1] + l_dT[3];
+			i++;
+		}
+		
+		return new double[] {l_dXSum/i,l_dYSum/i};
+	}
+	
+	/**
 	 * Give the new coordinate of a star with a rotation
 	 * @param _dX
 	 * 			X coordinate
@@ -592,11 +615,9 @@ public class Mathematics
 	 */
 	static public double[] getNewXYRotation(double _dX,double _dY,double _dAngle)
 	{
-		double l_dSinAngle = sin(Math.toRadians(_dAngle));
-		double l_dCosAngle = cos(Math.toRadians(_dAngle));
 		return new double[] {
-				l_dCosAngle * _dX - l_dSinAngle * _dY ,
-				l_dSinAngle * _dX + l_dCosAngle * _dY
+				_dX ,
+				_dY
 		};
 	}
 	
@@ -613,9 +634,12 @@ public class Mathematics
 	static public double[] getOrigin(double _dPitch,double _dAzimuth)
 	{
 		double l_dX = 0.0, l_dY = 0.0;
+		
+		if(_dPitch <= 0.0)
+			_dPitch = 0;
 
-		l_dX = sin(Math.toRadians(_dAzimuth))*cos(Math.toRadians(_dPitch)) * -1.0;
-		l_dY = cos(Math.toRadians(_dAzimuth))*cos(Math.toRadians(_dPitch));
+		l_dX = sin(Math.toRadians(_dAzimuth))*((90.0 - _dPitch) / 90.0) * -1.0;
+		l_dY = cos(Math.toRadians(_dAzimuth))*((90.0 - _dPitch) / 90.0);
 		
 		return new double[] {
 				l_dX,
