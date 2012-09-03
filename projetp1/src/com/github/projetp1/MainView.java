@@ -1513,7 +1513,7 @@ public class MainView extends JFrame implements KeyListener
 	    		skymap.updateSkyMap();
 	    		searchBarTextField.setText(null);
 	    		l_sSavedSearch = null;
-	    		if(pic.getMode() == PicMode.GUIDING)
+	    		if(pic != null && pic.getMode() == PicMode.GUIDING)
 	    			pic.changeMode(PicMode.POINTING);
         		compassPanel.setSearchMode(false);
         		inclinometerPanel.setSearchMode(false);
