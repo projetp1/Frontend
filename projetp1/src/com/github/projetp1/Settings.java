@@ -10,6 +10,8 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -158,6 +160,7 @@ public class Settings
 		catch (IOException ex)
 		{
 			log.severe("Impossible d'écrire le fichier de configuration : " + ex.getLocalizedMessage());
+			JOptionPane.showMessageDialog(null, Messages.getString("Settings.NoWriteMessage"), Messages.getString("Settings.NoWrite"), JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
 		catch (JSONException ex)

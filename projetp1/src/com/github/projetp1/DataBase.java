@@ -29,6 +29,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 public class DataBase
 {
 	private String sDataBase;
@@ -67,6 +69,7 @@ public class DataBase
 		catch (ClassNotFoundException e)
 		{
 			log.warning("Can't load the SQLite's drivers !");
+			JOptionPane.showMessageDialog(null, Messages.getString("DataBase.NoDriverMessage"), Messages.getString("DataBase.NoDriver"), JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 
@@ -77,6 +80,7 @@ public class DataBase
 		catch (SQLException e)
 		{
 			log.warning("Impossible to open a connection !");
+			JOptionPane.showMessageDialog(null, Messages.getString("DataBase.ErrorOpeningMessage") + "\n" + e.getLocalizedMessage(), Messages.getString("DataBase.ErrorOpening"), JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 
@@ -87,6 +91,7 @@ public class DataBase
 		catch (SQLException e)
 		{
 			log.warning("Impossible to execute SQL queries !");
+			JOptionPane.showMessageDialog(null, Messages.getString("DataBase.NoExecQMessage") + "\n" + e.getLocalizedMessage(), Messages.getString("DataBase.NoExecQ"), JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 
