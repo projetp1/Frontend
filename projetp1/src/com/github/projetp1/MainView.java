@@ -417,6 +417,8 @@ public class MainView extends JFrame implements KeyListener
 	{
 		if(zoom>1 || evt.getWheelRotation() < 0)
         	zoom-=evt.getWheelRotation();
+		if(zoom > 40)
+			zoom = 40;
 		double diffX = evt.getX() - (skymap.getWidth()/2);
 		double diffY = evt.getY() - (skymap.getHeight()/2);
 		
