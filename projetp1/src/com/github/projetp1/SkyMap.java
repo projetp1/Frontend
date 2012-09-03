@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import com.github.projetp1.Pic.PicMode;
 
 @SuppressWarnings("serial")
-public class SkyMap extends Container implements MouseListener
+public class SkyMap extends Container implements MouseListener, Runnable
 {
 	private int zoom = 1;
 	private double dXOrigin = 0.0;
@@ -43,7 +43,12 @@ public class SkyMap extends Container implements MouseListener
 	private ArrayList<CelestialObject> celestialObjects = null;
 	private ArrayList<Constellation> constellations = null;
 	private CelestialObject celestialObjectSearched = null;
-	private MainView mainView = null;
+	private MainView mainView = null;	
+	private Image[] starHighlight = null;
+	private int starHighlightCurrentImage = 0;
+	private int intervalle = 50;
+	private Thread runner = null;
+	
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	/**
@@ -60,13 +65,20 @@ public class SkyMap extends Container implements MouseListener
 
 		mainView = _mainView;
 		
-		bShowConstellations = mainView.getSettings().getSimulation();
+		bShowConstellations = true;//mainView.getSettings().getSimulation();
 		dMagnitudeMax = mainView.getSettings().getMagnitude();
+
+		starHighlight = new Image[10]; //TODO: constante
 		
-		Animate _test = new Animate();
-		_test.init();
-		_test.start();
-		this.add(_test);
+		for (int i = 0; i < 10; i++)
+		{
+			String imageURL = "/pointeur" + (i+1) + ".png";
+			starHighlight[i] = getToolkit().getImage(getClass().getResource(imageURL));
+		}
+		
+		this.start();
+		
+		//TODO: change refresh time
 	}
 
 	/**
@@ -110,6 +122,7 @@ public class SkyMap extends Container implements MouseListener
 		}
 		
 		mainView.updateInfo(l_nearestCelestialObject);
+		celestialObjectSearched = l_nearestCelestialObject;
 	}
 
 	/**
@@ -173,7 +186,6 @@ public class SkyMap extends Container implements MouseListener
 			l_dRoll = this.mainView.getPic().getRoll();
 		
 		Image l_imgArrow = getToolkit().getImage(getClass().getResource("/arrow.png"));
-		Image l_imgStarHighlight = getToolkit().getImage(getClass().getResource("/star_highlight.png"));
 
 		Font l_font = new Font("Calibri" , Font.BOLD, 16);
 		_g.setFont(l_font);
@@ -226,7 +238,7 @@ public class SkyMap extends Container implements MouseListener
 				_g.drawImage(l_imgSun,
 						l_x - (l_imgSun.getHeight(null) / 2),
 						l_y - (l_imgSun.getHeight(null) / 2),
-						null);
+						this);
 				_g.drawString(l_name, l_x - (l_imgSun.getHeight(null) / 2) + 20, l_y - (l_imgSun.getHeight(null) / 2) + 5);
 			}
 			else if (l_name != null && l_name.equals("Moon"))
@@ -318,7 +330,7 @@ public class SkyMap extends Container implements MouseListener
 					_g.drawImage(l_imgMoon, 
 							l_x - (l_imgMoon.getHeight(null) / 2),
 							l_y - (l_imgMoon.getHeight(null) / 2), 
-							null);
+							this);
 					_g.drawString(l_name, l_x - (l_imgMoon.getHeight(null) / 2) + 5, l_y - (l_imgMoon.getHeight(null) / 2) - 5);
 				}
 			}
@@ -336,19 +348,22 @@ public class SkyMap extends Container implements MouseListener
 		_g.drawImage(l_imgCenter,
 				(this.getWidth() / 2 - l_imgCenter.getWidth(null) / 2),
 				(this.getHeight() / 2 - l_imgCenter.getHeight(null) / 2),
-				null);
+				this);
 		
 		if (celestialObjectSearched != null)
 		{
 			int l_xStarPointed = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), l_dRoll)[0] * zoom * l_scale);
 			int l_yStarPointed = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), l_dRoll)[1] * zoom * l_scale);
+
+			if (++starHighlightCurrentImage >= starHighlight.length)
+				starHighlightCurrentImage = 0;
 			
-			if(celestialObjectSearched.getProperName() == null || !celestialObjectSearched.getProperName().equals("Moon") && !celestialObjectSearched.getProperName().equals("Sun"))
+			if(starHighlight[starHighlightCurrentImage] != null && celestialObjectSearched.getProperName() == null || !celestialObjectSearched.getProperName().equals("Moon") && !celestialObjectSearched.getProperName().equals("Sun"))
 			{
-				_g.drawImage(l_imgStarHighlight,
-						l_xStarPointed - l_imgStarHighlight.getWidth(null) / 2,
-						l_yStarPointed - l_imgStarHighlight.getHeight(null) / 2,
-						null);
+				_g.drawImage(starHighlight[starHighlightCurrentImage],
+						l_xStarPointed - starHighlight[starHighlightCurrentImage].getWidth(null) / 2,
+						l_yStarPointed - starHighlight[starHighlightCurrentImage].getHeight(null) / 2,
+						this);
 			}
 
 			if (!(l_xStarPointed > this.getWidth() * 0.1 && l_xStarPointed < this.getWidth() * 0.9  //Marge de 10%
@@ -356,7 +371,7 @@ public class SkyMap extends Container implements MouseListener
 			{
 				double l_dAngle = -getArrowAngle(celestialObjectSearched, l_dRoll);
 				g2.rotate(l_dAngle, this.getWidth() / 2, this.getHeight() / 2);
-				g2.drawImage(l_imgArrow, (this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2), (this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), null);
+				g2.drawImage(l_imgArrow, (this.getWidth() / 2 - l_imgArrow.getWidth(null) / 2), (this.getHeight() / 2 - l_imgArrow.getHeight(null) / 2), this);
 			}
 		}
 	}
@@ -420,7 +435,7 @@ public class SkyMap extends Container implements MouseListener
 
 		if(_mag > dMagnitudeMax)
 			l_size = 0;
-		
+
 		return l_size;
 	}
 
@@ -455,6 +470,43 @@ public class SkyMap extends Container implements MouseListener
 			c = new Color(240, 240, 255, _alpha);
 
 		return c;
+	}
+	
+	public void run()
+	{
+		Thread thisThread = Thread.currentThread();
+		while (runner == thisThread)
+		{
+			//this.repaint();
+			
+			this.updateSkyMap();
+			
+			try
+			{
+				Thread.sleep(intervalle);
+			}
+			catch (InterruptedException e)
+			{
+				log.severe(e.toString());
+			}
+		}
+	}
+
+	public void stop()
+	{
+		if (runner != null)
+		{
+			runner = null;
+		}
+	}
+	
+	public void start()
+	{
+		if (runner == null)
+		{
+			runner = new Thread(this);
+			runner.start();
+		}
 	}
 
 	public double getdLongitude()
@@ -518,81 +570,5 @@ public class SkyMap extends Container implements MouseListener
 	@Override
 	public void mouseReleased(MouseEvent _arg0)
 	{
-	}
-	
-	public class Animate extends javax.swing.JApplet implements Runnable
-	{
-
-		Image[] picture = new Image[10];
-		int totalPictures = 0;
-		int current = 0;
-		Thread runner;
-		int pause = 500;
-
-		public void init()
-		{
-			for (int i = 0; i < 10; i++)
-			{
-				String imageText = null;
-				imageText ="pointeur" + i+1 + ".png";
-				if (imageText != null)
-				{
-					totalPictures++;
-					picture[i] = getToolkit().getImage(getClass().getResource(imageText));
-				}
-				else
-					break;
-			}
-			String pauseText = null;
-			pauseText = "pause";
-			if (pauseText != null)
-			{
-				pause = 500;
-			}
-		}
-
-		public void paint(Graphics screen)
-		{
-			super.paint(screen);
-			Graphics2D screen2D = (Graphics2D) screen;
-			if (picture[current] != null)
-				screen2D.drawImage(picture[current], 0, 0, this);
-		}
-
-		public void start()
-		{
-			if (runner == null)
-			{
-				runner = new Thread(this);
-				runner.start();
-			}
-		}
-
-		public void run()
-		{
-			Thread thisThread = Thread.currentThread();
-			while (runner == thisThread)
-			{
-				repaint();
-				current++;
-				if (current >= totalPictures)
-					current = 0;
-				try
-				{
-					Thread.sleep(pause);
-				}
-				catch (InterruptedException e)
-				{
-				}
-			}
-		}
-
-		public void stop()
-		{
-			if (runner != null)
-			{
-				runner = null;
-			}
-		}
 	}
 }
