@@ -599,26 +599,8 @@ public class Mathematics
 			l_dYSum += l_dT[1] + l_dT[3];
 			i++;
 		}
-		
+		i*=2;
 		return new double[] {l_dXSum/i,l_dYSum/i};
-	}
-	
-	/**
-	 * Give the new coordinate of a star with a rotation
-	 * @param _dX
-	 * 			X coordinate
-	 * @param _dY
-	 * 			Y coordinate
-	 * @param _dAngle
-	 * 			Angle for the rotation
-	 * @return
-	 */
-	static public double[] getNewXYRotation(double _dX,double _dY,double _dAngle)
-	{
-		return new double[] {
-				_dX ,
-				_dY
-		};
 	}
 	
 	/**
