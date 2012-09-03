@@ -66,6 +66,11 @@ public class MainView extends JFrame implements KeyListener
 
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+	private static final double kMagnitudeMin = -1.44;
+	private static final double kMagnitudeMax = 6.5;
+	private static final int kZoomMin = 1;
+	private static final int kZoomMax = 40;
+	
 	private SkyMap skymap = null;
 	private Compass compassPanel;
 	private Inclinometer inclinometerPanel;
@@ -417,8 +422,8 @@ public class MainView extends JFrame implements KeyListener
 	{
 		if(zoom>1 || evt.getWheelRotation() < 0)
         	zoom-=evt.getWheelRotation();
-		if(zoom > 40)
-			zoom = 40;
+		if(zoom > kZoomMax)
+			zoom = kZoomMax;
 		double diffX = evt.getX() - (skymap.getWidth()/2);
 		double diffY = evt.getY() - (skymap.getHeight()/2);
 		
@@ -582,12 +587,9 @@ public class MainView extends JFrame implements KeyListener
         GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bImageNew = configuration.createCompatibleImage(destWidth, destHeight, 2);
         Graphics2D graphics = bImageNew.createGraphics();
-        //graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        //graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        
 
         graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        
+
         graphics.drawImage(bImage, 0, 0, destWidth, destHeight, 0, 0, bImage.getWidth(), bImage.getHeight(), null);
         graphics.dispose();
 
@@ -597,18 +599,15 @@ public class MainView extends JFrame implements KeyListener
     /**
 	 * resize the image by a arbitrary size
 	 */  
-    public static BufferedImage resizeImage2(BufferedImage bImage, double w, double h) {
-        int destWidth = (int)(w);//*bImage.getWidth());
-        int destHeight = (int)(h);//*bImage.getHeight());
+    public static BufferedImage resizeImage2(BufferedImage bImage, int w, int h) {
+        int destWidth = w;
+        int destHeight = h;
         GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bImageNew = configuration.createCompatibleImage(destWidth, destHeight, 2);
         Graphics2D graphics = bImageNew.createGraphics();
-        //graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        //graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        
+
         graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        
-        
+
         graphics.drawImage(bImage, 0, 0, destWidth, destHeight, 0, 0, bImage.getWidth(), bImage.getHeight(), null);
         graphics.dispose();
 
@@ -816,14 +815,12 @@ public class MainView extends JFrame implements KeyListener
     				comboBoxList.get(comboBoxList.size()-1).setSelectedItem(Messages.getString("MainView.None"));	
     				break;		
     		}
-    		//String magnitude[] = {"-2", "6.5", "15", "22"};
-    		//comboBoxList.add(new JComboBox<String>(magnitude));
-    		//comboBoxList.get(comboBoxList.size()-1).setSelectedItem(String.valueOf(settings.getMagnitude()));
     		sliderMagnitude = new JSlider();
-    		sliderMagnitude.setMinimum(-144);
-    		sliderMagnitude.setMaximum(2100);
+    		sliderMagnitude.setMinimum((int)(kMagnitudeMin*100));
+    		sliderMagnitude.setMaximum((int)(kMagnitudeMax*100));
     		sliderMagnitude.setValue((int)(settings.getMagnitude()*100));
     		sliderMagnitude.setOpaque(false);
+    		
     		sliderValue = new JLabel();
     		sliderValue.setText(String.valueOf(settings.getMagnitude()));
     		
@@ -1053,10 +1050,10 @@ public class MainView extends JFrame implements KeyListener
     		scale = _scale;
     		try {
     			backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/haut-fond.png")), scale/2);
-    			backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-fond.png")), 1, 200*scale/2);
+    			backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-fond.png")), 1, (int)(200*scale/2));
     			backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/bas-fond.png")), scale/2);
     			internalTop = resizeImage(ImageIO.read(getClass().getResource("/haut-interieur.png")), scale/2);
-    			internalMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-interne.png")), 1, 50*scale/2);
+    			internalMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-interne.png")), 1, (int)(50*scale/2));
     			internalBot = resizeImage(ImageIO.read(getClass().getResource("/bas-interieur.png")), scale/2);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -1129,8 +1126,8 @@ public class MainView extends JFrame implements KeyListener
     			text.setBounds((int)(40*scale), backgroundTop.getHeight()+internalTop.getHeight(), (int)(internalTop.getWidth()), (int)(scale*26*9));
     			
     			
-    			internalMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-interne.png")), text.getWidth(), text.getHeight()-52*scale);
-    			backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-fond.png")), backgroundTop.getWidth(), text.getHeight()+titre.getHeight()*2.7);
+    			internalMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-interne.png")), text.getWidth(), text.getHeight()-(int)(52*scale));
+    			backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-fond.png")), backgroundTop.getWidth(), text.getHeight()+(int)(titre.getHeight()*2.7));
     			internalBot = resizeImage(ImageIO.read(getClass().getResource("/bas-interieur.png")), scale/2);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -1159,12 +1156,11 @@ public class MainView extends JFrame implements KeyListener
     		this.setBounds(0, 0, (int)(width()/2), hig);
     		zoomSlider = new JSlider();
     		zoomSlider.setBounds(0, 0, (int)(width()/2), hig);
-    		zoomSlider.setMinimum(1);
-    		zoomSlider.setMaximum(40);
+    		zoomSlider.setMinimum(kZoomMin);
+    		zoomSlider.setMaximum(kZoomMax);
     		zoomSlider.setValue(zoom);
     		zoomSlider.setOpaque(false);
     		this.add(zoomSlider);
-			//this.setVisible(true);
 			zoomSlider.addChangeListener(new javax.swing.event.ChangeListener() {
 	            public void stateChanged(javax.swing.event.ChangeEvent evt) {
 	                jSlider1StateChanged(evt);
@@ -1333,7 +1329,6 @@ public class MainView extends JFrame implements KeyListener
     	 */
 		private void searchBarKeyReleased(java.awt.event.KeyEvent evt)
 		{
-			// System.out.println(evt.getKeyCode());
 			if (evt.getKeyCode() == 40) // down
 			{
 				listNameOrID.setSelectedIndex(listNameOrID.getSelectedIndex() + 1);
@@ -1513,11 +1508,12 @@ public class MainView extends JFrame implements KeyListener
 	    		skymap.updateSkyMap();
 	    		searchBarTextField.setText(null);
 	    		l_sSavedSearch = null;
-	    		if(pic.getMode() == PicMode.GUIDING)
+	    		if(pic != null && pic.getMode() == PicMode.GUIDING)
 	    			pic.changeMode(PicMode.POINTING);
         		compassPanel.setSearchMode(false);
         		inclinometerPanel.setSearchMode(false);
         		jScrollPane.setVisible(false);
+        		leftPanel.setText(null);
 	    	}
 			
 			@Override 
