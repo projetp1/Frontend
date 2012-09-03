@@ -46,10 +46,12 @@ public class SkyMap extends Container implements MouseListener, Runnable
 	private MainView mainView = null;	
 	private Image[] starHighlight = null;
 	private int starHighlightCurrentImage = 0;
-	private int intervalle = 50;
+	private int intervalle = 0;
 	private Thread runner = null;
 	
 	private Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+	private static final int kINTERVALWITHHIGHLIGHTIMAGE = 40;
 
 	/**
 	 * SkyMap Constructor
@@ -68,7 +70,7 @@ public class SkyMap extends Container implements MouseListener, Runnable
 		bShowConstellations = mainView.getSettings().getConstellation();
 		dMagnitudeMax = mainView.getSettings().getMagnitude();
 
-		starHighlight = new Image[10]; //TODO: constante
+		starHighlight = new Image[10];
 		
 		for (int i = 0; i < 10; i++)
 		{
@@ -76,9 +78,9 @@ public class SkyMap extends Container implements MouseListener, Runnable
 			starHighlight[i] = getToolkit().getImage(getClass().getResource(imageURL));
 		}
 		
-		this.start();
+		intervalle = kINTERVALWITHHIGHLIGHTIMAGE;
 		
-		//TODO: change refresh time
+		this.start();
 	}
 
 	/**
@@ -114,7 +116,7 @@ public class SkyMap extends Container implements MouseListener, Runnable
 					Math.abs(l_dXPressed - celestialObject.getXReal()), 2)
 					+ Math.pow(Math.abs(l_dYPressed - celestialObject.getYReal()), 2));
 
-			if (l_dLastDelta > l_dDelta)
+			if (l_dLastDelta > l_dDelta && celestialObject.getMag() <= dMagnitudeMax)
 			{
 				l_dLastDelta = l_dDelta;
 				l_nearestCelestialObject = celestialObject;
@@ -122,6 +124,7 @@ public class SkyMap extends Container implements MouseListener, Runnable
 		}
 		
 		mainView.updateInfo(l_nearestCelestialObject);
+		
 		celestialObjectSearched = l_nearestCelestialObject;
 	}
 
@@ -199,18 +202,19 @@ public class SkyMap extends Container implements MouseListener, Runnable
 			for (Constellation constellation : constellations)
 			{
 				int l_xName = 0, l_yName = 0;
+				l_xName = l_xCenter + (int) (Mathematics.getNewXYRotation(constellation.getX(),  constellation.getY(), l_dRoll)[0] * zoom * l_scale);
+				l_yName = l_yCenter + (int) (Mathematics.getNewXYRotation(constellation.getX(),  constellation.getY(), l_dRoll)[1] * zoom * l_scale);
 				for (double[] line : constellation.getLines())
 				{
 					_g.setColor(new Color(130, 200, 255));
 					_g.drawLine(
-							l_xName = l_xCenter + (int) (Mathematics.getNewXYRotation(line[0], line[1], l_dRoll)[0] * zoom * l_scale),
-							l_yName = l_yCenter + (int) (Mathematics.getNewXYRotation(line[0], line[1], l_dRoll)[1] * zoom * l_scale),
+							l_xCenter + (int) (Mathematics.getNewXYRotation(line[0], line[1], l_dRoll)[0] * zoom * l_scale),
+							l_yCenter + (int) (Mathematics.getNewXYRotation(line[0], line[1], l_dRoll)[1] * zoom * l_scale),
 							l_xCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[0] * zoom * l_scale),
 							l_yCenter + (int) (Mathematics.getNewXYRotation(line[2], line[3], l_dRoll)[1] * zoom * l_scale)
 							);
-				}				
-				//TODO: Si on a le temps faire un algorithme pour centrer le nom de la constellation
-				_g.drawString(((constellation.getProperName() != null) ? constellation.getProperName() : ""), l_xName, l_yName - 10);
+				}
+				_g.drawString(((constellation.getProperName() != null) ? constellation.getProperName() : ""), l_xName, l_yName);
 			}
 		}
 		
@@ -351,12 +355,9 @@ public class SkyMap extends Container implements MouseListener, Runnable
 				this);
 		
 		if (celestialObjectSearched != null)
-		{
+		{			
 			int l_xStarPointed = l_xCenter + (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), l_dRoll)[0] * zoom * l_scale);
 			int l_yStarPointed = l_yCenter - (int) (Mathematics.getNewXYRotation(celestialObjectSearched.getXReal(), celestialObjectSearched.getYReal(), l_dRoll)[1] * zoom * l_scale);
-
-			if (++starHighlightCurrentImage >= starHighlight.length)
-				starHighlightCurrentImage = 0;
 			
 			if(starHighlight[starHighlightCurrentImage] != null && celestialObjectSearched.getProperName() == null || !celestialObjectSearched.getProperName().equals("Moon") && !celestialObjectSearched.getProperName().equals("Sun"))
 			{
@@ -475,11 +476,22 @@ public class SkyMap extends Container implements MouseListener, Runnable
 	public void run()
 	{
 		Thread thisThread = Thread.currentThread();
+		int l_refreshAll = (int)(30000 / kINTERVALWITHHIGHLIGHTIMAGE);
+		int l_refreshAllCounter = 0;
 		while (runner == thisThread)
 		{
-			//this.repaint();
+			if (++starHighlightCurrentImage >= starHighlight.length)
+				starHighlightCurrentImage = 0;
 			
-			this.updateSkyMap();
+			if(++l_refreshAllCounter >= l_refreshAll)
+			{
+				l_refreshAllCounter = 0;
+				this.updateSkyMap();				
+			}
+			else
+			{
+				this.repaint();
+			}
 			
 			try
 			{

@@ -1504,7 +1504,9 @@ public class MainView extends JFrame implements KeyListener
 			}
 			
 			private void stopSearchActionPerformed(java.awt.event.MouseEvent evt) {
-	    		skymap.setCelestialObjectSearched(null);
+				skymap.setCelestialObjectSearched(null);
+	    		leftPanel.setText("");
+        		updateInfo(null);
 	    		skymap.updateSkyMap();
 	    		searchBarTextField.setText(null);
 	    		l_sSavedSearch = null;
