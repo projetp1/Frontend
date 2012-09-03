@@ -15,6 +15,7 @@
 
 package com.github.projetp1;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.logging.Logger;
@@ -580,6 +581,28 @@ public class Mathematics
 		this.dYear = Mathematics.kAdditionnalYearOfGregorianCalendar + _date.get(Calendar.YEAR);
 	}
 
+	/**
+	 * Return the barycenter of a point cloud
+	 * @param _XY
+	 * 			Arraylist that contains all the lines of a constellation (see class Constellations for more informations)
+	 * @return double[] Return an array with the first case that's the X and the second the Y
+	 */
+	static public double[] getBarycenter(ArrayList<double[]> _XY)
+	{
+		double l_dXSum = 0.0;
+		double l_dYSum = 0.0;
+		double i = 0;
+		
+		for (double[] l_dT : _XY)
+		{
+			l_dXSum += l_dT[0] + l_dT[2];
+			l_dYSum += l_dT[1] + l_dT[3];
+			i++;
+		}
+		
+		return new double[] {l_dXSum/i,l_dYSum/i};
+	}
+	
 	/**
 	 * Give the new coordinate of a star with a rotation
 	 * @param _dX

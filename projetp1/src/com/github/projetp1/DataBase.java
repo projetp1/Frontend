@@ -528,7 +528,10 @@ public class DataBase
 				if(!l_ProperName.equals(l_oldProperName) && !l_oldProperName.equals(""))
 				{
 					if(i != 0)
+					{
+						l_consts.setNameCoordinates();
 						al_const.add(l_consts);
+					}
 					l_consts = null;
 					if(l_Id == 0)
 						break;
