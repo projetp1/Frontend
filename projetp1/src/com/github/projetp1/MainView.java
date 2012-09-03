@@ -417,6 +417,8 @@ public class MainView extends JFrame implements KeyListener
 	{
 		if(zoom>1 || evt.getWheelRotation() < 0)
         	zoom-=evt.getWheelRotation();
+		if(zoom > 40)
+			zoom = 40;
 		double diffX = evt.getX() - (skymap.getWidth()/2);
 		double diffY = evt.getY() - (skymap.getHeight()/2);
 		
@@ -1293,7 +1295,7 @@ public class MainView extends JFrame implements KeyListener
     		String searchFeature = searchFeatures[searchFeatures.length - 1];
     				
 			//log.info("\n>" + searchFeature + "<->" + searchFeature.split(" ").length + "\n");
-        	if(searchFeature.split(" ").length > 1)
+        	if(searchFeature.split(" ").length > 1 && listModelObjects.size() > 0)
         	{
              	int index = listNameOrID.getSelectedIndex();
         		CelestialObject celObjt = listModelObjects.get(index);
