@@ -604,24 +604,6 @@ public class Mathematics
 	}
 	
 	/**
-	 * Give the new coordinate of a star with a rotation
-	 * @param _dX
-	 * 			X coordinate
-	 * @param _dY
-	 * 			Y coordinate
-	 * @param _dAngle
-	 * 			Angle for the rotation
-	 * @return
-	 */
-	static public double[] getNewXYRotation(double _dX,double _dY,double _dAngle)
-	{
-		return new double[] {
-				_dX ,
-				_dY
-		};
-	}
-	
-	/**
 	 * Give the origin's coordinates
 	 * 
 	 * @Param _dPitch
