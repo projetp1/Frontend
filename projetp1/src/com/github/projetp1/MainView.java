@@ -72,8 +72,8 @@ public class MainView extends JFrame implements KeyListener
 	private static final int kZoomMax = 40;
 	
 	private SkyMap skymap = null;
-	private Compass compassPanel;
-	private Inclinometer inclinometerPanel;
+	public Compass compassPanel;
+	public Inclinometer inclinometerPanel;
 	private Buttons buttonsPanel;
 	private SearchBar searchBarPanel;
 	private ZoomBar zoomBarPanel;
@@ -1550,7 +1550,9 @@ public class MainView extends JFrame implements KeyListener
 			}
 			
 			private void stopSearchActionPerformed(java.awt.event.MouseEvent evt) {
-	    		skymap.setCelestialObjectSearched(null);
+				skymap.setCelestialObjectSearched(null);
+	    		leftPanel.setText("");
+        		updateInfo(null);
 	    		skymap.updateSkyMap();
 	    		searchBarTextField.setText(null);
 	    		l_sSavedSearch = null;
@@ -1576,7 +1578,7 @@ public class MainView extends JFrame implements KeyListener
     /**
 	 * The Compass class
 	 */ 
-	private class Compass extends JLayeredPane
+	class Compass extends JLayeredPane
 	{
 		double scale = 1;
 		double redAngle = 0;
@@ -1792,7 +1794,7 @@ public class MainView extends JFrame implements KeyListener
 	/**
 	 * The Inclinometer class
 	 */ 
-	private class Inclinometer extends JLayeredPane
+	class Inclinometer extends JLayeredPane
 	{
 		double scale = 1;
 		double redAngle = 0;
