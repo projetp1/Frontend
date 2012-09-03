@@ -174,17 +174,6 @@ public class RS232 implements SerialPortEventListener
 	}
 
 	/**
-	 * Connect to the PIC (send ping, schedule ping)
-	 */
-	private void connect()
-	{
-		if (pic.getMode() == PicMode.SIMULATION)
-			pic.setMode(PicMode.POINTING);
-		sendPing();
-		pingTimer.restart();
-	}
-
-	/**
 	 * Disconnect from the PIC (cancel ping scheduling)
 	 */
 	private void disconnect()
@@ -215,11 +204,9 @@ public class RS232 implements SerialPortEventListener
 				disconnect();
 				break;
 			case GUIDING:
-				connect();
 				sendArrowToPic(PicArrowDirection.ONTARGET);
 				break;
 			case POINTING:
-				connect();
 				sendFrame(RS232CommandType.CHANGE_TO_POINT_MODE, "");
 				break;
 			default:
