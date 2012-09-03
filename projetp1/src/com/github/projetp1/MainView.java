@@ -820,8 +820,8 @@ public class MainView extends JFrame implements KeyListener
     		//comboBoxList.add(new JComboBox<String>(magnitude));
     		//comboBoxList.get(comboBoxList.size()-1).setSelectedItem(String.valueOf(settings.getMagnitude()));
     		sliderMagnitude = new JSlider();
-    		sliderMagnitude.setMinimum(-144);
-    		sliderMagnitude.setMaximum(2100);
+    		sliderMagnitude.setMinimum(-144);//TODO : faire une constante
+    		sliderMagnitude.setMaximum(650);//TODO : faire une constante
     		sliderMagnitude.setValue((int)(settings.getMagnitude()*100));
     		sliderMagnitude.setOpaque(false);
     		sliderValue = new JLabel();
@@ -1513,7 +1513,7 @@ public class MainView extends JFrame implements KeyListener
 	    		skymap.updateSkyMap();
 	    		searchBarTextField.setText(null);
 	    		l_sSavedSearch = null;
-	    		if(pic.getMode() == PicMode.GUIDING)
+	    		if(pic != null && pic.getMode() == PicMode.GUIDING)
 	    			pic.changeMode(PicMode.POINTING);
         		compassPanel.setSearchMode(false);
         		inclinometerPanel.setSearchMode(false);

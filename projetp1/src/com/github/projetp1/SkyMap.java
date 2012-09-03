@@ -60,7 +60,7 @@ public class SkyMap extends Container implements MouseListener
 
 		mainView = _mainView;
 		
-		bShowConstellations = mainView.getSettings().getSimulation();
+		bShowConstellations = mainView.getSettings().getConstellation();
 		dMagnitudeMax = mainView.getSettings().getMagnitude();
 	}
 
