@@ -105,7 +105,7 @@ public class Settings
 			stopbit = jRoot.getInt(KEY_STOPBIT);
 			parity = jRoot.getInt(KEY_PARITY);
 			flowControl = jRoot.getInt(KEY_FLOWCONTROL);
-			magnitude = jRoot.getInt(KEY_MAGNITUDE);
+			magnitude = jRoot.getDouble(KEY_MAGNITUDE);
 			constellation = jRoot.getBoolean(KEY_CONSTELLATION);
 			simulation = jRoot.getBoolean(KEY_SIMULATION);
 		}
