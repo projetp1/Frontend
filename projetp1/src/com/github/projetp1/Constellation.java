@@ -49,7 +49,7 @@ public class Constellation
 	 */
 	public void addLine(double l_X,double l_Y,double l_Xp,double l_Yp)
 	{
-		double[] l_dTemp = {l_X,l_Y,l_Xp,l_Yp};
+		double[] l_dTemp = {l_X,-l_Y,l_Xp,-l_Yp};
 		this.dLines.add(l_dTemp);
 	}
 	
