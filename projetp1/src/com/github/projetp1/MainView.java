@@ -1293,7 +1293,7 @@ public class MainView extends JFrame implements KeyListener
     		String searchFeature = searchFeatures[searchFeatures.length - 1];
     				
 			//log.info("\n>" + searchFeature + "<->" + searchFeature.split(" ").length + "\n");
-        	if(searchFeature.split(" ").length > 1)
+        	if(searchFeature.split(" ").length > 1 && listModelObjects.size() > 0)
         	{
              	int index = listNameOrID.getSelectedIndex();
         		CelestialObject celObjt = listModelObjects.get(index);
