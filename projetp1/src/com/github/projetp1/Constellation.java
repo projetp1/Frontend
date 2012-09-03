@@ -28,6 +28,9 @@ public class Constellation
 	/** The lines that make the constellation. */
 	private ArrayList<double[]> dLines = new ArrayList<double[]>();
 
+	private double dXName = 0.0;
+	private double dYName = 0.0;
+	
 	/**
 	 * Instantiates a new constellation.
 	 */
@@ -51,6 +54,16 @@ public class Constellation
 	}
 	
 	/**
+	 * Set the coordinates of the constellation's name
+	 */
+	public void setNameCoordinates()
+	{
+		double[] l_T = Mathematics.getBarycenter(this.dLines);
+		this.dXName = l_T[0];
+		this.dYName = l_T[1];
+	}
+	
+	/**
 	 * Sets the proper name of the constellation.
 	 *
 	 * @param _x the new proper name
@@ -68,6 +81,26 @@ public class Constellation
 	public String getProperName()
 	{
 		return this.sProperName;
+	}
+	
+	/**
+	 * Gets the X name's position of the constellation.
+	 *
+	 * @return the X coordinate
+	 */
+	public double getX()
+	{
+		return this.dXName;
+	}
+	
+	/**
+	 * Gets the Y name's position of the constellation.
+	 *
+	 * @return the Y coordinate
+	 */
+	public double getY()
+	{
+		return this.dYName;
 	}
 	
 	/**

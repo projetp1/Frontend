@@ -298,7 +298,7 @@ public class DataBase
 	private String addWhereQuery(String _sWhere[][], boolean _bsecured)
 	{
 		String l_sOut = " WHERE ";
-
+		this.argumentCount = 0;
 		// Analyze all the array and add the where clause to the query
 		// If secured = true, the function will prepared a prepared statement, replace all the value
 		// by "?"
@@ -409,7 +409,7 @@ public class DataBase
 		catch (SQLException e)
 		{
 			log.warning("Error in the query ! : " + e.getLocalizedMessage());
-			this.statement.close();
+			//this.statement.close();
 
 			l_sQuery = "SELECT * from " + this.sTable + " WHERE id=0"; // Return an empty Result
 			return this.statement.executeQuery(l_sQuery);
@@ -528,7 +528,10 @@ public class DataBase
 				if(!l_ProperName.equals(l_oldProperName) && !l_oldProperName.equals(""))
 				{
 					if(i != 0)
+					{
+						l_consts.setNameCoordinates();
 						al_const.add(l_consts);
+					}
 					l_consts = null;
 					if(l_Id == 0)
 						break;

@@ -65,7 +65,7 @@ public class SkyMap extends Container implements MouseListener, Runnable
 
 		mainView = _mainView;
 		
-		bShowConstellations = true;//mainView.getSettings().getSimulation();
+		bShowConstellations = mainView.getSettings().getConstellation();
 		dMagnitudeMax = mainView.getSettings().getMagnitude();
 
 		starHighlight = new Image[10]; //TODO: constante
