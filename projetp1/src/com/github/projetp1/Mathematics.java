@@ -615,11 +615,9 @@ public class Mathematics
 	 */
 	static public double[] getNewXYRotation(double _dX,double _dY,double _dAngle)
 	{
-		double l_dSinAngle = sin(Math.toRadians(_dAngle));
-		double l_dCosAngle = cos(Math.toRadians(_dAngle));
 		return new double[] {
-				l_dCosAngle * _dX - l_dSinAngle * _dY ,
-				l_dSinAngle * _dX + l_dCosAngle * _dY
+				_dX ,
+				_dY
 		};
 	}
 	
