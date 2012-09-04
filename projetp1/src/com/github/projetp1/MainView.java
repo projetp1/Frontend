@@ -185,6 +185,7 @@ public class MainView extends JFrame implements KeyListener
 
 		Color l_BackgroundColor = new Color(5, 30, 50);
 		this.getContentPane().setBackground(l_BackgroundColor);
+		this.setBackground(l_BackgroundColor);
 		this.addKeyListener(this);
         this.setMinimumSize(new java.awt.Dimension(800, 600));
 		this.setExtendedState(Frame.MAXIMIZED_BOTH);
