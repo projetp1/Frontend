@@ -121,11 +121,11 @@ public class MainView extends JFrame implements KeyListener
 		leftPanel = new JLabel("");
 		leftPanel.setBounds(100, 100, 100, 200);
 		leftPanel.setForeground(new Color(250, 250, 250));
-		
+
 		coordinate = new JLabel(0 + "° N, " + 0 + "° S", JLabel.RIGHT);
 		coordinate.setBounds((int)(20 * scale), this.getHeight() - (int)(20 * scale), 200, 20);
 		coordinate.setForeground(Color.WHITE);
-		
+
         buttonsPanel = new Buttons(scale);
 		buttonsPanel.setLocation((int)(width() / 2 - buttonsPanel.getWidth() / 2), 5);
 
@@ -152,7 +152,7 @@ public class MainView extends JFrame implements KeyListener
 				(100+inclinometerPanel.getHeight()));
 
 		skymap = new SkyMap(this);
-		
+
 		getLayeredPane().add(leftPanel);
 		getLayeredPane().add(coordinate);
 		getLayeredPane().add(buttonsPanel);
@@ -425,32 +425,37 @@ public class MainView extends JFrame implements KeyListener
 		{
 		if(zoom>1 || evt.getWheelRotation() < 0) 
 			zoom-=evt.getWheelRotation();	
+
+		double rayon = xOrigin*xOrigin + yOrigin*yOrigin;
+
 		if(zoom >= kZoomMax)		
 			zoom = kZoomMax;
 		else if (evt.getWheelRotation()<0)
 		{
-			
-		double diffX = evt.getX() - (skymap.getWidth()/2);	
-		double diffY = evt.getY() - (skymap.getHeight()/2);		
-		double scaleX = diffX / skymap.getWidth() *4/zoom;
-		double scaleY = diffY / skymap.getHeight() *4/zoom;
-		scaleX /= zoom;
-		scaleY /= zoom;
-		xOrigin += scaleX;
-		yOrigin -= scaleY;
-		
-		}
-		
-		if(xOrigin > 1)
-			xOrigin = 1;
-		else if(xOrigin < -1)
-			xOrigin =-1;
-		
-		if(yOrigin > 1)
-			yOrigin = 1;
-		else if(yOrigin < -1)
-			yOrigin =-1;
 
+			double diffX = evt.getX() - (skymap.getWidth()/2);	
+			double diffY = evt.getY() - (skymap.getHeight()/2);		
+			double scaleX = diffX / skymap.getWidth() *4/zoom;
+			double scaleY = diffY / skymap.getHeight() *4/zoom * -1;
+			scaleX /= zoom;
+			scaleY /= zoom;
+			if (rayon <= 1 || (xOrigin <= 0 && scaleX >= 0))
+				xOrigin += scaleX;
+			if (rayon <= 1 || (xOrigin >= 0 && scaleX <= 0))
+				xOrigin += scaleX;
+			if (rayon <= 1  || (yOrigin <= 0 && scaleY >= 0))
+				yOrigin += scaleY;
+			if (rayon <= 1  || (yOrigin >= 0 && scaleY <= 0))
+				yOrigin += scaleY;
+		
+			}
+
+		inclinometerPanel.setGreenNeedle(90-90*rayon);
+
+		if (xOrigin < 0)
+			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 90);
+		else
+			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 270);
         skymap.setXOrigin(xOrigin);
         skymap.setYOrigin(yOrigin);
 		
@@ -467,24 +472,25 @@ public class MainView extends JFrame implements KeyListener
 		if(pic == null || pic.getMode() == PicMode.SIMULATION)
 		{
 			float l_fDelta = (float) (0.05 / zoom);
+			double rayon = xOrigin*xOrigin + yOrigin*yOrigin;
 	        if(evt.getKeyCode() == 37) //Left
 	        {
-	        	if(xOrigin > -1)
+	        	if(rayon < 1 || xOrigin >= 0)
 	        		xOrigin -= l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == 39) //Right
 	        {
-	        	if(xOrigin < 1)
+	        	if(rayon < 1 || xOrigin <= 0)
 	        		xOrigin += l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == 38) // Up
 	        {
-	        	if(yOrigin < 1)
+	        	if(rayon < 1 || yOrigin <= 0)
 	        		yOrigin += l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == 40) // Down
 	        {
-	        	if(yOrigin > -1)
+	        	if(rayon < 1 || yOrigin >= 0)
 	        		yOrigin -= l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == (int)'.') //zoom +
@@ -497,7 +503,14 @@ public class MainView extends JFrame implements KeyListener
 	        		zoom--;
 	        }
 	        zoomBarPanel.zoomSlider.setValue(zoom);
-	        
+
+    		inclinometerPanel.setGreenNeedle(90-90*rayon);
+
+    		if (xOrigin < 0)
+    			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 90);
+    		else
+    			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 270);
+
 	        skymap.setZoom(zoom);
 	        skymap.setXOrigin(xOrigin);
 	        skymap.setYOrigin(yOrigin);
@@ -574,7 +587,6 @@ public class MainView extends JFrame implements KeyListener
 			
 			compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
 			inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(scale*70)), (100+inclinometerPanel.getHeight()));
-			//coordinate.setBounds(this.getWidth()-100, this.getHeight()-70, 100, 20);
 			coordinate.setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
 			coordinate.setBounds((int)(80*scale), (int)(height()-100*(height() * 0.30 / 350)), (int)(width()-160*scale), (int)(35*scale));
 
@@ -667,8 +679,8 @@ public class MainView extends JFrame implements KeyListener
             g2.drawImage(imgHelp, (int)(imgSettings.getWidth()+10*scale), 0, null);
         }
 
-    	private void MouseClicked(java.awt.event.MouseEvent evt) {
-
+    	private void MouseClicked(java.awt.event.MouseEvent evt)
+    	{
     		if(evt.getX()<buttonsPanel.getWidth()/2)
     		{
     			if (settingsPanel.isVisible())
@@ -691,7 +703,7 @@ public class MainView extends JFrame implements KeyListener
     			}
     		}
     	}
-    	
+
 		/** 
 		 * update the scale variable and resize the components
     	 * @param _scale : the scalar
@@ -708,7 +720,7 @@ public class MainView extends JFrame implements KeyListener
 			this.setSize((int)(imgSettings.getWidth()*2), (int)(imgHelp.getHeight()));
 		}
     }
-    
+
     /**
 	 * The SettingsConfig class
 	 */ 
@@ -1040,12 +1052,7 @@ public class MainView extends JFrame implements KeyListener
     	BufferedImage internalTop;
     	BufferedImage internalMid;
     	BufferedImage internalBot;
-    	
-    	JSlider sliderHorizontal;
-    	JSlider sliderVertical;
-    	
-    	int x;
-    	int y;
+
     	JLabel titre;
     	JLabel text;
     	/**
@@ -1055,8 +1062,6 @@ public class MainView extends JFrame implements KeyListener
     	public Help(double _scale)
     	{
     		scale = _scale;
-    		x = 0;
-    		y = 0;
     		try {
     			backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/haut-fond.png")), scale/2);
     			backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-fond.png")), 1, (int)(200*scale/2));
@@ -1078,42 +1083,10 @@ public class MainView extends JFrame implements KeyListener
     			text.setBounds(0, internalTop.getHeight(), (int)(scale*345), (int)(scale*34*8));
     			text.setForeground(Color.BLACK);
     			this.add(text, new Integer(2));
-    			
-    			sliderHorizontal = new JSlider();
-    			sliderHorizontal.setOpaque(false);
-    			sliderHorizontal.setFocusable(false);
-    			sliderHorizontal.setBounds(150, 50, 100, 15);
-    			sliderHorizontal.setMaximum(text.getWidth());
-    			sliderHorizontal.setValue(0);
-    			sliderHorizontal.addChangeListener(new javax.swing.event.ChangeListener() {
-    	            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-    	                x = sliderHorizontal.getValue();
-    	                text.setBounds((int)(40*scale) - x, backgroundTop.getHeight() + internalTop.getHeight() - y,
-    	                		(int)(internalTop.getWidth()), (int)(scale*26*9));
-    	            }
-    	        });
-    			this.add(sliderHorizontal, new Integer(3));
-    			
-    			sliderVertical = new JSlider();
-    			sliderVertical.setOpaque(false);
-    			sliderVertical.setOrientation(1);
-    			sliderVertical.setBounds(50, 150, 15, 100);
-    			sliderVertical.setInverted(true);
-    			sliderVertical.setFocusable(false);
-    			sliderVertical.setMaximum(text.getHeight());
-    			sliderVertical.setValue(0);
-    			sliderVertical.addChangeListener(new javax.swing.event.ChangeListener() {
-    	            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-    	            	y = sliderVertical.getValue();
-    	            	text.setBounds((int)(40*scale) - x, backgroundTop.getHeight() + internalTop.getHeight() - y,
-    	            			(int)(internalTop.getWidth()), (int)(scale*26*9));
-    	            }
-    	        });
-    			this.add(sliderVertical);
-    			
+
     			this.setBounds(0, 0, (int)(backgroundTop.getWidth()*2), (int)(500*scale));
     			this.setVisible(false);
-    			
+
     			this.addMouseListener(new java.awt.event.MouseAdapter() {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
                         MouseClicked(evt);
@@ -1146,7 +1119,7 @@ public class MainView extends JFrame implements KeyListener
     	private void MouseClicked(java.awt.event.MouseEvent evt) {
     		//nothing
     	}
-    	
+
 		/** 
 		 * update the scale variable and resize the components
     	 * @param _scale : the scalar
@@ -1154,19 +1127,18 @@ public class MainView extends JFrame implements KeyListener
 		public void update(double _scale)
 		{
 			scale = _scale;
-			
+
 			try {
     			backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/haut-fond.png")), scale/2);
     			backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/bas-fond.png")), scale/2);
     			internalTop = resizeImage(ImageIO.read(getClass().getResource("/haut-interieur.png")), scale/2);
-    			
+
     			titre.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
     			titre.setBounds(0, backgroundTop.getHeight(), backgroundTop.getWidth(), (int)(scale*35));
-    		
-    			text.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*24)));
-    			text.setBounds((int)(40*scale) - x, backgroundTop.getHeight() + internalTop.getHeight() - y, (int)(internalTop.getWidth()), (int)(scale*26*9));
 
-    			
+    			text.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*24)));
+    			text.setBounds(0, backgroundTop.getHeight() + internalTop.getHeight(), (int)(internalTop.getWidth()), (int)(scale*26*19));
+
     			internalMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-interne.png")), text.getWidth(), text.getHeight()-(int)(52*scale));
     			backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-fond.png")), backgroundTop.getWidth(), text.getHeight()+(int)(titre.getHeight()*3));
     			internalBot = resizeImage(ImageIO.read(getClass().getResource("/bas-interieur.png")), scale/2);
@@ -1174,13 +1146,7 @@ public class MainView extends JFrame implements KeyListener
 				e.printStackTrace();
 			}
 			this.setBounds(0, 0, (int)(backgroundTop.getWidth()), backgroundTop.getHeight()+backgroundMid.getHeight()+backgroundBot.getHeight());
-			
-			sliderHorizontal.setBounds((int)(this.getWidth()/2-internalMid.getWidth()/2), this.getHeight()-(int)(40*scale),
-					internalMid.getWidth(),(int)(50*scale));
-			sliderVertical.setBounds(this.getWidth() - (int)(40*scale), backgroundTop.getHeight()+titre.getHeight() + (int)(internalTop.getHeight()/2),
-					(int)(50*scale), internalMid.getHeight() + internalBot.getHeight());
 		}
-
     }
    
     /**
