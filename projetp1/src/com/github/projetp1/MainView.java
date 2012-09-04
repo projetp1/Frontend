@@ -661,8 +661,8 @@ public class MainView extends JFrame implements KeyListener
             g2.drawImage(imgHelp, (int)(imgSettings.getWidth()+10*scale), 0, null);
         }
 
-    	private void MouseClicked(java.awt.event.MouseEvent evt) {
-
+    	private void MouseClicked(java.awt.event.MouseEvent evt)
+    	{
     		if(evt.getX()<buttonsPanel.getWidth()/2)
     		{
     			if (settingsPanel.isVisible())
@@ -685,7 +685,7 @@ public class MainView extends JFrame implements KeyListener
     			}
     		}
     	}
-    	
+
 		/** 
 		 * update the scale variable and resize the components
     	 * @param _scale : the scalar
@@ -702,7 +702,7 @@ public class MainView extends JFrame implements KeyListener
 			this.setSize((int)(imgSettings.getWidth()*2), (int)(imgHelp.getHeight()));
 		}
     }
-    
+
     /**
 	 * The SettingsConfig class
 	 */ 
@@ -1153,14 +1153,13 @@ public class MainView extends JFrame implements KeyListener
     			backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/haut-fond.png")), scale/2);
     			backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/bas-fond.png")), scale/2);
     			internalTop = resizeImage(ImageIO.read(getClass().getResource("/haut-interieur.png")), scale/2);
-    			
+
     			titre.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*36)));
     			titre.setBounds(0, backgroundTop.getHeight(), backgroundTop.getWidth(), (int)(scale*35));
-    		
+
     			text.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*24)));
     			text.setBounds((int)(40*scale) - x, backgroundTop.getHeight() + internalTop.getHeight() - y, (int)(internalTop.getWidth()), (int)(scale*26*9));
 
-    			
     			internalMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-interne.png")), text.getWidth(), text.getHeight()-(int)(52*scale));
     			backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-fond.png")), backgroundTop.getWidth(), text.getHeight()+(int)(titre.getHeight()*3));
     			internalBot = resizeImage(ImageIO.read(getClass().getResource("/bas-interieur.png")), scale/2);
