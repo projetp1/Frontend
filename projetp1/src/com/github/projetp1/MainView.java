@@ -1035,12 +1035,7 @@ public class MainView extends JFrame implements KeyListener
     	BufferedImage internalTop;
     	BufferedImage internalMid;
     	BufferedImage internalBot;
-    	
-    	JSlider sliderHorizontal;
-    	JSlider sliderVertical;
-    	
-    	int x;
-    	int y;
+
     	JLabel titre;
     	JLabel text;
     	/**
@@ -1050,8 +1045,6 @@ public class MainView extends JFrame implements KeyListener
     	public Help(double _scale)
     	{
     		scale = _scale;
-    		x = 0;
-    		y = 0;
     		try {
     			backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/haut-fond.png")), scale/2);
     			backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-fond.png")), 1, (int)(200*scale/2));
@@ -1073,42 +1066,10 @@ public class MainView extends JFrame implements KeyListener
     			text.setBounds(0, internalTop.getHeight(), (int)(scale*345), (int)(scale*34*8));
     			text.setForeground(Color.BLACK);
     			this.add(text, new Integer(2));
-    			
-    			sliderHorizontal = new JSlider();
-    			sliderHorizontal.setOpaque(false);
-    			sliderHorizontal.setFocusable(false);
-    			sliderHorizontal.setBounds(150, 50, 100, 15);
-    			sliderHorizontal.setMaximum(text.getWidth());
-    			sliderHorizontal.setValue(0);
-    			sliderHorizontal.addChangeListener(new javax.swing.event.ChangeListener() {
-    	            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-    	                x = sliderHorizontal.getValue();
-    	                text.setBounds((int)(40*scale) - x, backgroundTop.getHeight() + internalTop.getHeight() - y,
-    	                		(int)(internalTop.getWidth()), (int)(scale*26*9));
-    	            }
-    	        });
-    			this.add(sliderHorizontal, new Integer(3));
-    			
-    			sliderVertical = new JSlider();
-    			sliderVertical.setOpaque(false);
-    			sliderVertical.setOrientation(1);
-    			sliderVertical.setBounds(50, 150, 15, 100);
-    			sliderVertical.setInverted(true);
-    			sliderVertical.setFocusable(false);
-    			sliderVertical.setMaximum(text.getHeight());
-    			sliderVertical.setValue(0);
-    			sliderVertical.addChangeListener(new javax.swing.event.ChangeListener() {
-    	            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-    	            	y = sliderVertical.getValue();
-    	            	text.setBounds((int)(40*scale) - x, backgroundTop.getHeight() + internalTop.getHeight() - y,
-    	            			(int)(internalTop.getWidth()), (int)(scale*26*9));
-    	            }
-    	        });
-    			this.add(sliderVertical);
-    			
+
     			this.setBounds(0, 0, (int)(backgroundTop.getWidth()*2), (int)(500*scale));
     			this.setVisible(false);
-    			
+
     			this.addMouseListener(new java.awt.event.MouseAdapter() {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
                         MouseClicked(evt);
@@ -1141,7 +1102,7 @@ public class MainView extends JFrame implements KeyListener
     	private void MouseClicked(java.awt.event.MouseEvent evt) {
     		//nothing
     	}
-    	
+
 		/** 
 		 * update the scale variable and resize the components
     	 * @param _scale : the scalar
@@ -1149,7 +1110,7 @@ public class MainView extends JFrame implements KeyListener
 		public void update(double _scale)
 		{
 			scale = _scale;
-			
+
 			try {
     			backgroundTop = resizeImage(ImageIO.read(getClass().getResource("/haut-fond.png")), scale/2);
     			backgroundBot = resizeImage(ImageIO.read(getClass().getResource("/bas-fond.png")), scale/2);
@@ -1159,7 +1120,7 @@ public class MainView extends JFrame implements KeyListener
     			titre.setBounds(0, backgroundTop.getHeight(), backgroundTop.getWidth(), (int)(scale*35));
 
     			text.setFont(new Font("Calibri", Font.BOLD,  (int)(scale*24)));
-    			text.setBounds((int)(40*scale) - x, backgroundTop.getHeight() + internalTop.getHeight() - y, (int)(internalTop.getWidth()), (int)(scale*26*9));
+    			text.setBounds(0, backgroundTop.getHeight() + internalTop.getHeight(), (int)(internalTop.getWidth()), (int)(scale*26*19));
 
     			internalMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-interne.png")), text.getWidth(), text.getHeight()-(int)(52*scale));
     			backgroundMid = resizeImage2(ImageIO.read(getClass().getResource("/mid-fond.png")), backgroundTop.getWidth(), text.getHeight()+(int)(titre.getHeight()*3));
@@ -1168,13 +1129,7 @@ public class MainView extends JFrame implements KeyListener
 				e.printStackTrace();
 			}
 			this.setBounds(0, 0, (int)(backgroundTop.getWidth()), backgroundTop.getHeight()+backgroundMid.getHeight()+backgroundBot.getHeight());
-			
-			sliderHorizontal.setBounds((int)(this.getWidth()/2-internalMid.getWidth()/2), this.getHeight()-(int)(40*scale),
-					internalMid.getWidth(),(int)(50*scale));
-			sliderVertical.setBounds(this.getWidth() - (int)(40*scale), backgroundTop.getHeight()+titre.getHeight() + (int)(internalTop.getHeight()/2),
-					(int)(50*scale), internalMid.getHeight() + internalBot.getHeight());
 		}
-
     }
    
     /**
