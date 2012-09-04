@@ -425,28 +425,37 @@ public class MainView extends JFrame implements KeyListener
 		{
 		if(zoom>1 || evt.getWheelRotation() < 0) 
 			zoom-=evt.getWheelRotation();	
+
+		double rayon = xOrigin*xOrigin + yOrigin*yOrigin;
+
 		if(zoom >= kZoomMax)		
 			zoom = kZoomMax;
 		else if (evt.getWheelRotation()<0)
 		{
-			
-		double diffX = evt.getX() - (skymap.getWidth()/2);	
-		double diffY = evt.getY() - (skymap.getHeight()/2);		
-		double scaleX = diffX / skymap.getWidth() *4/zoom;
-		double scaleY = diffY / skymap.getHeight() *4/zoom * -1;
-		scaleX /= zoom;
-		scaleY /= zoom;
-		if (xOrigin*xOrigin + yOrigin*yOrigin <= 1 || (xOrigin <= 0 && scaleX >= 0))
-			xOrigin += scaleX;
-		if (xOrigin*xOrigin + yOrigin*yOrigin <= 1 || (xOrigin >= 0 && scaleX <= 0))
-			xOrigin += scaleX;
-		if (xOrigin*xOrigin + yOrigin*yOrigin <= 1  || (yOrigin <= 0 && scaleY >= 0))
-			yOrigin += scaleY;
-		if (xOrigin*xOrigin + yOrigin*yOrigin <= 1  || (yOrigin >= 0 && scaleY <= 0))
-			yOrigin += scaleY;
-		
-		}
 
+			double diffX = evt.getX() - (skymap.getWidth()/2);	
+			double diffY = evt.getY() - (skymap.getHeight()/2);		
+			double scaleX = diffX / skymap.getWidth() *4/zoom;
+			double scaleY = diffY / skymap.getHeight() *4/zoom * -1;
+			scaleX /= zoom;
+			scaleY /= zoom;
+			if (rayon <= 1 || (xOrigin <= 0 && scaleX >= 0))
+				xOrigin += scaleX;
+			if (rayon <= 1 || (xOrigin >= 0 && scaleX <= 0))
+				xOrigin += scaleX;
+			if (rayon <= 1  || (yOrigin <= 0 && scaleY >= 0))
+				yOrigin += scaleY;
+			if (rayon <= 1  || (yOrigin >= 0 && scaleY <= 0))
+				yOrigin += scaleY;
+		
+			}
+
+		inclinometerPanel.setGreenNeedle(90-90*rayon);
+
+		if (xOrigin < 0)
+			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 90);
+		else
+			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 270);
         skymap.setXOrigin(xOrigin);
         skymap.setYOrigin(yOrigin);
 		
@@ -463,24 +472,25 @@ public class MainView extends JFrame implements KeyListener
 		if(pic == null || pic.getMode() == PicMode.SIMULATION)
 		{
 			float l_fDelta = (float) (0.05 / zoom);
+			double rayon = xOrigin*xOrigin + yOrigin*yOrigin;
 	        if(evt.getKeyCode() == 37) //Left
 	        {
-	        	if(xOrigin*xOrigin + yOrigin*yOrigin <= 1 || xOrigin >= 0)
+	        	if(rayon < 1 || xOrigin >= 0)
 	        		xOrigin -= l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == 39) //Right
 	        {
-	        	if(xOrigin*xOrigin + yOrigin*yOrigin <= 1 || xOrigin <= 0)
+	        	if(rayon < 1 || xOrigin <= 0)
 	        		xOrigin += l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == 38) // Up
 	        {
-	        	if(xOrigin*xOrigin + yOrigin*yOrigin <= 1 || yOrigin <= 0)
+	        	if(rayon < 1 || yOrigin <= 0)
 	        		yOrigin += l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == 40) // Down
 	        {
-	        	if(xOrigin*xOrigin + yOrigin*yOrigin <= 1 || yOrigin >= 0)
+	        	if(rayon < 1 || yOrigin >= 0)
 	        		yOrigin -= l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == (int)'.') //zoom +
@@ -493,7 +503,14 @@ public class MainView extends JFrame implements KeyListener
 	        		zoom--;
 	        }
 	        zoomBarPanel.zoomSlider.setValue(zoom);
-	        
+
+    		inclinometerPanel.setGreenNeedle(90-90*rayon);
+
+    		if (xOrigin < 0)
+    			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 90);
+    		else
+    			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 270);
+
 	        skymap.setZoom(zoom);
 	        skymap.setXOrigin(xOrigin);
 	        skymap.setYOrigin(yOrigin);
