@@ -121,11 +121,11 @@ public class MainView extends JFrame implements KeyListener
 		leftPanel = new JLabel("");
 		leftPanel.setBounds(100, 100, 100, 200);
 		leftPanel.setForeground(new Color(250, 250, 250));
-		
+
 		coordinate = new JLabel(0 + "° N, " + 0 + "° S", JLabel.RIGHT);
 		coordinate.setBounds((int)(20 * scale), this.getHeight() - (int)(20 * scale), 200, 20);
 		coordinate.setForeground(Color.WHITE);
-		
+
         buttonsPanel = new Buttons(scale);
 		buttonsPanel.setLocation((int)(width() / 2 - buttonsPanel.getWidth() / 2), 5);
 
@@ -152,7 +152,7 @@ public class MainView extends JFrame implements KeyListener
 				(100+inclinometerPanel.getHeight()));
 
 		skymap = new SkyMap(this);
-		
+
 		getLayeredPane().add(leftPanel);
 		getLayeredPane().add(coordinate);
 		getLayeredPane().add(buttonsPanel);
@@ -432,23 +432,19 @@ public class MainView extends JFrame implements KeyListener
 		double diffX = evt.getX() - (skymap.getWidth()/2);	
 		double diffY = evt.getY() - (skymap.getHeight()/2);		
 		double scaleX = diffX / skymap.getWidth() *4/zoom;
-		double scaleY = diffY / skymap.getHeight() *4/zoom;
+		double scaleY = diffY / skymap.getHeight() *4/zoom * -1;
 		scaleX /= zoom;
 		scaleY /= zoom;
-		xOrigin += scaleX;
-		yOrigin -= scaleY;
+		if (xOrigin*xOrigin + yOrigin*yOrigin <= 1 || (xOrigin <= 0 && scaleX >= 0))
+			xOrigin += scaleX;
+		if (xOrigin*xOrigin + yOrigin*yOrigin <= 1 || (xOrigin >= 0 && scaleX <= 0))
+			xOrigin += scaleX;
+		if (xOrigin*xOrigin + yOrigin*yOrigin <= 1  || (yOrigin <= 0 && scaleY >= 0))
+			yOrigin += scaleY;
+		if (xOrigin*xOrigin + yOrigin*yOrigin <= 1  || (yOrigin >= 0 && scaleY <= 0))
+			yOrigin += scaleY;
 		
 		}
-		
-		if(xOrigin > 1)
-			xOrigin = 1;
-		else if(xOrigin < -1)
-			xOrigin =-1;
-		
-		if(yOrigin > 1)
-			yOrigin = 1;
-		else if(yOrigin < -1)
-			yOrigin =-1;
 
         skymap.setXOrigin(xOrigin);
         skymap.setYOrigin(yOrigin);
@@ -468,22 +464,22 @@ public class MainView extends JFrame implements KeyListener
 			float l_fDelta = (float) (0.05 / zoom);
 	        if(evt.getKeyCode() == 37) //Left
 	        {
-	        	if(xOrigin > -1)
+	        	if(xOrigin*xOrigin + yOrigin*yOrigin <= 1 || xOrigin >= 0)
 	        		xOrigin -= l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == 39) //Right
 	        {
-	        	if(xOrigin < 1)
+	        	if(xOrigin*xOrigin + yOrigin*yOrigin <= 1 || xOrigin <= 0)
 	        		xOrigin += l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == 38) // Up
 	        {
-	        	if(yOrigin < 1)
+	        	if(xOrigin*xOrigin + yOrigin*yOrigin <= 1 || yOrigin <= 0)
 	        		yOrigin += l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == 40) // Down
 	        {
-	        	if(yOrigin > -1)
+	        	if(xOrigin*xOrigin + yOrigin*yOrigin <= 1 || yOrigin >= 0)
 	        		yOrigin -= l_fDelta;
 	        }
 	        else if(evt.getKeyCode() == (int)'.') //zoom +
@@ -573,7 +569,6 @@ public class MainView extends JFrame implements KeyListener
 			
 			compassPanel.setLocation((int)(width()-compassPanel.getWidth())-20, 50);
 			inclinometerPanel.setLocation((int)(width()-compassPanel.getWidth()+(scale*70)), (100+inclinometerPanel.getHeight()));
-			//coordinate.setBounds(this.getWidth()-100, this.getHeight()-70, 100, 20);
 			coordinate.setFont(new Font("Calibri", Font.BOLD, (int)(36*scale)));
 			coordinate.setBounds((int)(80*scale), (int)(height()-100*(height() * 0.30 / 350)), (int)(width()-160*scale), (int)(35*scale));
 
