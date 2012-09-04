@@ -417,7 +417,7 @@ public class MainView extends JFrame implements KeyListener
 	public void keyReleased(KeyEvent evt){} 
 
 	/**
-	 * 
+	 * Zoom with the wheel of the mouse
 	 */  
 	public void mouseWheel(MouseWheelEvent evt)
 	{
@@ -450,7 +450,7 @@ public class MainView extends JFrame implements KeyListener
 		
 			}
 
-		inclinometerPanel.setGreenNeedle(90-90*rayon);
+		inclinometerPanel.setGreenNeedle(Math.asin(rayon)*180/Math.PI);
 
 		if (xOrigin < 0)
 			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 90);
@@ -504,7 +504,7 @@ public class MainView extends JFrame implements KeyListener
 	        }
 	        zoomBarPanel.zoomSlider.setValue(zoom);
 
-    		inclinometerPanel.setGreenNeedle(90-90*rayon);
+    		inclinometerPanel.setGreenNeedle(Math.acos(rayon)*180/Math.PI);
 
     		if (xOrigin < 0)
     			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 90);
@@ -542,7 +542,7 @@ public class MainView extends JFrame implements KeyListener
 	}
 	
 	/**
-	 * calcul the beast scalar for resize the component
+	 * calcul the best scalar for resize the component
 	 */  
 	private double calculateScale()
 	{
@@ -679,6 +679,10 @@ public class MainView extends JFrame implements KeyListener
             g2.drawImage(imgHelp, (int)(imgSettings.getWidth()+10*scale), 0, null);
         }
 
+    	/**
+    	 * For open or hide the help or settings window.
+    	 * @param evt
+    	 */
     	private void MouseClicked(java.awt.event.MouseEvent evt)
     	{
     		if(evt.getX()<buttonsPanel.getWidth()/2)
@@ -940,7 +944,11 @@ public class MainView extends JFrame implements KeyListener
     	private void MouseClicked(java.awt.event.MouseEvent evt) {
     		//nothing
     	}
-    		
+
+    	/**
+    	 * save the settings then they are changed. 
+    	 * @param evt
+    	 */
     	private void	jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
 
     		String l_oldPort = settings.getPort();
@@ -1093,6 +1101,7 @@ public class MainView extends JFrame implements KeyListener
                     }
         		});
     	}
+
     	@Override 
         protected void paintComponent(Graphics g)
         { 
@@ -1157,7 +1166,7 @@ public class MainView extends JFrame implements KeyListener
     	double scale;
     	int hig;
     	JSlider zoomSlider;
-    	
+
     	/**
     	 * Constructor
     	 * @param _scale
@@ -1180,8 +1189,15 @@ public class MainView extends JFrame implements KeyListener
 	            }
 	        });
 			zoomSlider.setFocusable(false);
+
+			zoomSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+					helpPanel.setVisible(false);
+					settingsPanel.setVisible(false);
+				}
+			});
     	}
-    	
+
     	/**
     	 * Called then the value of the slider change
     	 * This method update the skymap
@@ -1192,7 +1208,7 @@ public class MainView extends JFrame implements KeyListener
     		skymap.setZoom(zoom);
     		skymap.updateSkyMap();
     	}
-    			
+
 		/** 
 		 * update the scale variable and resize the components
     	 * @param _scale : the scalar
@@ -1206,7 +1222,7 @@ public class MainView extends JFrame implements KeyListener
 			zoomSlider.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale), hig);
 		}
     }
-    
+
     /**
 	 * The SearchBar class
 	 */ 
@@ -1249,7 +1265,6 @@ public class MainView extends JFrame implements KeyListener
                 }
             });
 
-    		
     		searchBarTextField.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                 	if(l_sSavedSearch != null)
@@ -1261,8 +1276,7 @@ public class MainView extends JFrame implements KeyListener
         			}		
                 }
     		});
-    		
-    		
+
     		listModelNameOrID = new ListModel<String>();
     		listModelObjects = new ArrayList<CelestialObject>();
     		listNameOrID = new JList<String>();
@@ -1275,67 +1289,67 @@ public class MainView extends JFrame implements KeyListener
     		stopSearchButon = new StopButton(scale);
     		stopSearchButon.setBounds(0,searchBarTextField.getWidth(), 300, 400);
     		stopSearchButon.setFocusable(false);
-    		
-    		
-    		
-    		
+
     		listNameOrID.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                 	listNameOrIDMouseClicked(evt);
                 }
     		});
-    		
+
     		this.add(searchBarTextField, new Integer(1));
     		this.add(jScrollPane, new Integer(2));
     		this.add(stopSearchButon, new Integer(3));
+
+    		searchBarTextField.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+					helpPanel.setVisible(false);
+					settingsPanel.setVisible(false);
+				}
+			});
     	}
-    	
-    	
+
     	/**
     	 * used then the user select an element of the list.
     	 * @param evt
     	 */
-    	private void listNameOrIDMouseClicked(java.awt.event.MouseEvent evt) {
-
-    		
+    	private void listNameOrIDMouseClicked(java.awt.event.MouseEvent evt) 
+    	{
         	jScrollPane.setVisible(false);
         	String[] searchBarText = searchBarTextField.getText().split("[; ]");
         	String[] searchFeatures = searchBarTextField.getText().split(";");
     		String searchFeature = searchFeatures[searchFeatures.length - 1];
-    				
-			//log.info("\n>" + searchFeature + "<->" + searchFeature.split(" ").length + "\n");
-        	if(searchFeature.split(" ").length > 1 && listModelObjects.size() > 0)
+
+    		if(searchFeature.split(" ").length > 1 && listModelObjects.size() > 0)
         	{
              	int index = listNameOrID.getSelectedIndex();
         		CelestialObject celObjt = listModelObjects.get(index);
         		updateInfo(celObjt);
         		skymap.setCelestialObjectSearched(celObjt);
-        		
+
         		redArrowAzimuth = celObjt.getAzimuth() * 180 / Math.PI;
         		redArrowPitch = celObjt.getHeight() * 180 / Math.PI;
         		compassPanel.setRedNeedle(redArrowAzimuth);
         		inclinometerPanel.setRedNeedle(redArrowPitch);
         		compassPanel.setSearchMode(true);
         		inclinometerPanel.setSearchMode(true);
-    			
+
         		if(pic != null && pic.getMode() != PicMode.SIMULATION)
         			pic.changeMode(PicMode.GUIDING);
-        		
+
         		l_sSavedSearch = searchBarTextField.getText();
         		searchBarTextField.setText(listNameOrID.getSelectedValue().toString());
         		skymap.transferFocusBackward();
         		MainView.this.update();
         		return;
         	}
-    		
+
         	if(listNameOrID.getSelectedValue() != null && searchBarText.length > 0)
         		{
         			String regex = searchBarText[searchBarText.length - 1] + "$";
         			searchBarTextField.setText(searchBarTextField.getText().replaceFirst(regex, listNameOrID.getSelectedValue().toString()));
-            	}
-        		
+            	}	
     	}
-    	
+
     	/**
     	 * search in the database the stars corresponding with the textField.
     	 * @param evt
@@ -1472,7 +1486,6 @@ public class MainView extends JFrame implements KeyListener
 							: (int) (200 * scale);
 					jScrollPane.setBounds(0, 20, searchBarTextField.getWidth(), min);
 					jScrollPane.setVisible(true);
-
 				}
 				else
 					jScrollPane.setVisible(false);
@@ -1487,18 +1500,25 @@ public class MainView extends JFrame implements KeyListener
 		{
 			scale = _scale;
 			hig = 20;
-    		
+
 			searchBarTextField.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()), hig);
     		int min = (listModelNameOrID.getSize() < 5)?listModelNameOrID.getSize()*21:(int)(200*scale);
         	jScrollPane.setBounds(0, hig, searchBarTextField.getWidth(), min);
         	stopSearchButon.setBounds(searchBarTextField.getWidth()-hig,searchBarTextField.getHeight()/2-hig/2+(2), hig, hig);
         	this.setBounds(0, 0, (int)(width()/2-buttonsPanel.getWidth()/2-70*scale-compassPanel.getWidth()+stopSearchButon.getWidth()), hig+(int)(400*scale));
-			    		
 		}	
-		
+
+		/**
+		 * Private class StopButton
+		 */
 		private class StopButton extends JPanel
 		{
 	    	BufferedImage cross;
+	    	
+	    	/**
+	    	 * Constructor
+	    	 * @param _scale
+	    	 */
 			public StopButton(double _scale){
 				try
 				{
@@ -1515,7 +1535,11 @@ public class MainView extends JFrame implements KeyListener
 		        });
 				this.setOpaque(false);
 			}
-			
+
+			/**
+			 * then the user click on this button, all about search mode are clear.
+			 * @param evt
+			 */
 			private void stopSearchActionPerformed(java.awt.event.MouseEvent evt) {
 				skymap.setCelestialObjectSearched(null);
 	    		leftPanel.setText("");
@@ -1538,7 +1562,6 @@ public class MainView extends JFrame implements KeyListener
 	            Graphics2D g2 = (Graphics2D) g; 
 	            g2.drawImage(cross, 0, 0, null); 
 	        }
-			
 		}
     }
 
@@ -1623,7 +1646,6 @@ public class MainView extends JFrame implements KeyListener
             greenNeedle.rotate(greenAngle);
 			greenNeedle.setBounds(0, 0, (int)(scale*345), (int)(scale*304));
 
-
 			if(greenAngle < 0)
 				greenAngle += 360;
 			double l_dAngle = greenAngle - 22.5;
@@ -1663,7 +1685,6 @@ public class MainView extends JFrame implements KeyListener
 					break;
 			}
 
-
 			try
 			{
 				coordinateCompass.setText(String.valueOf((int)(greenAngle)) + "° " + l_sDirection);
@@ -1677,6 +1698,10 @@ public class MainView extends JFrame implements KeyListener
 			this.setSize((int)(scale*345), (int)(scale*350));
 		}
 
+		/**
+		 * For set visible the red needle then we are in search mode
+		 * @param _searchMode : if we search a star or not
+		 */
 		public void setSearchMode(boolean _searchMode)
 		{
 			redNeedle.setVisible(_searchMode);
@@ -1709,6 +1734,11 @@ public class MainView extends JFrame implements KeyListener
 		    double scale = 1;
 		    String adresseImage;
 		    
+		    /**
+		     * constructor
+		     * @param _adresseImage
+		     * @param _scale
+		     */
 			public Needle(String _adresseImage, double _scale)
 			{
 				scale = _scale;
@@ -1824,7 +1854,11 @@ public class MainView extends JFrame implements KeyListener
             Graphics2D g2 = (Graphics2D) g; 
             g2.drawImage(background, 0, 0, null); 
         }
-		
+
+		/**
+		 * For set visible the red needle then we are in search mode
+		 * @param _searchMode : if we search a star or not
+		 */
         public void setSearchMode(boolean _searchMode)
 		{
 			redNeedle.setVisible(_searchMode);
