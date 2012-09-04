@@ -417,7 +417,7 @@ public class MainView extends JFrame implements KeyListener
 	public void keyReleased(KeyEvent evt){} 
 
 	/**
-	 * 
+	 * Zoom with the wheel of the mouse
 	 */  
 	public void mouseWheel(MouseWheelEvent evt)
 	{
@@ -504,7 +504,7 @@ public class MainView extends JFrame implements KeyListener
 	        }
 	        zoomBarPanel.zoomSlider.setValue(zoom);
 
-    		inclinometerPanel.setGreenNeedle(90-90*rayon);
+    		inclinometerPanel.setGreenNeedle(Math.acos(rayon)*180/Math.PI);
 
     		if (xOrigin < 0)
     			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 90);
@@ -542,7 +542,7 @@ public class MainView extends JFrame implements KeyListener
 	}
 	
 	/**
-	 * calcul the beast scalar for resize the component
+	 * calcul the best scalar for resize the component
 	 */  
 	private double calculateScale()
 	{
