@@ -176,7 +176,7 @@ public class MainView extends JFrame implements KeyListener
             }
         });
 		
-		this.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+		skymap.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
 		      public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
             	mouseWheel(evt);
@@ -420,23 +420,24 @@ public class MainView extends JFrame implements KeyListener
 	 */  
 	public void mouseWheel(MouseWheelEvent evt)
 	{
-		if(zoom > 1 || evt.getWheelRotation() < 0)
-        	zoom-=evt.getWheelRotation();
-
-		if(zoom > kZoomMax)
-				zoom = kZoomMax;
-		else
+		if( evt.getWheelRotation() != 0)
 		{
-			double diffX = evt.getX() - (skymap.getWidth() / 2);
-			double diffY = evt.getY() - (skymap.getHeight() / 2);
-
-			double scaleX = diffX / (skymap.getWidth() / 2) * 0.05 / zoom;
-			double scaleY = diffY / (skymap.getWidth() / 2) * 0.05 / zoom;
-
-			xOrigin += scaleX;
-			yOrigin -= scaleY;
-			xOrigin += 0;
-			yOrigin -= 0;
+		if(zoom>1 || evt.getWheelRotation() < 0) 
+			zoom-=evt.getWheelRotation();	
+		if(zoom >= kZoomMax)		
+			zoom = kZoomMax;
+		else if (evt.getWheelRotation()<0)
+		{
+			
+		double diffX = evt.getX() - (skymap.getWidth()/2);	
+		double diffY = evt.getY() - (skymap.getHeight()/2);		
+		double scaleX = diffX / skymap.getWidth() *4/zoom;
+		double scaleY = diffY / skymap.getHeight() *4/zoom;
+		scaleX /= zoom;
+		scaleY /= zoom;
+		xOrigin += scaleX;
+		yOrigin -= scaleY;
+		
 		}
 		
 		if(xOrigin > 1)
@@ -455,7 +456,7 @@ public class MainView extends JFrame implements KeyListener
         zoomBarPanel.zoomSlider.setValue(zoom);
         skymap.setZoom(zoom);
         skymap.updateSkyMap();
-        
+		}
 	} 
 	
 	/**
@@ -494,7 +495,6 @@ public class MainView extends JFrame implements KeyListener
 	        	if(zoom>1)
 	        		zoom--;
 	        }
-
 	        zoomBarPanel.zoomSlider.setValue(zoom);
 	        
 	        skymap.setZoom(zoom);
