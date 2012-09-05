@@ -506,8 +506,6 @@ public class MainView extends JFrame implements KeyListener
 
 	        rayon = Math.sqrt(xOrigin*xOrigin + yOrigin*yOrigin);
 			inclinometerPanel.setGreenNeedle(90-90*rayon);
-    		
-			System.out.println(rayon + " => " + inclinometerPanel.greenAngle);
 
     		if (xOrigin < 0)
     			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 90);
