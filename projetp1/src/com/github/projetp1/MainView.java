@@ -426,7 +426,7 @@ public class MainView extends JFrame implements KeyListener
 		if(zoom>1 || evt.getWheelRotation() < 0) 
 			zoom-=evt.getWheelRotation();	
 
-		double rayon = xOrigin*xOrigin + yOrigin*yOrigin;
+		double rayon = Math.sqrt(xOrigin*xOrigin + yOrigin*yOrigin);
 
 		if(zoom >= kZoomMax)		
 			zoom = kZoomMax;
@@ -449,8 +449,8 @@ public class MainView extends JFrame implements KeyListener
 				yOrigin += scaleY;
 		
 			}
-
-		inclinometerPanel.setGreenNeedle(Math.asin(rayon)*180/Math.PI);
+		rayon = Math.sqrt(xOrigin*xOrigin + yOrigin*yOrigin);
+		inclinometerPanel.setGreenNeedle(90-90*rayon);
 
 		if (xOrigin < 0)
 			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 90);
@@ -472,7 +472,7 @@ public class MainView extends JFrame implements KeyListener
 		if(pic == null || pic.getMode() == PicMode.SIMULATION)
 		{
 			float l_fDelta = (float) (0.05 / zoom);
-			double rayon = xOrigin*xOrigin + yOrigin*yOrigin;
+			double rayon = Math.sqrt(xOrigin*xOrigin + yOrigin*yOrigin);
 	        if(evt.getKeyCode() == 37) //Left
 	        {
 	        	if(rayon < 1 || xOrigin >= 0)
@@ -504,7 +504,10 @@ public class MainView extends JFrame implements KeyListener
 	        }
 	        zoomBarPanel.zoomSlider.setValue(zoom);
 
-    		inclinometerPanel.setGreenNeedle(Math.acos(rayon)*180/Math.PI);
+	        rayon = Math.sqrt(xOrigin*xOrigin + yOrigin*yOrigin);
+			inclinometerPanel.setGreenNeedle(90-90*rayon);
+    		
+			System.out.println(rayon + " => " + inclinometerPanel.greenAngle);
 
     		if (xOrigin < 0)
     			compassPanel.setGreenNeedle(Math.atan(yOrigin/xOrigin)*180/Math.PI + 90);
