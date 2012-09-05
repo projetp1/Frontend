@@ -1,8 +1,6 @@
 package com.github.projetp1;
 
-import java.util.logging.Filter;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
@@ -18,18 +16,7 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).setFilter(new Filter()
-		{
-
-			@Override
-			public boolean isLoggable(LogRecord _arg0)
-			{
-				return true;// _arg0.getSourceClassName().contains("RS232");
-			}
-		});
-
-		Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-		log.setLevel(Level.FINEST);
+		Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).setLevel(Level.OFF);
 
 		new MainView();
 	}
